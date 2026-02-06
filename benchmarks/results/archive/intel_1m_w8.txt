@@ -1,0 +1,56 @@
+Parallel GC Performance Benchmark
+============================================================
+Build type: FTP
+Parallel GC available: True
+CPUs: 192
+Worker threads: 4
+Parallel GC workers: 8
+Duration per benchmark: 30.0s
+Runs per configuration: 5
+Heap size: 1,000,000
+
+Running: Realistic Workloads (pyperformance-style)
+------------------------------------------------------------
+  Serial:   1,460/sec (range: 1,297 - 1,566)
+  Parallel: 1,500/sec (range: 1,333 - 1,588)
+  Throughput change: +2.7%
+  STW pause: 1651ms -> 1370ms (-17%)
+
+Running: Collection Time Benchmarks (all heap types)
+------------------------------------------------------------
+  chain       :  286.5ms ->  150.8ms (1.90x)
+  tree        :  342.0ms ->  154.6ms (2.21x)
+  wide_tree   :  275.1ms ->  169.1ms (1.63x)
+  graph       :  287.1ms ->  147.5ms (1.95x)
+  layered     :  287.7ms ->  171.2ms (1.68x)
+  independent :  197.6ms ->  157.9ms (1.25x)
+  ai_workload :  237.8ms ->  145.8ms (1.63x)
+  web_server  :  197.8ms ->  143.0ms (1.38x)
+
+Running: Synthetic chain throughput
+------------------------------------------------------------
+  Serial:   1,429,911/sec (range: 870,986 - 2,124,041)
+  Parallel: 1,944,833/sec (range: 1,167,110 - 2,512,502)
+  Throughput change: +36.0%
+  STW pause: 10539ms -> 0.0ms (-100%)
+
+Running: Synthetic graph throughput
+------------------------------------------------------------
+  Serial:   276,731/sec (range: 9,081 - 392,991)
+  Parallel: 342,436/sec (range: 287,539 - 414,446)
+  Throughput change: +23.7%
+
+Running: Synthetic ai_workload throughput
+------------------------------------------------------------
+  Serial:   667,964/sec (range: 591,067 - 800,647)
+  Parallel: 503,061/sec (range: 375,609 - 598,717)
+  Throughput change: -24.7%
+  STW pause: 1913ms -> 970ms (-49%)
+
+Synthetic Summary (geometric mean across heap types)
+------------------------------------------------------------
+  Throughput change: +8.2%
+  STW pause change: -49%
+
+
+Results saved to: ../benchmarks/results/intel_1m_w8.json

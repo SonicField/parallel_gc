@@ -1,0 +1,56 @@
+Parallel GC Performance Benchmark
+============================================================
+Build type: FTP
+Parallel GC available: True
+CPUs: 192
+Worker threads: 4
+Parallel GC workers: 16
+Duration per benchmark: 30.0s
+Runs per configuration: 5
+Heap size: 1,000,000
+
+Running: Realistic Workloads (pyperformance-style)
+------------------------------------------------------------
+  Serial:   1,425/sec (range: 1,369 - 1,535)
+  Parallel: 1,477/sec (range: 1,323 - 1,641)
+  Throughput change: +3.6%
+  STW pause: 1285ms -> 529ms (-59%)
+
+Running: Collection Time Benchmarks (all heap types)
+------------------------------------------------------------
+  chain       :  210.9ms ->  138.1ms (1.53x)
+  tree        :  247.6ms ->  132.6ms (1.87x)
+  wide_tree   :  239.2ms ->  132.4ms (1.81x)
+  graph       :  266.3ms ->  101.9ms (2.61x)
+  layered     :  185.5ms ->  110.7ms (1.68x)
+  independent :  203.6ms ->  109.5ms (1.86x)
+  ai_workload :  238.5ms ->  139.1ms (1.71x)
+  web_server  :  170.7ms ->  104.9ms (1.63x)
+
+Running: Synthetic chain throughput
+------------------------------------------------------------
+  Serial:   1,677,681/sec (range: 1,071,444 - 2,440,338)
+  Parallel: 2,937,263/sec (range: 489,564 - 5,979,508)
+  Throughput change: +75.1%
+  STW pause: 8700ms -> 0.0ms (-100%)
+
+Running: Synthetic graph throughput
+------------------------------------------------------------
+  Serial:   320,792/sec (range: 37,640 - 494,455)
+  Parallel: 474,734/sec (range: 441,143 - 499,464)
+  Throughput change: +48.0%
+
+Running: Synthetic ai_workload throughput
+------------------------------------------------------------
+  Serial:   723,559/sec (range: 647,750 - 772,940)
+  Parallel: 633,310/sec (range: 581,069 - 778,847)
+  Throughput change: -12.5%
+  STW pause: 2774ms -> 727ms (-74%)
+
+Synthetic Summary (geometric mean across heap types)
+------------------------------------------------------------
+  Throughput change: +31.4%
+  STW pause change: -74%
+
+
+Results saved to: ../benchmarks/results/intel_1m_w16.json

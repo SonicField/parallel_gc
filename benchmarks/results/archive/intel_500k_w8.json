@@ -1,0 +1,202 @@
+{
+  "configuration": {
+    "build_type": "ftp",
+    "parallel_gc_available": true,
+    "num_workers": 8,
+    "num_threads": 4,
+    "duration_per_benchmark": 30.0,
+    "num_runs": 5,
+    "heap_size": 500000
+  },
+  "timestamp": "2026-02-12T04:49:56.884292",
+  "realistic": {
+    "name": "realistic",
+    "serial": {
+      "throughput_mean": 1439.6136308245837,
+      "throughput_stdev": 191.24423688747336,
+      "stw_pause_mean": 2166.3459511275314,
+      "stw_pause_stdev": 952.8392131542214,
+      "stw_pause_max": 3858.6674728430808,
+      "gc_overhead": 52.002506068389614,
+      "total_duration_sec": 155.1103900107555,
+      "total_collections": 50
+    },
+    "parallel": {
+      "throughput_mean": 1433.5548971777882,
+      "throughput_stdev": 160.00694114883444,
+      "stw_pause_mean": 912.3283477333333,
+      "stw_pause_stdev": 567.6637899243235,
+      "stw_pause_max": 1860.29993,
+      "gc_overhead": 50.41797728279016,
+      "total_duration_sec": 154.3949953680858,
+      "total_collections": 57
+    },
+    "throughput_change_pct": -0.420858313443806,
+    "stw_change_pct": -57.88630401997944
+  },
+  "collection_results": [
+    {
+      "heap_type": "chain",
+      "heap_size": 500000,
+      "serial_time_ms": 98.63538974896073,
+      "serial_stdev": 1.6252562486402058,
+      "parallel_time_ms": 51.58217493444681,
+      "parallel_stdev": 3.928193264847503,
+      "speedup": 1.912199124490417,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "tree",
+      "heap_size": 500000,
+      "serial_time_ms": 97.09601746872067,
+      "serial_stdev": 1.4826315817310296,
+      "parallel_time_ms": 68.96791318431497,
+      "parallel_stdev": 9.024544601505022,
+      "speedup": 1.4078433431679174,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "wide_tree",
+      "heap_size": 500000,
+      "serial_time_ms": 94.86755337566137,
+      "serial_stdev": 1.1361512319038618,
+      "parallel_time_ms": 67.36142560839653,
+      "parallel_stdev": 11.735081026944492,
+      "speedup": 1.408336485144641,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "graph",
+      "heap_size": 500000,
+      "serial_time_ms": 120.38835780695081,
+      "serial_stdev": 5.912844057887787,
+      "parallel_time_ms": 66.19081227108836,
+      "parallel_stdev": 5.193431588004375,
+      "speedup": 1.8188076815539476,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "layered",
+      "heap_size": 500000,
+      "serial_time_ms": 122.03588327392936,
+      "serial_stdev": 4.893279363177879,
+      "parallel_time_ms": 79.9377029761672,
+      "parallel_stdev": 10.229825943129672,
+      "speedup": 1.526637352968641,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "independent",
+      "heap_size": 500000,
+      "serial_time_ms": 126.11350882798433,
+      "serial_stdev": 1.6538348125891946,
+      "parallel_time_ms": 74.59532031789422,
+      "parallel_stdev": 10.20317143933767,
+      "speedup": 1.6906356630756598,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "ai_workload",
+      "heap_size": 500000,
+      "serial_time_ms": 151.07537303119898,
+      "serial_stdev": 7.288069258985413,
+      "parallel_time_ms": 97.54200736060739,
+      "parallel_stdev": 14.634311312795477,
+      "speedup": 1.5488237029271061,
+      "num_runs": 5
+    },
+    {
+      "heap_type": "web_server",
+      "heap_size": 500000,
+      "serial_time_ms": 118.89060474932194,
+      "serial_stdev": 1.8754158135938952,
+      "parallel_time_ms": 63.95191131159663,
+      "parallel_stdev": 10.505525717773441,
+      "speedup": 1.8590625723450906,
+      "num_runs": 5
+    }
+  ],
+  "synthetic_by_heap": {
+    "chain": {
+      "name": "synthetic_chain",
+      "serial": {
+        "throughput_mean": 1923979.3433980609,
+        "throughput_stdev": 324124.5508464927,
+        "stw_pause_mean": 4167.840413733696,
+        "stw_pause_stdev": 8402.129280386978,
+        "stw_pause_max": 19140.3063647449,
+        "gc_overhead": 27.57538021216578,
+        "total_duration_sec": 183.95587033452466,
+        "total_collections": 19
+      },
+      "parallel": {
+        "throughput_mean": 2994069.572413703,
+        "throughput_stdev": 2826098.3075558012,
+        "stw_pause_mean": 0,
+        "stw_pause_stdev": 0.0,
+        "stw_pause_max": 0,
+        "gc_overhead": 0.0,
+        "total_duration_sec": 269.5551938889548,
+        "total_collections": 0
+      },
+      "throughput_change_pct": 55.618592407841994,
+      "stw_change_pct": -100.0
+    },
+    "graph": {
+      "name": "synthetic_graph",
+      "serial": {
+        "throughput_mean": 572337.753437367,
+        "throughput_stdev": 59312.5125163945,
+        "stw_pause_mean": 0,
+        "stw_pause_stdev": 0.0,
+        "stw_pause_max": 0,
+        "gc_overhead": 0.0,
+        "total_duration_sec": 154.5770468013361,
+        "total_collections": 0
+      },
+      "parallel": {
+        "throughput_mean": 469437.02265240025,
+        "throughput_stdev": 110776.32534783996,
+        "stw_pause_mean": 995.5188317333333,
+        "stw_pause_stdev": 1312.2855294676972,
+        "stw_pause_max": 3145.7817,
+        "gc_overhead": 16.618321193222517,
+        "total_duration_sec": 154.872826309409,
+        "total_collections": 13
+      },
+      "throughput_change_pct": -17.979022031477353,
+      "stw_change_pct": 0
+    },
+    "ai_workload": {
+      "name": "synthetic_ai_workload",
+      "serial": {
+        "throughput_mean": 949333.8216598862,
+        "throughput_stdev": 147110.9720601131,
+        "stw_pause_mean": 790.4038016890001,
+        "stw_pause_stdev": 56.94073226573501,
+        "stw_pause_max": 1951.3961258344352,
+        "gc_overhead": 54.64524453495159,
+        "total_duration_sec": 154.11423228494823,
+        "total_collections": 107
+      },
+      "parallel": {
+        "throughput_mean": 883760.2953505017,
+        "throughput_stdev": 146454.8450048304,
+        "stw_pause_mean": 412.5416598326797,
+        "stw_pause_stdev": 49.563060496295215,
+        "stw_pause_max": 960.586599,
+        "gc_overhead": 65.12377805472471,
+        "total_duration_sec": 156.45363543508574,
+        "total_collections": 95
+      },
+      "throughput_change_pct": -6.907320145271012,
+      "stw_change_pct": -47.80621513318552
+    }
+  },
+  "summary": {
+    "realistic_throughput_change_pct": -0.420858313443806,
+    "collection_speedup_geomean": 1.6357156923283693,
+    "synthetic_throughput_geomean_pct": 5.917401971359304,
+    "synthetic_stw_geomean_pct": -47.80621513318552
+  }
+}

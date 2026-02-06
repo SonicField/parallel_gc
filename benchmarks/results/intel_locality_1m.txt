@@ -1,0 +1,52 @@
+High-Locality GC Benchmark (with real garbage)
+============================================================
+Heap size: 1,000,000 objects
+Survivor ratio: 0.8 (19% garbage)
+Workers: 8
+Iterations: 10 (after 3 warmup)
+
+Warming up (3 iterations)...
+
+Running SERIAL benchmark...
+  Min: 57.68ms
+  Mean: 59.92ms
+  Max: 61.67ms
+  Collected: 200000
+
+Running PARALLEL benchmark (8 workers)...
+  Min: 37.44ms
+  Mean: 39.49ms
+  Max: 42.46ms
+  Collected: 200000
+
+Phase timing (last collection):
+  stw0_ns: 0.00ms
+  merge_refs_ns: 0.00ms
+  delayed_frees_ns: 0.00ms
+  mark_alive_ns: 1.09ms
+  bucket_assign_ns: 0.03ms
+  update_refs_ns: 8.56ms
+  mark_heap_ns: 1.67ms
+  scan_heap_ns: 6.92ms
+  find_weakrefs_ns: 5.54ms
+  stw1_ns: 0.00ms
+  objs_decref_ns: 0.00ms
+  weakref_callbacks_ns: 0.00ms
+  finalize_ns: 5.16ms
+  stw2_ns: 0.00ms
+  resurrection_ns: 26.17ms
+  freelists_ns: 0.03ms
+  clear_weakrefs_ns: 5.35ms
+  stw3_ns: 0.00ms
+  cleanup_ns: 43.03ms
+  total_ns: 103.55ms
+  scan_mark_ns: 18.27ms
+  finalization_ns: 36.87ms
+  dealloc_ns: 48.41ms
+  stw_pause_ns: 55.36ms
+
+============================================================
+RESULT: 1.52x SPEEDUP (parallel is faster)
+Serial mean: 59.92ms
+Parallel mean: 39.49ms
+Difference: -20.44ms

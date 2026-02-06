@@ -1,0 +1,22 @@
+# Build artifacts
+*.o
+*.so
+*.pyc
+__pycache__/
+build/
+
+# Editor files
+*.swp
+*~
+.vscode/
+.idea/
+
+# Temporary files
+*.log
+
+# Build output
+*.tar.gz
+
+# Benchmark output (keep scripts, ignore output)
+*.json
+!.nbs/**/*.json
