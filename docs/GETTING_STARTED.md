@@ -197,8 +197,18 @@ gc.disable_parallel()               # Destroy workers, revert to serial
 
 ```python
 gc.get_parallel_config()
+# FTP build:
 # {'available': True, 'enabled': True, 'num_workers': 4, 'parallel_cleanup': True}
+#
+# GIL build (with adaptive controller):
+# {'available': True, 'enabled': True, 'num_workers': 4,
+#  'adaptive_workers_gen0': 3, 'adaptive_workers_gen1': 4, 'adaptive_workers_gen2': 5,
+#  'epsilon': 0.05}
 ```
+
+The GIL build exposes the stochastic hill-climbing controller state:
+- `adaptive_workers_genN`: current worker count the controller has chosen for generation N
+- `epsilon`: exploration probability (starts at 0.3, decays to floor of 0.05)
 
 ### Collection Statistics
 
@@ -225,6 +235,9 @@ gc.get_parallel_stats()
 #  'roots_found': 142, 'roots_distributed': 8703,
 #  'gc_roots_found': 0,
 #  'collections_attempted': 5, 'collections_succeeded': 5,
+#  'ema_per_obj_ns_gen0': 1850.1, 'ema_per_obj_ns_gen1': 100.0,
+#  'ema_per_obj_ns_gen2': 2903265.5,
+#  'last_generation': 2,
 #  'workers': [...],    # per-worker stats
 #  'phase_timing': {
 #      'update_refs_ns': ..., 'mark_alive_ns': ...,
@@ -232,6 +245,10 @@ gc.get_parallel_stats()
 #      'total_ns': ..., ...
 #  }}
 ```
+
+The `ema_per_obj_ns_genN` keys report the exponential moving average of
+per-object collection cost for each generation (used by the adaptive
+controller). `last_generation` is the generation of the most recent collection.
 
 The exact keys depend on the build mode. Use `sorted(gc.get_parallel_stats().keys())` to see what is available in your build.
 

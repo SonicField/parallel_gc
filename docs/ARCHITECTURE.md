@@ -321,6 +321,37 @@ to avoid assertion failure (`gc_parallel.c:661`).
 Falls back to serial when: parallel GC not enabled, split vector < 2 entries,
 or workers not active. All entry points return 0 to trigger fallback.
 
+### 2.7 Adaptive Worker Count Controller
+
+**Source:** `Modules/gcmodule.c:1405-1498`, state in `pycore_gc_parallel.h`
+
+The controller dynamically adjusts how many workers are woken per collection
+using per-generation stochastic hill-climbing (epsilon-greedy).
+
+**Per-generation state:** Each GC generation (0, 1, 2) independently tracks:
+- `adaptive_workers_by_gen[gen]`: current optimal worker count for this generation
+- `ema_per_obj_ns_by_gen[gen]`: exponential moving average of per-object cost
+
+At the start of each collection, `adaptive_workers` is set from the
+per-generation array (`gcmodule.c:1316`). At the end, the controller updates
+the per-generation state based on observed per-object cost.
+
+**Epsilon-greedy exploration:**
+- With probability `epsilon`: choose a random worker count in [2, num_workers]
+- With probability `1 - epsilon`: hill-climb (increase workers if cost
+  decreased vs EMA, decrease if cost increased; 15% dead zone)
+- `epsilon` starts at 0.3 (30% exploration), decays by 0.95x per
+  non-exploratory collection, floor at 0.05 (5% ongoing exploration)
+- Reset to 0.3 after 3 consecutive collections with cost > 2x EMA
+  (workload shift detection)
+
+**EMA warmup:** First 3 collections per generation only update the EMA
+without hill-climbing. This prevents cold-start EMA mismatch (initial 100.0
+vs actual cost potentially millions) from always reducing workers.
+
+**PRNG:** xorshift32, seeded from `GC_TEST_SEED` env var at startup or
+`_PyTime_GetPerfCounter()` if unset.
+
 ---
 
 ## 3. Free-Threaded Build Architecture
@@ -543,11 +574,17 @@ All in `Modules/gcmodule.c`.
 
 Returns `{'available': bool, 'enabled': bool, 'num_workers': int}`.
 FTP adds `'parallel_cleanup': True`.
+GIL build (when enabled) adds adaptive controller state:
+`'adaptive_workers_gen0'`, `'adaptive_workers_gen1'`,
+`'adaptive_workers_gen2'` (int), `'epsilon'` (float).
 
 ### gc.get_parallel_stats()
 
 Returns per-worker stats and phase timing (ns). Phase timing includes
 abstract names (`scan_mark_ns`, `stw_pause_ns`) for cross-build comparison.
+GIL build adds per-generation EMA values: `'ema_per_obj_ns_gen0'`,
+`'ema_per_obj_ns_gen1'`, `'ema_per_obj_ns_gen2'` (float), and
+`'last_generation'` (int).
 
 GIL build example:
 
