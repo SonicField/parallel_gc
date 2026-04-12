@@ -264,7 +264,7 @@ def run_dynamic_benchmark(args):
 
     # Ensure parallel GC is enabled
     config = get_parallel_config()
-    if config.get("num_workers", 0) < 2:
+    if not config.get("enabled", False):
         gc.enable_parallel(8)
         config = get_parallel_config()
 
@@ -317,7 +317,7 @@ def run_isolation_benchmark(args):
 
     config = get_parallel_config()
     max_workers = config.get("num_workers", 0)
-    if max_workers < 2:
+    if not config.get("enabled", False) or max_workers < 2:
         # Parallel GC not yet enabled; enable with 8 workers to determine max
         gc.enable_parallel(8)
         config = get_parallel_config()
