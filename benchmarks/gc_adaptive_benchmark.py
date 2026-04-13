@@ -148,29 +148,13 @@ def observe_controller_state(generation=None):
         "timestamp": time.monotonic(),
     }
 
-    # Per-generation adaptive workers (new API)
-    for gen in range(3):
-        key = f"adaptive_workers_gen{gen}"
-        if key in config:
-            state[key] = config[key]
+    # Adaptive worker count (random walk position)
+    if "adaptive_workers" in config:
+        state["adaptive_workers"] = config["adaptive_workers"]
 
-    # Fall back to single adaptive_workers if per-gen not available
-    if "adaptive_workers_gen0" not in state and "adaptive_workers" in config:
-        state["adaptive_workers"] = config.get("adaptive_workers")
-
-    # Epsilon (exploration probability)
-    if "epsilon" in config:
-        state["epsilon"] = config["epsilon"]
-
-    # Per-generation EMA
-    for gen in range(3):
-        key = f"ema_per_obj_ns_gen{gen}"
-        if key in stats:
-            state[key] = stats[key]
-
-    # Fall back to single EMA
-    if "ema_per_obj_ns_gen0" not in state and "ema_per_obj_ns" in stats:
-        state["ema_per_obj_ns"] = stats.get("ema_per_obj_ns")
+    # Previous per-object cost (random walk comparison baseline)
+    if "prev_cost_per_obj_ns" in stats:
+        state["prev_cost_per_obj_ns"] = stats["prev_cost_per_obj_ns"]
 
     state["num_workers"] = config.get("num_workers", 0)
     state["enabled"] = config.get("enabled", False)
@@ -289,19 +273,14 @@ def run_dynamic_benchmark(args):
 
             # Report latest controller state
             latest = observations[-1] if observations else {}
-            workers_key = None
-            for k in ["adaptive_workers_gen2", "adaptive_workers_gen0", "adaptive_workers"]:
-                if k in latest:
-                    workers_key = k
-                    break
-            workers_val = latest.get(workers_key, "?") if workers_key else "?"
-            epsilon_val = latest.get("epsilon", "?")
+            workers_val = latest.get("adaptive_workers", "?")
+            prev_cost = latest.get("prev_cost_per_obj_ns", "?")
             median_ns = int(sorted(
                 o["elapsed_ns"] for o in observations[-num_collections:]
             )[num_collections // 2])
 
             print(f" {elapsed:.1f}s, median={median_ns/1e6:.1f}ms, "
-                  f"workers={workers_val}, epsilon={epsilon_val}")
+                  f"workers={workers_val}, prev_cost={prev_cost}")
 
     return observations
 
@@ -389,15 +368,9 @@ def print_adaptation_summary(observations):
         n = len(obs_list)
 
         # Worker count at start and end of phase
-        workers_key = None
-        for k in ["adaptive_workers_gen2", "adaptive_workers_gen0", "adaptive_workers"]:
-            if k in obs_list[0]:
-                workers_key = k
-                break
-
-        if workers_key:
-            start_w = obs_list[0][workers_key]
-            end_w = obs_list[-1][workers_key]
+        if "adaptive_workers" in obs_list[0]:
+            start_w = obs_list[0]["adaptive_workers"]
+            end_w = obs_list[-1]["adaptive_workers"]
             print(f"  {phase}: workers {start_w} → {end_w} "
                   f"over {n} collections")
         else:
