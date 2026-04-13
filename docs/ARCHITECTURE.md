@@ -330,7 +330,7 @@ using a biased constrained random walk.
 
 **Algorithm:** Starting at `min(4, num_workers)`, each collection:
 1. Measure per-object cost (`total_time / candidates`)
-2. With 20% probability, step ±1 workers (60% bias toward increase, 40% decrease)
+2. With 20% probability, step ±1 workers (50/50, no directional bias)
 3. Clamp result to `[2, num_workers]`
 
 The walker always steps when the dice fires (proactive exploration). Good
