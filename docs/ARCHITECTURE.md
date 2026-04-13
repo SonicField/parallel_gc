@@ -323,31 +323,24 @@ or workers not active. All entry points return 0 to trigger fallback.
 
 ### 2.7 Adaptive Worker Count Controller
 
-**Source:** `Modules/gcmodule.c:1405-1498`, state in `pycore_gc_parallel.h`
+**Source:** `Modules/gcmodule.c:1405-1459`, state in `pycore_gc_parallel.h`
 
 The controller dynamically adjusts how many workers are woken per collection
-using per-generation stochastic hill-climbing (epsilon-greedy).
+using a biased constrained random walk.
 
-**Per-generation state:** Each GC generation (0, 1, 2) independently tracks:
-- `adaptive_workers_by_gen[gen]`: current optimal worker count for this generation
-- `ema_per_obj_ns_by_gen[gen]`: exponential moving average of per-object cost
+**Algorithm:** Starting at `min(4, num_workers)`, each collection:
+1. Measure per-object cost (`total_time / candidates`)
+2. With 20% probability, step ±1 workers (60% bias toward increase, 40% decrease)
+3. Clamp result to `[2, num_workers]`
 
-At the start of each collection, `adaptive_workers` is set from the
-per-generation array (`gcmodule.c:1316`). At the end, the controller updates
-the per-generation state based on observed per-object cost.
+The walker always steps when the dice fires (proactive exploration). Good
+values stick naturally because they don't trigger further corrective steps.
+The first collection is skipped (no baseline for comparison).
 
-**Epsilon-greedy exploration:**
-- With probability `epsilon`: choose a random worker count in [2, num_workers]
-- With probability `1 - epsilon`: hill-climb (increase workers if cost
-  decreased vs EMA, decrease if cost increased; 15% dead zone)
-- `epsilon` starts at 0.3 (30% exploration), decays by 0.95x per
-  non-exploratory collection, floor at 0.05 (5% ongoing exploration)
-- Reset to 0.3 after 3 consecutive collections with cost > 2x EMA
-  (workload shift detection)
-
-**EMA warmup:** First 3 collections per generation only update the EMA
-without hill-climbing. This prevents cold-start EMA mismatch (initial 100.0
-vs actual cost potentially millions) from always reducing workers.
+**State:** Only three values:
+- `adaptive_workers`: current worker count (the walk position)
+- `prev_cost_per_obj_ns`: previous collection's per-object cost
+- `explore_rng`: xorshift32 PRNG state
 
 **PRNG:** xorshift32, seeded from `GC_TEST_SEED` env var at startup or
 `_PyTime_GetPerfCounter()` if unset.
@@ -575,15 +568,13 @@ All in `Modules/gcmodule.c`.
 Returns `{'available': bool, 'enabled': bool, 'num_workers': int}`.
 FTP adds `'parallel_cleanup': True`.
 GIL build (when enabled) adds adaptive controller state:
-`'adaptive_workers_gen0'`, `'adaptive_workers_gen1'`,
-`'adaptive_workers_gen2'` (int), `'epsilon'` (float).
+`'adaptive_workers'` (int).
 
 ### gc.get_parallel_stats()
 
 Returns per-worker stats and phase timing (ns). Phase timing includes
 abstract names (`scan_mark_ns`, `stw_pause_ns`) for cross-build comparison.
-GIL build adds per-generation EMA values: `'ema_per_obj_ns_gen0'`,
-`'ema_per_obj_ns_gen1'`, `'ema_per_obj_ns_gen2'` (float), and
+GIL build adds `'prev_cost_per_obj_ns'` (float) and
 `'last_generation'` (int).
 
 GIL build example:
@@ -594,6 +585,8 @@ GIL build example:
     'roots_found': 142, 'roots_distributed': 3847,
     'gc_roots_found': 3,
     'collections_attempted': 15, 'collections_succeeded': 15,
+    'prev_cost_per_obj_ns': 1850.1,
+    'last_generation': 2,
     'workers': [{'objects_marked': 131072, 'steal_attempts': 42, ...}, ...],
     'phase_timing': {
         'update_refs_ns': ..., 'mark_alive_ns': ...,
