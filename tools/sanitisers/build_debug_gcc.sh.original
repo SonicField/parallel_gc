@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+cd /data/users/alexturner/parallel_gc/cpython
+
+echo "=== Clean ==="
+make clean 2>/dev/null || true
+
+echo "=== Configure (gcc, debug, no sanitizer) ==="
+CC=gcc CFLAGS='-O2 -g' ./configure --with-parallel-gc --with-pydebug 2>&1
+
+echo "=== Fix pyconfig.h ==="
+if grep -q 'undef Py_PARALLEL_GC' pyconfig.h 2>/dev/null; then
+    sed -i 's|/\* #undef Py_PARALLEL_GC \*/|#define Py_PARALLEL_GC 1|' pyconfig.h
+    echo "Fixed Py_PARALLEL_GC"
+fi
+
+echo "=== Build ==="
+make -j$(nproc) 2>&1
+
+echo "=== Verify ==="
+./python -c "import gc; print(gc.get_parallel_config()); import sys; print(sys.version)"
+echo "BUILD COMPLETE"

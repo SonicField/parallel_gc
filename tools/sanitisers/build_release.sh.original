@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+SRCDIR=/data/users/alexturner/parallel_gc/cpython-release
+LOG="$SRCDIR/build_release.log"
+cd "$SRCDIR"
+
+exec > "$LOG" 2>&1
+
+echo "=== Release Build ==="
+echo "Date: $(date)"
+echo "Commit: $(git log --oneline -1)"
+echo ""
+
+echo "=== Configure (release, no debug) ==="
+CC=gcc CFLAGS="-O3" ./configure --with-parallel-gc
+sed -i 's|/\* #undef Py_PARALLEL_GC \*/|#define Py_PARALLEL_GC 1|' pyconfig.h
+grep "Py_PARALLEL_GC" pyconfig.h
+echo ""
+
+echo "=== Build ==="
+make -j$(nproc)
+echo ""
+
+echo "=== Verify ==="
+./python --version
+./python -c "import gc; print('config:', gc.get_parallel_config())"
+echo ""
+
+echo "=== BUILD COMPLETE ==="

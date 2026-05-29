@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+SRCDIR=/data/users/alexturner/parallel_gc/cpython-tsan
+LOG="$SRCDIR/build_tsan.log"
+cd "$SRCDIR"
+
+exec > "$LOG" 2>&1
+
+echo "=== TSAN Build Script ==="
+echo "Date: $(date)"
+echo "Commit: $(git log --oneline -1)"
+echo ""
+
+echo "=== Step 1: Configure with clang ==="
+CC=clang CXX=clang++ ./configure --with-parallel-gc --with-pydebug
+echo ""
+
+echo "=== Step 2: Fix pyconfig.h (known configure bug) ==="
+sed -i 's|/\* #undef Py_PARALLEL_GC \*/|#define Py_PARALLEL_GC 1|' pyconfig.h
+grep "Py_PARALLEL_GC" pyconfig.h
+echo ""
+
+echo "=== Step 3: Inject TSAN into Makefile ==="
+sed -i 's/^BASECFLAGS=\t/BASECFLAGS=\t -fsanitize=thread/' Makefile
+sed -i 's/^CONFIGURE_LDFLAGS=.*/CONFIGURE_LDFLAGS=\t-fsanitize=thread/' Makefile
+echo "CFLAGS check:"
+grep "BASECFLAGS" Makefile | head -1
+echo "LDFLAGS check:"
+grep "CONFIGURE_LDFLAGS=" Makefile | head -1
+echo ""
+
+echo "=== Step 4: Build ==="
+make -j$(nproc)
+echo ""
+
+echo "=== Step 5: Verify binary ==="
+./python --version
+./python -c "import gc; print('parallel config:', gc.get_parallel_config())"
+echo ""
+
+echo "=== BUILD COMPLETE ==="

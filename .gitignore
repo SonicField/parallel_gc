@@ -20,3 +20,6 @@ build/
 # Benchmark output (keep scripts, ignore output)
 *.json
 !.nbs/**/*.json
+
+# NBS framework runtime state (ephemeral team coordination)
+.nbs/
