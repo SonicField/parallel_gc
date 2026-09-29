@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `55aeaa3e3d955dfef392c89ca7773353646ebca7`.
+`SonicField/cpython` commit `323d3cc90adcc5dcc799f79812edd339b347a46c`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 
@@ -148,8 +148,9 @@ configurations:
   1 file skipped.
 
 The broader results below were recorded on predecessor commit `9da963f754`.
-The current change is limited to generated configuration files and
-cross-platform test-harness behavior, but the broad suites must be rerun before
+Subsequent changes are limited to generated configuration files,
+cross-platform test-harness behavior, and safe reporting of object assertions
+from GIL collector helpers. The broad suites must nevertheless be rerun before
 these numbers can be attributed to the current fork commit.
 
 - Free-threaded: 47,914 tests passed across 481 files, including
