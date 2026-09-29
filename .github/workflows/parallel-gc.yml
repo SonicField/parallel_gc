@@ -1,0 +1,105 @@
+name: Parallel GC matrix
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GIL, parallel GC enabled
+            configure: --with-pydebug --with-parallel-gc
+            workers: "4"
+            free_threaded: false
+          - name: Free-threaded, parallel GC enabled
+            configure: --disable-gil --with-pydebug --with-parallel-gc
+            workers: "4"
+            free_threaded: true
+          - name: GIL, feature-off control
+            configure: --with-pydebug
+            workers: "0"
+            free_threaded: false
+          - name: Free-threaded, feature-off control
+            configure: --disable-gil --with-pydebug
+            workers: "0"
+            free_threaded: true
+
+    steps:
+      - name: Check out project and CPython fork
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Install CPython build dependencies
+        run: sudo ./cpython/.github/workflows/posix-deps-apt.sh
+
+      - name: Configure
+        run: |
+          mkdir build-ci
+          cd build-ci
+          ../cpython/configure ${{ matrix.configure }}
+
+      - name: Build
+        run: make -C build-ci -j2
+
+      - name: Verify selected configuration
+        env:
+          EXPECTED_AVAILABLE: ${{ matrix.workers != '0' && '1' || '0' }}
+          EXPECTED_FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+          PYTHON_PARALLEL_GC: ${{ matrix.workers }}
+        run: |
+          build-ci/python - <<'PY'
+          import gc
+          import os
+          import sys
+
+          config = gc.get_parallel_config()
+          expected_available = os.environ["EXPECTED_AVAILABLE"] == "1"
+          expected_free_threaded = os.environ["EXPECTED_FREE_THREADED"] == "1"
+          assert config["available"] is expected_available, config
+          assert sys._is_gil_enabled() is not expected_free_threaded
+          if expected_available:
+              assert config["enabled"] is True, config
+              assert config["num_workers"] == 4, config
+          else:
+              assert config["enabled"] is False, config
+              assert config["num_workers"] == 0, config
+          print(config)
+          PY
+
+      - name: Run affected-area tests
+        env:
+          PYTHON_PARALLEL_GC: ${{ matrix.workers }}
+          FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          tests=(
+            test_gc
+            test_gc_ws_deque
+            test_gc_parallel
+            test_gc_parallel_properties
+            test_capi.test_config
+            test_capi.test_misc
+            test_embed
+          )
+          if [[ "$FREE_THREADED" == "1" ]]; then
+            tests+=(test_free_threading.test_gc)
+            if [[ "$PYTHON_PARALLEL_GC" != "0" ]]; then
+              tests+=(test_gc_ft_parallel)
+            fi
+          fi
+          build-ci/python -m test -q --timeout=180 "${tests[@]}"

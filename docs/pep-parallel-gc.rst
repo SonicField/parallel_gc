@@ -619,7 +619,7 @@ Reference Implementation
 =========================
 
 The project repository is https://github.com/SonicField/parallel_gc. Its
-``cpython`` submodule records fork commit ``9da963f754`` on branch
+``cpython`` submodule records fork commit ``55aeaa3e3d`` on branch
 ``SonicField/cpython:parallel-gc-upstream-port``, based on ``python/cpython``
 commit ``333071231d``. No proposal has yet been made to ``python/cpython``.
 

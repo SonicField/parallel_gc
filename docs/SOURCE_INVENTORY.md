@@ -6,7 +6,7 @@ This inventory describes every modified or untracked path in
 material outside the submodule.
 
 The published fork commit is
-`9da963f754f747d64a6db4112efa2a2ef8bde111`. Status notation used when the
+`55aeaa3e3d955dfef392c89ca7773353646ebca7`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.

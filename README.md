@@ -15,7 +15,7 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `9da963f754f747d64a6db4112efa2a2ef8bde111`, on
+`SonicField/cpython` commit `55aeaa3e3d955dfef392c89ca7773353646ebca7`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
 with submodules therefore obtains the exact reviewed source.

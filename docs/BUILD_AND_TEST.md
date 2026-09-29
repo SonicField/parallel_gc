@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `9da963f754f747d64a6db4112efa2a2ef8bde111`.
+`SonicField/cpython` commit `55aeaa3e3d955dfef392c89ca7773353646ebca7`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 
@@ -54,11 +54,24 @@ Before changing configure options in an existing build directory, run
 `make -C <build-directory> distclean`. Do not share object files between the
 four configurations.
 
-The generated `cpython/configure` is currently usable on the
-supported host. It does not yet contain the latest 64-bit-target validation
-from `configure.ac`: canonical regeneration is blocked in this environment
-because the workflow cannot reach `ghcr.io`. Record that limitation; do not
-substitute an unreviewed generated file.
+The generated `cpython/configure` and `cpython/pyconfig.h.in` were regenerated
+with CPython's pinned Autoconf container. A second canonical regeneration
+produced byte-identical files. Their Git blob IDs also match the files produced
+by CPython's `regen-configure` CI job for the preceding fork revision.
+
+## Continuous integration
+
+The parent repository's `parallel-gc.yml` workflow builds and tests all four
+configurations above on Ubuntu. The feature-on jobs set
+`PYTHON_PARALLEL_GC=4`; the controls compile without `--with-parallel-gc` and
+verify that the runtime reports the feature as unavailable. Both GIL modes run
+the common affected-area tests, and both free-threaded modes additionally run
+the relevant free-threading tests.
+
+This project workflow complements CPython's standard workflow. The standard
+workflow provides broad platform and configuration coverage but normally
+builds with parallel GC disabled; it is not evidence that either active
+collector was exercised.
 
 ## Focused tests
 
@@ -125,6 +138,20 @@ or dependency skips; retain those in the test log.
 
 ### Current validation status
 
+The affected-area matrix on the current fork commit passes in all four debug
+configurations:
+
+- Parallel GIL: 540 tests run, 17 skipped, 7 files passed.
+- Parallel free-threaded: 557 tests run, 24 skipped, 9 files passed.
+- Feature-off GIL: 529 tests run, 30 skipped, 7 files passed, 1 file skipped.
+- Feature-off free-threaded: 539 tests run, 36 skipped, 8 files passed,
+  1 file skipped.
+
+The broader results below were recorded on predecessor commit `9da963f754`.
+The current change is limited to generated configuration files and
+cross-platform test-harness behavior, but the broad suites must be rerun before
+these numbers can be attributed to the current fork commit.
+
 - Free-threaded: 47,914 tests passed across 481 files, including
   `test_external_inspection`.
 - GIL: 48,103 tests passed across 483 files, including `test_capi`,
@@ -132,10 +159,9 @@ or dependency skips; retain those in the test log.
 - Feature-off focused controls: 203 tests in the GIL build and 211 tests in
   the free-threaded build.
 
-These results are tied to the fork commit named at the top of this guide; they
-are snapshots rather than permanent guarantees. Rerun every affected
-configuration after collector, runtime, configuration, or shared-concurrency
-changes.
+These results are snapshots rather than permanent guarantees. Rerun every
+affected configuration after collector, runtime, configuration, or
+shared-concurrency changes.
 
 ## Sanitizers
 
