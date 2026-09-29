@@ -2,9 +2,8 @@
 """
 Parallel GC Performance Benchmark Suite
 
-A unified benchmark for measuring parallel GC performance. Focuses on realistic
-workloads based on pyperformance benchmarks. Works with both GIL and
-free-threading Python builds.
+A unified benchmark for measuring parallel GC performance using project-specific
+mixed and synthetic workloads. Works with both GIL and free-threaded builds.
 
 Usage:
     python gc_perf_benchmark.py                    # Standard suite (~5 min)
@@ -14,29 +13,37 @@ Usage:
     python gc_perf_benchmark.py --include-synthetic # Also run synthetic stress tests
 """
 
-import gc
-import sys
-import time
-import random
 import argparse
-import threading
-import statistics
+import contextlib
+import gc
+import hashlib
 import json
+import os
+import pickle
+import platform
+import queue
+import random
+import statistics
+import subprocess
+import sys
+import sysconfig
+import threading
+import time
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Any, Callable
 from datetime import datetime
-import pickle
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
 # =============================================================================
 # Build Detection
 # =============================================================================
 
 def detect_build() -> str:
-    """Detect whether we're running on GIL or FTP build."""
+    """Detect whether we're running on a GIL or free-threaded build."""
     try:
         gil_enabled = sys._is_gil_enabled()
-        return "ftp" if not gil_enabled else "gil"
+        return "free-threaded" if not gil_enabled else "gil"
     except AttributeError:
         return "gil"
 
@@ -53,45 +60,127 @@ def is_parallel_gc_available() -> bool:
 def get_cpu_count() -> int:
     """Get number of CPUs available."""
     try:
-        import os
-        return os.cpu_count() or 4
+        if hasattr(os, "process_cpu_count"):
+            return os.process_cpu_count() or 4
+        return len(os.sched_getaffinity(0))
     except Exception:
-        return 4
+        return os.cpu_count() or 4
 
 
 BUILD_TYPE = detect_build()
 PARALLEL_GC_AVAILABLE = is_parallel_gc_available()
 CPU_COUNT = get_cpu_count()
+BENCHMARK_SEED = 42
+COLLECTION_WARMUP_RUNS = 3
+COLLECTION_SURVIVOR_RATIO = 0.8
+COLLECTION_CREATION_THREADS = 4
+
+
+def get_system_metadata() -> Dict[str, Any]:
+    """Return reproducibility metadata available from the running process."""
+    project_dir = Path(__file__).resolve().parent.parent
+    source_dir = Path(sysconfig.get_config_var("srcdir") or ".").resolve()
+
+    def git_state(path: Path) -> Dict[str, Any]:
+        try:
+            revision = subprocess.run(
+                ["git", "-C", str(path), "rev-parse", "HEAD"],
+                check=True, capture_output=True, text=True,
+            ).stdout.strip()
+            status = subprocess.run(
+                ["git", "-C", str(path), "status", "--porcelain",
+                 "--untracked-files=normal"],
+                check=True, capture_output=True, text=True,
+            ).stdout
+            patch = subprocess.run(
+                ["git", "-C", str(path), "diff", "--binary", "HEAD"],
+                check=True, capture_output=True,
+            ).stdout
+            # Normal porcelain output collapses untracked directories. This
+            # keeps out-of-tree builds from being read into the fingerprint;
+            # the CPython source worktree's new files are listed individually.
+            untracked = [
+                line[3:] for line in status.splitlines()
+                if line.startswith("?? ")
+            ]
+
+            digest = hashlib.sha256(patch)
+            for name in sorted(untracked):
+                digest.update(name.encode("utf-8", "surrogateescape"))
+                candidate = path / name
+                if candidate.is_file():
+                    digest.update(candidate.read_bytes())
+            return {
+                "revision": revision,
+                "dirty": bool(status),
+                "worktree_sha256": digest.hexdigest(),
+                "untracked_files": sorted(untracked),
+            }
+        except (OSError, subprocess.CalledProcessError):
+            return {"revision": None, "dirty": None}
+
+    metadata = {
+        "python_version": sys.version,
+        "python_executable": sys.executable,
+        "python_implementation": platform.python_implementation(),
+        "python_cache_tag": sys.implementation.cache_tag,
+        "python_build": platform.python_build(),
+        "python_git": getattr(sys, "_git", None),
+        "compiler": platform.python_compiler(),
+        "configure_args": sysconfig.get_config_var("CONFIG_ARGS"),
+        "cflags": sysconfig.get_config_var("CFLAGS"),
+        "ldflags": sysconfig.get_config_var("LDFLAGS"),
+        "py_cflags_nodist": sysconfig.get_config_var("PY_CFLAGS_NODIST"),
+        "py_ldflags_nodist": sysconfig.get_config_var("PY_LDFLAGS_NODIST"),
+        "py_parallel_gc": sysconfig.get_config_var("Py_PARALLEL_GC"),
+        "py_gil_disabled": sysconfig.get_config_var("Py_GIL_DISABLED"),
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "processor": platform.processor(),
+        "logical_cpu_count": os.cpu_count(),
+        "available_cpu_count": CPU_COUNT,
+        "pythonhashseed": os.environ.get("PYTHONHASHSEED"),
+        "benchmark_seed": BENCHMARK_SEED,
+        "command_line": [sys.executable, *sys.argv],
+        "project_git": git_state(project_dir),
+        "cpython_git": git_state(source_dir),
+    }
+    try:
+        metadata["cpu_affinity"] = sorted(os.sched_getaffinity(0))
+    except (AttributeError, OSError):
+        metadata["cpu_affinity"] = None
+    try:
+        metadata["numa_policy"] = subprocess.run(
+            ["numactl", "--show"], check=True, capture_output=True, text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        metadata["numa_policy"] = None
+    return metadata
 
 # =============================================================================
 # GC Control
 # =============================================================================
 
-def enable_parallel_gc(num_workers: int):
-    """Enable parallel GC with specified worker count."""
-    try:
-        if BUILD_TYPE == "ftp":
-            gc.enable_parallel(num_workers=num_workers)
-        else:
-            gc.enable_parallel(num_workers)
-    except (RuntimeError, AttributeError):
-        pass
+def enable_parallel_gc(num_workers: int) -> Dict[str, Any]:
+    """Enable parallel GC and verify the effective configuration."""
+    if not PARALLEL_GC_AVAILABLE:
+        raise RuntimeError("parallel GC is not available in this build")
+    gc.enable_parallel(num_workers)
+    config = gc.get_parallel_config()
+    if not config.get("enabled") or config.get("num_workers") != num_workers:
+        raise RuntimeError(
+            f"failed to activate parallel GC with {num_workers} workers: "
+            f"{config!r}"
+        )
+    return config
 
 
 def disable_parallel_gc():
     """Disable parallel GC."""
-    try:
-        gc.disable_parallel()
-    except (RuntimeError, AttributeError):
-        pass
+    if not PARALLEL_GC_AVAILABLE:
+        raise RuntimeError("parallel GC is not available in this build")
+    gc.disable_parallel()
 
-
-def get_parallel_stats() -> Dict[str, Any]:
-    """Get parallel GC statistics if available."""
-    try:
-        return gc.get_parallel_stats()
-    except AttributeError:
-        return {}
 
 # =============================================================================
 # Result Data Structures
@@ -107,6 +196,10 @@ class CollectionResult:
     serial_stdev: float = 0.0
     parallel_stdev: float = 0.0
     num_runs: int = 1
+    serial_samples_ms: List[float] = field(default_factory=list)
+    parallel_samples_ms: List[float] = field(default_factory=list)
+    serial_object_counts: List[int] = field(default_factory=list)
+    parallel_object_counts: List[int] = field(default_factory=list)
 
     @property
     def speedup(self) -> float:
@@ -119,13 +212,12 @@ class CollectionResult:
 class BenchmarkRun:
     """Result from a single benchmark run."""
     throughput: float  # workloads/sec or objects/sec
-    gc_time_ms: float
-    gc_overhead_pct: float
-    stw_pause_ms: float  # Mean STW pause
-    stw_max_ms: float
+    collection_time_ms: float
+    collection_time_pct: float
+    collection_latency_mean_ms: float
+    collection_latency_max_ms: float
     collections: int
     duration_sec: float
-    phase_timing: Dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -155,22 +247,26 @@ class BenchmarkResult:
         return min(r.throughput for r in self.runs) if self.runs else 0
 
     @property
-    def stw_pause_mean(self) -> float:
-        return statistics.mean(r.stw_pause_ms for r in self.runs) if self.runs else 0
+    def collection_latency_mean(self) -> float:
+        values = (r.collection_latency_mean_ms for r in self.runs)
+        return statistics.mean(values) if self.runs else 0
 
     @property
-    def stw_pause_stdev(self) -> float:
+    def collection_latency_stdev(self) -> float:
         if len(self.runs) < 2:
             return 0
-        return statistics.stdev(r.stw_pause_ms for r in self.runs)
+        return statistics.stdev(
+            r.collection_latency_mean_ms for r in self.runs)
 
     @property
-    def stw_pause_max(self) -> float:
-        return max(r.stw_max_ms for r in self.runs) if self.runs else 0
+    def collection_latency_max(self) -> float:
+        return max(
+            (r.collection_latency_max_ms for r in self.runs), default=0)
 
     @property
-    def gc_overhead_mean(self) -> float:
-        return statistics.mean(r.gc_overhead_pct for r in self.runs) if self.runs else 0
+    def collection_time_pct_mean(self) -> float:
+        values = (r.collection_time_pct for r in self.runs)
+        return statistics.mean(values) if self.runs else 0
 
     @property
     def total_duration(self) -> float:
@@ -214,14 +310,19 @@ class SuiteResult:
     parallel_gc_available: bool
     num_workers: int
     timestamp: str
+    runtime_config: Dict[str, Any] = field(default_factory=dict)
+    system_metadata: Dict[str, Any] = field(default_factory=dict)
     duration_per_benchmark: float = 30.0
     num_runs: int = 3
     num_threads: int = 4
     heap_size: int = 500000
+    random_seed: int = BENCHMARK_SEED
+    collection_warmup_runs: int = COLLECTION_WARMUP_RUNS
+    collection_survivor_ratio: float = COLLECTION_SURVIVOR_RATIO
+    collection_creation_threads: int = COLLECTION_CREATION_THREADS
     realistic: Optional[ComparisonResult] = None
     synthetic_by_heap: Dict[str, ComparisonResult] = field(default_factory=dict)
     collection_results: List[CollectionResult] = field(default_factory=list)
-    phase_timing: Dict[str, Dict[str, float]] = field(default_factory=dict)
 
     @property
     def geometric_mean_speedup(self) -> float:
@@ -237,14 +338,16 @@ class SuiteResult:
         return product ** (1.0 / len(speedups))
 
     @property
-    def geometric_mean_stw_reduction(self) -> float:
-        """Geometric mean of STW pause reduction ratios across all synthetic heap types."""
+    def geometric_mean_collection_latency_ratio(self) -> float:
+        """Geometric mean of collection-latency ratios."""
         if not self.synthetic_by_heap:
             return 1.0
         ratios = []
         for r in self.synthetic_by_heap.values():
-            if r.serial.stw_pause_mean > 0 and r.parallel.stw_pause_mean > 0:
-                ratios.append(r.parallel.stw_pause_mean / r.serial.stw_pause_mean)
+            serial = r.serial.collection_latency_mean
+            parallel = r.parallel.collection_latency_mean
+            if serial > 0 and parallel > 0:
+                ratios.append(parallel / serial)
         if not ratios:
             return 1.0
         product = 1.0
@@ -253,7 +356,7 @@ class SuiteResult:
         return product ** (1.0 / len(ratios))
 
 # =============================================================================
-# Realistic Workloads (pyperformance-style)
+# Project-specific mixed workloads
 # =============================================================================
 
 def workload_richards() -> None:
@@ -279,7 +382,10 @@ def workload_richards() -> None:
             self.count = 10000
 
     class Task:
-        __slots__ = ['link', 'ident', 'priority', 'input', 'handle', 'task_holding', 'task_waiting']
+        __slots__ = [
+            'link', 'ident', 'priority', 'input', 'handle', 'task_holding',
+            'task_waiting',
+        ]
         def __init__(self, ident, priority, input_queue, handle):
             self.link = None
             self.ident = ident
@@ -374,14 +480,16 @@ def workload_deepcopy() -> None:
         del copied
 
 
+class _PickleDataNode:
+    def __init__(self, data):
+        self.data = data
+        self.refs = []
+
+
 def workload_pickle_copy() -> None:
     """Pickle copy benchmark - serialization creates temporary objects."""
-    class DataNode:
-        def __init__(self, data):
-            self.data = data
-            self.refs = []
 
-    nodes = [DataNode(list(range(100))) for _ in range(20)]
+    nodes = [_PickleDataNode(list(range(100))) for _ in range(20)]
     for i, node in enumerate(nodes):
         node.refs = [nodes[(i + 1) % len(nodes)], nodes[(i + 2) % len(nodes)]]
 
@@ -485,7 +593,7 @@ REALISTIC_WORKLOADS: Dict[str, Callable] = {
 # clusters. This allows survivor_ratio to work correctly by discarding complete
 # clusters, ensuring discarded objects are truly unreachable and can be collected.
 #
-# For FTP (free-threading), GC only collects cyclic garbage - reference counting
+# In free-threaded builds, GC only collects cyclic garbage; reference counting
 # handles acyclic structures. Creating isolated cycles is essential for meaningful
 # GC benchmarks.
 
@@ -520,7 +628,8 @@ class ContainerNode:
 
 
 def create_chain(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                 node_class: type = None) -> List[List]:
+                 node_class: type = None,
+                 rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated circular chains: A -> B -> C -> ... -> Z -> A
 
@@ -542,7 +651,8 @@ def create_chain(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
 
 def create_tree(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                node_class: type = None) -> List[List]:
+                node_class: type = None,
+                rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated cyclic trees - each tree has back-references to root.
 
@@ -583,7 +693,8 @@ def create_tree(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
 
 def create_wide_tree(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                     node_class: type = None) -> List[List]:
+                     node_class: type = None,
+                     rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated wide trees with cyclic back-references.
 
@@ -611,7 +722,8 @@ def create_wide_tree(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
 
 def create_graph(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                 node_class: type = None) -> List[List]:
+                 node_class: type = None,
+                 rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated random graphs with internal cycles.
 
@@ -619,6 +731,8 @@ def create_graph(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
     """
     if node_class is None:
         node_class = Node
+    if rng is None:
+        rng = random
     clusters = []
     num_clusters = max(1, n // cluster_size)
 
@@ -627,8 +741,8 @@ def create_graph(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
         # Add random edges within cluster
         for node in nodes:
-            for _ in range(random.randint(1, 3)):
-                target = random.choice(nodes)
+            for _ in range(rng.randint(1, 3)):
+                target = rng.choice(nodes)
                 node.refs.append(target)
 
         clusters.append(nodes)
@@ -637,7 +751,8 @@ def create_graph(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
 
 def create_layered(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                   node_class: type = None) -> List[List]:
+                   node_class: type = None,
+                   rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated layered networks with cycles.
 
@@ -646,6 +761,8 @@ def create_layered(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
     """
     if node_class is None:
         node_class = Node
+    if rng is None:
+        rng = random
     clusters = []
     num_clusters = max(1, n // cluster_size)
     layers_per_cluster = 4
@@ -666,16 +783,16 @@ def create_layered(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
             if prev_layer:
                 # Connect to previous layer
                 for node in layer:
-                    node.refs.append(random.choice(prev_layer))
+                    node.refs.append(rng.choice(prev_layer))
 
             prev_layer = layer
 
         # Bidirectional references between first and last layer create cycles
         if prev_layer and first_layer:
             for node in prev_layer:
-                node.refs.append(random.choice(first_layer))
+                node.refs.append(rng.choice(first_layer))
             for node in first_layer:
-                node.refs.append(random.choice(prev_layer))
+                node.refs.append(rng.choice(prev_layer))
 
         clusters.append(all_nodes)
 
@@ -683,7 +800,8 @@ def create_layered(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
 
 
 def create_independent(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
-                       node_class: type = None) -> List[List]:
+                       node_class: type = None,
+                       rng: Optional[random.Random] = None) -> List[List]:
     """
     Create isolated self-referencing clusters.
 
@@ -704,7 +822,11 @@ def create_independent(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE,
     return clusters
 
 
-def create_ai_workload(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE) -> List[List]:
+def create_ai_workload(
+    n: int,
+    cluster_size: int = DEFAULT_CLUSTER_SIZE,
+    rng: Optional[random.Random] = None,
+) -> List[List]:
     """
     Create isolated AI-workload-like clusters with cycles.
 
@@ -713,6 +835,8 @@ def create_ai_workload(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE) -> List
     - 10% of children have finalizers
     - Cross-references within cluster create cycles
     """
+    if rng is None:
+        rng = random
     clusters = []
     num_clusters = max(1, n // cluster_size)
 
@@ -729,15 +853,15 @@ def create_ai_workload(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE) -> List
             all_nodes.append(parent)
 
             # Add 3-5 children
-            for j in range(random.randint(3, 5)):
-                if random.random() < 0.1:
+            for j in range(rng.randint(3, 5)):
+                if rng.random() < 0.1:
                     child = FinalizerNode()
                 else:
                     child = Node()
 
                 all_nodes.append(child)
 
-                if random.random() < 0.5:
+                if rng.random() < 0.5:
                     parent.children_list.append(child)
                 else:
                     parent.children_dict[f"child_{j}"] = child
@@ -748,14 +872,18 @@ def create_ai_workload(n: int, cluster_size: int = DEFAULT_CLUSTER_SIZE) -> List
         # Cross-references between parents (more cycles)
         for parent in parents:
             if parents:
-                parent.children_list.append(random.choice(parents))
+                parent.children_list.append(rng.choice(parents))
 
         clusters.append(all_nodes)
 
     return clusters
 
 
-def create_web_server(n: int, cluster_size: int = 200) -> List[List]:
+def create_web_server(
+    n: int,
+    cluster_size: int = 200,
+    rng: Optional[random.Random] = None,
+) -> List[List]:
     """
     Create isolated web server request-like clusters with NO cross-cluster references.
 
@@ -865,17 +993,15 @@ HEAP_GENERATORS = {
 }
 
 # =============================================================================
-# Pause Tracking
+# Collection-latency tracking
 # =============================================================================
 
-class PauseTracker:
-    """Track GC pause times."""
+class CollectionLatencyTracker:
+    """Track the wall time between GC start and stop callbacks."""
 
-    def __init__(self, parallel_enabled: bool = False):
+    def __init__(self):
         self.gc_times_ms: List[float] = []
-        self.stw_pauses_ms: List[float] = []
         self.gc_start_time: Optional[float] = None
-        self.parallel_enabled = parallel_enabled
 
     def gc_callback(self, phase: str, info: dict):
         if phase == "start":
@@ -885,21 +1011,25 @@ class PauseTracker:
                 gc_time_ms = (time.perf_counter() - self.gc_start_time) * 1000
                 self.gc_times_ms.append(gc_time_ms)
 
-                if self.parallel_enabled:
-                    stats = get_parallel_stats()
-                    if 'phase_timing' in stats:
-                        pt = stats['phase_timing']
-                        # Use the abstract stw_pause_ns phase (works for both GIL and FTP builds)
-                        stw_ns = pt.get('stw_pause_ns', 0)
-                        self.stw_pauses_ms.append(stw_ns / 1e6)
-                    else:
-                        self.stw_pauses_ms.append(gc_time_ms)
-                else:
-                    self.stw_pauses_ms.append(gc_time_ms)
-
     def reset(self):
         self.gc_times_ms.clear()
-        self.stw_pauses_ms.clear()
+
+
+def _join_threads_or_raise(
+    threads: List[threading.Thread], timeout: float
+) -> None:
+    """Join all threads within one deadline, or fail without touching state."""
+    deadline = time.monotonic() + timeout
+    for thread in threads:
+        remaining = max(0.0, deadline - time.monotonic())
+        thread.join(timeout=remaining)
+
+    alive = [thread.name for thread in threads if thread.is_alive()]
+    if alive:
+        names = ", ".join(alive)
+        raise RuntimeError(
+            f"benchmark workers did not stop within {timeout:.1f}s: {names}"
+        )
 
 # =============================================================================
 # Realistic Benchmark Runner
@@ -909,18 +1039,15 @@ def run_realistic_benchmark(
     duration_sec: float,
     num_threads: int,
     parallel_workers: int = 0,
-    verbose: bool = False
 ) -> BenchmarkRun:
     """
-    Run realistic mixed-workload benchmark.
+    Run the project-specific mixed-workload benchmark.
 
     Args:
         duration_sec: How long to run
         num_threads: Number of worker threads
         parallel_workers: 0 for serial, >0 for parallel GC
-        verbose: Include phase timing
     """
-    random.seed(42)
     gc.collect()
     gc.disable()
 
@@ -929,73 +1056,75 @@ def run_realistic_benchmark(
     else:
         disable_parallel_gc()
 
-    tracker = PauseTracker(parallel_enabled=parallel_workers > 0)
+    tracker = CollectionLatencyTracker()
     gc.callbacks.append(tracker.gc_callback)
 
     workload_counts: Dict[str, int] = {name: 0 for name in REALISTIC_WORKLOADS}
     workload_list = list(REALISTIC_WORKLOADS.items())
     lock = threading.Lock()
     stop_flag = threading.Event()
+    worker_errors: List[BaseException] = []
 
-    def worker():
+    def worker(worker_id: int):
         local_counts = {name: 0 for name in REALISTIC_WORKLOADS}
-        while not stop_flag.is_set():
-            name, func = random.choice(workload_list)
-            try:
+        rng = random.Random(BENCHMARK_SEED + worker_id)
+        try:
+            while not stop_flag.is_set():
+                name, func = rng.choice(workload_list)
                 func()
                 local_counts[name] += 1
-            except Exception:
-                pass
-
-        with lock:
-            for name, count in local_counts.items():
-                workload_counts[name] += count
+        except BaseException as exc:
+            with lock:
+                worker_errors.append(exc)
+            stop_flag.set()
+        finally:
+            with lock:
+                for name, count in local_counts.items():
+                    workload_counts[name] += count
 
     gc.enable()
     start_time = time.perf_counter()
 
-    threads = [threading.Thread(target=worker, daemon=True) for _ in range(num_threads)]
+    threads = [
+        threading.Thread(target=worker, args=(i,), daemon=True)
+        for i in range(num_threads)
+    ]
     for t in threads:
         t.start()
 
-    time.sleep(duration_sec)
+    stop_flag.wait(duration_sec)
     stop_flag.set()
 
-    for t in threads:
-        t.join(timeout=2.0)
+    # Do not alter callbacks or GC state unless every worker has stopped.
+    _join_threads_or_raise(threads, timeout=2.0)
 
     end_time = time.perf_counter()
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
+    gc.enable()
+
+    if worker_errors:
+        raise worker_errors[0]
 
     actual_duration = end_time - start_time
     total_workloads = sum(workload_counts.values())
     throughput = total_workloads / actual_duration
 
     total_gc_time = sum(tracker.gc_times_ms)
-    gc_overhead = (total_gc_time / 1000) / actual_duration * 100
+    collection_time_pct = (total_gc_time / 1000) / actual_duration * 100
 
-    stw_mean = statistics.mean(tracker.stw_pauses_ms) if tracker.stw_pauses_ms else 0
-    stw_max = max(tracker.stw_pauses_ms) if tracker.stw_pauses_ms else 0
-
-    phase_timing = {}
-    if verbose and parallel_workers > 0:
-        stats = get_parallel_stats()
-        if 'phase_timing' in stats:
-            phase_timing = {k: v / 1e6 for k, v in stats['phase_timing'].items()}
-
-    gc.enable()
+    latency_mean = statistics.mean(tracker.gc_times_ms) if tracker.gc_times_ms else 0
+    latency_max = max(tracker.gc_times_ms) if tracker.gc_times_ms else 0
 
     return BenchmarkRun(
         throughput=throughput,
-        gc_time_ms=total_gc_time,
-        gc_overhead_pct=gc_overhead,
-        stw_pause_ms=stw_mean,
-        stw_max_ms=stw_max,
+        collection_time_ms=total_gc_time,
+        collection_time_pct=collection_time_pct,
+        collection_latency_mean_ms=latency_mean,
+        collection_latency_max_ms=latency_max,
         collections=len(tracker.gc_times_ms),
         duration_sec=actual_duration,
-        phase_timing=phase_timing
     )
 
 # =============================================================================
@@ -1008,12 +1137,10 @@ def run_synthetic_benchmark(
     heap_type: str,
     num_threads: int,
     parallel_workers: int = 0,
-    verbose: bool = False
 ) -> BenchmarkRun:
     """
     Run synthetic throughput benchmark with specified heap type.
     """
-    random.seed(42)
     gc.collect()
     gc.disable()
 
@@ -1022,7 +1149,7 @@ def run_synthetic_benchmark(
     else:
         disable_parallel_gc()
 
-    tracker = PauseTracker(parallel_enabled=parallel_workers > 0)
+    tracker = CollectionLatencyTracker()
     gc.callbacks.append(tracker.gc_callback)
 
     heap_generator = HEAP_GENERATORS[heap_type]
@@ -1033,68 +1160,73 @@ def run_synthetic_benchmark(
     total_created = [0]
     lock = threading.Lock()
     stop_flag = threading.Event()
+    worker_errors: List[BaseException] = []
 
-    def worker():
-        local_heap = heap_generator(objects_per_thread)
+    def worker(worker_id: int):
         local_created = 0
+        rng = random.Random(BENCHMARK_SEED + worker_id)
+        try:
+            local_heap = heap_generator(objects_per_thread, rng=rng)
+            while not stop_flag.is_set():
+                num_discard = min(
+                    len(local_heap), churn_per_thread // 100 + 1)
+                if num_discard > 0:
+                    rng.shuffle(local_heap)
+                    local_heap = local_heap[num_discard:]
 
-        while not stop_flag.is_set():
-            num_discard = min(len(local_heap), churn_per_thread // 100 + 1)
-            if num_discard > 0:
-                random.shuffle(local_heap)
-                local_heap = local_heap[num_discard:]
-
-            new_clusters = heap_generator(churn_per_thread)
-            local_heap.extend(new_clusters)
-            local_created += churn_per_thread
-
-        with lock:
-            total_created[0] += local_created
+                new_clusters = heap_generator(churn_per_thread, rng=rng)
+                local_heap.extend(new_clusters)
+                local_created += sum(len(cluster) for cluster in new_clusters)
+        except BaseException as exc:
+            with lock:
+                worker_errors.append(exc)
+            stop_flag.set()
+        finally:
+            with lock:
+                total_created[0] += local_created
 
     gc.enable()
     start_time = time.perf_counter()
 
-    threads = [threading.Thread(target=worker, daemon=True) for _ in range(num_threads)]
+    threads = [
+        threading.Thread(target=worker, args=(i,), daemon=True)
+        for i in range(num_threads)
+    ]
     for t in threads:
         t.start()
 
-    time.sleep(duration_sec)
+    stop_flag.wait(duration_sec)
     stop_flag.set()
 
-    for t in threads:
-        t.join(timeout=2.0)
+    # Do not alter callbacks or GC state unless every worker has stopped.
+    _join_threads_or_raise(threads, timeout=2.0)
 
     end_time = time.perf_counter()
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
+    gc.enable()
+
+    if worker_errors:
+        raise worker_errors[0]
 
     actual_duration = end_time - start_time
     throughput = total_created[0] / actual_duration
 
     total_gc_time = sum(tracker.gc_times_ms)
-    gc_overhead = (total_gc_time / 1000) / actual_duration * 100
+    collection_time_pct = (total_gc_time / 1000) / actual_duration * 100
 
-    stw_mean = statistics.mean(tracker.stw_pauses_ms) if tracker.stw_pauses_ms else 0
-    stw_max = max(tracker.stw_pauses_ms) if tracker.stw_pauses_ms else 0
-
-    phase_timing = {}
-    if verbose and parallel_workers > 0:
-        stats = get_parallel_stats()
-        if 'phase_timing' in stats:
-            phase_timing = {k: v / 1e6 for k, v in stats['phase_timing'].items()}
-
-    gc.enable()
+    latency_mean = statistics.mean(tracker.gc_times_ms) if tracker.gc_times_ms else 0
+    latency_max = max(tracker.gc_times_ms) if tracker.gc_times_ms else 0
 
     return BenchmarkRun(
         throughput=throughput,
-        gc_time_ms=total_gc_time,
-        gc_overhead_pct=gc_overhead,
-        stw_pause_ms=stw_mean,
-        stw_max_ms=stw_max,
+        collection_time_ms=total_gc_time,
+        collection_time_pct=collection_time_pct,
+        collection_latency_mean_ms=latency_mean,
+        collection_latency_max_ms=latency_max,
         collections=len(tracker.gc_times_ms),
         duration_sec=actual_duration,
-        phase_timing=phase_timing
     )
 
 # =============================================================================
@@ -1105,16 +1237,14 @@ class CreationThreadPool:
     """
     Thread pool for object creation that keeps threads alive.
 
-    Keeps threads alive so mimalloc pages remain in live thread heaps
-    (not abandoned pool). This matches the old gc_benchmark.py methodology.
+    Keeps threads alive so mimalloc pages remain in live thread heaps rather
+    than moving to the abandoned pool.
     """
 
     def __init__(self, num_threads: int):
-        import queue as queue_module
         self.num_threads = num_threads
-        self.task_queue = queue_module.Queue()
-        self.result_queue = queue_module.Queue()
-        self.shutdown_flag = threading.Event()
+        self.task_queue = queue.Queue()
+        self.result_queue = queue.Queue()
         self.threads = []
 
         for i in range(num_threads):
@@ -1124,52 +1254,67 @@ class CreationThreadPool:
 
     def _worker(self, thread_id: int):
         """Worker thread that waits for creation tasks."""
-        while not self.shutdown_flag.is_set():
+        while True:
             try:
                 task = self.task_queue.get(timeout=0.1)
-            except:
+            except queue.Empty:
                 continue
 
-            if task is None:
-                break
+            try:
+                if task is None:
+                    return
 
-            heap_type, num_objects = task
-            clusters = HEAP_GENERATORS[heap_type](num_objects)
-            self.result_queue.put(clusters)
-            # Release reference immediately to avoid retaining garbage across iterations
-            clusters = None
-            del clusters
-            self.task_queue.task_done()
+                task_id, heap_type, num_objects, seed = task
+                try:
+                    clusters = HEAP_GENERATORS[heap_type](
+                        num_objects, rng=random.Random(seed))
+                except BaseException as exc:
+                    self.result_queue.put((task_id, False, exc))
+                else:
+                    self.result_queue.put((task_id, True, clusters))
+            finally:
+                self.task_queue.task_done()
 
     def create_objects(self, heap_type: str, total_objects: int) -> List:
         """Create objects using the thread pool."""
         objects_per_thread = total_objects // self.num_threads
 
         # Submit tasks
-        for _ in range(self.num_threads):
-            self.task_queue.put((heap_type, objects_per_thread))
+        for task_id in range(self.num_threads):
+            self.task_queue.put(
+                (task_id, heap_type, objects_per_thread,
+                 BENCHMARK_SEED + task_id))
 
         # Wait for completion
         self.task_queue.join()
 
-        # Collect results
-        all_clusters = []
-        while not self.result_queue.empty():
-            clusters = self.result_queue.get()
-            all_clusters.extend(clusters)
+        # Collect exactly one result per task. Workers report failures rather
+        # than dying and leaving task_queue.join() blocked forever.
+        results = {}
+        errors = []
+        for _ in range(self.num_threads):
+            task_id, succeeded, result = self.result_queue.get()
+            if succeeded:
+                results[task_id] = result
+            else:
+                errors.append(result)
 
+        if errors:
+            raise errors[0]
+
+        all_clusters = []
+        for task_id in range(self.num_threads):
+            all_clusters.extend(results[task_id])
         return all_clusters
 
     def shutdown(self):
         """Shutdown the thread pool."""
-        self.shutdown_flag.set()
         for _ in range(self.num_threads):
             self.task_queue.put(None)
-        for t in self.threads:
-            t.join(timeout=1.0)
+        _join_threads_or_raise(self.threads, timeout=2.0)
 
 
-# Global thread pool (kept alive between runs like old benchmark)
+# Global thread pool kept alive between runs.
 _creation_pool = None
 
 
@@ -1188,25 +1333,25 @@ def run_collection_benchmark(
     heap_type: str,
     num_runs: int,
     parallel_workers: int = 8,
-    survivor_ratio: float = 0.8,
-    creation_threads: int = 4,
-    warmup_runs: int = 3
+    survivor_ratio: float = COLLECTION_SURVIVOR_RATIO,
+    creation_threads: int = COLLECTION_CREATION_THREADS,
+    warmup_runs: int = COLLECTION_WARMUP_RUNS,
 ) -> CollectionResult:
     """
     Measure GC collection time for a given heap type.
 
-    Matches the old gc_benchmark.py methodology exactly:
-    - Creates heap across multiple threads using persistent thread pool
-    - Keeps threads alive (pages remain in live thread heaps)
-    - Uses survivor ratio on complete CLUSTERS (not individual objects)
-    - Warmup runs before measurement
-    - Serial and parallel measured in separate passes (not interleaved)
+    Objects are created across a persistent thread pool, so pages remain in
+    live thread heaps. The survivor ratio is applied to complete clusters.
     """
     pool = get_creation_pool(creation_threads)
-    seed = 42
+    seed = BENCHMARK_SEED
 
-    def run_batch(use_parallel: bool, num_iterations: int, is_warmup: bool) -> List[float]:
-        """Run a batch of iterations and return times in ms."""
+    def run_batch(
+        use_parallel: bool,
+        num_iterations: int,
+        is_warmup: bool,
+    ) -> tuple[List[float], List[int]]:
+        """Run a batch and return collection times and generated counts."""
         gc.disable()
 
         if use_parallel:
@@ -1215,20 +1360,23 @@ def run_collection_benchmark(
             disable_parallel_gc()
 
         times = []
+        object_counts = []
 
         try:
             for _ in range(num_iterations):
-                random.seed(seed)
+                selection_rng = random.Random(seed)
 
                 # Create clusters using thread pool (threads stay alive)
                 clusters = pool.create_objects(heap_type, heap_size)
+                object_counts.append(
+                    sum(len(cluster) for cluster in clusters))
 
                 # Apply survivor ratio by keeping complete CLUSTERS
                 keep_refs = None
                 if survivor_ratio < 1.0:
                     num_keep = int(len(clusters) * survivor_ratio)
                     if num_keep > 0:
-                        random.shuffle(clusters)
+                        selection_rng.shuffle(clusters)
                         keep_refs = clusters[:num_keep]
                     else:
                         keep_refs = []
@@ -1256,15 +1404,35 @@ def run_collection_benchmark(
         finally:
             gc.enable()
 
-        return times
+        return times, object_counts
 
-    # Run serial: warmup then measurements
+    # Warm each configuration before alternating measured pairs.
     run_batch(use_parallel=False, num_iterations=warmup_runs, is_warmup=True)
-    serial_times = run_batch(use_parallel=False, num_iterations=num_runs, is_warmup=False)
-
-    # Run parallel: warmup then measurements
     run_batch(use_parallel=True, num_iterations=warmup_runs, is_warmup=True)
-    parallel_times = run_batch(use_parallel=True, num_iterations=num_runs, is_warmup=False)
+    serial_times = []
+    parallel_times = []
+    serial_object_counts = []
+    parallel_object_counts = []
+    for iteration in range(num_runs):
+        modes = (False, True) if iteration % 2 == 0 else (True, False)
+        for use_parallel in modes:
+            samples, object_counts = run_batch(
+                use_parallel=use_parallel,
+                num_iterations=1,
+                is_warmup=False,
+            )
+            if use_parallel:
+                parallel_times.extend(samples)
+                parallel_object_counts.extend(object_counts)
+            else:
+                serial_times.extend(samples)
+                serial_object_counts.extend(object_counts)
+
+    if serial_object_counts != parallel_object_counts:
+        raise RuntimeError(
+            f"serial and parallel {heap_type} heaps differ: "
+            f"{serial_object_counts!r} != {parallel_object_counts!r}"
+        )
 
     serial_mean = statistics.mean(serial_times)
     parallel_mean = statistics.mean(parallel_times)
@@ -1278,7 +1446,11 @@ def run_collection_benchmark(
         parallel_time_ms=parallel_mean,
         serial_stdev=serial_stdev,
         parallel_stdev=parallel_stdev,
-        num_runs=num_runs
+        num_runs=num_runs,
+        serial_samples_ms=serial_times,
+        parallel_samples_ms=parallel_times,
+        serial_object_counts=serial_object_counts,
+        parallel_object_counts=parallel_object_counts,
     )
 
 # =============================================================================
@@ -1291,16 +1463,22 @@ def run_comparison(
     run_fn: Callable[..., BenchmarkRun],
     num_runs: int,
     parallel_workers: int,
-    verbose: bool = False,
     **kwargs
 ) -> ComparisonResult:
     """Run a benchmark in both serial and parallel modes."""
 
-    # Serial runs
     serial_runs = []
-    for _ in range(num_runs):
-        run = run_fn(parallel_workers=0, verbose=verbose, **kwargs)
-        serial_runs.append(run)
+    parallel_runs = []
+    for iteration in range(num_runs):
+        modes = (0, parallel_workers)
+        if iteration % 2:
+            modes = tuple(reversed(modes))
+        for workers in modes:
+            run = run_fn(parallel_workers=workers, **kwargs)
+            if workers:
+                parallel_runs.append(run)
+            else:
+                serial_runs.append(run)
 
     serial_result = BenchmarkResult(
         name=name,
@@ -1308,12 +1486,6 @@ def run_comparison(
         mode="serial",
         runs=serial_runs
     )
-
-    # Parallel runs
-    parallel_runs = []
-    for _ in range(num_runs):
-        run = run_fn(parallel_workers=parallel_workers, verbose=verbose, **kwargs)
-        parallel_runs.append(run)
 
     parallel_result = BenchmarkResult(
         name=name,
@@ -1335,10 +1507,14 @@ def run_suite(
     num_threads: int = 4,
     parallel_workers: int = 8,
     heap_size: int = 500000,
-    verbose: bool = False,
     include_synthetic: bool = True
 ) -> SuiteResult:
     """Run the full benchmark suite."""
+
+    if not PARALLEL_GC_AVAILABLE:
+        raise RuntimeError("parallel GC is not available in this build")
+    runtime_config = enable_parallel_gc(parallel_workers)
+    disable_parallel_gc()
 
     print(f"Parallel GC Performance Benchmark")
     print(f"=" * 60)
@@ -1356,27 +1532,23 @@ def run_suite(
         build_type=BUILD_TYPE,
         parallel_gc_available=PARALLEL_GC_AVAILABLE,
         num_workers=parallel_workers,
-        timestamp=datetime.now().isoformat(),
+        timestamp=datetime.now().astimezone().isoformat(),
+        runtime_config=runtime_config,
+        system_metadata=get_system_metadata(),
         duration_per_benchmark=duration_per_benchmark,
         num_runs=num_runs,
         num_threads=num_threads,
         heap_size=heap_size
     )
 
-    if not PARALLEL_GC_AVAILABLE:
-        print("WARNING: Parallel GC not available - running serial only")
-        parallel_workers = 0
-
-    # Realistic benchmark (most important)
-    print("Running: Realistic Workloads (pyperformance-style)")
+    print("Running: Project-specific mixed workload")
     print("-" * 60)
     result.realistic = run_comparison(
-        name="realistic",
-        description="Mixed workloads based on pyperformance benchmarks",
+        name="mixed_workload",
+        description="Project-specific mixed allocation workloads",
         run_fn=run_realistic_benchmark,
         num_runs=num_runs,
         parallel_workers=parallel_workers,
-        verbose=verbose,
         duration_sec=duration_per_benchmark,
         num_threads=num_threads
     )
@@ -1394,14 +1566,19 @@ def run_suite(
                 heap_size=heap_size,
                 heap_type=heap_type,
                 num_runs=num_runs,
-                parallel_workers=parallel_workers
+                parallel_workers=parallel_workers,
+                survivor_ratio=result.collection_survivor_ratio,
+                creation_threads=result.collection_creation_threads,
+                warmup_runs=result.collection_warmup_runs,
             )
             result.collection_results.append(coll)
-            print(f"  {heap_type:<12}: {coll.serial_time_ms:6.1f}ms -> {coll.parallel_time_ms:6.1f}ms "
-                  f"({coll.speedup:.2f}x)")
+            print(
+                f"  {heap_type:<12}: {coll.serial_time_ms:6.1f}ms -> "
+                f"{coll.parallel_time_ms:6.1f}ms ({coll.speedup:.2f}x)"
+            )
         print()
 
-        # Synthetic throughput - use representative subset (takes longer)
+        # Synthetic throughput for a smaller subset (takes longer).
         throughput_heap_types = ["chain", "graph", "ai_workload"]
         for heap_type in throughput_heap_types:
             print(f"Running: Synthetic {heap_type} throughput")
@@ -1412,7 +1589,6 @@ def run_suite(
                 run_fn=run_synthetic_benchmark,
                 num_runs=num_runs,
                 parallel_workers=parallel_workers,
-                verbose=verbose,
                 duration_sec=duration_per_benchmark,
                 heap_size=heap_size,
                 heap_type=heap_type,
@@ -1427,9 +1603,9 @@ def run_suite(
             print("Synthetic Summary (geometric mean across heap types)")
             print("-" * 60)
             gm_speedup = result.geometric_mean_speedup
-            gm_stw = result.geometric_mean_stw_reduction
+            gm_latency = result.geometric_mean_collection_latency_ratio
             print(f"  Throughput change: {_format_change(gm_speedup)}")
-            print(f"  STW pause change: {(gm_stw - 1) * 100:+.0f}%")
+            print(f"  Collection latency change: {(gm_latency - 1) * 100:+.0f}%")
             print()
 
     return result
@@ -1444,8 +1620,8 @@ def _format_change(ratio: float) -> str:
         return f"{pct:.1f}%"
 
 
-def _format_pause_ms(ms: float) -> str:
-    """Format pause time with appropriate precision.
+def _format_latency_ms(ms: float) -> str:
+    """Format collection latency with appropriate precision.
 
     Uses 1 decimal place for values < 10ms to avoid showing "0ms"
     when the actual value is e.g. 0.4ms.
@@ -1457,12 +1633,26 @@ def _format_pause_ms(ms: float) -> str:
 
 def _print_comparison(comp: ComparisonResult):
     """Print a comparison result."""
-    print(f"  Serial:   {comp.serial.throughput_mean:,.0f}/sec (range: {comp.serial.throughput_worst:,.0f} - {comp.serial.throughput_best:,.0f})")
-    print(f"  Parallel: {comp.parallel.throughput_mean:,.0f}/sec (range: {comp.parallel.throughput_worst:,.0f} - {comp.parallel.throughput_best:,.0f})")
+    print(
+        f"  Serial:   {comp.serial.throughput_mean:,.0f}/sec "
+        f"(range: {comp.serial.throughput_worst:,.0f} - "
+        f"{comp.serial.throughput_best:,.0f})"
+    )
+    print(
+        f"  Parallel: {comp.parallel.throughput_mean:,.0f}/sec "
+        f"(range: {comp.parallel.throughput_worst:,.0f} - "
+        f"{comp.parallel.throughput_best:,.0f})"
+    )
     print(f"  Throughput change: {_format_change(comp.speedup)}")
-    if comp.serial.stw_pause_mean > 0:
-        stw_change = (comp.parallel.stw_pause_mean / comp.serial.stw_pause_mean - 1) * 100
-        print(f"  STW pause: {_format_pause_ms(comp.serial.stw_pause_mean)}ms -> {_format_pause_ms(comp.parallel.stw_pause_mean)}ms ({stw_change:+.0f}%)")
+    serial_latency = comp.serial.collection_latency_mean
+    if serial_latency > 0:
+        parallel_latency = comp.parallel.collection_latency_mean
+        change = (parallel_latency / serial_latency - 1) * 100
+        print(
+            "  Collection latency: "
+            f"{_format_latency_ms(serial_latency)}ms -> "
+            f"{_format_latency_ms(parallel_latency)}ms ({change:+.0f}%)"
+        )
 
 # =============================================================================
 # Output Formatters
@@ -1482,16 +1672,27 @@ def format_markdown(result: SuiteResult) -> str:
     lines.append(f"- Duration per benchmark: {result.duration_per_benchmark}s")
     lines.append(f"- Runs per configuration: {result.num_runs}")
     lines.append(f"- Heap size (synthetic): {result.heap_size:,}")
+    lines.append(f"- Random seed: {result.random_seed}")
+    lines.append(
+        f"- Collection warmup runs: {result.collection_warmup_runs}")
+    lines.append(
+        f"- Collection survivor ratio: {result.collection_survivor_ratio}")
+    lines.append(
+        "- Collection creation threads: "
+        f"{result.collection_creation_threads}"
+    )
     lines.append(f"- Timestamp: {result.timestamp}")
+    lines.append(f"- Runtime parallel-GC config: `{result.runtime_config!r}`")
+    for key, value in result.system_metadata.items():
+        lines.append(f"- {key.replace('_', ' ').title()}: `{value}`")
     lines.append("")
 
-    # Realistic results (prominently displayed)
+    # Project-specific mixed-workload results.
     if result.realistic:
         r = result.realistic
-        lines.append("## Realistic Workloads (Primary Metric)")
+        lines.append("## Mixed Workload Throughput")
         lines.append("")
-        lines.append("Mixed workloads based on pyperformance benchmarks. This is the most")
-        lines.append("representative measure of real-world parallel GC benefit.")
+        lines.append("Results for this project's handwritten allocation workload.")
         lines.append("")
 
         # Runtime info
@@ -1513,33 +1714,57 @@ def format_markdown(result: SuiteResult) -> str:
         change_str = f"{(r.speedup - 1) * 100:+.1f}%"
         lines.append(f"| Throughput       | {s_tp:<18} | {p_tp:<18} | {change_str:<10} |")
 
-        if r.serial.stw_pause_mean > 0:
-            # STW pause mean with stddev
-            s_stw = f"{_format_pause_ms(r.serial.stw_pause_mean)} ± {_format_pause_ms(r.serial.stw_pause_stdev)}ms"
-            p_stw = f"{_format_pause_ms(r.parallel.stw_pause_mean)} ± {_format_pause_ms(r.parallel.stw_pause_stdev)}ms"
-            stw_change_str = f"{(r.parallel.stw_pause_mean / r.serial.stw_pause_mean - 1) * 100:+.0f}%"
-            lines.append(f"| STW pause (mean) | {s_stw:<18} | {p_stw:<18} | {stw_change_str:<10} |")
+        serial_latency = r.serial.collection_latency_mean
+        if serial_latency > 0:
+            parallel_latency = r.parallel.collection_latency_mean
+            serial_stdev = r.serial.collection_latency_stdev
+            parallel_stdev = r.parallel.collection_latency_stdev
+            s_latency = (
+                f"{_format_latency_ms(serial_latency)} ± "
+                f"{_format_latency_ms(serial_stdev)}ms"
+            )
+            p_latency = (
+                f"{_format_latency_ms(parallel_latency)} ± "
+                f"{_format_latency_ms(parallel_stdev)}ms"
+            )
+            latency_change = (parallel_latency / serial_latency - 1) * 100
+            lines.append(
+                f"| Collection latency (mean) | {s_latency:<18} | "
+                f"{p_latency:<18} | {latency_change:+.0f}% |"
+            )
 
-            # STW pause max
-            s_max = f"{_format_pause_ms(r.serial.stw_pause_max)}ms"
-            p_max = f"{_format_pause_ms(r.parallel.stw_pause_max)}ms"
-            stw_max_change = (r.parallel.stw_pause_max / r.serial.stw_pause_max - 1) * 100 if r.serial.stw_pause_max > 0 else 0
-            stw_max_str = f"{stw_max_change:+.0f}%"
-            lines.append(f"| STW pause (max)  | {s_max:<18} | {p_max:<18} | {stw_max_str:<10} |")
+            s_max = f"{_format_latency_ms(r.serial.collection_latency_max)}ms"
+            p_max = f"{_format_latency_ms(r.parallel.collection_latency_max)}ms"
+            max_change = (
+                r.parallel.collection_latency_max /
+                r.serial.collection_latency_max - 1
+            ) * 100
+            lines.append(
+                f"| Collection latency (max) | {s_max:<18} | "
+                f"{p_max:<18} | {max_change:+.0f}% |"
+            )
 
-        # GC overhead (absolute change in percentage)
-        s_overhead = f"{r.serial.gc_overhead_mean:.1f}%"
-        p_overhead = f"{r.parallel.gc_overhead_mean:.1f}%"
-        overhead_change = r.parallel.gc_overhead_mean - r.serial.gc_overhead_mean
+        s_overhead = f"{r.serial.collection_time_pct_mean:.1f}%"
+        p_overhead = f"{r.parallel.collection_time_pct_mean:.1f}%"
+        overhead_change = (
+            r.parallel.collection_time_pct_mean -
+            r.serial.collection_time_pct_mean
+        )
         overhead_str = f"{overhead_change:+.1f}%"
-        lines.append(f"| GC overhead      | {s_overhead:<18} | {p_overhead:<18} | {overhead_str:<10} |")
+        lines.append(
+            f"| Collection time | {s_overhead:<18} | {p_overhead:<18} | "
+            f"{overhead_str:<10} |"
+        )
         lines.append("")
 
     # Collection time benchmarks
     if result.collection_results:
-        lines.append("## GC Collection Time (500k heap)")
+        lines.append(f"## GC Collection Time ({result.heap_size:,}-object heap)")
         lines.append("")
-        lines.append("Time to collect a single 500,000 object heap. Lower is better.")
+        lines.append(
+            f"Time to collect one requested {result.heap_size:,}-object heap. "
+            "Lower is better."
+        )
         lines.append("")
 
         # Aligned table - wider heap type column for ai_workload, web_server
@@ -1550,7 +1775,10 @@ def format_markdown(result: SuiteResult) -> str:
             s_time = f"{coll.serial_time_ms:.1f} ± {coll.serial_stdev:.1f}"
             p_time = f"{coll.parallel_time_ms:.1f} ± {coll.parallel_stdev:.1f}"
             speedup_str = f"{coll.speedup:.2f}x"
-            lines.append(f"| {coll.heap_type:<12} | {s_time:<18} | {p_time:<18} | {speedup_str:<7} |")
+            lines.append(
+                f"| {coll.heap_type:<12} | {s_time:<18} | {p_time:<18} | "
+                f"{speedup_str:<7} |"
+            )
 
         # Geometric mean of collection speedups
         if len(result.collection_results) > 1:
@@ -1559,50 +1787,124 @@ def format_markdown(result: SuiteResult) -> str:
                 product *= coll.speedup
             gm_speedup = product ** (1.0 / len(result.collection_results))
             gm_str = f"{gm_speedup:.2f}x"
-            lines.append(f"| Geomean      |                    |                    | {gm_str:<7} |")
+            lines.append(
+                "| Geomean      |                    |                    | "
+                f"{gm_str:<7} |"
+            )
         lines.append("")
 
     # Synthetic throughput results
     if result.synthetic_by_heap:
         lines.append("## Synthetic Throughput (Per Heap Type)")
         lines.append("")
-        lines.append("Steady-state throughput with continuous allocation. Representative subset of heap types.")
+        lines.append("Steady-state throughput with continuous allocation.")
         lines.append("")
 
         # Aligned table
-        lines.append("| Heap Type    | Serial             | Parallel           | Throughput | STW Change |")
-        lines.append("|--------------|--------------------|--------------------|------------|------------|")
+        lines.append(
+            "| Heap Type    | Serial             | Parallel           | "
+            "Throughput | Latency change |"
+        )
+        lines.append(
+            "|--------------|--------------------|--------------------|"
+            "------------|----------------|"
+        )
 
         for heap_type, comp in result.synthetic_by_heap.items():
             s_tp = f"{comp.serial.throughput_mean:,.0f}/s"
             p_tp = f"{comp.parallel.throughput_mean:,.0f}/s"
             tp_change = f"{(comp.speedup - 1) * 100:+.1f}%"
-            if comp.serial.stw_pause_mean > 0:
-                stw_change = f"{(comp.parallel.stw_pause_mean / comp.serial.stw_pause_mean - 1) * 100:+.0f}%"
+            serial_latency = comp.serial.collection_latency_mean
+            if serial_latency > 0:
+                latency_change = (
+                    comp.parallel.collection_latency_mean / serial_latency - 1
+                ) * 100
+                latency_change_text = f"{latency_change:+.0f}%"
             else:
-                stw_change = "N/A"
-            lines.append(f"| {heap_type:<12} | {s_tp:<18} | {p_tp:<18} | {tp_change:<10} | {stw_change:<10} |")
+                latency_change_text = "N/A"
+            lines.append(
+                f"| {heap_type:<12} | {s_tp:<18} | {p_tp:<18} | "
+                f"{tp_change:<10} | {latency_change_text:<14} |"
+            )
 
         # Geometric mean summary
         gm_speedup = f"{(result.geometric_mean_speedup - 1) * 100:+.1f}%"
-        gm_stw = f"{(result.geometric_mean_stw_reduction - 1) * 100:+.0f}%"
-        lines.append(f"| Geomean      |                    |                    | {gm_speedup:<10} | {gm_stw:<10} |")
+        gm_latency = (
+            result.geometric_mean_collection_latency_ratio - 1
+        ) * 100
+        lines.append(
+            "| Geomean      |                    |                    | "
+            f"{gm_speedup:<10} | {gm_latency:+.0f}% |"
+        )
         lines.append("")
 
-        # STW Pause times table
-        lines.append("### STW Pause Times")
+        lines.append("### Collection Latencies")
         lines.append("")
-        lines.append("| Heap Type    | Serial Mean (ms) | Serial Max (ms) | Parallel Mean (ms) | Parallel Max (ms) |")
-        lines.append("|--------------|------------------|-----------------|--------------------|--------------------|")
+        lines.append(
+            "| Heap Type    | Serial Mean (ms) | Serial Max (ms) | "
+            "Parallel Mean (ms) | Parallel Max (ms) |"
+        )
+        lines.append(
+            "|--------------|------------------|-----------------|"
+            "--------------------|-------------------|"
+        )
 
         for heap_type, comp in result.synthetic_by_heap.items():
-            s_mean = _format_pause_ms(comp.serial.stw_pause_mean)
-            s_max = _format_pause_ms(comp.serial.stw_pause_max)
-            p_mean = _format_pause_ms(comp.parallel.stw_pause_mean)
-            p_max = _format_pause_ms(comp.parallel.stw_pause_max)
-            lines.append(f"| {heap_type:<12} | {s_mean:<16} | {s_max:<15} | {p_mean:<18} | {p_max:<18} |")
+            s_mean = _format_latency_ms(comp.serial.collection_latency_mean)
+            s_max = _format_latency_ms(comp.serial.collection_latency_max)
+            p_mean = _format_latency_ms(comp.parallel.collection_latency_mean)
+            p_max = _format_latency_ms(comp.parallel.collection_latency_max)
+            lines.append(
+                f"| {heap_type:<12} | {s_mean:<16} | {s_max:<15} | "
+                f"{p_mean:<18} | {p_max:<18} |"
+            )
 
         lines.append("")
+
+    lines.append("## Raw Samples")
+    lines.append("")
+    lines.append(
+        "Callback latency is the full interval between the GC start and stop "
+        "callbacks; it is not a stop-the-world measurement."
+    )
+    lines.append("")
+    lines.append(
+        "| Benchmark | Mode | Run | Throughput/s | Callback latency mean "
+        "(ms) | Callback latency max (ms) | Collections | Duration (s) |"
+    )
+    lines.append(
+        "|-----------|------|-----|--------------|----------------------------|"
+        "---------------------------|-------------|--------------|"
+    )
+    comparisons = []
+    if result.realistic is not None:
+        comparisons.append(result.realistic)
+    comparisons.extend(result.synthetic_by_heap.values())
+    for comparison in comparisons:
+        for benchmark_result in (comparison.serial, comparison.parallel):
+            for index, run in enumerate(benchmark_result.runs, 1):
+                lines.append(
+                    f"| {comparison.benchmark_name} | {benchmark_result.mode} | "
+                    f"{index} | {run.throughput:.6f} | "
+                    f"{run.collection_latency_mean_ms:.6f} | "
+                    f"{run.collection_latency_max_ms:.6f} | "
+                    f"{run.collections} | {run.duration_sec:.6f} |"
+                )
+    for collection in result.collection_results:
+        lines.append("")
+        lines.append(
+            f"- `{collection.heap_type}` serial collection samples (ms): "
+            f"`{collection.serial_samples_ms!r}`"
+        )
+        lines.append(
+            f"- `{collection.heap_type}` parallel collection samples (ms): "
+            f"`{collection.parallel_samples_ms!r}`"
+        )
+        lines.append(
+            f"- `{collection.heap_type}` generated object counts: "
+            f"`{collection.serial_object_counts!r}`"
+        )
+    lines.append("")
 
     # Summary
     lines.append("## Summary")
@@ -1610,52 +1912,74 @@ def format_markdown(result: SuiteResult) -> str:
     if result.realistic:
         pct = (result.realistic.speedup - 1) * 100
         if pct > 0:
-            lines.append(f"Parallel GC provides {pct:.1f}% throughput improvement on realistic workloads.")
+            lines.append(
+                f"Parallel GC provides {pct:.1f}% throughput improvement "
+                "on the mixed workload."
+            )
         else:
-            lines.append(f"Parallel GC shows {pct:.1f}% throughput change on realistic workloads.")
+            lines.append(f"Parallel GC shows {pct:.1f}% throughput change on the mixed workload.")
 
     if result.collection_results:
         product = 1.0
         for coll in result.collection_results:
             product *= coll.speedup
         gm_coll = product ** (1.0 / len(result.collection_results))
-        lines.append(f"GC collection time improved by {gm_coll:.2f}x (geometric mean across heap types).")
+        lines.append(
+            f"GC collection time improved by {gm_coll:.2f}x "
+            "(geometric mean across heap types)."
+        )
 
     return "\n".join(lines)
 
 
 def format_json(result: SuiteResult) -> str:
     """Format results as JSON."""
+    def run_to_dict(run: BenchmarkRun) -> Dict[str, Any]:
+        return {
+            "throughput": run.throughput,
+            "collection_time_ms": run.collection_time_ms,
+            "collection_time_pct": run.collection_time_pct,
+            "collection_latency_mean_ms": run.collection_latency_mean_ms,
+            "collection_latency_max_ms": run.collection_latency_max_ms,
+            "collections": run.collections,
+            "duration_sec": run.duration_sec,
+        }
+
     def comparison_to_dict(comp: Optional[ComparisonResult]) -> Optional[Dict]:
         if comp is None:
             return None
-        stw_change = 0
-        if comp.serial.stw_pause_mean > 0:
-            stw_change = (comp.parallel.stw_pause_mean / comp.serial.stw_pause_mean - 1) * 100
+        latency_change = 0
+        if comp.serial.collection_latency_mean > 0:
+            latency_change = (
+                comp.parallel.collection_latency_mean /
+                comp.serial.collection_latency_mean - 1
+            ) * 100
         return {
             "name": comp.benchmark_name,
             "serial": {
                 "throughput_mean": comp.serial.throughput_mean,
                 "throughput_stdev": comp.serial.throughput_stdev,
-                "stw_pause_mean": comp.serial.stw_pause_mean,
-                "stw_pause_stdev": comp.serial.stw_pause_stdev,
-                "stw_pause_max": comp.serial.stw_pause_max,
-                "gc_overhead": comp.serial.gc_overhead_mean,
+                "collection_latency_mean_ms": comp.serial.collection_latency_mean,
+                "collection_latency_stdev_ms": comp.serial.collection_latency_stdev,
+                "collection_latency_max_ms": comp.serial.collection_latency_max,
+                "collection_time_pct": comp.serial.collection_time_pct_mean,
                 "total_duration_sec": comp.serial.total_duration,
                 "total_collections": comp.serial.total_collections,
+                "runs": [run_to_dict(run) for run in comp.serial.runs],
             },
             "parallel": {
                 "throughput_mean": comp.parallel.throughput_mean,
                 "throughput_stdev": comp.parallel.throughput_stdev,
-                "stw_pause_mean": comp.parallel.stw_pause_mean,
-                "stw_pause_stdev": comp.parallel.stw_pause_stdev,
-                "stw_pause_max": comp.parallel.stw_pause_max,
-                "gc_overhead": comp.parallel.gc_overhead_mean,
+                "collection_latency_mean_ms": comp.parallel.collection_latency_mean,
+                "collection_latency_stdev_ms": comp.parallel.collection_latency_stdev,
+                "collection_latency_max_ms": comp.parallel.collection_latency_max,
+                "collection_time_pct": comp.parallel.collection_time_pct_mean,
                 "total_duration_sec": comp.parallel.total_duration,
                 "total_collections": comp.parallel.total_collections,
+                "runs": [run_to_dict(run) for run in comp.parallel.runs],
             },
             "throughput_change_pct": (comp.speedup - 1) * 100,
-            "stw_change_pct": stw_change,
+            "collection_latency_change_pct": latency_change,
         }
 
     def collection_to_dict(coll: CollectionResult) -> Dict:
@@ -1668,6 +1992,10 @@ def format_json(result: SuiteResult) -> str:
             "parallel_stdev": coll.parallel_stdev,
             "speedup": coll.speedup,
             "num_runs": coll.num_runs,
+            "serial_samples_ms": coll.serial_samples_ms,
+            "parallel_samples_ms": coll.parallel_samples_ms,
+            "serial_object_counts": coll.serial_object_counts,
+            "parallel_object_counts": coll.parallel_object_counts,
         }
 
     synthetic_dict = {}
@@ -1693,16 +2021,27 @@ def format_json(result: SuiteResult) -> str:
             "duration_per_benchmark": result.duration_per_benchmark,
             "num_runs": result.num_runs,
             "heap_size": result.heap_size,
+            "random_seed": result.random_seed,
+            "collection_warmup_runs": result.collection_warmup_runs,
+            "collection_survivor_ratio": result.collection_survivor_ratio,
+            "collection_creation_threads": result.collection_creation_threads,
+            "runtime_parallel_gc_config": result.runtime_config,
         },
+        "system": result.system_metadata,
         "timestamp": result.timestamp,
-        "realistic": comparison_to_dict(result.realistic),
+        "mixed_workload": comparison_to_dict(result.realistic),
         "collection_results": collection_list,
         "synthetic_by_heap": synthetic_dict,
         "summary": {
-            "realistic_throughput_change_pct": (result.realistic.speedup - 1) * 100 if result.realistic else 0,
+            "mixed_workload_throughput_change_pct": (
+                (result.realistic.speedup - 1) * 100
+                if result.realistic else 0
+            ),
             "collection_speedup_geomean": gm_collection,
             "synthetic_throughput_geomean_pct": (result.geometric_mean_speedup - 1) * 100,
-            "synthetic_stw_geomean_pct": (result.geometric_mean_stw_reduction - 1) * 100,
+            "synthetic_collection_latency_geomean_pct": (
+                result.geometric_mean_collection_latency_ratio - 1
+            ) * 100,
         },
     }
 
@@ -1744,8 +2083,6 @@ Examples:
                         help='Output as JSON instead of markdown')
     parser.add_argument('--output', '-o', type=str,
                         help='Output file (default: stdout)')
-    parser.add_argument('--verbose', '-v', action='store_true',
-                        help='Include phase timing details')
     parser.add_argument('--include-synthetic', action='store_true',
                         help='Include synthetic stress test benchmarks')
 
@@ -1759,16 +2096,20 @@ Examples:
         args.duration = 60.0
         args.runs = 5
 
-    # Run the suite
-    result = run_suite(
-        duration_per_benchmark=args.duration,
-        num_runs=args.runs,
-        num_threads=args.threads,
-        parallel_workers=args.workers,
-        heap_size=args.heap_size,
-        verbose=args.verbose,
-        include_synthetic=args.include_synthetic
-    )
+    try:
+        output_stream = sys.stderr if args.json else sys.stdout
+        with contextlib.redirect_stdout(output_stream):
+            result = run_suite(
+                duration_per_benchmark=args.duration,
+                num_runs=args.runs,
+                num_threads=args.threads,
+                parallel_workers=args.workers,
+                heap_size=args.heap_size,
+                include_synthetic=args.include_synthetic,
+            )
+    except (AttributeError, RuntimeError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
 
     # Format output
     if args.json:
@@ -1782,9 +2123,11 @@ Examples:
             f.write(output)
         print(f"\nResults saved to: {args.output}")
     else:
-        print("\n" + "=" * 60)
+        if not args.json:
+            print("\n" + "=" * 60)
         print(output)
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

@@ -6,6 +6,10 @@ Assumes familiarity with CPython's GC internals (`gc.c`, `gc_free_threading.c`,
 
 For build instructions see [GETTING_STARTED.md](GETTING_STARTED.md).
 For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
+The canonical proposal is [pep-parallel-gc.rst](pep-parallel-gc.rst).
+
+This document describes the `cpython/` submodule at fork commit `9da963f754`,
+based on `python/cpython` commit `333071231d`.
 
 ---
 
@@ -23,32 +27,34 @@ There are two independent implementations, selected at compile time:
 | GIL (`./configure --with-parallel-gc`) | `Py_PARALLEL_GC` | `gc_parallel.c`, `pycore_gc_parallel.h` | `Python/gc.c` |
 | Free-threaded (`--with-parallel-gc --disable-gil`) | `Py_GIL_DISABLED && Py_PARALLEL_GC` | `gc_free_threading_parallel.c`, `pycore_gc_ft_parallel.h` | `Python/gc_free_threading.c` |
 
-Both implementations share the Chase-Lev work-stealing deque
-(`pycore_ws_deque.h`), barrier synchronisation (`pycore_gc_barrier.h`), and
-local work buffer.
+Both implementations use the Chase-Lev deque in `pycore_ws_deque.h`; the GIL
+path also uses its local-buffer helpers. Their dispatch and termination
+strategies differ. Idle workers are selected and woken through per-worker
+condition variables; barriers are limited to the GIL pool's startup handshake.
 
 **Important:** The two implementations are mutually exclusive. GIL builds guard
 on `Py_PARALLEL_GC` alone; free-threaded builds guard on both `Py_GIL_DISABLED`
 and `Py_PARALLEL_GC`.
 
 Parallel GC is **opt-in at build time** via `--with-parallel-gc` and **opt-in
-at runtime** via `gc.enable_parallel(N)`. Without the configure flag, the
-parallel GC code is not compiled. The parallel GC does not change *what* is
-collected -- only *how fast* the mark phase runs.
+at runtime** via `gc.enable_parallel(N)`, `-X parallel_gc=N`, or
+`PYTHON_PARALLEL_GC=N`. Without the configure flag, the collector implementation
+is not compiled. It is intended to preserve reachability, finalization, and
+weak-reference semantics; traversal and worklist order are not guaranteed.
 
 ```
                     gc.collect()
                         |
             +-----------+-----------+
             |                       |
-     GIL Build (gc.c)      FTP Build (gc_free_threading.c)
+     GIL Build (gc.c)      Free-threaded Build (gc_free_threading.c)
             |                       |
      gc_parallel.c          gc_free_threading_parallel.c
             |                       |
      +------+------+        +------+------+
-     | Shared infra |        | Shared infra |
-     | ws_deque.h   |        | ws_deque.h   |
-     | barrier.h    |        | barrier.h    |
+     | Deque + local|        | Shared deque |
+     | buffer       |        | primitives   |
+     | primitives  |        |              |
      +--------------+        +--------------+
 ```
 
@@ -59,38 +65,33 @@ collected -- only *how fast* the mark phase runs.
 **Source:** `Python/gc_parallel.c`, `Include/internal/pycore_gc_parallel.h`
 **Guard:** `#ifdef Py_PARALLEL_GC` (defined when `--with-parallel-gc` is passed to configure)
 **Requirement:** 64-bit platform (`SIZEOF_VOID_P >= 8`) -- enforced at
-compile time (`pycore_gc_parallel.h:37`).
+compile time in `pycore_gc_parallel.h`.
 
 ### 2.1 Integration with gc.c
 
-The parallel collector hooks into `deduce_unreachable()` in `Python/gc.c` at
-three call sites. The serial `update_refs` is replaced by
-`update_refs_with_splits()`, and three parallel entry points are called in
-sequence. If any returns 0, `deduce_unreachable()` falls through to the serial
-code path.
+The parallel collector hooks into `deduce_unreachable()` in `Python/gc.c`.
+The serial `update_refs` is replaced by `update_refs_with_splits()`, followed by
+two parallel entry points. Each parallel phase has its own fallback; a failure
+to dispatch one phase does not retroactively make the other phase serial.
 
 ```
-deduce_unreachable()                         [gc.c:~1540]
+deduce_unreachable()
   |
-  +-- update_refs_with_splits()              [gc.c:541]
+  +-- update_refs_with_splits()
   |     Serial. Walks the GC list, sets gc_refs = Py_REFCNT,
   |     and records split-vector waypoints every 8192 objects.
   |
-  +-- _PyGC_ParallelMarkAliveFromQueue()     [gc_parallel.c:2192]
-  |     Parallel. Pre-marks interpreter roots (sysdict, builtins,
-  |     thread stacks, type dicts). Pipelined producer-consumer.
-  |
-  +-- _PyGC_ParallelSubtractRefs()           [gc_parallel.c:1792]
+  +-- _PyGC_ParallelSubtractRefs()
   |     Parallel. Decrements gc_refs via tp_traverse with
   |     atomic decref visitor. Split-vector work distribution.
   |
-  +-- _PyGC_ParallelMoveUnreachable()        [gc_parallel.c:1489]
+  +-- _PyGC_ParallelMoveUnreachable()
         Parallel mark + serial sweep.
         Workers scan segments for roots (gc_refs > 0),
         mark subgraphs. Main thread sweeps: COLLECTING=1 -> unreachable.
 ```
 
-**Fallback:** At `gc.c:1683`:
+**Fallback:** In `deduce_unreachable()`:
 
 ```c
 if (!_PyGC_ParallelMoveUnreachable(interp, base, unreachable)) {
@@ -114,97 +115,41 @@ During parallel marking, the COLLECTING flag is the marking bit:
 - `COLLECTING = 1` -- object not yet proven reachable
 - `COLLECTING = 0` -- object marked reachable by a worker
 
-### 2.3 The Four Phases
+### 2.3 Collection Phases
 
 ```
-  +-----------+     +----------------+     +-----------+     +-------+
-  | mark_alive| --> | subtract_refs  | --> |   mark    | --> | sweep |
-  | (parallel)|     |   (parallel)   |     | (parallel)|     |(serial)|
-  +-----------+     +----------------+     +-----------+     +-------+
-   Pipelined         Split-vector           Split-vector      Main thread
-   producer-         segments               segments          walks list,
-   consumer                                                   moves COLLECTING
-                                                              objects to
-                                                              unreachable
+  +-------------+     +----------------+     +-----------+     +-------+
+  | update_refs | --> | subtract_refs  | --> |   mark    | --> | sweep |
+  |  (serial)   |     |   (parallel)   |     | (parallel)|     |(serial)|
+  +-------------+     +----------------+     +-----------+     +-------+
+   Record split       Split-vector           Split-vector      Main thread
+   waypoints           segments               segments          moves unreachable
 ```
 
 #### update_refs (Serial, with split recording)
 
-**Entry:** `update_refs_with_splits()` (`gc.c:541`)
+**Entry:** `update_refs_with_splits()` in `Python/gc.c`
 
 Walks the GC list and sets `gc_refs = ob_refcnt` for every object.
 Simultaneously records **split points** -- pointers into the GC list at
-`_PyGC_SPLIT_INTERVAL` (8192) object intervals -- into a growable
-`_PyGCSplitVector` (`pycore_gc_parallel.h:117`):
+`_PyGC_PARALLEL_WORK_CHUNK` (8192) object intervals -- into a growable
+`_PyGCSplitVector`:
 
 ```c
-// gc.c:572
-if (candidates % _PyGC_SPLIT_INTERVAL == 0 && next != containers) {
-    _PyGCSplitVector_Push(splits, next);
+if (candidates % _PyGC_PARALLEL_WORK_CHUNK == 0) {
+    _PyGCSplitVector_Push(splits, gc);
 }
+/* Append containers as the exclusive end marker. */
+_PyGCSplitVector_Push(splits, containers);
 ```
 
 The split vector enables O(1) parallel partitioning without an extra list
 traversal. A sentinel entry (the list head) is pushed at the end as an
 exclusive end marker.
 
-#### Phase 1: mark_alive -- Interpreter Root Pre-Marking
+#### Phase 1: subtract_refs -- Parallel Reference Count Decrement
 
-**Entry:** `_PyGC_ParallelMarkAliveFromQueue()` (`gc_parallel.c:2192`)
-
-**Purpose:** Pre-mark objects reachable from interpreter roots before the
-subtract_refs/mark cycle. Objects marked here are skipped by subsequent
-phases, substantially reducing parallel work.
-
-**Distribution: Pipelined producer-consumer.**
-
-The main thread calls `gc_expand_roots_to_queue()` which traverses each
-interpreter root by one level via `tp_traverse`, pushing level-1 children to
-a shared `_PyGCWorkQueue` (`pycore_gc_parallel.h:161`). Workers claim batches
-of `_PyGC_QUEUE_BATCH_SIZE` (64) objects using atomic CAS on the queue's
-`read_index` and traverse subtrees locally.
-
-```
-  Main thread (producer)               Workers (consumers)
-  +--------------------------+         +------------------------+
-  | For each interp root:    |         | loop:                  |
-  |   mark root reachable    |         |   batch = ClaimBatch() |
-  |   tp_traverse(root) -->  |-------->|   for obj in batch:    |
-  |     push children to     |         |     tp_traverse(obj)   |
-  |     work queue           |         |     push children to   |
-  +--------------------------+         |     local buffer/deque  |
-  | ProducerDone()           |         |   drain local buffer   |
-  +--------------------------+         +------------------------+
-```
-
-**Why not simple work-stealing?** Interpreter roots form a hub: ~100 roots
-reference most of the heap. With naive work-stealing, the first worker to
-process the hub marks most objects before others can steal (99% imbalance
-measured empirically). Level-1 expansion produces thousands of distributed
-starting points.
-
-The queue is block-based (`_PyGCQueueBlock`, 4096 pointers per block), with
-`_PyGC_QUEUE_INITIAL_BLOCKS` (8) pre-allocated blocks for zero-allocation
-operation. `write_index` and `read_index` are cache-line padded:
-
-```c
-// pycore_gc_parallel.h:169
-Py_ssize_t write_index;
-char _pad1[64 - sizeof(Py_ssize_t)];
-Py_ssize_t read_index;
-char _pad2[64 - sizeof(Py_ssize_t)];
-```
-
-Workers consume in the `_PyGC_PHASE_MARK_ALIVE_QUEUE` dispatch case
-(`gc_parallel.c:272`).
-
-**Alternative:** `_PyGC_ParallelMarkAliveFromRoots` (`gc_parallel.c:2130`)
-distributes roots round-robin with coordinator-based termination, but is not
-used by default due to the hub imbalance.
-
-#### Phase 2: subtract_refs -- Parallel Reference Count Decrement
-
-**Entry:** `_PyGC_ParallelSubtractRefs()` (`gc_parallel.c:1792`)
+**Entry:** `_PyGC_ParallelSubtractRefs()`
 
 **Purpose:** Call `tp_traverse` with a visitor that atomically decrements
 `gc_refs` of referenced objects. After this phase, objects with `gc_refs > 0`
@@ -213,65 +158,75 @@ are roots.
 **Distribution: Split vector segments.** Workers get contiguous ranges:
 
 ```c
-// gc_parallel.c:1819
 size_t entries_per_worker = splits->count / par_gc->num_workers;
 par_gc->workers[i].slice_start = splits->entries[start_idx];
 par_gc->workers[i].slice_end   = splits->entries[end_idx];
 par_gc->workers[i].phase = _PyGC_PHASE_SUBTRACT_REFS;
 ```
 
-**Atomic decrement** -- references cross segment boundaries:
+**Shared traversal callback.** References cross segment boundaries, so a
+parallel-GC build uses an atomic decrement in the same callback used by the
+serial path:
 
 ```c
-// gc_parallel.c:1695
-static inline void
-gc_decref_atomic(PyGC_Head *gc)
+int
+_PyGC_VisitDecref(PyObject *op, void *parent)
 {
-    _Py_atomic_add_uintptr(&gc->_gc_prev,
-                           -((uintptr_t)1 << _PyGC_PREV_SHIFT));
+    if (_PyObject_IS_GC(op)) {
+        PyGC_Head *gc = AS_GC(op);
+        if (gc_is_collecting(gc)) {
+            _Py_atomic_add_uintptr(
+                &gc->_gc_prev,
+                -((uintptr_t)1 << _PyGC_PREV_SHIFT));
+        }
+    }
+    return 0;
 }
 ```
 
-The visitor (`visit_decref_atomic`, `gc_parallel.c:1703`) checks COLLECTING
-with a relaxed load -- objects marked alive in Phase 1 are skipped.
+Using one callback identity is semantically important: `_PyGC_VisitStackRef()`
+recognizes it and skips borrowed or embedded stack references, whose reference
+counts are not represented in `Py_REFCNT`. The callback is exported only to
+the core and `_testinternalcapi` when parallel GC is compiled.
 
-#### Phase 3: mark -- Parallel Root Discovery and Local Marking
+#### Phase 2: mark -- Parallel Root Discovery and Local Marking
 
-**Entry:** `_PyGC_ParallelMoveUnreachable()` (`gc_parallel.c:1489`)
+**Entry:** `_PyGC_ParallelMoveUnreachable()`
 
-Same split-vector segments. Workers scan for roots (`gc_refs > 0`), mark
-them, traverse subgraphs **locally** -- no work-stealing. Safe because
-Phase 1 already marked most reachable objects.
+Using the same split-vector segments, workers scan for roots (`gc_refs > 0`),
+claim them atomically, and traverse each discovered subgraph **locally**. The
+active GIL path does not use work stealing.
 
-Worker dispatch (`gc_parallel.c:327`):
+Worker dispatch:
 
 ```c
 // Scan segment for roots
 while (gc != end) {
     if (!gc_is_collecting(gc)) { gc = next; continue; }
     if (gc_get_refs(gc) > 0) {
-        gc->_gc_prev &= ~_PyGC_PREV_MASK_COLLECTING;
-        _PyGCLocalBuffer_Push(&worker->local_buffer, _Py_FROM_GC(gc));
+        if (gc_try_mark_reachable_atomic(gc)) {
+            _PyGCLocalBuffer_Push(&worker->local_buffer, _Py_FROM_GC(gc));
+        }
     }
     gc = next;
 }
 // Drain local buffer and own deque until both empty
 ```
 
-#### Phase 4: sweep -- Serial
+#### Phase 3: sweep -- Serial
 
-Main thread sweeps the GC list (`gc_parallel.c:1606`). Objects with
+The main thread sweeps the GC list. Objects with
 COLLECTING still set are moved to unreachable; reachable objects have
-`_gc_prev` restored.
+`_gc_prev` restored. Weak-reference handling, finalization, and deallocation
+then continue on the existing serial paths.
 
 ### 2.4 Atomic Marking via Fetch-And
 
 ```c
-// gc_parallel.c:76
 static inline int
 gc_try_mark_reachable_atomic(PyGC_Head *gc)
 {
-    // Fast path: relaxed load (~1 cycle, ~10x cheaper than RMW)
+    // Fast path: avoid an RMW when the object is already marked
     uintptr_t prev = _Py_atomic_load_uintptr_relaxed(&gc->_gc_prev);
     if (!(prev & _PyGC_PREV_MASK_COLLECTING)) {
         return 0;
@@ -296,54 +251,46 @@ shared objects cheaply.
 ```
 gc.enable_parallel(N)
   |
-  _PyGC_ParallelInit()   [gc_parallel.c:405]
-  _PyGC_ParallelStart()  [gc_parallel.c:576]
+  _PyGC_ParallelInit()
+  _PyGC_ParallelStart()
   |
   [... GC collections ...]
   |
 gc.disable_parallel()
   |
-  _PyGC_ParallelStop()   [gc_parallel.c:623]
+  _PyGC_ParallelStop()
 ```
 
-Workers are persistent, sleeping on `mark_barrier`. Each has:
-- `_PyWSDeque` with 2 MB pre-allocated buffer
-- `_PyGCLocalBuffer` (1024 items, zero fences)
-- `PyThreadState` (for `Py_REF_DEBUG`)
-- Per-worker statistics and timing
+Workers are persistent while parallel GC is enabled and sleep on their own
+`wake_cond`. `dispatch_and_wait()` signals at most one worker per available
+8192-object slice and waits for completion on `done_cond`. Each has a growing
+`_PyWSDeque` and a 1024-item `_PyGCLocalBuffer`.
 
-**Thread state cleanup:** Done by **main thread** after join
-(`gc_parallel.c:655`) -- clears `bound_gilstate` before `PyThreadState_Delete`
-to avoid assertion failure (`gc_parallel.c:661`).
+GIL helper threads do not create or bind persistent `PyThreadState` objects.
+This keeps collector helpers out of interpreter thread-state enumeration. The
+active helpers invoke `tp_traverse` under the current C-API contract, which
+allows traversal from any thread and specifies that only one thread state is
+attached while traversal handlers run during garbage collection. The
+collecting thread remains that attached thread.
+
+`gc.disable_parallel()` stops the GIL helpers and releases the pool. Re-enabling
+creates a new pool. Calling `gc.enable_parallel()` with a different count while
+enabled replaces the existing pool.
 
 ### 2.6 Serial Fallback Conditions
 
-Falls back to serial when: parallel GC not enabled, split vector < 2 entries,
-or workers not active. All entry points return 0 to trigger fallback.
+The GIL collector uses serial code when parallel GC is disabled, workers are not
+active, fewer than two 8192-object slices are available, or a phase cannot
+assign work. Initialization and thread-creation errors fail
+`gc.enable_parallel()` or interpreter startup; they are not serial fallback.
 
-### 2.7 Adaptive Worker Count Controller
+### 2.7 Worker Count
 
-**Source:** `Modules/gcmodule.c:1405-1459`, state in `pycore_gc_parallel.h`
-
-The controller dynamically adjusts how many workers are woken per collection
-using a biased constrained random walk.
-
-**Algorithm:** Starting at `min(4, num_workers)`, each collection:
-1. Measure per-object cost (`total_time / candidates`)
-2. With 20% probability, step ±1 workers (50/50, no directional bias)
-3. Clamp result to `[2, num_workers]`
-
-The walker always steps when the dice fires (proactive exploration). Good
-values stick naturally because they don't trigger further corrective steps.
-The first collection is skipped (no baseline for comparison).
-
-**State:** Only three values:
-- `adaptive_workers`: current worker count (the walk position)
-- `prev_cost_per_obj_ns`: previous collection's per-object cost
-- `explore_rng`: xorshift32 PRNG state
-
-**PRNG:** xorshift32, seeded from `GC_TEST_SEED` env var at startup or
-`_PyTime_GetPerfCounter()` if unset.
+The configured count is an upper bound on threads executing collector work.
+Active participation is capped at one worker per 8192 candidate objects. A GIL
+build uses helpers while the collecting thread coordinates them. In a
+free-threaded build the collecting thread participates as worker zero. The
+grain is provisional pending benchmark evidence.
 
 ---
 
@@ -351,19 +298,19 @@ The first collection is skipped (no baseline for comparison).
 
 **Source:** `Python/gc_free_threading_parallel.c`,
 `Include/internal/pycore_gc_ft_parallel.h`
-**Guard:** `#ifdef Py_GIL_DISABLED`
+**Guard:** `#if defined(Py_GIL_DISABLED) && defined(Py_PARALLEL_GC)`
 
 ### 3.1 Integration with gc_free_threading.c
 
 ```
-gc_mark_alive_from_roots()                   [gc_free_threading.c:1524]
-  +-- _PyGC_ParallelPropagateAliveWithPool() [gc_free_threading_parallel.c:1936]
+gc_mark_alive_from_roots()                 serial upstream path
 
-deduce_unreachable_heap()                    [gc_free_threading.c:1588]
-  +-- _PyGC_AssignPagesToBuckets()           [gc_free_threading_parallel.c:391]
-  +-- _PyGC_ParallelUpdateRefsWithPool()
-  +-- _PyGC_ParallelMarkHeapWithPool()
-  +-- _PyGC_ParallelScanHeapWithPool()
+deduce_unreachable_heap()
+  +-- gc_visit_heaps(... update_refs ...)   serial upstream path
+  +-- _PyGC_AssignPagesToBuckets()          parallel-mark preparation
+  +-- gc_visit_thread_stacks()               serial deferred-ref scan
+  +-- _PyGC_ParallelMarkHeapWithPool()      only parallel FT phase
+  +-- gc_visit_heaps(... scan_heap ...)     serial upstream path
 ```
 
 ### 3.2 Object Layout
@@ -373,13 +320,13 @@ deduce_unreachable_heap()                    [gc_free_threading.c:1588]
 
 ### 3.3 Architectural Differences from GIL Build
 
-| Aspect | GIL Build | FTP Build |
+| Aspect | GIL Build | Free-threaded Build |
 |--------|-----------|-----------|
 | Marking bit | `_gc_prev` COLLECTING flag | `ob_gc_bits` ALIVE/UNREACHABLE |
 | gc_refs storage | Upper bits of `_gc_prev` | `ob_tid` (repurposed during STW) |
-| Marking op | Fetch-And on `uintptr_t` | Relaxed load/store on `uint8_t` |
+| Marking op | Fetch-And on `uintptr_t` | Fetch-And clears `UNREACHABLE` |
 | Work distribution | Split vector (GC list) | Page-based (mimalloc buckets) |
-| Phases parallelised | mark_alive, subtract_refs, mark | update_refs, mark_alive, mark_heap, scan_heap |
+| Phases parallelised | subtract_refs, mark | mark_heap only |
 
 ### 3.4 Page-Based Work Distribution
 
@@ -397,87 +344,97 @@ deduce_unreachable_heap()                    [gc_free_threading.c:1588]
 
 **Normal pages:** Sequential filling preserving locality.
 **Huge pages:** Round-robin to spread expensive traversals.
-**Abandoned pool pages:** Included via `_mi_abandoned_pool_enumerate_pages()`.
+**Abandoned pool pages:** Included via `_mi_abandoned_pool_visit_pages()`.
 
 Page counting: O(threads) via `heap->page_count`.
 Page enumeration: O(pages) through mimalloc bin queues.
 
-### 3.5 Relaxed-Atomic Marking on ob_gc_bits
+### 3.5 Atomic Marking on ob_gc_bits
 
 ```c
-// pycore_gc_ft_parallel.h:174
 static inline int
-_PyGC_TryMarkAlive(PyObject *op)
+_PyGC_TryMarkReachable(PyObject *op)
 {
-    if (_Py_atomic_load_uint8_relaxed(&op->ob_gc_bits) & _PyGC_BITS_ALIVE) {
+    if (!(_Py_atomic_load_uint8_relaxed(&op->ob_gc_bits)
+          & _PyGC_BITS_UNREACHABLE)) {
         return 0;
     }
-    uint8_t new_bits = (op->ob_gc_bits | _PyGC_BITS_ALIVE)
-                     & ~_PyGC_BITS_UNREACHABLE;
-    _Py_atomic_store_uint8_relaxed(&op->ob_gc_bits, new_bits);
-    _Py_atomic_fence_acquire();
-    return 1;
+    return _PyGC_TryClearBit(op, _PyGC_BITS_UNREACHABLE);
 }
 ```
 
-If two workers race: both write ALIVE (idempotent), both traverse referents,
-duplicate traversal stops at next level. Eliminates ~20-40 cycles per object
-vs atomic RMW.
+The old value gives exactly one worker ownership of a newly reachable object.
+Only that worker queues the object for transitive traversal. Root propagation
+that sets the `ALIVE` bit remains in the upstream serial path.
 
-For MARK_HEAP, `_PyGC_TryMarkReachable()` (`pycore_gc_ft_parallel.h:215`)
-uses Fetch-And on UNREACHABLE bit for strict ownership.
+### 3.6 Phases of deduce_unreachable_heap
 
-### 3.6 The Three Phases of deduce_unreachable_heap
+#### UPDATE_REFS (serial)
 
-#### UPDATE_REFS (2-phase with barrier)
+`gc_visit_heaps(interp, &update_refs, &state->base)` performs the complete
+upstream pass. It remains serial because `visit_decref()` may lazily initialise
+referents not found by the heap-page walk.
 
-```
-Phase 1: init_refs              Phase 2: compute_refs
-+---------------------+        +---------------------+
-| Set UNREACHABLE     | barrier| Add Py_REFCNT to    |
-| Zero ob_tid         |------->| ob_tid (gc_refs)    |
-| Count candidates    |        | tp_traverse +decref |
-+---------------------+        +---------------------+
-```
+#### Deferred-reference stack scan (serial)
 
-Atomic gc_refs ops (`pycore_gc_ft_parallel.h:448`):
-
-```c
-static inline void gc_decref_atomic(PyObject *op) {
-    _Py_atomic_add_uintptr(&op->ob_tid, (uintptr_t)-1);
-}
-```
+`gc_visit_thread_stacks(interp, state)` accounts for deferred references after
+page assignment and before marking begins.
 
 #### MARK_HEAP (roots + transitive marking)
 
-Workers scan pages for roots, work-stealing loop with `MAX_IDLE_ROUNDS = 3`.
+Workers scan pages for roots and then drain or steal reachable-object work. An
+atomic outstanding-work count covers root scanners plus queued and in-flight
+objects, so workers stop only when no scanner can publish more work and every
+published object has been traversed.
 
-#### SCAN_HEAP (collect unreachable)
+#### SCAN_HEAP (serial)
 
-Dynamic page distribution via atomic counter:
-
-```c
-// gc_free_threading_parallel.c:1584
-int page_idx = atomic_fetch_add(&work->page_counter, 1);
-```
-
-Thread-local worklists merged after barrier.
+`gc_visit_heaps(interp, &scan_heap_visitor, &state->base)` identifies the
+remaining unreachable objects. It remains serial because it merges reference
+counts and rewrites deferred frame references.
 
 ### 3.7 Thread Pool (_PyGCThreadPool)
 
 ```
   _PyGCThreadPool
-  +-------------------------------------------+
-  | mark_barrier     Workers wait for work     |
-  | done_barrier     All wait when done        |
-  | phase_barrier    Multi-phase sync          |
-  | workers[0..N-1]  deque, local, pool, tstate|
-  | current_work     type + parameters         |
-  +-------------------------------------------+
+  +------------------------------------------------+
+  | workers[0..N-1]  deque, wake condition        |
+  | done_cond         helper completion signal     |
+  | current_work      type + parameters            |
+  | worker_args       arguments owned by this pool |
+  +------------------------------------------------+
 ```
 
-Worker 0 = main thread. Dispatch via `thread_pool_do_work`
-(`gc_free_threading_parallel.c:1596`).
+Worker 0 is the collecting thread; `N-1` persistent helper threads represent
+workers 1 through N-1. `dispatch_and_wait()` signals only the active helpers,
+runs `mark_heap_pool_work(pool, 0)` directly, and waits for the
+signalled helpers on `done_cond`. The only current free-threaded work descriptor
+is `_PyGC_WORK_MARK_HEAP`.
+
+The mark-only helpers do not create Python thread states, so they are not
+reported as Python execution threads by external-inspection tools.
+`gc.disable_parallel()` joins the helpers and destroys the complete
+free-threaded pool; a later enable always creates a new pool.
+
+The configured count is capped at one participant per 8192 candidate objects;
+fewer than two work units use the serial path. If page assignment fails,
+`mark_heap` uses the upstream serial
+visitor. If parallel marking reports an error, reference counts are restored and
+the collection aborts, matching the serial error path. Root propagation,
+`update_refs`, and `scan_heap` are always serial.
+
+The pool and its worker-argument allocation are both owned by the interpreter's
+`_PyGCThreadPool`; there is no process-global worker-argument pointer.
+
+### 3.8 Fork Lifecycle
+
+Before `fork()`, CPython quiesces the enabled helper pool. In the parent, the
+after-fork hook makes a best-effort attempt to restart those helpers. A restart
+failure is cleared and parallel GC is disabled, leaving the successful parent
+process on the serial collector. The child does not create threads in the
+post-fork hook: parallel GC is disabled and remains serial until an explicit
+`gc.enable_parallel()` creates a fresh active pool. The GIL pool follows the
+same externally visible policy.
 
 ---
 
@@ -500,17 +457,16 @@ Based on Chase & Lev 2005 and Le et al. 2013.
 
 - Push/Take: owner, lock-free, LIFO for cache locality
 - Steal: any worker, lock-free CAS, FIFO for fairness
-- top/bot initialised to 1 (bug fix from paper, `ws_deque.h:206`)
-- Pre-allocated 2MB buffers via `_PyWSDeque_InitWithBuffer()` (`ws_deque.h:217`)
-- `_PyWSDeque_FiniExternal(deque, buffer)` for buffer-backed cleanup
-- OOM: `Py_FatalError` at Init (`ws_deque.h:194`) and Push/Grow (`ws_deque.h:329`)
+- top/bot initialised to 1
+- Initial capacity of 4096 pointers (32 KiB on 64-bit builds)
+- Growth allocation failure is reported to the collector; it never drops an
+  item and continues with a partially marked graph
 
-### 4.2 Barrier Synchronisation
+### 4.2 Synchronisation
 
 **File:** `Include/internal/pycore_gc_barrier.h`
 
 ```c
-// pycore_gc_barrier.h:64
 typedef struct {
     unsigned int num_left;
     unsigned int capacity;
@@ -520,11 +476,15 @@ typedef struct {
 } _PyGCBarrier;
 ```
 
-Portable: POSIX pthread or Windows SRWLOCK/CONDITION_VARIABLE.
+The barrier is portable across the POSIX and Windows implementations of the
+underlying mutex and condition-variable primitives. It is not the general
+dispatch mechanism. Both collectors use per-worker condition variables for
+targeted dispatch and a separate completion condition. The barrier is currently
+used for the GIL pool's startup handshake.
 
-### 4.3 Local Work Buffers
+### 4.3 GIL Local Work Buffers
 
-**Defined in:** `pycore_ws_deque.h:420`
+**Defined in:** `pycore_ws_deque.h`
 
 ```
   tp_traverse --> LocalBuffer (1024, zero fences)
@@ -533,18 +493,17 @@ Portable: POSIX pthread or Windows SRWLOCK/CONDITION_VARIABLE.
                      | steal: batch-steal from victim
 ```
 
-- `_PyGC_OverflowFlush` (`ws_deque.h:532`): half-flush, 38% faster than full
-- `_PyGC_RefillLocalFromDeque` (`ws_deque.h:476`): up to 512 items
-- `_PyGC_BatchSteal` (`ws_deque.h:496`): up to 512, lazy size check first
+- `_PyGC_OverflowFlush()`: half-flush to reduce deque traffic
+- `_PyGC_RefillLocalFromDeque()`: refill with up to 512 items
+- `_PyGC_BatchSteal()`: available shared helper; not used by the active paths
 
-### 4.4 Coordinator-Based Termination (GIL build)
+### 4.4 Work Termination
 
-For mark_alive work-stealing (`pycore_gc_parallel.h:327`):
-1. Worker exhausts work, tries to become coordinator (mutex election)
-2. Coordinator polls all deques, wakes idle workers via `_PyGCSemaphore`
-3. Termination: coordinator is last active + all deques empty
+The GIL mark phase drains each worker's local buffer and deque without stealing.
 
-FTP uses simpler `idle_rounds` counter (`MAX_IDLE_ROUNDS = 3`).
+Free-threaded `MARK_HEAP` uses work stealing. An atomic outstanding-work count
+covers active root scanners plus queued and in-flight objects, providing a
+global termination condition.
 
 ---
 
@@ -554,47 +513,30 @@ All in `Modules/gcmodule.c`.
 
 ### gc.enable_parallel(num_workers)
 
-- **GIL** (`gcmodule.c:549`): `_PyGC_ParallelInit()` + `_PyGC_ParallelStart()`
-- **FTP** (`gcmodule.c:513`): `_PyGC_ThreadPoolInit()`
-- num_workers >= 2 required
+- **GIL:** `_PyGC_ParallelInit()` plus `_PyGC_ParallelStart()`; `num_workers`
+  is the concurrency limit and the collecting thread only coordinates.
+- **Free-threaded:** `_PyGC_ThreadPoolInit()`; the collecting thread is one of
+  the `num_workers` participants, so the pool creates `num_workers - 1`
+  helpers. A
+  collection may activate fewer participants when it has fewer work units.
+- The runtime API accepts 2--64 workers in both builds.
+- Startup configuration applies the same range. Zero leaves parallel GC
+  disabled; one is rejected.
+- In a build without `--with-parallel-gc`, a nonzero startup request fails
+  interpreter initialization. Zero remains valid.
+- When already enabled, the same count is a no-op and a different count
+  replaces the pool in both builds.
 
 ### gc.disable_parallel()
 
-- **GIL** (`gcmodule.c:634`): `_PyGC_ParallelStop()` + disable
-- **FTP** (`gcmodule.c:621`): `_PyGC_ThreadPoolFini()`
+- Both implementations join their helper threads and destroy the complete
+  worker pool.
 
 ### gc.get_parallel_config()
 
 Returns `{'available': bool, 'enabled': bool, 'num_workers': int}`.
-FTP adds `'parallel_cleanup': True`.
-GIL build (when enabled) adds adaptive controller state:
-`'adaptive_workers'` (int).
-
-### gc.get_parallel_stats()
-
-Returns per-worker stats and phase timing (ns). Phase timing includes
-abstract names (`scan_mark_ns`, `stw_pause_ns`) for cross-build comparison.
-GIL build adds `'prev_cost_per_obj_ns'` (float) and
-`'last_generation'` (int).
-
-GIL build example:
-
-```python
-{
-    'enabled': True, 'num_workers': 8,
-    'roots_found': 142, 'roots_distributed': 3847,
-    'gc_roots_found': 3,
-    'collections_attempted': 15, 'collections_succeeded': 15,
-    'prev_cost_per_obj_ns': 1850.1,
-    'last_generation': 2,
-    'workers': [{'objects_marked': 131072, 'steal_attempts': 42, ...}, ...],
-    'phase_timing': {
-        'update_refs_ns': ..., 'mark_alive_ns': ...,
-        'subtract_refs_ns': ..., 'mark_ns': ...,
-        'scan_mark_ns': ..., 'stw_pause_ns': ...,
-    }
-}
-```
+After disable, both report zero workers because their pools have been
+destroyed.
 
 ---
 
@@ -608,8 +550,9 @@ objects cheaply. See Section 2.4.
 
 ### Why persistent thread pool?
 
-Thread create/join: ~100us/collection. Barrier signal: ~1-5us. 2MB pools
-allocated once and reused.
+Thread creation and joining are avoided between collections. Deque storage is
+retained and reused. Dispatch uses targeted condition-variable signals rather
+than a barrier broadcast.
 
 ### Why the split vector?
 
@@ -617,20 +560,17 @@ GC list has no random access. Split vector piggybacks on `update_refs`
 (zero extra traversals, zero atomics for partitioning). 8K resolution for
 fine-grained balancing.
 
-### Why pipelined producer-consumer for mark_alive?
+### Why Fetch-And in free-threaded MARK_HEAP?
 
-~100 interpreter roots form a hub. Naive work-stealing: 99% imbalance.
-Level-1 expansion creates thousands of starting points.
+Clearing `UNREACHABLE` is monotonic. Fetch-And returns the old bit value, so one
+worker owns traversal without a CAS retry loop. See Section 3.5.
 
-### Why relaxed atomics in FTP TryMarkAlive?
+### How is deque allocation failure handled?
 
-During STW, all threads cooperate. Duplicate marking is idempotent.
-Saves ~20-40 cycles/object vs atomic RMW. See Section 3.5.
-
-### Why Py_FatalError for deque OOM?
-
-Dropping objects = missed marks = use-after-free. Error propagation would
-require 12+ call site changes. Consistent with CPython practice.
+Every worklist producer propagates allocation failure. The GIL collector
+restores its list state and uses the serial path; the free-threaded collector
+restores reference counts and aborts the collection. Queues are reset after a
+free-threaded dispatch so borrowed object pointers cannot survive an error.
 
 ---
 
@@ -640,18 +580,18 @@ require 12+ call site changes. Consistent with CPython practice.
 
 | File | Description |
 |------|-------------|
-| `Python/gc_parallel.c` | GIL build: all 4 phases, worker thread, split vector, work queue, semaphore, coordinator, stats |
-| `Python/gc_free_threading_parallel.c` | FTP build: page enumeration/assignment, update_refs/mark_heap/scan_heap, thread pool, propagate, test APIs |
-| `Python/gc.c` | GIL base GC: `update_refs_with_splits()` (line 541), parallel calls in `deduce_unreachable()` (lines 1543-1697) |
-| `Python/gc_free_threading.c` | FTP base GC: parallel calls in `gc_mark_alive_from_roots()` (line 1524), `deduce_unreachable_heap()` (line 1588) |
-| `Modules/gcmodule.c` | Python API: `enable_parallel()` (510), `disable_parallel()` (618), `get_parallel_config()` (681), `get_parallel_stats()` (772) |
+| `Python/gc_parallel.c` | GIL build: helper threads, subtract/mark/sweep support, split vector, and fork hooks |
+| `Python/gc_free_threading_parallel.c` | Free-threaded build: page enumeration/assignment, parallel mark_heap, thread pool, and fork hooks |
+| `Python/gc.c` | GIL base GC: `update_refs_with_splits()` and parallel calls in `deduce_unreachable()` |
+| `Python/gc_free_threading.c` | Free-threaded base GC: serial root/update/scan paths and optional parallel mark in `deduce_unreachable_heap()` |
+| `Modules/gcmodule.c` | Python API: `enable_parallel()`, `disable_parallel()`, and `get_parallel_config()` |
 
 ### Header Files
 
 | File | Description |
 |------|-------------|
-| `Include/internal/pycore_gc_parallel.h` | GIL: worker/global state, split vector, work queue, semaphore, CPU/prefetch primitives, phase enum, API |
-| `Include/internal/pycore_gc_ft_parallel.h` | FTP: atomic bit ops, thread pool, work descriptor, worker state, page buckets, gc_refs ops, scan structs |
+| `Include/internal/pycore_gc_parallel.h` | GIL: worker/global state, split vector, prefetch primitives, phase enum, API |
+| `Include/internal/pycore_gc_ft_parallel.h` | Free-threaded: atomic bit ops, thread pool, mark work descriptor, worker state, page buckets |
 | `Include/internal/pycore_ws_deque.h` | Chase-Lev deque, local buffer, shared batch operations |
 | `Include/internal/pycore_gc_barrier.h` | Barrier with epoch protection, portable mutex/condvar macros |
 
@@ -662,26 +602,30 @@ require 12+ call site changes. Consistent with CPython practice.
 | `docs/ARCHITECTURE.md` | This file |
 | `docs/DESIGN_POST.md` | Design rationale, CinderX heritage, optimisations |
 | `docs/GETTING_STARTED.md` | Reviewer quick start: build, test, evaluate |
-| `docs/PEP_OUTLINE.md` | PEP draft outline |
+| `docs/pep-parallel-gc.rst` | Canonical proposal |
 
 ---
 
-## 8. Invariants
+## 8. Required Invariants
 
-1. **Every reachable object is marked.** Atomic marking + deque/buffer drain +
-   termination detection guarantee no missed marks.
+1. **Every reachable object must be marked.** Atomic marking, deque/buffer
+   draining, and termination detection are intended to establish this property;
+   the concurrency audit must validate that argument for every active path.
 
 2. **Marking is monotonic.** COLLECTING/UNREACHABLE bits only transition in one
    direction during a collection. No re-set after clear.
 
-3. **Serial equivalence.** Parallel GC collects exactly the same objects as
-   serial. Finalizers/weakrefs run in serial cleanup phase.
+3. **Semantic equivalence is the target.** Parallel GC must identify the same
+   reachable and unreachable objects as serial GC. Traversal and worklist order
+   are not guaranteed. Finalizers and weak-reference callbacks remain serial.
 
-4. **Worker isolation.** No shared mutable state beyond marking bits and deque
-   indices. Each worker has independent buffer, stats, deque storage, tstate.
+4. **Controlled sharing.** Each helper has its own deque and wake state; GIL
+   helpers also have local work buffers. Shared marking bits, counters, work
+   descriptors, and synchronization state use their documented atomic or
+   lock-based protocols.
 
-5. **Barrier completeness.** All workers arrive before any proceed. Epoch-based
-   barrier prevents spurious passage.
+5. **Phase completion.** A dispatch does not return until every selected worker
+   has signalled completion.
 
 ---
 
@@ -692,38 +636,34 @@ gc.collect()
   |
   deduce_unreachable(base, unreachable)                      [gc.c]
   |
-  |  (1) update_refs_with_splits(base, split_vector)         [gc.c:541]
+  |  (1) update_refs_with_splits(base, split_vector)
   |       Serial: gc_refs = Py_REFCNT(op), record waypoints
   |
-  |  (2) _PyGC_ParallelMarkAliveFromQueue(interp, base)      [gc_parallel.c:2192]
-  |       Producer-consumer: expand roots -> queue -> workers
-  |       Atomic: Fetch-And on _gc_prev COLLECTING bit
-  |
-  |  (3) _PyGC_ParallelSubtractRefs(interp, base)            [gc_parallel.c:1792]
+  |  (2) _PyGC_ParallelSubtractRefs(interp)
   |       Workers: tp_traverse + atomic decref on gc_refs
   |
-  |  (4) _PyGC_ParallelMoveUnreachable(interp, base, unr)    [gc_parallel.c:1489]
+  |  (3) _PyGC_ParallelMoveUnreachable(interp, base, unr)
   |       Workers: find gc_refs>0 roots, mark locally
   |       Main: serial sweep, move COLLECTING to unreachable
   |
   finalize_garbage(unreachable)                              [gc.c]
 ```
 
-## Appendix B: Full Collection Flow (FTP Build)
+## Appendix B: Full Collection Flow (Free-threaded Build)
 
 ```
 gc_collect_internal()
   |
   gc_mark_alive_from_roots(interp, state)                    [gc_free_threading.c]
-  |  _PyGC_ParallelPropagateAliveWithPool()
-  |  Relaxed atomic marking on ob_gc_bits
+  |  Serial upstream root propagation
   |
   deduce_unreachable_heap(interp, state)                     [gc_free_threading.c]
   |
-  |  (1) _PyGC_AssignPagesToBuckets()      Page distribution
-  |  (2) _PyGC_ParallelUpdateRefsWithPool() init+barrier+compute
-  |  (3) _PyGC_ParallelMarkHeapWithPool()   roots + work-stealing
-  |  (4) _PyGC_ParallelScanHeapWithPool()   atomic counter distribution
+  |  (1) gc_visit_heaps(... update_refs ...) serial upstream pass
+  |  (2) _PyGC_AssignPagesToBuckets()        parallel-mark preparation
+  |  (3) _PyGC_ParallelMarkHeapWithPool()     roots + work-stealing
+  |      or mark_heap_visitor                  serial fallback
+  |  (4) gc_visit_heaps(... scan_heap ...)    serial upstream pass
   |
   handle_weakrefs / delete_garbage                           [gc_free_threading.c]
 ```
@@ -732,6 +672,5 @@ gc_collect_internal()
 
 Ported from [CinderX](https://github.com/facebookincubator/cinder).
 Key divergences: CPython atomic wrappers, multi-phase architecture,
-pipelined producer-consumer, split vector, thread-local pools, FTP build
-(entirely new). `pycore_ws_deque.h` and `pycore_gc_barrier.h` carry Meta
-copyright headers.
+split-vector work distribution, thread-local work buffers, and the free-threaded
+integration. Provenance and licensing still need an upstream-readiness review.

@@ -6,16 +6,17 @@ This script investigates the hypothesis that multi-threaded object creation
 causes different heap distribution (across mimalloc thread-local heaps) that
 makes parallel GC more expensive.
 
-IMPORTANT: For accurate serial vs parallel comparison, use --subprocess mode
-to avoid stale stats contamination between runs.
+Serial and parallel cases run in separate subprocesses so each starts with a
+clean collector state.
 
 Usage:
     ./python ../benchmarks/gc_creation_analysis.py --creation-threads --heap ai_workload
     ./python ../benchmarks/gc_creation_analysis.py --chain-vs-clusters
-    ./python ../benchmarks/gc_creation_analysis.py --all-phases --heap ai_workload
+    ./python ../benchmarks/gc_creation_analysis.py --comparison --heap ai_workload
 """
 import sys
 import argparse
+import gc
 import subprocess
 import threading
 import random
@@ -115,8 +116,15 @@ def create_ai_workload(n, cluster_size=100):
 
 
 def create_clusters(n, cluster_size=100):
-    """Create isolated Node clusters (like benchmark chain but clustered)."""
-    return create_chain(n, cluster_size)
+    """Create isolated cyclic graphs with two outgoing edges per node."""
+    clusters = []
+    for _ in range(max(1, n // cluster_size)):
+        nodes = [Node() for _ in range(cluster_size)]
+        for i, node in enumerate(nodes):
+            node.refs.append(nodes[(i + 1) % cluster_size])
+            node.refs.append(nodes[(i * 7 + 3) % cluster_size])
+        clusters.append(nodes)
+    return clusters
 
 
 HEAP_GENERATORS = {
@@ -211,20 +219,9 @@ def create_heap_multi_thread(heap_type, n, num_threads, cluster_size=100,
 # GC Testing
 # =============================================================================
 
-PHASES = [
-    ('mark_alive', 'mark_alive_ns'),
-    ('update_refs', 'update_refs_ns'),
-    ('mark_heap', 'mark_heap_ns'),
-    ('scan_heap', 'scan_heap_ns'),
-    ('find_weakrefs', 'find_weakrefs_ns'),
-    ('cleanup', 'cleanup_ns'),
-    ('finalize', 'finalize_ns'),
-    ('resurrection', 'resurrection_ns'),
-]
-
-
-def run_subprocess_test(mode, workers, creation_threads, size, heap_type='ai_workload',
-                        survivors=False, cluster_size=100, keep_threads_alive=False):
+def run_subprocess_test(mode, workers, creation_threads, size,
+                        heap_type='ai_workload', survivor_ratio=0.0,
+                        cluster_size=100, keep_threads_alive=False):
     """Run a GC test in a subprocess for clean state.
 
     Args:
@@ -232,10 +229,9 @@ def run_subprocess_test(mode, workers, creation_threads, size, heap_type='ai_wor
             keeping pages in live thread heaps. If False (default), threads
             exit after creation, putting pages in abandoned pool.
     """
-    if survivors:
-        release_code = "keep = clusters; clusters = None"
-    else:
-        release_code = "clusters = None"
+    release_code = f'''keep_count = int(len(clusters) * {survivor_ratio!r})
+keep = clusters[:keep_count]
+clusters = None'''
 
     # Thread creation mode
     if keep_threads_alive:
@@ -246,6 +242,7 @@ def run_subprocess_test(mode, workers, creation_threads, size, heap_type='ai_wor
     script = f'''
 import gc
 import sys
+import time
 import random
 import threading
 
@@ -305,7 +302,21 @@ def create_ai_workload(n, cluster_size):
         clusters.append(all_nodes)
     return clusters
 
-GENERATORS = {{"chain": create_chain, "ai_workload": create_ai_workload, "clusters": create_chain}}
+def create_clusters(n, cluster_size):
+    clusters = []
+    for _ in range(max(1, n // cluster_size)):
+        nodes = [Node() for _ in range(cluster_size)]
+        for i, node in enumerate(nodes):
+            node.refs.append(nodes[(i + 1) % cluster_size])
+            node.refs.append(nodes[(i * 7 + 3) % cluster_size])
+        clusters.append(nodes)
+    return clusters
+
+GENERATORS = {{
+    "chain": create_chain,
+    "ai_workload": create_ai_workload,
+    "clusters": create_clusters,
+}}
 
 mode = "{mode}"
 workers = {workers}
@@ -317,11 +328,11 @@ thread_mode = "{thread_mode}"
 
 if mode == "parallel":
     gc.enable_parallel(num_workers=workers)
+    config = gc.get_parallel_config()
+    if not config.get("enabled") or config.get("num_workers") != workers:
+        raise RuntimeError(f"parallel GC activation failed: {{config!r}}")
 else:
-    try:
-        gc.disable_parallel()
-    except:
-        pass
+    gc.disable_parallel()
 
 gc.collect()
 gc.collect()
@@ -382,18 +393,18 @@ else:
     threads = None
 
 {release_code}
+start_ns = time.perf_counter_ns()
 collected = gc.collect()
-stats = gc.get_parallel_stats()
-pt = stats.get("phase_timing", {{}})
+elapsed_ns = time.perf_counter_ns() - start_ns
+config = gc.get_parallel_config()
 
 # Release pool threads after GC if applicable
 if release_threads is not None:
     release_threads()
 
-for key, val in sorted(pt.items()):
-    print(f"{{key}}={{val / 1e6:.3f}}")
 print(f"collected={{collected}}")
-print(f"enabled={{stats.get('enabled', False)}}")
+print(f"enabled={{config.get('enabled', False)}}")
+print(f"wall_ms={{elapsed_ns / 1e6:.3f}}")
 '''
     result = subprocess.run(
         [sys.executable, '-c', script],
@@ -417,8 +428,7 @@ print(f"enabled={{stats.get('enabled', False)}}")
 def test_creation_threads_impact(size, heap_type, gc_workers, creation_thread_counts,
                                   survivor_ratio=0.8):
     """Test how creation thread count affects parallel GC performance."""
-    survivors = survivor_ratio >= 1.0
-    survivor_pct = int(survivor_ratio * 100)
+    survivor_pct = round(survivor_ratio * 100)
 
     print("=" * 80)
     print(f"CREATION THREAD IMPACT ON PARALLEL GC")
@@ -429,25 +439,23 @@ def test_creation_threads_impact(size, heap_type, gc_workers, creation_thread_co
     for ct in creation_thread_counts:
         print(f"\n--- Creation threads: {ct} ---")
 
-        serial = run_subprocess_test('serial', gc_workers, ct, size, heap_type, survivors)
-        parallel = run_subprocess_test('parallel', gc_workers, ct, size, heap_type, survivors)
+        serial = run_subprocess_test(
+            'serial', gc_workers, ct, size, heap_type, survivor_ratio)
+        parallel = run_subprocess_test(
+            'parallel', gc_workers, ct, size, heap_type, survivor_ratio)
 
-        s_total = serial.get('total_ns', 1)
-        p_total = parallel.get('total_ns', 1)
-        s_mark = serial.get('mark_alive_ns', 0)
-        p_mark = parallel.get('mark_alive_ns', 0)
+        s_total = serial['wall_ms']
+        p_total = parallel['wall_ms']
         speedup = s_total / p_total if p_total > 0 else 0
 
-        print(f"  Serial:   total={s_total:.1f}ms, mark_alive={s_mark:.1f}ms")
-        print(f"  Parallel: total={p_total:.1f}ms, mark_alive={p_mark:.1f}ms")
+        print(f"  Serial:   {s_total:.1f}ms")
+        print(f"  Parallel: {p_total:.1f}ms")
         print(f"  Speedup: {speedup:.2f}x")
 
         results.append({
             'creation_threads': ct,
             'serial_total': s_total,
             'parallel_total': p_total,
-            'serial_mark': s_mark,
-            'parallel_mark': p_mark,
             'speedup': speedup,
         })
 
@@ -477,50 +485,47 @@ def compare_chain_vs_clusters(size, gc_workers):
     for heap_type in ['chain', 'clusters']:
         print(f"--- {heap_type.upper()} ---")
 
-        serial = run_subprocess_test('serial', gc_workers, 1, size, heap_type, survivors=True)
-        parallel = run_subprocess_test('parallel', gc_workers, 1, size, heap_type, survivors=True)
+        serial = run_subprocess_test(
+            'serial', gc_workers, 1, size, heap_type, survivor_ratio=1.0)
+        parallel = run_subprocess_test(
+            'parallel', gc_workers, 1, size, heap_type,
+            survivor_ratio=1.0)
 
-        s_total = serial.get('total_ns', 1)
-        p_total = parallel.get('total_ns', 1)
-        s_mark = serial.get('mark_alive_ns', 0)
-        p_mark = parallel.get('mark_alive_ns', 0)
+        s_total = serial['wall_ms']
+        p_total = parallel['wall_ms']
         speedup = s_total / p_total if p_total > 0 else 0
 
-        print(f"  Serial:   total={s_total:.1f}ms, mark_alive={s_mark:.1f}ms")
-        print(f"  Parallel: total={p_total:.1f}ms, mark_alive={p_mark:.1f}ms")
+        print(f"  Serial:   {s_total:.1f}ms")
+        print(f"  Parallel: {p_total:.1f}ms")
         print(f"  Speedup: {speedup:.2f}x")
         if speedup < 1.0:
             print(f"  ** PARALLEL IS {1/speedup:.1f}x SLOWER **")
         print()
 
 
-def show_all_phases(size, creation_threads, gc_workers, heap_type, survivors=False):
-    """Show all phases for a single run (useful for debugging)."""
+def show_comparison(size, creation_threads, gc_workers, heap_type,
+                    survivors=False):
+    """Show one serial/parallel collection comparison."""
     print("=" * 80)
-    print(f"ALL PHASES (serial vs parallel) - {'100% survivors' if survivors else '100% garbage'}")
+    contents = '100% survivors' if survivors else '100% garbage'
+    print(f"COLLECTION LATENCY (serial vs parallel) - {contents}")
     print(f"Heap: {heap_type}, Size: {size:,}, Creation threads: {creation_threads}")
     print(f"GC workers: {gc_workers}")
     print("=" * 80)
 
-    serial = run_subprocess_test('serial', gc_workers, creation_threads, size, heap_type, survivors)
-    parallel = run_subprocess_test('parallel', gc_workers, creation_threads, size, heap_type, survivors)
+    survivor_ratio = 1.0 if survivors else 0.0
+    serial = run_subprocess_test(
+        'serial', gc_workers, creation_threads, size, heap_type,
+        survivor_ratio)
+    parallel = run_subprocess_test(
+        'parallel', gc_workers, creation_threads, size, heap_type,
+        survivor_ratio)
 
-    all_keys = sorted(set(serial.keys()) | set(parallel.keys()))
-
-    print(f"\n{'Phase':<25} | {'Serial':>10} | {'Parallel':>10} | {'Diff':>10}")
-    print("-" * 65)
-
-    for key in all_keys:
-        if key in ('collected', 'enabled'):
-            continue
-        s = serial.get(key, 0)
-        p = parallel.get(key, 0)
-        if isinstance(s, str) or isinstance(p, str):
-            continue
-        diff = p - s
-        marker = "**" if abs(diff) > 1 else ""
-        name = key.replace('_ns', '')
-        print(f"{name:<25} | {s:>10.2f} | {p:>10.2f} | {diff:>+10.2f} {marker}")
+    serial_ms = serial['wall_ms']
+    parallel_ms = parallel['wall_ms']
+    print(f"Serial:   {serial_ms:.2f}ms")
+    print(f"Parallel: {parallel_ms:.2f}ms")
+    print(f"Speedup:  {serial_ms / parallel_ms:.2f}x")
 
 
 def compare_abandoned_vs_pool(size, gc_workers, creation_threads_list, heap_type):
@@ -546,18 +551,17 @@ def compare_abandoned_vs_pool(size, gc_workers, creation_threads_list, heap_type
             continue  # Single thread has no abandoned pool behavior
         print(f"--- Creation threads: {ct} ---")
 
-        abandon = run_subprocess_test('parallel', gc_workers, ct, size, heap_type,
-                                       survivors=True, keep_threads_alive=False)
-        pool = run_subprocess_test('parallel', gc_workers, ct, size, heap_type,
-                                    survivors=True, keep_threads_alive=True)
+        abandon = run_subprocess_test(
+            'parallel', gc_workers, ct, size, heap_type,
+            survivor_ratio=1.0, keep_threads_alive=False)
+        pool = run_subprocess_test(
+            'parallel', gc_workers, ct, size, heap_type,
+            survivor_ratio=1.0, keep_threads_alive=True)
 
-        a_total = abandon.get('total_ns', 1)
-        p_total = pool.get('total_ns', 1)
-        a_scan = abandon.get('scan_heap_ns', 0)
-        p_scan = pool.get('scan_heap_ns', 0)
-
-        print(f"  Abandon: total={a_total:.1f}ms, scan_heap={a_scan:.1f}ms")
-        print(f"  Pool:    total={p_total:.1f}ms, scan_heap={p_scan:.1f}ms")
+        a_total = abandon['wall_ms']
+        p_total = pool['wall_ms']
+        print(f"  Abandon: {a_total:.1f}ms")
+        print(f"  Pool:    {p_total:.1f}ms")
 
         if a_total > 0 and p_total > 0:
             ratio = a_total / p_total
@@ -571,8 +575,6 @@ def compare_abandoned_vs_pool(size, gc_workers, creation_threads_list, heap_type
             'creation_threads': ct,
             'abandon_total': a_total,
             'pool_total': p_total,
-            'abandon_scan': a_scan,
-            'pool_scan': p_scan,
         })
 
     print("=" * 80)
@@ -603,8 +605,8 @@ Examples:
     # Compare abandoned vs pool threads (shows parallel GC fix impact)
     ./python Lib/test/gc_creation_analysis.py --abandon-vs-pool --heap ai_workload
 
-    # Show all phases for debugging
-    ./python Lib/test/gc_creation_analysis.py --all-phases --heap ai_workload --survivors
+    # Show one serial/parallel comparison
+    ./python Lib/test/gc_creation_analysis.py --comparison --heap ai_workload --survivors
 """)
     parser.add_argument('--threads', type=int, default=1,
                         help='Number of threads for object creation')
@@ -621,12 +623,18 @@ Examples:
                         help='Compare chain vs clusters structure sensitivity')
     parser.add_argument('--abandon-vs-pool', action='store_true',
                         help='Compare abandoned threads vs pool threads')
-    parser.add_argument('--all-phases', action='store_true',
-                        help='Show all phases (subprocess mode)')
+    parser.add_argument('--comparison', action='store_true',
+                        help='Show one serial/parallel comparison')
     parser.add_argument('--survivors', action='store_true',
                         help='Keep all objects alive (100%% survivors, no garbage)')
 
     args = parser.parse_args()
+
+    config_fn = getattr(gc, 'get_parallel_config', None)
+    config = config_fn() if config_fn is not None else {}
+    if not config.get('available', False):
+        print('ERROR: parallel GC is not available in this build', file=sys.stderr)
+        return 2
 
     if args.chain_vs_clusters:
         compare_chain_vs_clusters(args.size, args.workers)
@@ -634,12 +642,13 @@ Examples:
         compare_abandoned_vs_pool(args.size, args.workers, [2, 4, 8], args.heap)
     elif args.creation_threads:
         test_creation_threads_impact(args.size, args.heap, args.workers, [1, 2, 4, 8])
-    elif args.all_phases:
-        show_all_phases(args.size, args.threads, args.workers, args.heap, args.survivors)
+    elif args.comparison:
+        show_comparison(
+            args.size, args.threads, args.workers, args.heap, args.survivors)
     else:
         # Default: show creation thread impact with ai_workload
         test_creation_threads_impact(args.size, args.heap, args.workers, [1, 2, 4])
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

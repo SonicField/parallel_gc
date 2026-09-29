@@ -1,120 +1,163 @@
 # Testing Strategy
 
-This document describes **what to test, why, and how to interpret results** for the parallel GC. For the underlying build/test commands, see [BUILD_AND_TEST.md](BUILD_AND_TEST.md). For benchmarks specifically, see [BENCHMARKING.md](BENCHMARKING.md).
+This document describes the evidence needed for the authoritative `cpython/`
+submodule. See [BUILD_AND_TEST.md](BUILD_AND_TEST.md)
+for commands and [BENCHMARKING.md](BENCHMARKING.md) for performance work.
 
-The terminal goal is upstream CPython PR submission. A CPython core reviewer must be able to verify the project end-to-end without asking questions. The single-command entry point is the [`Makefile`](../Makefile) at the project root.
+## Four-build policy
 
-## Single-command verification
+The GIL and free-threaded collectors are first-class implementations. Every
+collector, runtime, shared-primitives, configuration, or public-API change must
+be checked in both feature-on out-of-tree debug builds:
 
-For a reviewer or a developer wanting to know "is this change OK":
+- `build-port-gil/`: `--with-pydebug --with-parallel-gc`
+- `build-port-ft/`: `--disable-gil --with-pydebug --with-parallel-gc`
 
-```bash
-make gate-all   # Build both GIL and FTP, run full test suite for each
-```
+The matrix also includes both feature-off controls:
 
-This is the gate. If it passes, the change is correct enough to consider for merge. If it fails, the failure is the reviewer's signal.
+- `build-baseline-gil/`: `--with-pydebug`
+- `build-baseline-ft/`: `--disable-gil --with-pydebug`
 
-For faster iteration during development, use the narrower gates:
+These serial-GC debug baselines help distinguish upstream behavior from port
+regressions, but do not replace either feature-on build.
 
-```bash
-make gate-gil   # GIL build only
-make gate-ftp   # FTP build only
-```
+The `cpython/` submodule records the published fork commit. The root `Makefile`
+and scripts under `tools/` target the older project workflow and are not valid
+shortcuts for this matrix.
 
-## Test categories
+## Verification layers
 
-Five categories, ordered by what they prove.
+### Focused functional tests
 
-### 1. Core GC tests (`make test-gc` → `test_gc`)
-
-The upstream CPython GC test suite, run unmodified. Proves that **adding parallel GC has not regressed the serial GC path**. Must pass in every build mode.
-
-**What passing means**: serial GC behaves identically to vanilla CPython.
-**What failing means**: parallel-GC code (or build configuration) has broken a guarantee of the serial GC. Treat as a P0 regression.
-
-### 2. Parallel-GC algorithm tests
-
-Test files that exercise the parallel-GC implementation itself.
-
-| Test file | Build | What it proves |
-|-----------|-------|----------------|
-| `test_gc_ws_deque` | both | Chase-Lev work-stealing deque correctness — the algorithmic foundation. 11 tests including concurrent push/steal. |
-| `test_gc_parallel_mark_alive` | GIL only | mark_alive pre-marking optimisation correctness — root collection, finaliser interaction, type cycles. 22 tests. |
-| `test_gc_parallel` | FTP only | Parallel GC public API, enable/disable, phase timing, mixed scenarios. 35 tests. |
-| `test_gc_ft_parallel` | FTP only | FTP-specific internals — page counting, parallel marking, cross-thread refs. 30 tests. |
-| `test_gc_parallel_properties` | FTP only | Property-based: cycles collected, reachables survive, worker stats consistent. 16 tests, each iterates 100×. |
-
-Run as a group: `make test-parallel`.
-
-**Naming caveat (Phase 4 followup):** the names are inconsistent. `test_gc_parallel` is FTP-only despite no `_ft` prefix; `test_gc_ft_parallel` is named as FTP-only but runs build-agnostic tests too; `test_gc_parallel_mark_alive` is GIL-only despite no `_gil` prefix. The build/skip behaviour is enforced by `setUpModule()` in each file. A future renaming pass should make this explicit, e.g. `test_gc_parallel_gil_mark_alive`, `test_gc_parallel_ftp_pages`, `test_gc_parallel_common_ws_deque`.
-
-**What passing means**: the parallel GC implements its declared contract correctly.
-**What failing means**: depends — see the categories below.
-
-### 3. Full CPython suite (`make test-all` → `python -m test`)
-
-Runs every test CPython ships with. ~48,000 tests; ~1–2 minutes on a 192-core host, ~30 minutes typical desktop.
-
-**What passing means**: parallel GC has not regressed any CPython functionality and has not introduced incompatibilities visible from Python-level tests.
-
-**What failing means**: depends — the failure is the signal. Common modes:
-- **Help-text or env-var snapshot tests** (e.g. `test_cmd_line`) failing: parallel GC added a new env var or `-X` option in the wrong alphabetical position. Fix the source ordering in `Python/initconfig.c`.
-- **Test runner crashes** (e.g. `test_capi`): a parallel-GC test helper triggers an assertion outside its intended subprocess context. The helper must be renamed to avoid `test_capi`'s auto-discovery (prefix with `unsafe_`).
-- **Threading/concurrency tests** failing: most likely a real bug in the parallel GC. Re-run under TSan (`make build-tsan && make test-parallel`).
-
-### 4. Sanitiser gate (`make build-asan` or `make build-tsan` + tests)
-
-Address Sanitizer and Thread Sanitizer builds. TSan is the most important — parallel GC is inherently concurrent and Python's reference counting layered with worker threads + work-stealing deque is exactly what TSan was designed to catch.
+Run these modules in both parallel builds:
 
 ```bash
-make build-tsan
-make test-parallel
+PYTHON_PARALLEL_GC=4 <build>/python -m test -v \
+    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc_parallel_properties test_capi.test_config test_embed
+
+# Add these in the free-threaded build:
+PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -v \
+    test_gc_ft_parallel test_free_threading.test_gc
 ```
 
-**What passing means**: no data races detectable under TSan; no use-after-free, double-free, or buffer errors detectable under ASan (when run with `make build-asan`).
+| Test module | Applicable build | Main evidence |
+|-------------|------------------|---------------|
+| `test_gc` | All four builds | Existing cyclic-GC behavior and integration |
+| `test_gc_ws_deque` | All four builds | Shared deque, barrier, and local-buffer primitives |
+| `test_gc_parallel` | All four builds | Public API, unavailable-build behavior, configuration, lifecycle, and process/thread scenarios |
+| `test_gc_ft_parallel` | Free-threaded | End-to-end free-threaded graph and pool behavior |
+| `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
+| `test_capi.test_config` | All four builds | Public configuration layout and defaults |
+| `test_embed` | All four builds | Direct `PyConfig` validation and embedded startup |
+| `test_free_threading.test_gc` | Free-threaded | Existing free-threaded GC regression coverage |
 
-**What failing means**: a real concurrency or memory bug. Stop. Do not paper over it with locks or "fix" by suppressing the report. Read the TSan/ASan output and find the root cause.
+Build-specific modules skip in the other configuration. Tests may also skip
+for unavailable platform facilities. Treat an unexplained skip in the active
+mode as a result to investigate.
 
-**Build cost**: sanitiser builds require `make distclean` and full rebuild (~10 min on typical hardware, ~1 min on 192-core). Switching back to a non-sanitiser build also requires `make distclean`. This is by design — sanitisers change the ABI.
+### Broad CPython suite
 
-### 5. Benchmark gate (`make bench-quick` for sanity; full procedure in BENCHMARKING.md)
+Run the broad suite independently in each feature-on, first-class build. This catches
+integration failures in areas such as startup, extension traversal, object
+lifetime, and threading that focused GC tests may miss.
 
-Confirms the parallel GC actually delivers a speedup and that recent changes have not regressed performance. See [BENCHMARKING.md](BENCHMARKING.md) for the full procedure.
-
-**Required for**: any change touching `gc_parallel.c`, `gc_free_threading_parallel.c`, the dispatch path, or the work-stealing deque. Recommended for: any other parallel-GC-touching change.
-
-**What passing means**: speedup within tolerance of published numbers (1.23×–2.33× on supported workloads, −54% to −67% STW pause reduction).
-**What failing means**: performance regression. May or may not block merge depending on whether the change is a correctness fix worth the cost — but the regression must be measured and discussed, not hidden.
-
-## Decision matrix: what must pass before merge
-
-| Change scope | Required gates |
-|--------------|----------------|
-| Documentation only | (none — text changes only) |
-| Test code only | `make test-parallel` on the affected build |
-| Build-system change | `make gate-all` |
-| Algorithm change to parallel GC | `make gate-all` **and** `make build-tsan && make test-parallel` **and** benchmark check (see BENCHMARKING.md) |
-| Public API change (`gc.enable_parallel`, etc.) | `make gate-all` **and** updated tests in `test_gc_parallel*.py` **and** doc update |
-| Upstream PR submission | `make gate-all` **and** sanitiser builds clean **and** benchmark numbers re-published |
-
-## Reproducibility
-
-Property-based tests use a seed. Reproduce a failure by setting `GC_TEST_SEED`:
+Missing optional dependencies and the known upstream multiprocessing issue
+must be recorded, not silently converted into a clean result.
+Use these exact broad-suite command shapes on the current host:
 
 ```bash
-GC_TEST_SEED=12345 cd cpython && ./python -m test test_gc_parallel_properties -v
+PYTHON_PARALLEL_GC=4 build-port-gil/python -m test -q -j4 \
+    --timeout=300 --fail-env-changed --randseed=20260929 \
+    -x test_cext test_multiprocessing_fork \
+       test_multiprocessing_forkserver test_multiprocessing_spawn
+
+PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -q -j4 \
+    --timeout=300 --fail-env-changed --randseed=20260929 \
+    -x test_cext test_free_threading test_multiprocessing_fork \
+       test_multiprocessing_forkserver test_multiprocessing_spawn
 ```
 
-The seed is printed on every test run. Capture it from a CI log if you need to reproduce a failure that happened elsewhere.
+The exclusion reasons are recorded in [BUILD_AND_TEST.md](BUILD_AND_TEST.md).
 
-## What the strategy does NOT cover yet
+Current recorded status:
 
-Honest list of gaps a reviewer would identify:
+- The free-threaded broad active run passed 47,914 tests across 481 files,
+  including `test_external_inspection`.
+- The GIL broad active run passed 48,103 tests across 483 files, including
+  `test_capi`, `test_pickle`, and `test_external_inspection`.
+- Focused feature-off controls passed 203 tests in the GIL build and 211 tests
+  in the free-threaded build.
 
-- **No CI configuration.** The strategy assumes a developer runs `make gate-all` manually. An upstream PR would benefit from a GitHub Actions workflow that runs at least `gate-gil` and `gate-ftp` on each push, and `build-tsan + test-parallel` on a slower nightly cadence.
-- **Test naming is inconsistent** (see Category 2 above). A reviewer will trip over `test_gc_parallel` being FTP-only.
-- **No coverage measurement.** We can run all the tests but cannot say what percentage of parallel-GC code paths are exercised. A coverage gate would be valuable but requires extra build configuration.
-- **Sanitiser tests are not automated end-to-end.** `make build-tsan` builds; the developer must remember to also run `make test-parallel` after.
-- **Benchmark gates are not enforced numerically.** BENCHMARKING.md describes how to run them; no CI tooling compares results to a published baseline yet.
+Test counts are snapshots rather than a contract. Always retain the runner's
+summary, seed, failures, skips, and exact command.
 
-These are all addressable. They are documented here so a reviewer knows the boundary of what has been claimed.
+### Sanitizers
+
+At the currently recorded development state, AddressSanitizer builds passed
+213 affected-area GIL tests and 229 affected-area free-threaded tests with leak
+detection disabled and no sanitizer diagnostics. These results must be tied to
+a published commit for submission.
+
+The exact affected-area commands are:
+
+```bash
+ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+    build-port-gil-asan/python -m test -j4 --timeout=180 \
+    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc_parallel_properties test_capi.test_config test_embed
+
+ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+    build-port-ft-asan/python -m test -j4 --timeout=180 \
+    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc_parallel_properties test_capi.test_config test_embed \
+    test_gc_ft_parallel test_free_threading.test_gc
+```
+
+ThreadSanitizer is currently blocked by the absence of `libtsan`. This is a
+verification gap, not a pass. Once the runtime is available, run the same
+focused suite against separate GIL and free-threaded TSan builds.
+
+The same focused suites pass debug reference-leak checks with `-R 3:3` in both
+feature-on builds: 213 tests in the GIL build and 229 tests in the
+free-threaded build, with no positive leaked references or memory blocks.
+
+For every sanitizer run, record:
+
+- CPython commit and working-tree state;
+- compiler and sanitizer versions;
+- configure flags and build directory;
+- exact test command and seed;
+- expected skips and complete sanitizer output.
+
+### Configure regeneration
+
+The checked-in generated `configure` can be used for builds. Regeneration from
+`configure.ac` is currently blocked because the project workflow cannot reach
+`ghcr.io`. Changes to configure inputs therefore require a later regeneration
+and generated-file consistency check in an environment with registry access.
+
+### Performance
+
+Concurrency and collector changes require controlled benchmark comparison in
+addition to functional and sanitizer evidence. Follow
+[BENCHMARKING.md](BENCHMARKING.md) and record hardware, commits, configure
+flags, worker counts, seeds, warmups, samples, and raw results.
+
+## Evidence required by change type
+
+| Change | Required evidence |
+|--------|-------------------|
+| Documentation only | Link, command, and consistency review |
+| Test-only change | Focused tests in every applicable build |
+| Build-system change | All four GIL/free-threaded, feature-on/feature-off builds plus focused tests |
+| Collector or concurrency change | Both parallel builds, focused and broad suites, both-mode sanitizers, and benchmarks |
+| Public API change | Both parallel builds, focused API tests, broad suites, documentation, and compatibility rationale |
+| Submission candidate | Current dual-build functional results, both-mode sanitizer evidence, reproducible benchmarks, and explicit limitations |
+
+## Open verification gaps
+
+- ThreadSanitizer cannot run until `libtsan` is available.
+- Configure regeneration is blocked by `ghcr.io` network access.
+- There is no CI matrix enforcing both first-class build modes.
+- Native Linux x86-64, Windows, and macOS validation has not been run.

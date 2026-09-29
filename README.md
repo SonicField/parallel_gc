@@ -1,147 +1,161 @@
 # Parallel Garbage Collection for CPython
 
-A parallel garbage collector for CPython 3.15+, supporting both GIL (default) and free-threaded builds. Worker threads use work-stealing deques to parallelise the mark-sweep phases, reducing stop-the-world pause times on large heaps.
+This repository is an experimental implementation of parallel cyclic garbage
+collection for GIL and free-threaded CPython builds. Parallel collection is
+optional at build time and runtime.
 
-## What This Is
+## Repository status
 
-This repository contains a CPython fork (`cpython/` subdirectory, branch `parallel-gc-dev`) with parallel GC implementations:
-
-- **GIL build** (`Python/gc_parallel.c`) — parallelises subtract_refs, mark_alive, and mark phases during stop-the-world GC pauses
-- **Free-threaded build** (`Python/gc_free_threading_parallel.c`) — parallelises update_refs and mark_heap during stop-the-world pauses, using atomics for coordination between GC worker threads
-
-Both share the same core design: Chase-Lev work-stealing deques, coordinator-based termination detection, and barrier synchronisation.
-
-## How to Build
-
-### GIL build (with parallel GC)
+Clone the complete project first:
 
 ```bash
-cd cpython
-./configure --with-parallel-gc
-make -j$(nproc)
+git clone --recurse-submodules https://github.com/SonicField/parallel_gc.git
+cd parallel_gc
+git submodule update --init --recursive
 ```
 
-### Free-threaded build (with parallel GC)
+The authoritative source is the checked-in `cpython/` submodule at
+`SonicField/cpython` commit `9da963f754f747d64a6db4112efa2a2ef8bde111`, on
+branch `parallel-gc-upstream-port`. The port is based on CPython commit
+`333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
+with submodules therefore obtains the exact reviewed source.
+
+The root `Makefile` and scripts under `tools/` still describe the older project
+workflow. Use the explicit current-port commands below for build, test,
+sanitizer, and benchmark evidence.
+
+## Implemented scope
+
+- The GIL collector runs `update_refs_with_splits` serially, then parallelises
+  reference subtraction and reachability marking. The collecting thread moves
+  objects between GC lists; finalization and deallocation also remain serial.
+- The free-threaded collector parallelises only `mark_heap`, the transitive
+  reachability phase. Root propagation, `update_refs`, `scan_heap`,
+  finalization, and deallocation remain serial.
+
+Both implementations use persistent worker pools. The GIL path uses
+split-vector work assignment. The free-threaded path distributes mimalloc pages
+for `mark_heap` and uses work-stealing while traversing reachable objects.
+
+## Build the current local port
+
+Run these commands from the outer repository:
 
 ```bash
-cd cpython
-./configure --with-parallel-gc --disable-gil
-make -j$(nproc)
+mkdir -p build-port-ft
+cd build-port-ft
+../cpython/configure \
+    --disable-gil \
+    --with-pydebug \
+    --with-parallel-gc
+make -j"$(nproc)"
 ```
 
-**Switching between modes requires `make distclean`** — the object files, `pyconfig.h`, and `config.status` are incompatible.
-
-### Optimised build (for benchmarking)
+For a GIL build, use a separate build directory:
 
 ```bash
-cd cpython
-./configure --with-parallel-gc --disable-gil --enable-optimizations --with-lto
-make -j$(nproc)
+cd ..
+mkdir -p build-port-gil
+cd build-port-gil
+../cpython/configure \
+    --with-pydebug \
+    --with-parallel-gc
+make -j"$(nproc)"
 ```
 
-## How to Use
+Keeping the configurations out of tree prevents incompatible generated files
+and object files from being reused.
 
-**Command line:**
+The complete verification matrix also includes feature-off GIL and
+free-threaded control builds. See the [build-and-test guide](docs/BUILD_AND_TEST.md)
+for all four configurations.
+
+## Use and test
+
 ```bash
 ./python -X parallel_gc=4 your_script.py
+PYTHON_PARALLEL_GC=4 ./python your_script.py
 ```
 
-**Environment variable:**
-```bash
-PYTHONPARALLELGC=8 ./python your_script.py
-```
+The runtime API is:
 
-**Python API:**
 ```python
 import gc
 
-gc.enable_parallel(4)       # Enable with 4 workers
-stats = gc.get_parallel_stats()  # Per-phase timing, per-worker stats
-gc.disable_parallel()       # Revert to serial collection
+gc.enable_parallel(4)
+print(gc.get_parallel_config())
+gc.collect()
+gc.disable_parallel()
 ```
 
-## How to Test
+`gc.enable_parallel()` accepts worker counts from 2 through 64. Startup controls
+also accept zero to leave the collector disabled. In a build without
+`--with-parallel-gc`, a nonzero `-X parallel_gc`, `PYTHON_PARALLEL_GC`, or
+`PyConfig.parallel_gc_workers` request fails interpreter startup. The runtime
+enable and disable functions raise `RuntimeError` in that build, while
+`gc.get_parallel_config()` reports that the feature is unavailable.
+
+From a configured build directory, run:
 
 ```bash
-cd cpython
-
-# Core GC tests
-./python -m test test_gc -v
-
-# Parallel GC tests
-./python -m test test_gc_parallel -v
-./python -m test test_gc_parallel_mark_alive -v
-./python -m test test_gc_ws_deque -v
+PYTHON_PARALLEL_GC=4 ./python -m test -j4 \
+    test_gc \
+    test_gc_ws_deque \
+    test_gc_parallel \
+    test_gc_parallel_properties \
+    test_capi.test_config \
+    test_embed
 ```
 
-**Both build modes must pass all tests.** Run the test suite in both GIL and free-threaded configurations before considering a change complete.
+For the free-threaded build, also run `test_gc_ft_parallel` and
+`test_free_threading.test_gc`. See the build-and-test guide for the full matrix.
 
-## How to Benchmark
+## Fork behavior
 
-```bash
-cd cpython
+Parallel worker threads are quiesced before `fork()`. In the parent, CPython
+attempts to restart the previous worker pool; if that fails, the successful
+fork is preserved and parallel GC is disabled. The child does not create worker
+threads in the post-fork handler and uses serial GC until
+`gc.enable_parallel()` is called explicitly.
 
-# Quick smoke test
-./python ../benchmarks/gc_perf_benchmark.py --quick
+Helpers invoke `tp_traverse` without attaching Python thread states. This
+matches the current C-API contract: `tp_traverse` may be called from any thread,
+and only the collecting thread's state remains attached while the world is
+stopped.
 
-# Full benchmark suite
-./python ../benchmarks/gc_perf_benchmark.py --full
-```
+## Performance evidence
 
-Benchmark scripts in `benchmarks/`:
+No performance result is claimed yet for this port. The progress log records
+functional suite passes on Linux AArch64 for the current development state. See
+[the benchmarking guide](docs/BENCHMARKING.md) for the measurements required
+before proposing a performance claim.
 
-| Script | What it measures |
-|--------|-----------------|
-| `gc_perf_benchmark.py` | Collection time vs workers and heap size |
-| `gc_creation_analysis.py` | Object creation overhead |
-| `gc_locality_benchmark.py` | Cache/NUMA effects on scaling |
-| `gc_production_experiment.py` | Realistic workload simulation |
-
-## Results Summary
-
-On an optimised (PGO+LTO) free-threaded build with 1M objects, 8 workers (Intel Xeon Platinum 8339HC, 192 CPUs):
-
-| Heap Type | Collection Speedup |
-|-----------|-------------------|
-| Chain (linked list) | 1.89x |
-| Tree (binary) | 1.33x |
-| Wide tree | 1.37x |
-| Graph (random) | 2.33x |
-| Layered | 1.45x |
-| Independent | 1.23x |
-| AI workload | 1.43x |
-| Web server | 1.32x |
-
-Stop-the-world pause reduction: -54% to -67% on realistic workloads. Synthetic throughput: +31% geomean. Speedup depends on heap structure, object count, and available cores. Run-to-run variance is significant on some heap types (CV 14-23%) due to cache and NUMA sensitivity.
-
-Results from two independent runs with fixed seeds (seed=42) and 5 iterations each. See `benchmarks/results/` for full data.
-
-## Key Files
+## Key files
 
 | File | Purpose |
 |------|---------|
-| `cpython/Python/gc_parallel.c` | GIL parallel GC implementation |
-| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel GC implementation |
-| `cpython/Include/internal/pycore_gc_parallel.h` | GIL parallel GC data structures |
-| `cpython/Include/internal/pycore_gc_ft_parallel.h` | Free-threaded parallel GC data structures |
-| `cpython/Include/internal/pycore_gc_barrier.h` | Shared barrier implementation |
-| `cpython/Modules/gcmodule.c` | Python-level gc module API |
+| `cpython/Python/gc_parallel.c` | GIL parallel collector |
+| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel mark implementation |
+| `cpython/Include/internal/pycore_gc_parallel.h` | GIL collector state |
+| `cpython/Include/internal/pycore_gc_ft_parallel.h` | Free-threaded collector state |
+| `cpython/Include/internal/pycore_ws_deque.h` | Shared work-stealing deque |
+| `cpython/Include/internal/pycore_gc_barrier.h` | Shared barrier |
+| `cpython/Modules/gcmodule.c` | Python-level control and configuration API |
 
 ## Documentation
 
-- [Getting Started](docs/GETTING_STARTED.md) — quick start, API reference, repository layout, reading order
-- [Architecture Guide](docs/ARCHITECTURE.md) — GIL and FTP collector internals, shared infrastructure, invariants
-- [Build and Test Guide](docs/BUILD_AND_TEST.md) — all build configurations, test suites, development workflow
-- [Benchmarking Guide](docs/BENCHMARKING.md) — benchmark scripts, expected results, methodology
-- [Design Post](docs/DESIGN_POST.md) — technical deep dive, algorithms, divergence from CinderX
-- [PEP Outline](docs/PEP_OUTLINE.md) — draft PEP structure and rationale
-
-## Platform Support
-
-Tested on Linux x86_64. Windows and macOS builds are not yet tested and may require platform-specific work (thread primitives, CPU pause instructions).
+- [Getting Started](docs/GETTING_STARTED.md)
+- [Architecture Guide](docs/ARCHITECTURE.md)
+- [Build and Test Guide](docs/BUILD_AND_TEST.md)
+- [Benchmarking Guide](docs/BENCHMARKING.md)
+- [Proposed Patch Series](docs/PATCH_SERIES.md)
+- [Current Source Inventory](docs/SOURCE_INVENTORY.md)
+- [Core-Developer Decisions](docs/CORE_DEV_DECISIONS.md)
+- [Design Post](docs/DESIGN_POST.md)
+- [PEP Draft](docs/pep-parallel-gc.rst)
 
 ## Links
 
-- **Fork:** https://github.com/SonicField/cpython
-- **Branch:** `parallel-gc-dev`
-- **Upstream:** https://github.com/python/cpython
+- [Project repository](https://github.com/SonicField/parallel_gc)
+- [Project CPython fork](https://github.com/SonicField/cpython)
+- [Upstream CPython](https://github.com/python/cpython)

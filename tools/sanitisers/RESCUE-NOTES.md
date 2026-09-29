@@ -1,51 +1,23 @@
-# Sanitiser Build Scripts — Rescue Notes
+# Sanitizer Script History
 
-**Captured:** 2026-05-29 during the 3.15 consolidation pass.
+The `*.original` files in this directory are snapshots from former separate
+CPython worktrees. Their paths and build procedures are obsolete; retain them
+only as development history.
 
-These `.original` scripts were preserved from the soon-to-be-deleted `cpython-asan/`, `cpython-tsan/`, `cpython-release/`, and the original `cpython/` worktrees. They are kept verbatim for reference. Paths inside are hardcoded to those worktrees and **will not work as-is** after Phase 1 deletion.
+In particular, an old note claimed that `--with-parallel-gc` failed to define
+`Py_PARALLEL_GC` and required editing `pyconfig.h`. That problem is not present
+in the current tree. The supported configure option emits the definition, and
+the project must not patch generated headers after configuration.
 
-Phase 4 of the consolidation will refactor them to operate against the consolidated `parallel_gc/cpython/` tree.
+`build-asan.sh` and `build-tsan.sh` are newer in-place wrappers, but they are
+still provisional:
 
-## Critical institutional knowledge captured here
+- they build only the GIL configuration;
+- they require Clang and the normal CPython build dependencies;
+- they run `make distclean` unconditionally, so they require an existing
+  generated Makefile;
+- their suggested test commands cover only the GIL implementation.
 
-### The `configure` → `pyconfig.h` bug
-
-Every script contains this manual fix:
-
-```bash
-sed -i 's|/\* #undef Py_PARALLEL_GC \*/|#define Py_PARALLEL_GC 1|' pyconfig.h
-```
-
-**Cause:** `./configure --with-parallel-gc` does not emit `#define Py_PARALLEL_GC 1` in `pyconfig.h`. It writes `/* #undef Py_PARALLEL_GC */` (the unset state), so the parallel-GC code is not actually compiled despite the configure flag being accepted.
-
-**Workaround:** patch `pyconfig.h` after `./configure`, before `make`.
-
-**Real fix (Phase 4 candidate):** the autoconf macro for `--with-parallel-gc` needs to be repaired so the `#define` is emitted. Until then, every build script must apply the `sed` workaround.
-
-### ASan/TSan flag injection
-
-Sanitiser scripts inject `-fsanitize=address` (or `thread`) into `BASECFLAGS` and `CONFIGURE_LDFLAGS` via `sed` on the generated `Makefile`. This is fragile (depends on Makefile structure) but works.
-
-```bash
-# ASan
-sed -i 's/^BASECFLAGS=\t/BASECFLAGS=\t -fsanitize=address/' Makefile
-sed -i 's/^CONFIGURE_LDFLAGS=.*/CONFIGURE_LDFLAGS=\t-fsanitize=address/' Makefile
-
-# TSan
-sed -i 's/^BASECFLAGS=\t/BASECFLAGS=\t -fsanitize=thread/' Makefile
-sed -i 's/^CONFIGURE_LDFLAGS=.*/CONFIGURE_LDFLAGS=\t-fsanitize=thread/' Makefile
-```
-
-### Compilers used
-
-- ASan/TSan: `clang` (CC=clang CXX=clang++)
-- Release: `gcc` (CC=gcc CFLAGS="-O3")
-- Debug-no-sanitiser: `gcc` (CC=gcc CFLAGS='-O2 -g')
-
-### Verification command after build
-
-```bash
-./python -c "import gc; print(gc.get_parallel_config())"
-```
-
-Should print the parallel-GC config (worker count, etc.) — confirms the macro was actually defined at compile time, not just configured.
+Use the explicit, mode-specific procedures in
+[BUILD_AND_TEST.md](../../docs/BUILD_AND_TEST.md) until the wrappers cover both
+GIL and free-threaded builds and have been validated from a fresh checkout.

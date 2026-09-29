@@ -92,7 +92,8 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
     print(f"High-Locality GC Benchmark (with real garbage)")
     print(f"=" * 60)
     print(f"Heap size: {size:,} objects")
-    print(f"Survivor ratio: {survivor_ratio} ({int((1-survivor_ratio)*100)}% garbage)")
+    garbage_pct = round((1 - survivor_ratio) * 100)
+    print(f"Survivor ratio: {survivor_ratio} ({garbage_pct}% garbage)")
     print(f"Workers: {workers}")
     print(f"Iterations: {iterations} (after {warmup} warmup)")
     print()
@@ -135,6 +136,9 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
     print(f"Running PARALLEL benchmark ({workers} workers)...")
     gc.disable()
     gc.enable_parallel(num_workers=workers)
+    config = gc.get_parallel_config()
+    if not config.get('enabled') or config.get('num_workers') != workers:
+        raise RuntimeError(f"parallel GC activation failed: {config!r}")
     parallel_stats = run_gc_timing(create_heap_with_garbage, iterations=iterations)
     gc.collect()
     gc.enable()
@@ -142,18 +146,6 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
     print(f"  Mean: {parallel_stats['mean']:.2f}ms")
     print(f"  Max: {parallel_stats['max']:.2f}ms")
     print(f"  Collected: {parallel_stats['collected']}")
-
-    # Get phase timing from last collection
-    try:
-        stats = gc.get_parallel_stats()
-        phase_timing = stats.get('phase_timing', {})
-        print()
-        print("Phase timing (last collection):")
-        for phase, ns in phase_timing.items():
-            if ns != 0:
-                print(f"  {phase}: {ns/1e6:.2f}ms")
-    except AttributeError:
-        pass
 
     # Comparison
     print()
@@ -188,12 +180,11 @@ def main():
                         help='Number of warmup iterations (default: 2)')
     args = parser.parse_args()
 
-    # Check if parallel GC is available
-    try:
-        gc.get_parallel_config()
-    except AttributeError:
-        print("ERROR: Parallel GC not available in this build")
-        return 1
+    config_fn = getattr(gc, 'get_parallel_config', None)
+    config = config_fn() if config_fn is not None else {}
+    if not config.get('available', False):
+        print("ERROR: parallel GC is not available in this build")
+        return 2
 
     run_benchmark(
         size=args.size,

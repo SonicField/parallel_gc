@@ -2,10 +2,11 @@
 """
 GC Production Experiment
 
-Measures cyclic garbage production across canonical pyperformance benchmarks.
+Measures cyclic garbage production across project-specific workloads inspired
+by common Python benchmark patterns.
 
 Purpose:
-    Determine which standard benchmarks produce cyclic garbage (requiring GC)
+    Determine which workload patterns produce cyclic garbage (requiring GC)
     versus acyclic garbage (freed by refcount). This informs realistic GC
     benchmark design.
 
@@ -113,7 +114,7 @@ class GCTracker:
 # =============================================================================
 # Benchmark Implementations
 # =============================================================================
-# Simplified versions of canonical pyperformance benchmarks.
+# Project-specific workloads inspired by common benchmark patterns.
 # These capture the essential allocation patterns of each benchmark.
 
 def benchmark_richards(iterations: int = 100) -> None:
@@ -696,11 +697,10 @@ def run_benchmark_with_gc(
 
         end_time = time.perf_counter()
         mem_after = get_memory_usage_kb()
-
-        # Final collection to catch remaining garbage
-        gc.collect()
-
         gc_stats = tracker.get_stats()
+
+        # Drain remaining garbage outside the measured interval and snapshot.
+        gc.collect()
 
         stats = GCStats(
             benchmark_name=name,

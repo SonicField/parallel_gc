@@ -1,25 +1,45 @@
 # Benchmarking Guide
 
-How to run benchmarks, interpret results, and what numbers to expect from the parallel GC.
+How to run the current benchmark tools and produce reviewable results.
 
 ## Quick Start
 
 ```bash
-cd cpython
+git clone --recurse-submodules https://github.com/SonicField/parallel_gc.git
+cd parallel_gc
 
-# Build optimised (required for meaningful benchmarks)
-./configure --with-parallel-gc --disable-gil --enable-optimizations --with-lto
-make -j$(nproc)
+mkdir -p build-benchmark-gil build-benchmark-ft
 
-# Quick sanity check (~1 minute)
-./python ../benchmarks/gc_perf_benchmark.py --quick
+# Build both optimized configurations in separate directories.
+(cd build-benchmark-gil && \
+    ../cpython/configure \
+        --with-parallel-gc --enable-optimizations --with-lto)
+make -C build-benchmark-gil -j"$(nproc)"
 
-# Standard run (~5 minutes)
-./python ../benchmarks/gc_perf_benchmark.py
+(cd build-benchmark-ft && \
+    ../cpython/configure \
+        --with-parallel-gc --disable-gil --enable-optimizations --with-lto)
+make -C build-benchmark-ft -j"$(nproc)"
 
-# Full run (~15 minutes, 5 iterations, synthetic heaps included)
-./python ../benchmarks/gc_perf_benchmark.py --full --include-synthetic
+# Quick sanity checks of the mixed workload.
+build-benchmark-gil/python benchmarks/gc_perf_benchmark.py --quick
+build-benchmark-ft/python benchmarks/gc_perf_benchmark.py --quick
+
+# Standard mixed-workload runs.
+build-benchmark-gil/python benchmarks/gc_perf_benchmark.py
+build-benchmark-ft/python benchmarks/gc_perf_benchmark.py
+
+# Longer runs including collection and synthetic-throughput benchmarks
+# (runtime is workload- and machine-dependent)
+build-benchmark-gil/python benchmarks/gc_perf_benchmark.py \
+    --full --include-synthetic
+build-benchmark-ft/python benchmarks/gc_perf_benchmark.py \
+    --full --include-synthetic
 ```
+
+The root `Makefile` and scripts under `tools/` target the older project
+workflow. Do not use `make build-release`, `make bench-quick`, or the legacy
+sanitizer/build helpers for current-port measurements.
 
 ---
 
@@ -33,8 +53,8 @@ The main benchmark measuring parallel GC performance across realistic and synthe
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--quick` | Quick sanity check (2 runs, 10s each) | — |
-| `--full` | Full suite (5 runs, 60s each) | — |
+| `--quick` | Set 2 runs per configuration and a 10-second duration | — |
+| `--full` | Set 5 runs per configuration and a 60-second duration | — |
 | `--duration, -d` | Duration per benchmark (seconds) | 30 |
 | `--runs, -r` | Number of runs per configuration | 3 |
 | `--threads, -t` | Application worker threads | 4 |
@@ -42,10 +62,13 @@ The main benchmark measuring parallel GC performance across realistic and synthe
 | `--heap-size, -s` | Objects for synthetic benchmarks | 500,000 |
 | `--json, -j` | Output JSON instead of markdown | — |
 | `--output, -o` | Output file (default: stdout) | — |
-| `--verbose, -v` | Include per-phase timing details | — |
-| `--include-synthetic` | Include synthetic stress tests | — |
+| `--include-synthetic` | Add collection and synthetic-throughput tests | off |
 
-**Realistic workloads (7):**
+The realistic benchmark is one mixed workload. Its application threads
+randomly select from these seven components; it does not report a separate
+result for each component.
+
+**Mixed-workload components (7):**
 
 | Workload | Cycles | Description |
 |----------|--------|-------------|
@@ -59,23 +82,25 @@ The main benchmark measuring parallel GC performance across realistic and synthe
 
 **Synthetic heap types (8):**
 
-| Heap Type | Description | Parallelism |
-|-----------|-------------|-------------|
-| chain | Circular linked lists | Low (sequential) |
-| tree | Binary trees with back-references | Medium |
-| wide_tree | Single root, many children | Medium |
-| graph | Random graphs with cycles | High (best case) |
-| layered | Neural-network-like layers | Medium-High |
-| independent | Self-referencing isolated clusters | High |
-| ai_workload | ML computation graph with finalisers | Medium |
-| web_server | HTTP request/response lifecycle | Medium |
+| Heap Type | Description |
+|-----------|-------------|
+| chain | Circular linked lists |
+| tree | Binary trees with back-references |
+| wide_tree | Single root, many children |
+| graph | Random graphs with cycles |
+| layered | Neural-network-like layers |
+| independent | Self-referencing isolated clusters |
+| ai_workload | ML computation graph with finalisers |
+| web_server | HTTP request/response lifecycle |
 
 **Output metrics:**
 - **Throughput** (workloads/sec or objects/sec) — mean, stddev, min/max
-- **STW pause** (ms) — mean, max across collections
-- **GC overhead** (% of total time)
+- **Collection latency** (ms) — mean and max callback-to-callback duration
+- **GC callback-active time** (% of wall time; not additive in the
+  free-threaded build)
 - **Speedup** — ratio of parallel to serial
-- **Geometric mean** — across all heap types
+- **Geometric mean** — collection ratios across all eight heap types, and
+  throughput ratios across the three synthetic throughput types
 
 **Examples:**
 
@@ -86,8 +111,8 @@ The main benchmark measuring parallel GC performance across realistic and synthe
 # JSON output for automated processing
 ./python ../benchmarks/gc_perf_benchmark.py --json -o results.json
 
-# Verbose with synthetic heaps
-./python ../benchmarks/gc_perf_benchmark.py --full --include-synthetic --verbose
+# Full run with synthetic heaps
+./python ../benchmarks/gc_perf_benchmark.py --full --include-synthetic
 ```
 
 ### gc_creation_analysis.py — Multi-Threaded Allocation Impact
@@ -106,8 +131,8 @@ Investigates how multi-threaded object creation affects parallel GC performance 
 # Compare abandoned threads vs thread pool
 ./python ../benchmarks/gc_creation_analysis.py --abandon-vs-pool --heap ai_workload
 
-# Show all GC phase timings (uses subprocess for clean state)
-./python ../benchmarks/gc_creation_analysis.py --all-phases --heap ai_workload
+# Show one isolated serial/parallel comparison
+./python ../benchmarks/gc_creation_analysis.py --comparison --heap ai_workload
 ```
 
 **Key options:**
@@ -117,9 +142,10 @@ Investigates how multi-threaded object creation affects parallel GC performance 
 - `--heap` — structure: chain, clusters, ai_workload
 - `--survivors` — keep all objects alive (100% survivors)
 
-### gc_locality_benchmark.py — Cache Locality Worst Case
+### gc_locality_benchmark.py — Contiguous Chain Locality
 
-Tests parallel GC on contiguous circular chains — the worst case for parallelisation (high cache locality, sequential traversal).
+Tests serial and parallel collection on contiguous circular chains. It is a
+single-worker-count locality experiment, not a NUMA-scaling benchmark.
 
 ```bash
 ./python ../benchmarks/gc_locality_benchmark.py --size 500000 --workers 8 --survivor-ratio 0.8
@@ -134,7 +160,8 @@ Tests parallel GC on contiguous circular chains — the worst case for paralleli
 
 ### gc_production_experiment.py — Cyclic Garbage Survey
 
-Measures which standard benchmarks actually produce cyclic garbage. Useful for understanding which workloads benefit from parallel GC.
+Measures which project-specific workload patterns produce cyclic garbage.
+This helps identify workloads that may benefit from parallel GC.
 
 ```bash
 # Run all 14 benchmarks
@@ -154,114 +181,92 @@ Classifies each benchmark as HIGH_CYCLES, MODERATE_CYCLES, MINIMAL_CYCLES, or NO
 
 ---
 
-## Expected Results
-
-All results below are from an optimised (PGO+LTO) free-threaded build on Intel Xeon Platinum 8339HC (192 CPUs, 4 NUMA nodes), 8 parallel GC workers, 1M objects, fixed seed=42, 5 iterations.
-
-### Collection Time Speedup
-
-| Heap Type | Serial (ms) | Parallel (ms) | Speedup |
-|-----------|-------------|---------------|---------|
-| Chain | 224.3 | 118.6 | 1.89x |
-| Tree | 237.9 | 178.9 | 1.33x |
-| Wide tree | 248.2 | 180.6 | 1.37x |
-| Graph | 315.0 | 135.5 | **2.33x** |
-| Layered | 177.1 | 122.4 | 1.45x |
-| Independent | 159.4 | 129.5 | 1.23x |
-| AI workload | 193.7 | 135.9 | 1.43x |
-| Web server | 157.7 | 119.5 | 1.32x |
-
-### STW Pause Reduction
-
-- **Realistic workloads:** -54% to -67% STW pause reduction
-- **Synthetic throughput geometric mean:** +31%
-
-### When Parallel GC Helps
-
-| Heap Size | Expected Speedup |
-|-----------|-----------------|
-| < 100K objects | 0.5-0.9x (slower — overhead dominates) |
-| 100K-300K | 0.9-1.1x (break-even) |
-| 300K-500K | 1.1-1.3x (slight win) |
-| > 500K | **1.2-2.3x** (clear win) |
-
-### When Parallel GC Does Not Help
-
-- Heaps under 100K objects (overhead exceeds benefit)
-- Linear chains or binary trees with limited parallelism in graph structure
-- Very short-lived automatic gen-0/gen-1 collections (barrier overhead dominates)
-
----
-
 ## Methodology
 
 ### Reproducibility
 
-The collection and throughput benchmarks (`gc_perf_benchmark.py`, `gc_creation_analysis.py`, `gc_locality_benchmark.py`) use `random.seed(42)` for reproducible heap topologies. `gc_production_experiment.py` does not set a fixed seed because its workloads are deterministic (no random heap generation). Results are reported as the **worst-of-two-runs** per heap type — no cherry-picking.
+`gc_perf_benchmark.py` uses deterministic per-worker random streams seeded
+from 42. Its paired collection runs also reconstruct heaps from fixed per-task
+streams and reject a serial/parallel pair if the generated object counts
+differ. The other multi-threaded tools use Python's process-global generator;
+their seed makes single-threaded construction repeatable but does not guarantee
+identical multi-threaded heaps. `gc_production_experiment.py` uses
+deterministic workloads.
+
+Each result file reports means over the samples in that invocation. Retain all
+raw samples and report every invocation rather than selecting a favorable run.
+The primary harness aborts on worker exceptions or shutdown timeouts rather
+than emitting a partial result. Its JSON records actual generated-object
+counts and SHA-256 fingerprints for dirty worktrees; clean published revisions
+are still preferred for final evidence.
 
 ### Run-to-Run Variance
 
-Some heap types show significant run-to-run variance (CV 14-23%) due to cache and NUMA sensitivity:
-
-| Heap Type | Typical CV |
-|-----------|-----------|
-| Chain | 3-5% |
-| Tree | 5-8% |
-| Graph | 14-18% |
-| Layered | 15-20% |
-| AI workload | 14-23% |
-| Web server | 12-18% |
-
-This variance is inherent to work-stealing on NUMA hardware. To get stable numbers:
+Collection measurements can have substantial within-run and run-to-run
+variance. To obtain useful numbers:
 
 1. Use at least 5 iterations (`--runs 5` or `--full`)
 2. Pin to a single NUMA node if possible: `numactl --cpunodebind=0 --membind=0 ./python ...`
 3. Run on a quiet machine (no competing workloads)
-4. Report geometric mean across heap types, not individual results
+4. Report every run and the raw samples or their full distribution
+5. Record the exact command, both repository commits, dirty state, compiler,
+   build flags, requested and active worker counts, and affinity/NUMA policy
 
 ### Comparing Serial vs Parallel
 
-The benchmarks run both serial and parallel configurations in the same process, same heap, same seed. This eliminates most sources of measurement noise except cache/NUMA effects.
+The benchmarks compare `gc.disable_parallel()` and `gc.enable_parallel(N)` in
+the same Python process and binary. They rebuild equivalent heaps for serial
+and parallel measurements; they do not collect the same heap twice.
+`gc_perf_benchmark.py` alternates measured serial and parallel runs to reduce
+systematic drift.
+
+This same-binary comparison measures the runtime-mode delta. It does not
+measure compile-time overhead from building with `--with-parallel-gc`; in the
+GIL build, for example, the shared decref visitor remains atomic while runtime
+parallelism is disabled. A submission campaign must also compare against
+optimized GIL and free-threaded builds compiled without the feature.
+
+`gc_perf_benchmark.py` measures both serial and parallel collection latency as
+the wall-clock interval between `gc.callbacks` start and stop events. This is
+the complete callback span, not a claim about the strictly stop-the-world
+portion of free-threaded collection.
 
 ### What the Numbers Mean
 
 - **Collection speedup:** How much faster a single `gc.collect()` call is with parallel workers. This is the primary metric.
-- **STW pause reduction:** How much shorter the application-visible pause is. This matters for latency-sensitive workloads.
-- **Throughput change:** Overall application throughput (allocation + collection + work). Usually neutral — parallel GC reduces collection time but doesn't speed up allocation.
-- **GC overhead:** Time spent in GC as a percentage of total time. Lower is better.
+- **Collection latency:** Callback-to-callback wall-clock duration for both
+  serial and parallel modes.
+- **Throughput change:** Overall application throughput, including allocation,
+  collection, and application work.
+- **GC callback-active time:** Sum of callback start-to-stop intervals as a
+  percentage of benchmark wall time. In the free-threaded build, intervals can
+  overlap application work, so this is not an exclusive overhead percentage
+  and should not be added to application time.
 
 ---
 
-## Benchmark Results Location
+## Benchmark results
 
-Published results are in `benchmarks/results/`:
-
-| File | Contents |
-|------|----------|
-| `intel_1m_w8.txt` | Summary (8 workers, 1M objects) |
-| `intel_1m_w8.json` | Full JSON data |
-| `intel_1m_w8_run1.txt/json` | Run 1 data |
-| `intel_locality_1m.txt` | Locality benchmark results |
-| `system_info.txt` | Hardware and build configuration |
-
-### System Info
-
-The reference results were collected on:
-
-```
-CPU: Intel Xeon Platinum 8339HC @ 1.80GHz
-Sockets: 4 x 24 cores (96 physical, 192 logical with HT)
-NUMA: 4 nodes
-L3 cache: 132 MiB (4 x 33 MiB)
-Build: Python 3.15.0a2+, --disable-gil --enable-optimizations --with-lto
-```
+No current-port result set is published yet. New result sets must record the
+exact CPython commit, parallel-GC commit, configuration flags, machine
+description, command line, raw samples, and variance. Keep GIL and
+free-threaded results separate, and retain serial results from the same
+binaries as their controls.
 
 ---
 
 ## Tips
 
 - **Always use an optimised build** for benchmarking. Debug builds have assertions and Py_REF_DEBUG overhead that distort results.
-- **Warm up** before timing. The `--warmup` option (default: 2 iterations) handles this.
+- **Warm up** before timing. `gc_perf_benchmark.py` uses 3 fixed collection
+  warmups; `gc_locality_benchmark.py` exposes `--warmup` (default: 2).
 - **Don't compare across machines** without documenting hardware. NUMA topology, cache sizes, and core count all affect results.
-- **The `--quick` flag** is for sanity checking, not publishable results. Use `--full` for numbers you'll report.
+- **The `--quick` flag** is for sanity checking, not publishable results.
+  `--full` increases duration and sample count but does not enable synthetic
+  tests; add `--include-synthetic` explicitly.
+- **Budget enough time.** With the documented 60-second duration and five
+  samples, `--full --include-synthetic` has a 40-minute timed floor per build
+  before heap construction and cleanup. On the current AArch64 host, allow
+  roughly 45–70 minutes per build and run the GIL and free-threaded campaigns
+  sequentially.
 - **JSON output** (`--json`) is machine-readable for automated analysis and regression tracking.
