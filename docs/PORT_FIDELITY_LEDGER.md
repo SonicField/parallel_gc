@@ -12,7 +12,7 @@ The GIL integration mapping is documented separately in
 - Baseline's upstream comparison point:
   `2e64e36a2b1f8ebb2a6f24ad5c8f75388047d039`
 - Current port under audit:
-  `323d3cc90adcc5dcc799f79812edd339b347a46c`
+  `624d4bc8f3a37b701a55d14c9923b1f999f14a83`
 - Port's upstream parent:
   `333071231d3a46cccc32d7f44b99328c3299d0b1`
 
@@ -20,7 +20,8 @@ The GIL integration mapping is documented separately in
 
 The port must preserve every algorithmic phase, synchronization choice,
 atomic invariant, adaptive mechanism, API behaviour, diagnostic, and test in
-the baseline. Code cleanup may change presentation only, never behaviour.
+the baseline unless a specific difference is discussed and recorded here.
+Code cleanup may change presentation only, never behaviour.
 
 An upstream incompatibility is a hard blocker. It must be documented and
 discussed with Alex before any adaptation is designed or implemented. Passing
@@ -33,6 +34,8 @@ new tests or CPython CI is not evidence of parity with the baseline.
 - **CHANGED**: both exist, but behaviour or implementation semantics differ.
 - **BLOCKED**: current upstream prevents a direct port; no resolution is
   authorized until discussed.
+- **APPROVED DIFFERENCE**: a specific divergence was discussed and accepted;
+  the reason must be recorded here.
 - **UNAUDITED**: comparison is not complete.
 
 ## Restoration status
@@ -48,14 +51,14 @@ new tests or CPython CI is not evidence of parity with the baseline.
 | Statistics | `gc.get_parallel_stats()` with phase timing | Restored | MATCH |
 | Configuration reporting | Includes adaptive count and FT cleanup capability | Restored | MATCH |
 | Reconfiguration | Baseline GIL and FT contracts | Restored | MATCH |
-| Environment option | `PYTHONPARALLELGC` | Restored | MATCH |
-| `PyConfig` field | `parallel_gc` | Restored | MATCH |
-| Startup worker range | 0 through 256 | Restored | MATCH |
+| Environment option | Baseline startup environment control | Not present | APPROVED DIFFERENCE: runtime API only |
+| `PyConfig` field | `parallel_gc` | Not present | APPROVED DIFFERENCE: runtime API only |
+| Startup worker range | 0 through 256 | Fixed internal ceiling of 16 | APPROVED DIFFERENCE: adaptive runtime selection |
 | Resizable barrier | `_PyGCBarrier_Resize` supports adaptive FT dispatch | Restored | MATCH |
 | Deque backing store | Preallocated external-buffer initialization/finalization | Restored | MATCH |
 | GIL shared work queue | Block queue and semaphore support parallel root marking | Restored | MATCH |
 | Worker thread state | Baseline helper thread-state and accounting fields | Restored | MATCH |
-| Deque allocation failure | Baseline fatal behavior | Restored | MATCH |
+| Deque allocation failure | Baseline behavior | Explicit propagation; no silent work loss | CHANGED; final failure-path audit required |
 | Synchronization failures | Baseline native-operation handling | Restored | MATCH |
 | Fork lifecycle | No baseline-specific hooks | Reduced-port hooks removed | MATCH |
 | GIL mark-alive tests | 34-test dedicated module | Restored exactly | MATCH |
@@ -83,62 +86,61 @@ These blob identifiers make the intended source exact rather than descriptive:
 | Path | Baseline blob | Current-port blob | Status |
 |---|---|---|---|
 | `Include/internal/pycore_gc_barrier.h` | `f77578d8db82d184788d2c19023a357a007591a1` | `f77578d8db82d184788d2c19023a357a007591a1` | MATCH |
-| `Include/internal/pycore_gc_ft_parallel.h` | `816d74deecfcddf6164479de43bc5d8d9d4dcd5e` | `816d74deecfcddf6164479de43bc5d8d9d4dcd5e` | MATCH |
-| `Include/internal/pycore_gc_parallel.h` | `b6c9da7225077ba8adb94a515fc6f384cdc739c0` | `b6c9da7225077ba8adb94a515fc6f384cdc739c0` | MATCH |
-| `Include/internal/pycore_gc_random_walk.h` | `36fcd08d813de99d07391b781555685aa77c4362` | `36fcd08d813de99d07391b781555685aa77c4362` | MATCH |
+| `Include/internal/pycore_gc_ft_parallel.h` | `816d74deecfcddf6164479de43bc5d8d9d4dcd5e` | `96c242bb4a2c52392a092cc5b8b13af363f40201` | APPROVED DIFFERENCE: rollback state |
+| `Include/internal/pycore_gc_parallel.h` | `b6c9da7225077ba8adb94a515fc6f384cdc739c0` | `2977d32000434b8ca719d9de231017d7275455b7` | APPROVED DIFFERENCES: fixed ceiling, threshold, rollback state, visitor declaration |
+| `Include/internal/pycore_gc_random_walk.h` | `36fcd08d813de99d07391b781555685aa77c4362` | `b64ccbbf84ed6653af3573f29668d3eae6202de2` | APPROVED DIFFERENCE: reject regressions and walk back |
 | `Include/internal/pycore_ws_deque.h` | `fd268cd416eba16d1e5dea513e191e7a1e899c97` | `fd268cd416eba16d1e5dea513e191e7a1e899c97` | MATCH |
-| `Python/gc_free_threading_parallel.c` | `753b9bfb9144b8530ca03c6fe40f7af065c431ab` | `753b9bfb9144b8530ca03c6fe40f7af065c431ab` | MATCH |
-| `Python/gc_parallel.c` | `21dd4468d05cc644882a74805eeb047ae9931426` | `5dc28f6833a279493d795f558a42c3efecf17051` | MATCH WITH APPROVED LIST-BIT MAPPING |
+| `Python/gc_free_threading_parallel.c` | `753b9bfb9144b8530ca03c6fe40f7af065c431ab` | `b8c4a4e24ff1c6acb68d88199e157a16fbb54134` | APPROVED DIFFERENCE: initialize rollback state |
+| `Python/gc_parallel.c` | `21dd4468d05cc644882a74805eeb047ae9931426` | `40120b54c92fb673682fec52e4b4cdcc244b7398` | APPROVED DIFFERENCES: current list bit, complete pre-mark draining, rollback state |
 
 The current versions are not accepted as equivalent merely because portions of
 their control flow or APIs have the same names.
 
 The baseline patch adds 157 Python test methods across the parallel-GC test
-modules and `Lib/test/test_free_threading/test_gc.py`. The current port adds 58
-across the corresponding files. The baseline also adds 29 C test/helper entry
-points in `Modules/_testinternalcapi/test_ws_deque.c`. New port-side tests do not
-count as replacements until their assertions have been mapped individually.
+modules and `Lib/test/test_free_threading/test_gc.py`; all 157 are present in
+the current port. The baseline also adds 29 C test/helper entry points in
+`Modules/_testinternalcapi/test_ws_deque.c`; the current file retains those and
+adds coverage for the approved port behavior.
 
-## Candidate upstream blockers requiring reproduction
+## Reported blockers and outcomes
 
-These were reported while constructing the reduced port, but the failing
-intermediate source states were not committed. They are therefore hypotheses,
-not authorization for a behavioural change:
+The earlier reduced port reported several conflicts without preserving a
+reproducer. Restoration showed that none justified deleting a baseline phase:
 
-| Baseline facility | Reported current-upstream conflict | Required evidence |
-|---|---|---|
-| GIL interpreter-root pre-mark | Stale/freed pointers appeared in a broad run | Exact baseline path ported unchanged, deterministic reproducer, and failing assertion or sanitizer trace |
-| FT parallel root propagation | `validate_gc_objects` assertion | Exact baseline path ported unchanged and minimized failing test |
-| FT parallel `update_refs` | `validate_gc_objects` assertion; upstream now lazily initializes referents outside the page walk | Exact baseline path ported unchanged and minimized failing test |
-| FT parallel `scan_heap` | Resurrection assertions in `test_crossinterp` and `test_pdb` | Exact baseline path ported unchanged and minimized failing test |
-| Helper-owned Python thread states | Reported incompatibility with external thread inspection | Exact test, trace, and upstream invariant that conflict with the baseline design |
+| Facility | Outcome |
+|---|---|
+| GIL interpreter-root pre-mark | Restored. A stale-pointer crash was reproduced and traced to completion with a non-empty worker-private deque. Workers now drain the complete private closure before returning. |
+| FT root propagation | Restored and exercised by the original tests. |
+| FT parallel `update_refs` | Restored with its two-pass barrier and exercised by the original tests. |
+| FT parallel `scan_heap` | Restored, including abandoned pages and unique-ID batching, and exercised by the original tests. |
+| Helper-owned Python thread states | Restored; the broad `test_external_inspection` run passed on the earlier port revision. Current-revision broad validation remains required. |
 
-Until reproduced, none of these claims permits deletion, serialization, or
-replacement of the baseline facility.
+## Baseline paths deliberately absent from the port delta
 
-## Baseline-modified paths absent from the port delta
+The following baseline paths implement either the removed startup interface or
+an unrelated upstream policy and are intentionally absent after discussion:
 
-- `.gitignore`
-- `Include/internal/pycore_gc_random_walk.h`
-- `Include/internal/pycore_uniqueid.h`
-- `Lib/test/test_gc_parallel_mark_alive.py`
-- `Objects/object.c`
-- `PCbuild/_freeze_module.vcxproj`
-- `PCbuild/_freeze_module.vcxproj.filters`
-- `Python/brc.c`
-- `Python/uniqueid.c`
+- `Include/cpython/initconfig.h`, `Python/initconfig.c`,
+  `Programs/_testembed.c`, `Doc/c-api/init_config.rst`, and
+  `Doc/using/cmdline.rst`: environment, `-X`, and `PyConfig` worker selection;
+- `Python/brc.c`: an accidental relocation made during an earlier BRC
+  experiment; current upstream's BRC implementation is retained; and
+- `.gitignore`: repository housekeeping, not collector behavior.
 
-Some entries may ultimately prove generated or behaviour-neutral. They remain
-in scope until that is demonstrated and explicitly accepted.
+The RSS-based free-threaded collection-deferral logic is also not restored,
+because it was an upstream policy inherited by the baseline rather than part
+of parallel GC.
 
 ## Literal patch applicability
 
 The complete baseline delta was applied without modification in a disposable,
-detached worktree at the port's upstream parent. The active branch was not
-modified.
+detached worktree at the port's upstream parent. This historical exercise
+identified 36 clean applications and 12 textual conflicts; those conflicts
+were subsequently inspected and resolved rather than treated as permission to
+change the collector design.
 
 - 36 paths apply unchanged.
-- 12 paths have textual conflicts and are hard blockers pending inspection.
+- 12 paths had textual conflicts.
 
 The conflicted paths are:
 
@@ -155,14 +157,13 @@ The conflicted paths are:
 - `Python/initconfig.c`
 - `Python/pylifecycle.c`
 
-A clean textual application is not yet classified as a semantic match. Each of
-the 48 paths remains subject to source and test review.
+A clean textual application alone was not classified as a semantic match.
 
 ### Conflict classification
 
-No required 3.15-to-current spelling change has been identified. In particular,
-the port's `PyConfig.parallel_gc_workers` and `PYTHON_PARALLEL_GC` names were
-not forced by upstream; the baseline names apply cleanly.
+No required 3.15-to-current spelling change was identified. In particular,
+startup worker selection was removed by an explicit interface decision, not
+because an upstream rename forced it.
 
 Nine conflicts are integration-placement conflicts and do not presently imply
 an algorithm change:
@@ -206,18 +207,21 @@ change was discussed and approved: the baseline parallel sweep's
 `NEXT_MASK_UNREACHABLE` representation. The removed old-space bit belonged to
 the retired incremental serial collector and carried no parallel-GC state.
 
-The original GIL worker implementation, adaptive controller, barrier/deque
-primitives, mark-alive tests, and standalone test modules have been restored.
+The original GIL phases, barrier/deque primitives, mark-alive tests, and
+standalone test modules have been restored. Approved changes are the current
+list-bit mapping, full draining of the pre-mark private deque, the 16,384-object
+serial threshold, the fixed 16-worker ceiling, and a random-walk controller
+that rejects a worse trial and returns to the previous count.
 The current debug ARM64 GIL build succeeds. The 34 original GIL mark-alive and
 adaptive tests, 31 original deque/barrier tests, and 61 applicable upstream
 `test_gc` tests pass.
 
 ## Free-threaded restoration checkpoint (2026-09-30)
 
-The original FT worker implementation and header are restored byte-for-byte.
-The baseline abandoned-page enumeration and unique-ID batching APIs are also
-restored byte-for-byte; their absence caused three reproducible compiler
-errors before restoration.
+The original FT worker algorithm is restored. Its source differs from the
+baseline by initialization of the approved random-walk rollback state. The
+baseline abandoned-page enumeration and unique-ID batching APIs are restored;
+their absence caused three reproducible compiler errors before restoration.
 
 The original parallel root propagation, `update_refs`, `mark_heap`, and
 `scan_heap` call sites are restored in `Python/gc_free_threading.c`, along with
@@ -235,12 +239,14 @@ The current ARM64 free-threaded debug build succeeds. Results so far:
   its seven upstream tests.
 
 The reduced port's single replacement abandoned-pool test has been removed;
-all five original baseline tests are present again. The five standalone test
-modules match the baseline blobs exactly, accounting for 152 tests, and the
-existing FT module contains the baseline's remaining five additions.
+all five original baseline additions are present again. The standalone modules
+retain all 152 baseline methods and add six regression methods for approved
+port behavior. They include documented API and portability adaptations and are
+therefore not byte-for-byte baseline blobs.
 
-This checkpoint is not a final MATCH declaration. The remaining source/build
-audit must be resolved first.
+This checkpoint records design restoration, not submission readiness. Clean
+current-revision broad, sanitizer, feature-on platform, and repeat benchmark
+evidence remain separate gates.
 
 ## Platform integration decision (2026-09-30)
 
@@ -251,18 +257,10 @@ replacing baseline behavior. Alex confirmed that Windows support is required
 and that the working implementation must not be reversed merely because those
 files were absent from the older baseline patch.
 
-## Audit sequence
+## Completed audit sequence and remaining gates
 
-1. Account for all 47 baseline-modified paths and all subsequent feature
-   commits through `beb2907f8d`.
-2. Map every public and internal interface and its exact semantics.
-3. Map GIL and FT collector phases, work distribution, termination, atomics,
-   barriers, and lifecycle behavior.
-4. Restore and map every original Python and C test. Preserve each test's body,
-   parameters, and assertions; a required mechanical edit is a blocker first.
-5. Separate exact matches from discrepancies and upstream hard blockers.
-6. Review the completed ledger with Alex before changing CPython source.
-7. Restore approved baseline code and tests in reviewable commits without
-   semantic cleanup.
-8. Verify both GIL and FT builds with the complete original test intent,
-   broader CPython tests, sanitizers, and long-form ABBA performance runs.
+The path, interface, phase, test, and upstream-conflict audits are complete for
+the restoration commit. Remaining submission gates are clean current-revision
+broad and sanitizer runs, feature-on platform coverage, clean repeated ABBA
+benchmarks with feature-off controls, and core review of the proposed public
+surface.

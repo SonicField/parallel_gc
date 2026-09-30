@@ -139,9 +139,21 @@ and every rerun.
 
 ## Results Directory
 
-No current-port result set has been published. New results belong under
-`results/` only when they include the source revisions, build configuration,
-machine metadata, command line, raw samples, and variance.
+Current AArch64 PGO+LTO results are:
+
+- [GIL full run](results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md):
+  1.26x geometric-mean collection speedup across eight requested
+  500,000-object heaps, +9.5% sustained-synthetic throughput geomean, and a
+  neutral (-0.2%) mixed-workload result. This run records the dirty
+  pre-commit worktree that was subsequently committed as `92f992042c`.
+- [Free-threaded full run](results/arm64-316-ft-92f-full-2026-09-30.md):
+  1.22x requested-heap geomean and +19.5% mixed-workload throughput. The
+  finalizer-heavy sustained workload is a measured negative region (-14.7%
+  throughput, +105% callback interval).
+
+The result files retain their exact source state, commands, build flags,
+machine metadata, raw samples, variance, affinity, and NUMA policy. New result
+sets belong under `results/` only when they provide the same provenance.
 
 Run the harness regressions with:
 

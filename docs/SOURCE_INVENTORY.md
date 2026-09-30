@@ -5,8 +5,8 @@ This inventory describes every modified or untracked path in
 `333071231d3a46cccc32d7f44b99328c3299d0b1`. It excludes archived project
 material outside the submodule.
 
-The published fork commit is
-`323d3cc90adcc5dcc799f79812edd339b347a46c`. Status notation used when the
+The current fork commit is
+`624d4bc8f3a37b701a55d14c9923b1f999f14a83`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
@@ -30,7 +30,7 @@ snapshot was prepared:
 - **New** `Include/internal/pycore_gc_parallel.h` — defines GIL collector state,
   workers, phases, split vectors, and lifecycle/collection interfaces.
 - **New** `Include/internal/pycore_gc_random_walk.h` — defines the shared
-  stochastic hill-climbing worker-count controller.
+  stochastic random-walk worker-count controller.
 - **New** `Include/internal/pycore_ws_deque.h` — implements the shared Chase-Lev
   deque and the GIL collector's local work buffer.
 - **Modified** `Objects/mimalloc/segment.c` — implements enumeration and counting
@@ -47,8 +47,9 @@ snapshot was prepared:
 
 - **Modified** `Include/internal/pycore_interp_structs.h` — adds per-interpreter
   parallel-GC state for the GIL and free-threaded implementations.
-- **Modified** `Python/gc.c` — integrates split recording, parallel reference
-  interpreter-root marking, reference subtraction, reachability marking,
+- **Modified** `Python/gc.c` — integrates split recording, candidate counting,
+  interpreter-root pre-marking, reference subtraction, reachability marking,
+  the small-collection serial threshold,
   private adaptive timing, and serial fallback into the GIL cyclic collector.
 - **Modified** `Python/gc_free_threading.c` — integrates parallel root
   propagation, page assignment, `update_refs`, `mark_heap`, `scan_heap`, and
@@ -72,9 +73,10 @@ snapshot was prepared:
 - **Modified** `Modules/_sysconfig.c` — exposes the compiled `Py_PARALLEL_GC`
   value through `sysconfig`.
 - **Modified** `Modules/gcmodule.c` — implements `gc.enable_parallel()`,
-  `gc.disable_parallel()`, and `gc.get_parallel_config()` for feature-on and
-  feature-off builds. `enable_parallel()` takes no worker-count argument; the
-  internal maximum is 16 and the adaptive controller selects the active count.
+  `gc.disable_parallel()`, `gc.get_parallel_config()`,
+  `gc.get_parallel_stats()`, and `gc.collect_async()`. `enable_parallel()`
+  takes no worker-count argument; the internal maximum is 16 and the adaptive
+  controller selects the active count.
 
 There is no environment-variable, `-X`, or `PyConfig` startup interface for
 parallel GC.
@@ -88,13 +90,12 @@ parallel GC.
 - **Modified** `configure.ac` — defines `--with-parallel-gc`, emits
   `Py_PARALLEL_GC`, and rejects 32-bit targets. This is the authoritative
   Autoconf input.
-- **Modified, generated** `configure` — Autoconf output containing the feature
-  option and macro definition; canonical regeneration is still required to pick
-  up all current `configure.ac` changes.
+- **Modified, generated** `configure` — canonically regenerated Autoconf output
+  containing the feature option and macro definition.
 - **Modified, generated** `pyconfig.h.in` — `autoheader` output containing the
   `Py_PARALLEL_GC` template definition.
 - **Modified, generated** `Modules/clinic/gcmodule.c.h` — Argument Clinic output
-  for the three public `gc` functions and the `num_workers` argument parser.
+  for the five no-argument public `gc` functions.
 - **Modified, generated** `Include/internal/pycore_global_objects_fini_generated.h`
   — generated static
   identifier finalization/check entry for `num_workers`.
@@ -112,6 +113,10 @@ parallel GC.
 
 - **Modified** `Lib/test/support/__init__.py` — exposes a `Py_PARALLEL_GC` build
   capability flag to Python tests.
+- **Modified** `Lib/test/test_capi/test_config.py` — checks the exported build
+  configuration value.
+- **Modified** `Lib/test/test_embed.py` — checks that parallel-GC support is
+  absent from the startup configuration surface.
 - **Modified** `Lib/test/test_free_threading/test_gc.py` — adds regression
   coverage for collecting cycles allocated by threads whose mimalloc pages have
   become abandoned.
@@ -156,17 +161,16 @@ parallel GC.
 
 ## CPython documentation
 
-- **Modified** `Doc/library/gc.rst` — documents the three experimental `gc`
+- **Modified** `Doc/library/gc.rst` — documents the five experimental `gc`
   functions and their availability and worker-count contracts.
 - **Modified** `Doc/using/configure.rst` — documents the
   `--with-parallel-gc` build option and runtime API opt-in.
 
 ## Path-set verification
 
-At the time of this fidelity restoration, the source differs from the recorded
-upstream base at 57 paths: 44 modified files and 13 additions (including the
-two additions that remain untracked until the restoration commit). The final
-count and revision will be refreshed after that commit.
+At commit `624d4bc8f3`, the source differs from the recorded upstream base at
+51 paths: 38 modified files and 13 additions. The CPython worktree was clean
+when that revision was recorded in the parent repository.
 
 The only classification ambiguity is
 `Include/internal/pycore_global_strings.h`: the file contains hand-maintained

@@ -1,6 +1,6 @@
 # GIL Parallel GC Call-Site Mapping
 
-**Status:** approved mapping; implementation in progress
+**Status:** implemented at `92f992042c`
 
 **Design baseline:** `beb2907f8d723d7a202d068cb7de69448c53ff7e`
 
@@ -34,15 +34,18 @@ merged generation list.
 |---|---|---|
 | `update_refs_with_splits(base, split_vector)` | `deduce_unreachable()` calls `update_refs(base)` | Replace only when the unchanged baseline enable predicate is true; retain serial `update_refs()` otherwise. |
 | `_PyGC_ParallelMarkAliveFromQueue(interp, base)` with baseline serial fallback | Between `update_refs` and `subtract_refs` in `deduce_unreachable()` | Preserve the exact baseline ordering and fallback. |
-| `_PyGC_ParallelSubtractRefs(interp, base)` with serial fallback | `deduce_unreachable()` calls `subtract_refs(base)` | Preserve the exact baseline call, result handling, and threshold behavior. |
+| `_PyGC_ParallelSubtractRefs(interp, base)` with serial fallback | `deduce_unreachable()` calls `subtract_refs(base)` | Preserve the baseline call and result handling after the approved collection-wide size decision. |
 | `_PyGC_ParallelMoveUnreachable(interp, base, unreachable)` with serial fallback | `deduce_unreachable()` initializes `unreachable`, then calls `move_unreachable()` | Preserve the exact baseline ordering and fallback. |
 | Record `last_generation` | Baseline `gc_collect_region()` entry | Put at `gc_collect_main()` after `GENERATION_AUTO` has been resolved and before `deduce_unreachable()`. |
 | Reset private adaptive timing state | Baseline `_PyGC_Collect()` entry | Reset the unchanged `parallel_gc` timing fields in `gc_collect_main()`, after its entry assertions and before the `collecting` compare-and-exchange. This does not alter upstream GC timing. |
 | Record `cleanup_end_ns` and call `_PyGC_RandomWalkUpdate()` | End of baseline `gc_collect_region()`, immediately after legacy-finalizer handling and list validation | Current `gc_collect_main()` has the same post-cleanup point. Preserve the exact update arguments, including `split_vector.count`. |
 
-The existing 8192-object split interval remains only the baseline work
-partitioning granularity. It must not select or cap the active worker count;
-that remains the responsibility of `adaptive_workers`.
+The 8192-object split interval remains the work-partitioning granularity. The
+approved serial threshold is two complete slices (16,384 candidates): below
+that point, subtraction and reachability stay entirely on the collecting
+thread and the adaptive controller is not updated. Above it, the interval does
+not select or cap the active worker count; that remains the responsibility of
+`adaptive_workers`.
 
 ## Timing responsibilities
 
@@ -89,15 +92,18 @@ The literal baseline patch adds these files cleanly to the upstream target:
 Their algorithms and memory-ordering operations require no change merely to
 place them in the current source tree.
 
-`Python/gc_parallel.c` is also retained byte-for-byte except for the approved
-one-line list-flag representation mapping described above.
+`Python/gc_parallel.c` retains the baseline algorithms with the approved
+list-bit mapping, complete draining of private pre-mark work, adaptive rollback
+state, and current internal visitor symbol required by stack-reference
+handling. The 16,384-candidate decision is integrated in `Python/gc.c`.
 
 ## Invariants that the call-site mapping must preserve
 
 1. `update_refs_with_splits` completes before any parallel traversal starts.
 2. Parallel mark-alive completes before parallel `subtract_refs` begins.
 3. `move_unreachable` starts only after `subtract_refs` completes.
-4. The original `split_vector.count < 2` serial fallback remains unchanged.
+4. Fewer than 16,384 candidates take the serial path before pre-mark dispatch;
+   malformed or unusable split work also retains a serial fallback.
 5. `_PyGC_DispatchAndWait` continues to use `adaptive_workers`; inactive
    workers remain asleep.
 6. No atomic operation, fence, mutex, condition variable, semaphore, barrier,
@@ -118,12 +124,11 @@ This mapping does not authorize any change to either timing system. Any case
 where the baseline adaptive boundaries cannot coexist with upstream's
 unchanged duration boundaries is a hard blocker for discussion.
 
-## Verification gate
+## Verification status and remaining gate
 
-- Restore `Lib/test/test_gc_parallel_mark_alive.py` exactly.
-- Restore the baseline GIL API, lifecycle, statistics, property, and deque
-  tests exactly.
-- Demonstrate the original phase order and adaptive worker value under a fixed
-  `GC_TEST_SEED`.
-- Run debug and optimized GIL builds, the focused baseline tests, the broad
-  CPython suite, sanitizers, and the established long-form ABBA benchmark.
+The baseline GIL API, lifecycle, statistics, mark-alive, property, and deque
+test intent is restored. Fixed-seed tests exercise phase order and adaptive
+state, and threshold tests cover both sides of 16,384 candidates. Debug and
+optimized AArch64 builds and the long-form benchmark have run. A clean-revision
+broad suite, sanitizer rerun, and native feature-on platform matrix remain
+submission gates.

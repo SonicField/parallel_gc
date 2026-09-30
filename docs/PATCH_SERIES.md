@@ -1,7 +1,7 @@
 # Proposed CPython Patch Series
 
 This is the proposed review order for the `cpython/` submodule commit. The
-published fork currently contains one snapshot commit; it can be split into
+fork currently contains one snapshot implementation commit; it can be split into
 this dependency order before any proposal to `python/cpython`. Generated files
 must first be regenerated canonically, and every resulting commit must pass
 both GIL and free-threaded builds.
@@ -19,7 +19,9 @@ the GIL collector.
 
 Add the GIL worker pool, split-vector support, parallel interpreter-root
 marking, reference subtraction, reachability marking, serial fallback, and
-integration with `gc.c`. Keep this patch dormant behind `Py_PARALLEL_GC`.
+integration with `gc.c`. Include the 16,384-candidate serial threshold and the
+pre-mark deque-draining regression test. Keep this patch dormant behind
+`Py_PARALLEL_GC`.
 
 ## 3. Mimalloc page enumeration
 
@@ -37,10 +39,12 @@ paths. Keep this patch dormant behind both `Py_GIL_DISABLED` and
 
 ## 5. Configuration and lifecycle
 
-Add `--with-parallel-gc`, the no-argument `gc` control/configuration functions,
-interpreter shutdown, sysconfig exposure, Windows build support, generated
-Clinic output, and generated global-string files. The worker ceiling is the
-internal constant 16; there is no startup worker-count interface.
+Add `--with-parallel-gc`, the no-argument `gc` control, configuration,
+statistics, and asynchronous-collection functions, interpreter shutdown,
+sysconfig exposure, Windows build support, generated Clinic output, and
+generated global-string files. The worker ceiling is the internal constant 16;
+there is no startup worker-count interface. The public API set should be agreed
+before this patch is prepared.
 
 ## 6. Fidelity and lifecycle tests
 
@@ -57,9 +61,10 @@ behavior without claiming an implementation protocol that is not present.
 
 ## 8. Documentation and NEWS
 
-Add the configure, command-line, `PyConfig`, and `gc` documentation after the
-interface is agreed. Add the NEWS fragment only after a CPython issue number is
-assigned; do not invent one for the draft series.
+Add the configure and `gc` documentation after the interface is agreed. The
+current proposal deliberately adds no environment variable, command-line
+option, or `PyConfig` field. Add the NEWS fragment only after a CPython issue
+number is assigned; do not invent one for the draft series.
 
 ## Cross-patch rules
 

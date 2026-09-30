@@ -21,7 +21,7 @@ The matrix also includes both feature-off controls:
 These serial-GC debug baselines help distinguish upstream behavior from port
 regressions, but do not replace either feature-on build.
 
-The `cpython/` submodule records the published fork commit. The root `Makefile`
+The `cpython/` submodule records the current fork revision. The root `Makefile`
 and scripts under `tools/` target the older project workflow and are not valid
 shortcuts for this matrix.
 
@@ -80,7 +80,7 @@ build-port-ft/python -m test -q -j4 \
 
 The exclusion reasons are recorded in [BUILD_AND_TEST.md](BUILD_AND_TEST.md).
 
-Current recorded status:
+Historical broad status from predecessor commit `9da963f754`:
 
 - The free-threaded broad active run passed 47,914 tests across 481 files,
   including `test_external_inspection`.
@@ -92,9 +92,14 @@ Current recorded status:
 Test counts are snapshots rather than a contract. Always retain the runner's
 summary, seed, failures, skips, and exact command.
 
+At `92f992042c`, a fresh optimized free-threaded build completed its PGO
+training suite (9,724 tests) and passed the focused selection with 194 tests
+and 33 expected skips. The broad GIL and free-threaded results above must be
+repeated before they can be attributed to the current revision.
+
 ### Sanitizers
 
-At the currently recorded development state, AddressSanitizer builds passed
+At an earlier recorded development state, AddressSanitizer builds passed
 213 affected-area GIL tests and 229 affected-area free-threaded tests with leak
 detection disabled and no sanitizer diagnostics. These results must be tied to
 a published commit for submission.
@@ -132,10 +137,10 @@ For every sanitizer run, record:
 
 ### Configure regeneration
 
-The checked-in generated `configure` can be used for builds. Regeneration from
-`configure.ac` is currently blocked because the project workflow cannot reach
-`ghcr.io`. Changes to configure inputs therefore require a later regeneration
-and generated-file consistency check in an environment with registry access.
+The checked-in `configure` and `pyconfig.h.in` were regenerated with CPython's
+pinned Autoconf container. A second canonical regeneration was byte-identical,
+and CPython's generated-file CI check passed on the predecessor fork revision.
+Any later configure-input change requires the same canonical regeneration.
 
 ### Performance
 
@@ -158,6 +163,7 @@ flags, worker counts, seeds, warmups, samples, and raw results.
 ## Open verification gaps
 
 - ThreadSanitizer cannot run until `libtsan` is available.
-- Configure regeneration is blocked by `ghcr.io` network access.
-- There is no CI matrix enforcing both first-class build modes.
-- Native Linux x86-64, Windows, and macOS validation has not been run.
+- The parent CI enforces all four GIL/free-threaded and
+  feature-on/feature-off configurations on Ubuntu.
+- Native feature-on Linux x86-64, Windows, and macOS validation has not been
+  run. The standard feature-off CPython workflow has passed on the fork.

@@ -219,10 +219,9 @@ and parallel measurements; they do not collect the same heap twice.
 systematic drift.
 
 This same-binary comparison measures the runtime-mode delta. It does not
-measure compile-time overhead from building with `--with-parallel-gc`; in the
-GIL build, for example, the shared decref visitor remains atomic while runtime
-parallelism is disabled. A submission campaign must also compare against
-optimized GIL and free-threaded builds compiled without the feature.
+measure compile-time overhead from building with `--with-parallel-gc`. A
+submission campaign must also compare against optimized GIL and free-threaded
+builds compiled without the feature.
 
 `gc_perf_benchmark.py` measures both serial and parallel collection latency as
 the wall-clock interval between `gc.callbacks` start and stop events. This is
@@ -245,11 +244,33 @@ portion of free-threaded collection.
 
 ## Benchmark results
 
-No current-port result set is published yet. New result sets must record the
-exact CPython commit, parallel-GC commit, configuration flags, machine
-description, command line, raw samples, and variance. Keep GIL and
-free-threaded results separate, and retain serial results from the same
-binaries as their controls.
+The current full results were collected with optimized PGO+LTO CPython 3.16
+builds on the same 72-core AArch64 host. They establish useful large-heap
+regions for both collectors and also expose negative regions; they are not a
+claim that every workload improves.
+
+| Build | Mixed throughput | 500K requested heaps | Sustained synthetics |
+|-------|------------------|----------------------|----------------------|
+| GIL | -0.2% | all 8 faster; 1.26x geomean | +9.5% throughput geomean; -26% mean callback interval |
+| Free-threaded | +19.5% | all 8 faster; 1.22x geomean | +2.3% throughput geomean; +31% mean callback interval |
+
+The free-threaded sustained aggregate contains a material negative result:
+the finalizer-heavy `ai_workload` was -14.7% in throughput and +105% in mean
+callback interval. A diagnostic run found similar candidate totals but fewer,
+larger parallel collections; the recorded phase timings were dominated by
+serial finalization and deallocation. That is a falsifiable explanation to
+investigate, not proof of a single cause.
+
+- [GIL full result](../benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md)
+- [Free-threaded full result](../benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md)
+- [Free-threaded standard result](../benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md)
+
+The GIL report records the dirty pre-commit worktree later committed as
+`92f992042c`; the free-threaded report records that commit directly. Final
+submission evidence should repeat both builds from clean, published commits
+and add feature-off optimized controls. New result sets must record exact
+commits, configuration flags, machine description, command line, raw samples,
+and variance.
 
 ---
 

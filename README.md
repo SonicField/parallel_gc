@@ -15,7 +15,7 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `323d3cc90adcc5dcc799f79812edd339b347a46c`, on
+`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
 with submodules therefore obtains the exact reviewed source.
@@ -26,9 +26,10 @@ sanitizer, and benchmark evidence.
 
 ## Implemented scope
 
-- The GIL collector parallelises interpreter-root marking, reference
-  subtraction, and reachability marking. It retains the serial collector's
-  list movement, finalization, and deallocation stages.
+- The GIL collector counts the generation and keeps collections below 16,384
+  candidates entirely serial. Above that threshold it parallelises
+  interpreter-root pre-marking, reference subtraction, and reachability
+  marking. List reconstruction, finalization, and deallocation remain serial.
 - The free-threaded collector parallelises root propagation, `update_refs`,
   `mark_heap`, and `scan_heap`. Finalization and deallocation remain serial.
 
@@ -78,16 +79,23 @@ import gc
 
 gc.enable_parallel()
 print(gc.get_parallel_config())
+print(gc.get_parallel_stats())
 gc.collect()
+gc.collect_async()
 gc.disable_parallel()
 ```
 
 `gc.enable_parallel()` creates a pool with a fixed maximum of 16 workers. The
-stochastic hill-climbing controller tries adjacent worker counts and retains
-only improvements. There is no environment-variable, `-X`, or `PyConfig`
+stochastic random-walk controller tries adjacent worker counts and walks back
+after a regression. There is no environment-variable, `-X`, or `PyConfig`
 startup control. In a build without parallel-GC support, the runtime enable and
 disable functions raise `RuntimeError`, while
 `gc.get_parallel_config()` reports that the feature is unavailable.
+
+`gc.get_parallel_stats()` exposes implementation diagnostics and phase
+timings. `gc.collect_async()` schedules the normal collector and returns
+without waiting; it is part of the current experimental surface but does not
+itself select parallel mode.
 
 From a configured build directory, run:
 
@@ -118,10 +126,22 @@ implementation changes a reference count.
 
 ## Performance evidence
 
-No performance result is claimed yet for this port. The progress log records
-functional suite passes on Linux AArch64 for the current development state. See
-[the benchmarking guide](docs/BENCHMARKING.md) for the measurements required
-before proposing a performance claim.
+Optimized PGO+LTO measurements on the current 72-core AArch64 host show that
+the implementation is worth further evaluation, while also identifying its
+limits:
+
+- GIL: all eight requested 500,000-object heaps improved, with a 1.26x
+  collection-time geomean. Sustained synthetic throughput improved by 9.5%
+  geomean; the mixed workload was effectively neutral at -0.2%.
+- Free-threaded: all eight requested heaps improved, with a 1.22x geomean.
+  Mixed-workload throughput improved by 19.5%. Sustained synthetic throughput
+  improved by 2.3% geomean, but the finalizer-heavy workload regressed by
+  14.7% and its callback interval increased.
+
+These are same-binary serial/parallel comparisons, not general CPython
+performance claims. Callback intervals are not strictly stop-the-world time in
+the free-threaded build. Full metadata, raw samples, and qualifications are in
+[the benchmarking guide](docs/BENCHMARKING.md) and the linked result files.
 
 ## Key files
 

@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `323d3cc90adcc5dcc799f79812edd339b347a46c`.
+`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 
@@ -138,8 +138,8 @@ or dependency skips; retain those in the test log.
 
 ### Current validation status
 
-The affected-area matrix on the current fork commit passes in all four debug
-configurations:
+The affected-area matrix below passed in all four debug configurations before
+the final design-restoration commit:
 
 - Parallel GIL: 540 tests run, 17 skipped, 7 files passed.
 - Parallel free-threaded: 557 tests run, 24 skipped, 9 files passed.
@@ -156,10 +156,8 @@ workflow builds parallel GC disabled, so it is cross-platform compatibility
 evidence rather than active-collector coverage.
 
 The broader results below were recorded on predecessor commit `9da963f754`.
-Subsequent changes are limited to generated configuration files,
-cross-platform test-harness behavior, and safe reporting of object assertions
-from GIL collector helpers. The broad suites must nevertheless be rerun before
-these numbers can be attributed to the current fork commit.
+The collector design has changed materially since that run, so these results
+are historical evidence only and must not be attributed to `92f992042c`.
 
 - Free-threaded: 47,914 tests passed across 481 files, including
   `test_external_inspection`.
@@ -172,9 +170,14 @@ These results are snapshots rather than permanent guarantees. Rerun every
 affected configuration after collector, runtime, configuration, or
 shared-concurrency changes.
 
+A fresh optimized free-threaded build at `92f992042c` completed its PGO
+training suite (9,724 tests) and then passed the focused selection with 194
+tests and 33 expected skips. A corresponding clean-revision GIL focused and
+broad run is still required before submission.
+
 ## Sanitizers
 
-At the currently recorded development state, AddressSanitizer builds passed
+At an earlier recorded development state, AddressSanitizer builds passed
 213 affected-area GIL tests and 229 affected-area free-threaded tests with leak
 detection disabled and no sanitizer diagnostics.
 

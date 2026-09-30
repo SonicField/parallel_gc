@@ -21,7 +21,7 @@ benchmarks, and project-level test workflow.
 ### Current port status
 
 The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `323d3cc90adcc5dcc799f79812edd339b347a46c`, on
+`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`, on
 branch `parallel-gc-upstream-port`. It is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
 
@@ -78,8 +78,8 @@ gc.disable_parallel()
 ```
 
 A build configured with `--with-parallel-gc` reports
-`'available': True`. While enabled, `num_workers` is the configured number of
-threads that may execute collector work.
+`'available': True`. `num_workers` is the fixed ceiling; while enabled,
+`adaptive_workers` is the count currently selected by the controller.
 
 Run the focused tests in the GIL build:
 
@@ -117,23 +117,31 @@ import gc
 
 gc.enable_parallel()
 config = gc.get_parallel_config()
+stats = gc.get_parallel_stats()
+gc.collect_async()
 gc.disable_parallel()
 ```
 
 `gc.enable_parallel()` creates a pool with a fixed maximum of 16 workers. In a
 GIL build the collecting thread coordinates the helpers. In a free-threaded
 build it participates as worker zero, so the pool creates exactly one fewer
-helper. The shared stochastic hill climber starts at four workers, tries
-adjacent counts, and retains only improvements within the 2--16 range. In a
-build without parallel-GC support,
+helper. The shared stochastic random-walk controller starts at four workers,
+tries adjacent counts, and walks back after a regression within the 2--16
+range. In a build without parallel-GC support,
 `gc.enable_parallel()` and `gc.disable_parallel()` raise
 `RuntimeError`, while `gc.get_parallel_config()` reports `available` as false.
+
+`gc.get_parallel_stats()` reports implementation diagnostics and private phase
+timings. `gc.collect_async()` schedules the ordinary collector and returns
+without waiting; it does not enable parallel collection. Both are part of the
+current experimental API and remain subject to core-developer review.
 
 ## What runs in parallel
 
 | Collector | Parallel phases | Serial phases |
 |-----------|-----------------|---------------|
-| GIL | interpreter-root marking, reference subtraction, reachability marking | list movement, finalization, deallocation |
+| GIL, at least 16,384 candidates | interpreter-root pre-marking, reference subtraction, reachability marking | initial count/split walk, list reconstruction, finalization, deallocation |
+| GIL, fewer than 16,384 candidates | none | complete collection |
 | Free-threaded | root propagation, `update_refs`, `mark_heap`, `scan_heap` | finalization, deallocation |
 
 For the free-threaded collector, page assignment prepares buckets for the
@@ -142,9 +150,12 @@ parallel `update_refs` and `mark_heap` to account for deferred references.
 Parallel `scan_heap` restores object state and creates the unreachable
 worklists.
 
-The implementation remains stop-the-world. “Parallel” refers to collector work
-performed by the collecting thread and helper threads during that pause; it
-does not mean collection runs concurrently with application threads.
+Reachability analysis remains stop-the-world. “Parallel” refers to collector
+work performed by the collecting thread and helpers; it does not mean that
+heap marking runs concurrently with application threads. The free-threaded
+collector resumes application threads around callbacks, finalizers, and final
+deallocation, so its complete callback interval is broader than a single
+stop-the-world pause.
 
 GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
 helpers also own persistent thread states; they install those states in
@@ -191,8 +202,10 @@ Important files in the current port:
 
 ## Performance status
 
-The current port has functional build-and-test evidence on Linux AArch64 but
-does not yet make a performance claim. New results must name the exact source
-revision, build configuration, hardware, affinity and NUMA policy, workload
-parameters, sample count, and measured statistic. See
-[BENCHMARKING.md](BENCHMARKING.md).
+Current optimized PGO+LTO measurements on Linux AArch64 show 1.26x and 1.22x
+geometric-mean speedups across eight requested 500,000-object heaps for the GIL
+and free-threaded builds respectively. Mixed-workload throughput was -0.2% for
+GIL and +19.5% for free-threaded. Sustained workloads include a known negative
+region: the free-threaded finalizer-heavy case regressed by 14.7%. These are
+same-binary serial/parallel measurements, not universal performance claims.
+See [BENCHMARKING.md](BENCHMARKING.md) for full results and interpretation.
