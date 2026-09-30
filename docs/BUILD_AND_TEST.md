@@ -147,6 +147,14 @@ configurations:
 - Feature-off free-threaded: 539 tests run, 36 skipped, 8 files passed,
   1 file skipped.
 
+Parent workflow run `36631372624` reproduced this four-configuration matrix on
+Ubuntu 26.04 and passed every job. Standard CPython workflow run `36631682622`
+also passed: 43 jobs succeeded and 2 inapplicable jobs were skipped. That run
+includes generated-file checks, Autoconf regeneration, Linux, Windows, macOS,
+Android, iOS, WASI, Emscripten, and sanitizer configurations. The standard
+workflow builds parallel GC disabled, so it is cross-platform compatibility
+evidence rather than active-collector coverage.
+
 The broader results below were recorded on predecessor commit `9da963f754`.
 Subsequent changes are limited to generated configuration files,
 cross-platform test-harness behavior, and safe reporting of object assertions
