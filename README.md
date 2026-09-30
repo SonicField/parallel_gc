@@ -26,12 +26,11 @@ sanitizer, and benchmark evidence.
 
 ## Implemented scope
 
-- The GIL collector runs `update_refs_with_splits` serially, then parallelises
-  reference subtraction and reachability marking. The collecting thread moves
-  objects between GC lists; finalization and deallocation also remain serial.
-- The free-threaded collector parallelises only `mark_heap`, the transitive
-  reachability phase. Root propagation, `update_refs`, `scan_heap`,
-  finalization, and deallocation remain serial.
+- The GIL collector parallelises interpreter-root marking, reference
+  subtraction, and reachability marking. It retains the serial collector's
+  list movement, finalization, and deallocation stages.
+- The free-threaded collector parallelises root propagation, `update_refs`,
+  `mark_heap`, and `scan_heap`. Finalization and deallocation remain serial.
 
 Both implementations use persistent worker pools. The GIL path uses
 split-vector work assignment. The free-threaded path distributes mimalloc pages
@@ -72,33 +71,28 @@ for all four configurations.
 
 ## Use and test
 
-```bash
-./python -X parallel_gc=4 your_script.py
-PYTHON_PARALLEL_GC=4 ./python your_script.py
-```
-
 The runtime API is:
 
 ```python
 import gc
 
-gc.enable_parallel(4)
+gc.enable_parallel()
 print(gc.get_parallel_config())
 gc.collect()
 gc.disable_parallel()
 ```
 
-`gc.enable_parallel()` accepts worker counts from 2 through 64. Startup controls
-also accept zero to leave the collector disabled. In a build without
-`--with-parallel-gc`, a nonzero `-X parallel_gc`, `PYTHON_PARALLEL_GC`, or
-`PyConfig.parallel_gc_workers` request fails interpreter startup. The runtime
-enable and disable functions raise `RuntimeError` in that build, while
+`gc.enable_parallel()` creates a pool with a fixed maximum of 16 workers. The
+stochastic hill-climbing controller tries adjacent worker counts and retains
+only improvements. There is no environment-variable, `-X`, or `PyConfig`
+startup control. In a build without parallel-GC support, the runtime enable and
+disable functions raise `RuntimeError`, while
 `gc.get_parallel_config()` reports that the feature is unavailable.
 
 From a configured build directory, run:
 
 ```bash
-PYTHON_PARALLEL_GC=4 ./python -m test -j4 \
+./python -m test -j4 \
     test_gc \
     test_gc_ws_deque \
     test_gc_parallel \
@@ -112,16 +106,15 @@ For the free-threaded build, also run `test_gc_ft_parallel` and
 
 ## Fork behavior
 
-Parallel worker threads are quiesced before `fork()`. In the parent, CPython
-attempts to restart the previous worker pool; if that fails, the successful
-fork is preserved and parallel GC is disabled. The child does not create worker
-threads in the post-fork handler and uses serial GC until
-`gc.enable_parallel()` is called explicitly.
+Fork lifecycle behavior has not yet been validated. The restored baseline does
+not install special parallel-GC fork hooks; this remains an explicit item in
+the verification plan.
 
-Helpers invoke `tp_traverse` without attaching Python thread states. This
-matches the current C-API contract: `tp_traverse` may be called from any thread,
-and only the collecting thread's state remains attached while the world is
-stopped.
+GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
+helpers also own persistent thread states; they install those states in
+thread-local storage while running collector work, without performing a full
+bind. This supports debug-build reference accounting when a `tp_traverse`
+implementation changes a reference count.
 
 ## Performance evidence
 
@@ -135,7 +128,7 @@ before proposing a performance claim.
 | File | Purpose |
 |------|---------|
 | `cpython/Python/gc_parallel.c` | GIL parallel collector |
-| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel mark implementation |
+| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel collector phases |
 | `cpython/Include/internal/pycore_gc_parallel.h` | GIL collector state |
 | `cpython/Include/internal/pycore_gc_ft_parallel.h` | Free-threaded collector state |
 | `cpython/Include/internal/pycore_ws_deque.h` | Shared work-stealing deque |

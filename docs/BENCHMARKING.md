@@ -58,7 +58,6 @@ The main benchmark measuring parallel GC performance across realistic and synthe
 | `--duration, -d` | Duration per benchmark (seconds) | 30 |
 | `--runs, -r` | Number of runs per configuration | 3 |
 | `--threads, -t` | Application worker threads | 4 |
-| `--workers, -w` | Parallel GC worker count | 8 |
 | `--heap-size, -s` | Objects for synthetic benchmarks | 500,000 |
 | `--json, -j` | Output JSON instead of markdown | — |
 | `--output, -o` | Output file (default: stdout) | — |
@@ -105,8 +104,8 @@ result for each component.
 **Examples:**
 
 ```bash
-# Standard with 8 workers
-./python ../benchmarks/gc_perf_benchmark.py --workers 8
+# Standard adaptive-worker run
+./python ../benchmarks/gc_perf_benchmark.py
 
 # JSON output for automated processing
 ./python ../benchmarks/gc_perf_benchmark.py --json -o results.json
@@ -138,7 +137,6 @@ Investigates how multi-threaded object creation affects parallel GC performance 
 **Key options:**
 - `--threads` — creation threads (default: 1)
 - `--size` — objects to create (default: 400,000)
-- `--workers` — parallel GC workers (default: 8)
 - `--heap` — structure: chain, clusters, ai_workload
 - `--survivors` — keep all objects alive (100% survivors)
 
@@ -148,12 +146,11 @@ Tests serial and parallel collection on contiguous circular chains. It is a
 single-worker-count locality experiment, not a NUMA-scaling benchmark.
 
 ```bash
-./python ../benchmarks/gc_locality_benchmark.py --size 500000 --workers 8 --survivor-ratio 0.8
+./python ../benchmarks/gc_locality_benchmark.py --size 500000 --survivor-ratio 0.8
 ```
 
 **Options:**
 - `--size, -s` — number of objects (default: 500,000)
-- `--workers, -w` — parallel GC workers (default: 8)
 - `--survivor-ratio, -r` — fraction surviving (default: 0.8 = 20% garbage)
 - `--iterations, -i` — timed iterations (default: 5)
 - `--warmup` — warmup iterations (default: 2)
@@ -210,11 +207,12 @@ variance. To obtain useful numbers:
 3. Run on a quiet machine (no competing workloads)
 4. Report every run and the raw samples or their full distribution
 5. Record the exact command, both repository commits, dirty state, compiler,
-   build flags, requested and active worker counts, and affinity/NUMA policy
+   build flags, configured ceiling and observed adaptive worker counts, and
+   affinity/NUMA policy
 
 ### Comparing Serial vs Parallel
 
-The benchmarks compare `gc.disable_parallel()` and `gc.enable_parallel(N)` in
+The benchmarks compare `gc.disable_parallel()` and `gc.enable_parallel()` in
 the same Python process and binary. They rebuild equivalent heaps for serial
 and parallel measurements; they do not collect the same heap twice.
 `gc_perf_benchmark.py` alternates measured serial and parallel runs to reduce

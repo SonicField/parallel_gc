@@ -161,16 +161,15 @@ def get_system_metadata() -> Dict[str, Any]:
 # GC Control
 # =============================================================================
 
-def enable_parallel_gc(num_workers: int) -> Dict[str, Any]:
+def enable_parallel_gc() -> Dict[str, Any]:
     """Enable parallel GC and verify the effective configuration."""
     if not PARALLEL_GC_AVAILABLE:
         raise RuntimeError("parallel GC is not available in this build")
-    gc.enable_parallel(num_workers)
+    gc.enable_parallel()
     config = gc.get_parallel_config()
-    if not config.get("enabled") or config.get("num_workers") != num_workers:
+    if not config.get("enabled"):
         raise RuntimeError(
-            f"failed to activate parallel GC with {num_workers} workers: "
-            f"{config!r}"
+            f"failed to activate parallel GC: {config!r}"
         )
     return config
 
@@ -218,6 +217,8 @@ class BenchmarkRun:
     collection_latency_max_ms: float
     collections: int
     duration_sec: float
+    adaptive_workers_start: Optional[int] = None
+    adaptive_workers_end: Optional[int] = None
 
 
 @dataclass
@@ -225,7 +226,7 @@ class BenchmarkResult:
     """Aggregated results from multiple runs of a benchmark."""
     name: str
     description: str
-    mode: str  # "serial" or "parallel-N"
+    mode: str  # "serial" or "parallel-adaptive"
     runs: List[BenchmarkRun] = field(default_factory=list)
 
     @property
@@ -308,7 +309,7 @@ class SuiteResult:
     """Results from running the full benchmark suite."""
     build_type: str
     parallel_gc_available: bool
-    num_workers: int
+    worker_ceiling: int
     timestamp: str
     runtime_config: Dict[str, Any] = field(default_factory=dict)
     system_metadata: Dict[str, Any] = field(default_factory=dict)
@@ -1051,8 +1052,10 @@ def run_realistic_benchmark(
     gc.collect()
     gc.disable()
 
+    adaptive_workers_start = None
     if parallel_workers > 0:
-        enable_parallel_gc(parallel_workers)
+        config = enable_parallel_gc()
+        adaptive_workers_start = config.get("adaptive_workers")
     else:
         disable_parallel_gc()
 
@@ -1096,9 +1099,12 @@ def run_realistic_benchmark(
     stop_flag.set()
 
     # Do not alter callbacks or GC state unless every worker has stopped.
-    _join_threads_or_raise(threads, timeout=2.0)
+    _join_threads_or_raise(threads, timeout=max(60.0, duration_sec))
 
     end_time = time.perf_counter()
+    adaptive_workers_end = None
+    if parallel_workers > 0:
+        adaptive_workers_end = gc.get_parallel_config().get("adaptive_workers")
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
@@ -1125,6 +1131,8 @@ def run_realistic_benchmark(
         collection_latency_max_ms=latency_max,
         collections=len(tracker.gc_times_ms),
         duration_sec=actual_duration,
+        adaptive_workers_start=adaptive_workers_start,
+        adaptive_workers_end=adaptive_workers_end,
     )
 
 # =============================================================================
@@ -1144,8 +1152,10 @@ def run_synthetic_benchmark(
     gc.collect()
     gc.disable()
 
+    adaptive_workers_start = None
     if parallel_workers > 0:
-        enable_parallel_gc(parallel_workers)
+        config = enable_parallel_gc()
+        adaptive_workers_start = config.get("adaptive_workers")
     else:
         disable_parallel_gc()
 
@@ -1199,9 +1209,12 @@ def run_synthetic_benchmark(
     stop_flag.set()
 
     # Do not alter callbacks or GC state unless every worker has stopped.
-    _join_threads_or_raise(threads, timeout=2.0)
+    _join_threads_or_raise(threads, timeout=max(60.0, duration_sec))
 
     end_time = time.perf_counter()
+    adaptive_workers_end = None
+    if parallel_workers > 0:
+        adaptive_workers_end = gc.get_parallel_config().get("adaptive_workers")
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
@@ -1227,6 +1240,8 @@ def run_synthetic_benchmark(
         collection_latency_max_ms=latency_max,
         collections=len(tracker.gc_times_ms),
         duration_sec=actual_duration,
+        adaptive_workers_start=adaptive_workers_start,
+        adaptive_workers_end=adaptive_workers_end,
     )
 
 # =============================================================================
@@ -1332,7 +1347,7 @@ def run_collection_benchmark(
     heap_size: int,
     heap_type: str,
     num_runs: int,
-    parallel_workers: int = 8,
+    parallel_workers: int = 16,
     survivor_ratio: float = COLLECTION_SURVIVOR_RATIO,
     creation_threads: int = COLLECTION_CREATION_THREADS,
     warmup_runs: int = COLLECTION_WARMUP_RUNS,
@@ -1355,7 +1370,7 @@ def run_collection_benchmark(
         gc.disable()
 
         if use_parallel:
-            enable_parallel_gc(parallel_workers)
+            enable_parallel_gc()
         else:
             disable_parallel_gc()
 
@@ -1490,7 +1505,7 @@ def run_comparison(
     parallel_result = BenchmarkResult(
         name=name,
         description=description,
-        mode=f"parallel-{parallel_workers}",
+        mode="parallel-adaptive",
         runs=parallel_runs
     )
 
@@ -1505,7 +1520,6 @@ def run_suite(
     duration_per_benchmark: float = 30.0,
     num_runs: int = 3,
     num_threads: int = 4,
-    parallel_workers: int = 8,
     heap_size: int = 500000,
     include_synthetic: bool = True
 ) -> SuiteResult:
@@ -1513,7 +1527,8 @@ def run_suite(
 
     if not PARALLEL_GC_AVAILABLE:
         raise RuntimeError("parallel GC is not available in this build")
-    runtime_config = enable_parallel_gc(parallel_workers)
+    runtime_config = enable_parallel_gc()
+    parallel_workers = runtime_config["num_workers"]
     disable_parallel_gc()
 
     print(f"Parallel GC Performance Benchmark")
@@ -1522,7 +1537,7 @@ def run_suite(
     print(f"Parallel GC available: {PARALLEL_GC_AVAILABLE}")
     print(f"CPUs: {CPU_COUNT}")
     print(f"Worker threads: {num_threads}")
-    print(f"Parallel GC workers: {parallel_workers}")
+    print(f"Parallel GC worker ceiling: {parallel_workers}")
     print(f"Duration per benchmark: {duration_per_benchmark}s")
     print(f"Runs per configuration: {num_runs}")
     print(f"Heap size: {heap_size:,}")
@@ -1531,7 +1546,7 @@ def run_suite(
     result = SuiteResult(
         build_type=BUILD_TYPE,
         parallel_gc_available=PARALLEL_GC_AVAILABLE,
-        num_workers=parallel_workers,
+        worker_ceiling=parallel_workers,
         timestamp=datetime.now().astimezone().isoformat(),
         runtime_config=runtime_config,
         system_metadata=get_system_metadata(),
@@ -1667,7 +1682,7 @@ def format_markdown(result: SuiteResult) -> str:
     lines.append("")
     lines.append(f"- Build type: {result.build_type.upper()}")
     lines.append(f"- Parallel GC available: {result.parallel_gc_available}")
-    lines.append(f"- Parallel workers: {result.num_workers}")
+    lines.append(f"- Parallel worker ceiling: {result.worker_ceiling}")
     lines.append(f"- Worker threads: {result.num_threads}")
     lines.append(f"- Duration per benchmark: {result.duration_per_benchmark}s")
     lines.append(f"- Runs per configuration: {result.num_runs}")
@@ -1869,12 +1884,14 @@ def format_markdown(result: SuiteResult) -> str:
     )
     lines.append("")
     lines.append(
-        "| Benchmark | Mode | Run | Throughput/s | Callback latency mean "
-        "(ms) | Callback latency max (ms) | Collections | Duration (s) |"
+        "| Benchmark | Mode | Run | Active workers | Throughput/s | "
+        "Callback latency mean (ms) | Callback latency max (ms) | "
+        "Collections | Duration (s) |"
     )
     lines.append(
-        "|-----------|------|-----|--------------|----------------------------|"
-        "---------------------------|-------------|--------------|"
+        "|-----------|------|-----|----------------|--------------|"
+        "----------------------------|---------------------------|"
+        "-------------|--------------|"
     )
     comparisons = []
     if result.realistic is not None:
@@ -1883,9 +1900,15 @@ def format_markdown(result: SuiteResult) -> str:
     for comparison in comparisons:
         for benchmark_result in (comparison.serial, comparison.parallel):
             for index, run in enumerate(benchmark_result.runs, 1):
+                active_workers = "—"
+                if run.adaptive_workers_start is not None:
+                    active_workers = (
+                        f"{run.adaptive_workers_start}→"
+                        f"{run.adaptive_workers_end}"
+                    )
                 lines.append(
                     f"| {comparison.benchmark_name} | {benchmark_result.mode} | "
-                    f"{index} | {run.throughput:.6f} | "
+                    f"{index} | {active_workers} | {run.throughput:.6f} | "
                     f"{run.collection_latency_mean_ms:.6f} | "
                     f"{run.collection_latency_max_ms:.6f} | "
                     f"{run.collections} | {run.duration_sec:.6f} |"
@@ -1943,6 +1966,8 @@ def format_json(result: SuiteResult) -> str:
             "collection_latency_max_ms": run.collection_latency_max_ms,
             "collections": run.collections,
             "duration_sec": run.duration_sec,
+            "adaptive_workers_start": run.adaptive_workers_start,
+            "adaptive_workers_end": run.adaptive_workers_end,
         }
 
     def comparison_to_dict(comp: Optional[ComparisonResult]) -> Optional[Dict]:
@@ -2016,7 +2041,7 @@ def format_json(result: SuiteResult) -> str:
         "configuration": {
             "build_type": result.build_type,
             "parallel_gc_available": result.parallel_gc_available,
-            "num_workers": result.num_workers,
+            "worker_ceiling": result.worker_ceiling,
             "num_threads": result.num_threads,
             "duration_per_benchmark": result.duration_per_benchmark,
             "num_runs": result.num_runs,
@@ -2075,8 +2100,6 @@ Examples:
                         help='Number of runs per configuration (default: 3)')
     parser.add_argument('--threads', '-t', type=int, default=4,
                         help='Number of worker threads (default: 4)')
-    parser.add_argument('--workers', '-w', type=int, default=8,
-                        help='Number of parallel GC workers (default: 8)')
     parser.add_argument('--heap-size', '-s', type=int, default=500000,
                         help='Heap size for synthetic benchmarks (default: 500000)')
     parser.add_argument('--json', '-j', action='store_true',
@@ -2103,7 +2126,6 @@ Examples:
                 duration_per_benchmark=args.duration,
                 num_runs=args.runs,
                 num_threads=args.threads,
-                parallel_workers=args.workers,
                 heap_size=args.heap_size,
                 include_synthetic=args.include_synthetic,
             )

@@ -12,17 +12,18 @@ submodule.
 ## Scope
 
 Parallel GC is compiled with `--with-parallel-gc` and enabled explicitly with
-a worker limit. Serial collection remains the default.
+`gc.enable_parallel()`. Serial collection remains the default.
 
 The two builds parallelise different work:
 
 | Collector | Parallel phases | Serial phases |
 |-----------|-----------------|---------------|
-| GIL | reference subtraction, reachability marking | `update_refs_with_splits`, list movement, finalization, deallocation |
-| Free-threaded | `mark_heap` | root propagation, `update_refs`, `scan_heap`, finalization, deallocation |
+| GIL | interpreter-root marking, reference subtraction, reachability marking | `update_refs_with_splits`, list movement, finalization, deallocation |
+| Free-threaded | root propagation, `update_refs`, `mark_heap`, `scan_heap` | finalization, deallocation |
 
-The free-threaded distinction is important. Its page assignment prepares
-`mark_heap`; `update_refs` and `scan_heap` remain serial.
+The free-threaded collector retains serial fallbacks for its parallel heap
+phases. Page assignment prepares per-worker buckets used by `update_refs` and
+`mark_heap`; `scan_heap` uses dynamic page distribution.
 
 ## Shared infrastructure
 
@@ -39,9 +40,8 @@ them.
 The shared barrier infrastructure supports:
 
 - a startup handshake in the GIL worker pool;
-- phase boundaries in multi-stage worker-pool operations. The current
-  free-threaded collection path parallelises only `mark_heap` and does not use
-  the barrier to parallelise `update_refs` or `scan_heap`.
+- phase boundaries in multi-stage worker-pool operations, including the
+  free-threaded `update_refs` initialization and computation stages.
 
 The free-threaded collecting thread participates as worker zero. Therefore a
 configured value of four means one collecting thread and three helper threads.
@@ -52,10 +52,11 @@ The GIL implementation works over the generation's linked GC list.
 
 ### Reference subtraction
 
-The collecting thread first runs `update_refs_with_splits` serially. This
-initializes temporary reference counts and records a split vector containing
-positions in the GC list. Workers then receive contiguous ranges and call
-`tp_traverse` to atomically subtract internal references from `gc_refs`.
+The workers first mark objects reachable from interpreter roots. The
+collecting thread then runs `update_refs_with_splits` serially. This initializes
+temporary reference counts and records a split vector containing positions in
+the GC list. Workers receive contiguous ranges and call `tp_traverse` to
+atomically subtract internal references from `gc_refs`.
 
 References can cross worker ranges, so subtraction uses atomic operations even
 though application threads are stopped.
@@ -70,21 +71,21 @@ deallocation remain serial.
 
 ### `tp_traverse` calling contract
 
-Both parallel GIL phases invoke type-provided `tp_traverse` functions on helper
-threads without attaching Python thread states. Current CPython C-API
-documentation explicitly allows `tp_traverse` to be called from any thread and
-states that only one thread state is attached while traversal handlers run
-during garbage collection. The collecting thread remains that attached thread.
+GIL helpers create and bind persistent `PyThreadState` objects. This is needed
+by debug-build reference accounting when a `tp_traverse` implementation calls
+`Py_INCREF` or `Py_DECREF`.
 
 ## Free-threaded collector
 
 The free-threaded implementation works over mimalloc GC pages and stores
 temporary GC state in `ob_tid` and `ob_gc_bits`.
 
-### Serial preparation
+### Root propagation and preparation
 
-Root propagation remains serial. The collector then runs serial `update_refs`,
+Known roots are propagated in parallel using local buffers and Chase-Lev
+deques, with a serial fallback. The collector then runs parallel `update_refs`,
 including its lazy initialization of referents not found by a heap-page walk.
+Its initialization and computation stages are separated by a resized barrier.
 
 After `update_refs`, the collector enumerates non-empty mimalloc GC pages and
 assigns them to worker buckets. Pages left behind by exited threads are included
@@ -103,43 +104,37 @@ alive. Claiming a reachable object atomically clears its
 
 Workers traverse claimed objects using Chase-Lev deques. A worker that
 exhausts its own deque attempts to steal from the others. Atomic bit clearing
-gives exactly one worker ownership of each newly reachable object. An atomic
-outstanding-work count prevents termination while a scanner or queued object
-can still publish more work.
+gives exactly one worker ownership of each newly reachable object. After
+exhausting available work, a worker performs repeated idle rounds before
+leaving the phase; a shared error flag terminates unsuccessful work.
 
-### Serial scan and cleanup
+### Parallel scan and serial cleanup
 
-After the helpers finish, the collecting thread runs serial `scan_heap`. This
-restores object state, merges reference counts, rewrites deferred frame
-references, and builds the unreachable and legacy-finalizer worklists.
-Weak-reference handling, finalization, and deallocation also remain serial.
+After marking, the pool runs `scan_heap` in parallel using an atomic page
+counter for dynamic distribution. Per-worker results are merged by the
+collecting thread. This restores object state, merges reference counts,
+rewrites deferred frame references, and builds the unreachable and
+legacy-finalizer worklists. Weak-reference handling, finalization, and
+deallocation remain serial.
 
-Keeping these phases serial preserves the current collector's ordering and
-state-restoration behavior while the proposal concentrates parallelism in the
-transitive marking phase.
+Each parallel phase retains the original serial path as its error or shutdown
+fallback.
 
 ## Worker selection
 
-The configured count is an upper bound on threads executing collector work.
+The fixed maximum of 16 is an upper bound on threads executing collector work.
 A GIL build uses helpers while the collecting thread coordinates them; in a
 free-threaded build the collecting thread participates as worker zero. A
-collection activates at most one worker per 8192 candidate objects. This grain
-is provisional until benchmark evidence can support a final policy.
+shared stochastic hill-climbing controller tries adjacent counts and retains
+only improvements, within that bound. The GIL collector's
+8192-object split interval creates list waypoints for work partitioning; it is
+not a worker-count heuristic.
 
 ## Fork safety
 
-A process must not fork while helper threads are active and then use inherited
-synchronization state as though those threads survived. The lifecycle hooks use
-the following protocol:
-
-1. Before `fork()`, quiesce and stop the parallel worker pool.
-2. In the parent, try to restart the previous pool.
-3. If the parent cannot recreate helpers, preserve the successful fork and
-   disable parallel GC rather than surfacing an unrelated failure.
-4. In the child, leave parallel GC disabled. Do not create threads in the
-   post-fork handler.
-5. The child may create a fresh pool later through
-   `gc.enable_parallel(workers)`.
+The restored design does not install special parallel-GC fork hooks. Fork
+behavior therefore remains a validation item; this document does not claim a
+pool restart or child-disable protocol that the implementation does not have.
 
 ## Atomic operations
 
@@ -147,10 +142,8 @@ The GIL collector atomically clears the collecting bit in `_gc_prev` when a
 worker claims an object. A relaxed load avoids an unnecessary read-modify-write
 for objects already marked.
 
-The free-threaded marker uses atomic access to `ob_gc_bits`. During the
-stop-the-world phase only GC workers modify these bits. Two workers may both
-decide to traverse an object, but they store the same marking state and later
-checks stop duplicate propagation.
+The free-threaded marker uses atomic access to `ob_gc_bits`. Atomically clearing
+the unreachable bit gives one worker ownership of each newly reachable object.
 
 Memory-ordering comments in the implementation are correctness documentation,
 not performance claims. Any change to those operations should be reviewed
@@ -161,7 +154,7 @@ against both x86-64 and weakly ordered architectures such as AArch64.
 ```python
 import gc
 
-gc.enable_parallel(4)
+gc.enable_parallel()
 gc.get_parallel_config()
 gc.collect()
 gc.disable_parallel()
@@ -170,16 +163,10 @@ gc.disable_parallel()
 The configuration reports availability, whether the collector is enabled, and
 the currently selected worker count.
 
-The command-line and environment forms are:
-
-```bash
-./python -X parallel_gc=4 script.py
-PYTHON_PARALLEL_GC=4 ./python script.py
-```
-
-Startup values are either zero (disabled) or 2 through 64. A nonzero request
-fails interpreter initialization when the build does not include
-`--with-parallel-gc`; zero remains valid.
+The runtime API takes no worker-count argument. It creates a pool with a fixed
+maximum of 16, and the adaptive controller selects the active count for each
+collection. There is no environment-variable, `-X`, or `PyConfig` startup
+control.
 
 ## Design heritage
 

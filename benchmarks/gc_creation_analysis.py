@@ -116,15 +116,8 @@ def create_ai_workload(n, cluster_size=100):
 
 
 def create_clusters(n, cluster_size=100):
-    """Create isolated cyclic graphs with two outgoing edges per node."""
-    clusters = []
-    for _ in range(max(1, n // cluster_size)):
-        nodes = [Node() for _ in range(cluster_size)]
-        for i, node in enumerate(nodes):
-            node.refs.append(nodes[(i + 1) % cluster_size])
-            node.refs.append(nodes[(i * 7 + 3) % cluster_size])
-        clusters.append(nodes)
-    return clusters
+    """Create isolated Node clusters (like benchmark chain but clustered)."""
+    return create_chain(n, cluster_size)
 
 
 HEAP_GENERATORS = {
@@ -303,14 +296,7 @@ def create_ai_workload(n, cluster_size):
     return clusters
 
 def create_clusters(n, cluster_size):
-    clusters = []
-    for _ in range(max(1, n // cluster_size)):
-        nodes = [Node() for _ in range(cluster_size)]
-        for i, node in enumerate(nodes):
-            node.refs.append(nodes[(i + 1) % cluster_size])
-            node.refs.append(nodes[(i * 7 + 3) % cluster_size])
-        clusters.append(nodes)
-    return clusters
+    return create_chain(n, cluster_size)
 
 GENERATORS = {{
     "chain": create_chain,
@@ -327,9 +313,9 @@ cluster_size = {cluster_size}
 thread_mode = "{thread_mode}"
 
 if mode == "parallel":
-    gc.enable_parallel(num_workers=workers)
+    gc.enable_parallel()
     config = gc.get_parallel_config()
-    if not config.get("enabled") or config.get("num_workers") != workers:
+    if not config.get("enabled"):
         raise RuntimeError(f"parallel GC activation failed: {{config!r}}")
 else:
     gc.disable_parallel()
@@ -397,6 +383,9 @@ start_ns = time.perf_counter_ns()
 collected = gc.collect()
 elapsed_ns = time.perf_counter_ns() - start_ns
 config = gc.get_parallel_config()
+phase_timing = {{}}
+if mode == "parallel":
+    phase_timing = gc.get_parallel_stats().get("phase_timing", {{}})
 
 # Release pool threads after GC if applicable
 if release_threads is not None:
@@ -405,6 +394,8 @@ if release_threads is not None:
 print(f"collected={{collected}}")
 print(f"enabled={{config.get('enabled', False)}}")
 print(f"wall_ms={{elapsed_ns / 1e6:.3f}}")
+for key, value in sorted(phase_timing.items()):
+    print(f"phase_{{key}}={{value}}")
 '''
     result = subprocess.run(
         [sys.executable, '-c', script],
@@ -612,8 +603,6 @@ Examples:
                         help='Number of threads for object creation')
     parser.add_argument('--size', type=int, default=400000,
                         help='Number of objects to create')
-    parser.add_argument('--workers', type=int, default=8,
-                        help='Number of parallel GC workers')
     parser.add_argument('--heap', type=str, default='ai_workload',
                         choices=['chain', 'clusters', 'ai_workload'],
                         help='Heap structure type (default: ai_workload)')
@@ -635,19 +624,22 @@ Examples:
     if not config.get('available', False):
         print('ERROR: parallel GC is not available in this build', file=sys.stderr)
         return 2
+    gc.enable_parallel()
+    gc_workers = gc.get_parallel_config()['num_workers']
+    gc.disable_parallel()
 
     if args.chain_vs_clusters:
-        compare_chain_vs_clusters(args.size, args.workers)
+        compare_chain_vs_clusters(args.size, gc_workers)
     elif args.abandon_vs_pool:
-        compare_abandoned_vs_pool(args.size, args.workers, [2, 4, 8], args.heap)
+        compare_abandoned_vs_pool(args.size, gc_workers, [2, 4, 8], args.heap)
     elif args.creation_threads:
-        test_creation_threads_impact(args.size, args.heap, args.workers, [1, 2, 4, 8])
+        test_creation_threads_impact(args.size, args.heap, gc_workers, [1, 2, 4, 8])
     elif args.comparison:
         show_comparison(
-            args.size, args.threads, args.workers, args.heap, args.survivors)
+            args.size, args.threads, gc_workers, args.heap, args.survivors)
     else:
         # Default: show creation thread impact with ai_workload
-        test_creation_threads_impact(args.size, args.heap, args.workers, [1, 2, 4])
+        test_creation_threads_impact(args.size, args.heap, gc_workers, [1, 2, 4])
 
 
 if __name__ == '__main__':

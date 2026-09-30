@@ -113,7 +113,7 @@ Workers since check reset to: 0
 **What went well:**
 - Worker completed entire pipeline: build + 4 benchmark configs + analysis
 - PGO build failure handled autonomously (excluded test_sqlite3)
-- Publication-quality results: 1.25x–2.61x collection speedup, up to -74% STW pause
+- Historical benchmark output is not evidence for the current upstream port.
 - Thorough analysis comparing debug vs optimised, current vs archived, worker scaling
 
 **What didn't work:**

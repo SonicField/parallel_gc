@@ -32,12 +32,12 @@ shortcuts for this matrix.
 Run these modules in both parallel builds:
 
 ```bash
-PYTHON_PARALLEL_GC=4 <build>/python -m test -v \
+<build>/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed
 
 # Add these in the free-threaded build:
-PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -v \
+build-port-ft/python -m test -v \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 
@@ -49,7 +49,7 @@ PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -v \
 | `test_gc_ft_parallel` | Free-threaded | End-to-end free-threaded graph and pool behavior |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
-| `test_embed` | All four builds | Direct `PyConfig` validation and embedded startup |
+| `test_embed` | All four builds | Embedded-runtime regression coverage |
 | `test_free_threading.test_gc` | Free-threaded | Existing free-threaded GC regression coverage |
 
 Build-specific modules skip in the other configuration. Tests may also skip
@@ -67,12 +67,12 @@ must be recorded, not silently converted into a clean result.
 Use these exact broad-suite command shapes on the current host:
 
 ```bash
-PYTHON_PARALLEL_GC=4 build-port-gil/python -m test -q -j4 \
+build-port-gil/python -m test -q -j4 \
     --timeout=300 --fail-env-changed --randseed=20260929 \
     -x test_cext test_multiprocessing_fork \
        test_multiprocessing_forkserver test_multiprocessing_spawn
 
-PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -q -j4 \
+build-port-ft/python -m test -q -j4 \
     --timeout=300 --fail-env-changed --randseed=20260929 \
     -x test_cext test_free_threading test_multiprocessing_fork \
        test_multiprocessing_forkserver test_multiprocessing_spawn
@@ -102,12 +102,12 @@ a published commit for submission.
 The exact affected-area commands are:
 
 ```bash
-ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+ASAN_OPTIONS=detect_leaks=0 \
     build-port-gil-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed
 
-ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+ASAN_OPTIONS=detect_leaks=0 \
     build-port-ft-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed \

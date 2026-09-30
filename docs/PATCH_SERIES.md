@@ -17,9 +17,9 @@ the GIL collector.
 
 ## 2. GIL collector
 
-Add the GIL worker pool, split-vector support, parallel reference subtraction,
-parallel reachability marking, serial fallback, and integration with `gc.c`.
-Keep this patch dormant behind `Py_PARALLEL_GC`.
+Add the GIL worker pool, split-vector support, parallel interpreter-root
+marking, reference subtraction, reachability marking, serial fallback, and
+integration with `gc.c`. Keep this patch dormant behind `Py_PARALLEL_GC`.
 
 ## 3. Mimalloc page enumeration
 
@@ -29,29 +29,31 @@ the mimalloc boundary independently.
 
 ## 4. Free-threaded collector
 
-Add page bucketing, the persistent pool, parallel `mark_heap`, work stealing,
-outstanding-work termination, error recovery, and integration with the
-existing serial root, update, scan, and cleanup phases. Keep this patch dormant
-behind both `Py_GIL_DISABLED` and `Py_PARALLEL_GC`.
+Add page bucketing, the persistent pool, parallel root propagation,
+`update_refs`, `mark_heap`, and `scan_heap`, work stealing, error recovery,
+unique-ID batching, and integration with the serial fallback and cleanup
+paths. Keep this patch dormant behind both `Py_GIL_DISABLED` and
+`Py_PARALLEL_GC`.
 
 ## 5. Configuration and lifecycle
 
-Add `--with-parallel-gc`, `PyConfig.parallel_gc_workers`, `-X parallel_gc=N`,
-`PYTHON_PARALLEL_GC`, the `gc` control/configuration functions, interpreter
-startup and shutdown, sysconfig exposure, Windows build support, generated
-Clinic output, and generated global-string files.
+Add `--with-parallel-gc`, the no-argument `gc` control/configuration functions,
+interpreter shutdown, sysconfig exposure, Windows build support, generated
+Clinic output, and generated global-string files. The worker ceiling is the
+internal constant 16; there is no startup worker-count interface.
 
-## 6. Fork safety
+## 6. Fidelity and lifecycle tests
 
-Quiesce every interpreter's pool before `fork()`, restart parent pools before
-resuming Python threads, and leave child pools disabled until explicitly
-re-enabled.
+Restore the original lifecycle, configuration, graph-correctness, abandoned
+page, adaptive-worker, and low-level primitive tests. Fork behavior remains a
+validation item; the restored implementation does not add special fork hooks.
 
-## 7. Integration and regression tests
+## 7. Integration and regression validation
 
 Add API/configuration tests, deque and split-vector tests, GIL/FT graph
 properties, lifecycle and reconfiguration tests, allocation/collection races,
-external-inspection coverage, helper-participation proof, and fork behavior.
+external-inspection coverage, and helper-participation proof. Validate fork
+behavior without claiming an implementation protocol that is not present.
 
 ## 8. Documentation and NEWS
 

@@ -19,8 +19,9 @@ snapshot was prepared:
 - **Modified** `Include/internal/mimalloc/mimalloc/internal.h` — declares the
   abandoned-pool page visitor and page-count helpers needed to include pages
   owned by exited threads in free-threaded collection.
-- **Modified** `Include/internal/pycore_gc.h` — defines the shared worker-count
-  limits and 8192-object work grain used by both implementations.
+- **Modified** `Include/internal/pycore_gc.h` — carries the baseline source
+  layout change; worker limits and work-partitioning constants live in the
+  implementation-specific parallel-GC headers.
 - **New** `Include/internal/pycore_gc_barrier.h` — provides checked POSIX/Windows
   mutex and condition-variable wrappers and the reusable GIL-pool startup
   barrier.
@@ -28,56 +29,62 @@ snapshot was prepared:
   worker-pool, page-bucket, work-descriptor, marking, and lifecycle interfaces.
 - **New** `Include/internal/pycore_gc_parallel.h` — defines GIL collector state,
   workers, phases, split vectors, and lifecycle/collection interfaces.
+- **New** `Include/internal/pycore_gc_random_walk.h` — defines the shared
+  stochastic hill-climbing worker-count controller.
 - **New** `Include/internal/pycore_ws_deque.h` — implements the shared Chase-Lev
   deque and the GIL collector's local work buffer.
 - **Modified** `Objects/mimalloc/segment.c` — implements enumeration and counting
   of non-empty abandoned mimalloc pages by heap tag.
 - **New** `Python/gc_free_threading_parallel.c` — implements page bucketing, the
-  free-threaded persistent pool, parallel `mark_heap`, work stealing, error
-  propagation, and fork hooks.
+  free-threaded persistent pool, parallel root propagation, `update_refs`,
+  `mark_heap`, and `scan_heap`, work stealing, and error propagation.
 - **New** `Python/gc_parallel.c` — implements the GIL persistent worker pool,
-  split-vector dispatch, parallel reference subtraction and reachability
-  marking, serial fallback support, and fork hooks.
+  split-vector dispatch, parallel interpreter-root marking, reference
+  subtraction and reachability marking, serial fallback support, and adaptive
+  worker selection.
 
 ## Core collector integration and lifecycle
 
 - **Modified** `Include/internal/pycore_interp_structs.h` — adds per-interpreter
   parallel-GC state for the GIL and free-threaded implementations.
-- **Modified** `Modules/posixmodule.c` — quiesces every interpreter's pool before
-  `fork()`, restarts parent pools, and disables inherited child pools.
 - **Modified** `Python/gc.c` — integrates split recording, parallel reference
-  subtraction, parallel reachability marking, and serial fallback into the GIL
-  cyclic collector.
-- **Modified** `Python/gc_free_threading.c` — integrates page assignment and
-  optional parallel `mark_heap` while retaining upstream serial root, reference,
-  stack, scan, and cleanup processing.
+  interpreter-root marking, reference subtraction, reachability marking,
+  private adaptive timing, and serial fallback into the GIL cyclic collector.
+- **Modified** `Python/gc_free_threading.c` — integrates parallel root
+  propagation, page assignment, `update_refs`, `mark_heap`, `scan_heap`, and
+  private adaptive timing while retaining serial fallbacks and serial stack,
+  finalization, and cleanup processing.
 - **Modified** `Python/pylifecycle.c` — starts configured pools during main
   interpreter initialization and finalizes pools before interpreter thread-state
   teardown.
 - **Modified** `Python/pystate.c` — makes interpreter clearing defensively
   finalize any remaining per-interpreter parallel-GC pool.
+- **Modified** `Include/internal/pycore_uniqueid.h` and `Python/uniqueid.c` —
+  provide the stop-the-world batch unique-ID release used by parallel
+  free-threaded `scan_heap`.
+- **Modified** `Objects/object.c` — restores the baseline explanatory comment
+  around cross-thread queued-reference handling; it does not alter behavior.
 
 ## Public API and runtime configuration
 
-- **Modified** `Include/cpython/initconfig.h` — adds the public
-  `PyConfig.parallel_gc_workers` field.
 - **Modified** `Lib/sysconfig/__init__.py` — includes `Py_PARALLEL_GC` in the
   non-POSIX configuration-variable export path.
 - **Modified** `Modules/_sysconfig.c` — exposes the compiled `Py_PARALLEL_GC`
   value through `sysconfig`.
 - **Modified** `Modules/gcmodule.c` — implements `gc.enable_parallel()`,
   `gc.disable_parallel()`, and `gc.get_parallel_config()` for feature-on and
-  feature-off builds.
-- **Modified** `Python/initconfig.c` — parses and validates
-  `PYTHON_PARALLEL_GC`, `-X parallel_gc=N`, and
-  `PyConfig.parallel_gc_workers`, including unsupported-build rejection.
+  feature-off builds. `enable_parallel()` takes no worker-count argument; the
+  internal maximum is 16 and the adaptive controller selects the active count.
+
+There is no environment-variable, `-X`, or `PyConfig` startup interface for
+parallel GC.
 
 ## Build-system inputs and generated outputs
 
 - **Modified** `Makefile.pre.in` — adds both collector implementation objects to
   POSIX builds.
-- **Modified** `Modules/Setup.stdlib.in` — adds the two parallel-GC internal test
-  sources to `_testinternalcapi`.
+- **Modified** `Modules/Setup.stdlib.in` — adds the deque/primitives test source
+  to `_testinternalcapi`.
 - **Modified** `configure.ac` — defines `--with-parallel-gc`, emits
   `Py_PARALLEL_GC`, and rejects 32-bit targets. This is the authoritative
   Autoconf input.
@@ -105,10 +112,6 @@ snapshot was prepared:
 
 - **Modified** `Lib/test/support/__init__.py` — exposes a `Py_PARALLEL_GC` build
   capability flag to Python tests.
-- **Modified** `Lib/test/test_capi/test_config.py` — verifies that
-  `parallel_gc_workers` is present in the public configuration schema.
-- **Modified** `Lib/test/test_embed.py` — drives embedded-runtime tests for valid
-  and invalid `PyConfig.parallel_gc_workers` startup values.
 - **Modified** `Lib/test/test_free_threading/test_gc.py` — adds regression
   coverage for collecting cycles allocated by threads whose mimalloc pages have
   become abandoned.
@@ -116,25 +119,22 @@ snapshot was prepared:
   correctness, concurrent collection/allocation, abandoned pages, and pool
   lifecycle/reconfiguration.
 - **New** `Lib/test/test_gc_parallel.py` — covers the public API, feature-off
-  behavior, startup controls, worker validation, fork restart, and subinterpreter
-  lifecycle.
+  behavior, worker validation, timing statistics, abandoned pages, concurrent
+  allocation, and serial/parallel equivalence.
+- **New** `Lib/test/test_gc_parallel_mark_alive.py` — covers GIL interpreter-root
+  marking and graph reachability cases.
 - **New** `Lib/test/test_gc_parallel_properties.py` — exercises shared graph
   invariants, split boundaries, helper participation, worker counts, and
   repeated reconfiguration.
 - **New** `Lib/test/test_gc_ws_deque.py` — exercises deque, local-buffer,
   barrier, split-vector, concurrency, and allocation-failure behavior through
   `_testinternalcapi`.
-- **Modified** `Modules/_testinternalcapi.c` — registers the new parallel-GC and
-  deque/primitives test parts.
-- **Modified** `Modules/_testinternalcapi/parts.h` — declares initialization
-  entry points for those two test parts.
-- **New** `Modules/_testinternalcapi/test_parallel_gc.c` — provides low-level
-  barrier, local-buffer, split-vector, stack-reference, and helper-traversal test
-  hooks.
+- **Modified** `Modules/_testinternalcapi.c` — registers the deque/primitives
+  test part.
+- **Modified** `Modules/_testinternalcapi/parts.h` — declares its initialization
+  entry point.
 - **New** `Modules/_testinternalcapi/test_ws_deque.c` — provides low-level deque
   ordering, growth, OOM, reset, and concurrent owner/thief test hooks.
-- **Modified** `Programs/_testembed.c` — implements embedded-startup probes for
-  accepted, invalid, and unsupported parallel-GC configuration.
 
 ## Windows platform integration
 
@@ -146,28 +146,27 @@ snapshot was prepared:
   new internal headers to the Windows core project.
 - **Modified** `PCbuild/pythoncore.vcxproj.filters` — places those collector
   sources and headers in the corresponding Visual Studio filters.
-- **Modified** `PCbuild/_testinternalcapi.vcxproj` — adds both new C test parts to
-  the Windows `_testinternalcapi` project.
-- **Modified** `PCbuild/_testinternalcapi.vcxproj.filters` — places those C test
-  parts in the Visual Studio source filter.
+- **Modified** `PCbuild/_freeze_module.vcxproj` and
+  `PCbuild/_freeze_module.vcxproj.filters` — compile and classify both collector
+  sources in the bootstrap executable.
+- **Modified** `PCbuild/_testinternalcapi.vcxproj` — adds the deque/primitives C
+  test part to the Windows `_testinternalcapi` project.
+- **Modified** `PCbuild/_testinternalcapi.vcxproj.filters` — places that C test
+  part in the Visual Studio source filter.
 
 ## CPython documentation
 
-- **Modified** `Doc/c-api/init_config.rst` — documents
-  `PyConfig.parallel_gc_workers`, its limits, activation semantics, and
-  unsupported-build behavior.
 - **Modified** `Doc/library/gc.rst` — documents the three experimental `gc`
   functions and their availability and worker-count contracts.
-- **Modified** `Doc/using/cmdline.rst` — documents `-X parallel_gc=N` and
-  `PYTHON_PARALLEL_GC` startup behavior.
 - **Modified** `Doc/using/configure.rst` — documents the
-  `--with-parallel-gc` build option and runtime opt-in controls.
+  `--with-parallel-gc` build option and runtime API opt-in.
 
 ## Path-set verification
 
-At the time of this inventory, `git status --porcelain=v1` reports 53 paths:
-41 modified tracked files and 12 untracked additions. The 53 paths above occur
-exactly once and are the complete status set relative to `upstream/main`.
+At the time of this fidelity restoration, the source differs from the recorded
+upstream base at 57 paths: 44 modified files and 13 additions (including the
+two additions that remain untracked until the restoration commit). The final
+count and revision will be refreshed after that commit.
 
 The only classification ambiguity is
 `Include/internal/pycore_global_strings.h`: the file contains hand-maintained

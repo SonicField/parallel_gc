@@ -62,9 +62,10 @@ by CPython's `regen-configure` CI job for the preceding fork revision.
 ## Continuous integration
 
 The parent repository's `parallel-gc.yml` workflow builds and tests all four
-configurations above on Ubuntu. The feature-on jobs set
-`PYTHON_PARALLEL_GC=4`; the controls compile without `--with-parallel-gc` and
-verify that the runtime reports the feature as unavailable. Both GIL modes run
+configurations above on Ubuntu. The feature-on jobs enable parallel collection
+through the `gc` API in the focused tests; the controls compile without
+`--with-parallel-gc` and verify that the runtime reports the feature as
+unavailable. Both GIL modes run
 the common affected-area tests, and both free-threaded modes additionally run
 the relevant free-threading tests.
 
@@ -78,11 +79,11 @@ collector was exercised.
 Run the common focused set in both parallel builds:
 
 ```bash
-PYTHON_PARALLEL_GC=4 build-port-gil/python -m test -v \
+build-port-gil/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed
 
-PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -v \
+build-port-ft/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed \
     test_gc_ft_parallel test_free_threading.test_gc
@@ -105,9 +106,8 @@ build-baseline-ft/python -m test -v \
     test_free_threading.test_gc
 ```
 
-These feature-off tests also verify that nonzero startup requests through
-`-X parallel_gc`, `PYTHON_PARALLEL_GC`, and `PyConfig.parallel_gc_workers` are
-rejected. A zero value remains valid and leaves the collector disabled.
+These feature-off tests also verify that the runtime API reports the feature as
+unavailable and rejects attempts to enable it.
 
 ## Broad regression runs
 
@@ -115,12 +115,12 @@ Run the CPython suite separately in both feature-on, first-class builds. A
 representative command is:
 
 ```bash
-PYTHON_PARALLEL_GC=4 build-port-gil/python -m test -q -j4 \
+build-port-gil/python -m test -q -j4 \
     --timeout=300 --fail-env-changed --randseed=20260929 \
     -x test_cext test_multiprocessing_fork \
        test_multiprocessing_forkserver test_multiprocessing_spawn
 
-PYTHON_PARALLEL_GC=4 build-port-ft/python -m test -q -j4 \
+build-port-ft/python -m test -q -j4 \
     --timeout=300 --fail-env-changed --randseed=20260929 \
     -x test_cext test_free_threading test_multiprocessing_fork \
        test_multiprocessing_forkserver test_multiprocessing_spawn
@@ -199,12 +199,12 @@ make -C build-port-ft-asan -j"$(nproc)"
 Run the affected-area tests with leak detection disabled:
 
 ```bash
-ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+ASAN_OPTIONS=detect_leaks=0 \
     build-port-gil-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed
 
-ASAN_OPTIONS=detect_leaks=0 PYTHON_PARALLEL_GC=4 \
+ASAN_OPTIONS=detect_leaks=0 \
     build-port-ft-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_properties test_capi.test_config test_embed \

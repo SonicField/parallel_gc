@@ -21,7 +21,7 @@ uses the local buffer. Their work distribution and termination strategies
 differ.
 
 Parallel GC is opt-in at build time via ``--with-parallel-gc`` and at
-runtime via ``gc.enable_parallel(num_workers=N)``.  Serial collection
+runtime via ``gc.enable_parallel()``.  Serial collection
 remains the default. The current implementation requires a 64-bit target and
 POSIX or Windows threads.
 
@@ -129,14 +129,16 @@ work distribution mechanisms.
 
 **GIL build** (``gc_parallel.c``): Uses the ``_gc_prev`` COLLECTING bit
 for marking via Fetch-And.  Split vector recorded during serial
-``update_refs`` for work distribution.  Phases: ``update_refs`` (serial)
--> ``subtract_refs`` (parallel) -> ``mark`` (parallel) -> sweep,
-finalisation, and deallocation (serial).
+``update_refs`` for work distribution.  Phases: interpreter-root marking
+(parallel) -> ``update_refs`` (serial) -> ``subtract_refs`` (parallel) ->
+reachability marking (parallel) -> sweep, finalisation, and deallocation
+(serial).
 
 **Free-threaded build** (``gc_free_threading_parallel.c``): Uses
 ``ob_gc_bits`` for marking via Fetch-And. Page-based distribution via mimalloc
-internals. Root propagation, ``update_refs``, and ``scan_heap`` retain the
-upstream serial paths; only ``MARK_HEAP`` is parallel.
+internals. Root propagation, ``update_refs``, ``MARK_HEAP``, and ``scan_heap``
+run through the persistent pool, with serial fallbacks where provided by the
+original design.
 
 
 Specification
@@ -176,49 +178,37 @@ Three new functions are added to the ``gc`` module::
 
     import gc
 
-    # Enable parallel GC with a parallelism limit N (N >= 2)
-    gc.enable_parallel(num_workers=4)
+    # Enable parallel GC with adaptive worker selection
+    gc.enable_parallel()
 
     # Disable parallel GC (stops worker threads and reverts to serial)
     gc.disable_parallel()
 
     # Query configuration
     config = gc.get_parallel_config()
-    # Returns: {'available': True, 'enabled': True, 'num_workers': 4}
+    # Returns: {'available': True, 'enabled': True, 'num_workers': 16, ...}
 
-``gc.enable_parallel(num_workers)`` accepts 2 through 64 workers. The value is
-the maximum number of threads executing collector work. A GIL build uses that
-many helpers while the collecting thread coordinates them. In a free-threaded
-build, the collecting thread is worker 0 and the pool creates
-``num_workers - 1`` helpers.
+``gc.enable_parallel()`` creates a pool with an implementation maximum of 16
+workers. A GIL build uses helpers while the collecting thread coordinates
+them. In a free-threaded build, the collecting thread is worker 0 and the pool
+creates 15 helpers. The controller selects the active count for each
+collection.
 
-Calling ``gc.enable_parallel()`` with the current count is a no-op. Calling it
-with another count destroys and rebuilds the pool in both builds.
+Calling ``gc.enable_parallel()`` while already enabled is a no-op.
 
-``gc.disable_parallel()`` joins the worker threads and destroys the pool in
-both builds. ``gc.get_parallel_config()`` reports zero workers while disabled.
+``gc.disable_parallel()`` stops the GIL helpers but retains that pool; the
+free-threaded implementation joins helpers and destroys its pool.
+``gc.get_parallel_config()`` reports zero configured workers while disabled.
 
 If parallel GC was not compiled (``--with-parallel-gc`` not passed),
 ``gc.enable_parallel()`` and ``gc.disable_parallel()`` raise ``RuntimeError``.
 ``gc.get_parallel_config()`` returns ``{'available': False, ...}``.
 
-Command-Line and Environment Variable
---------------------------------------
+Startup Configuration
+---------------------
 
-::
-
-    # -X flag (N = number of workers)
-    python -X parallel_gc=N script.py
-
-    # Environment variable
-    PYTHON_PARALLEL_GC=N python script.py
-
-A value from 2 through 64 activates parallel GC at interpreter startup; zero
-leaves the collector disabled. The ``gc`` module API allows enabling and
-disabling during execution. In a build without parallel GC, a nonzero value
-supplied by either startup mechanism or through
-``PyConfig.parallel_gc_workers`` fails interpreter initialization; zero remains
-valid.
+There is no environment-variable, ``-X``, or ``PyConfig`` startup interface.
+Parallel collection is enabled explicitly through the ``gc`` module API.
 
 C API (Internal)
 ----------------
@@ -232,40 +222,45 @@ GIL build::
     _PyGC_ParallelStart(interp)
     _PyGC_ParallelStop(interp)
     _PyGC_ParallelFini(interp)
-    _PyGC_ParallelBeforeFork(interp)
-    _PyGC_ParallelAfterFork(interp)
-    _PyGC_ParallelAfterForkChild(interp)
     _PyGC_ParallelIsEnabled(interp)
     _PyGC_ParallelMoveUnreachable(interp, young, unreachable)
     _PyGC_ParallelSubtractRefs(interp)
+    _PyGC_ParallelMarkAliveFromRoots(interp, containers)
+    _PyGC_ParallelMarkAliveFromQueue(interp, containers)
 
 Free-threaded build::
 
     _PyGC_ThreadPoolInit(interp, num_workers)
     _PyGC_ThreadPoolFini(interp)
-    _PyGC_ThreadPoolBeforeFork(interp)
-    _PyGC_ThreadPoolAfterFork(interp)
-    _PyGC_ThreadPoolAfterForkChild(interp)
     _PyGC_AssignPagesToBuckets(interp, state)
     _PyGC_FreeBuckets(state)
+    _PyGC_ParallelPropagateAliveWithPool(interp, roots, num_roots, num_workers)
+    _PyGC_ParallelUpdateRefsWithPool(interp, state)
     _PyGC_ParallelMarkHeapWithPool(interp, state, skip_deferred_objects)
+    _PyGC_ParallelScanHeapWithPool(interp, state, result)
 
 GIL Build: Multi-Phase Architecture
 ------------------------------------
 
 The parallel collector hooks into ``deduce_unreachable()`` in
-``Python/gc.c``.  The serial ``update_refs`` is replaced by
-``update_refs_with_splits()``, followed by two parallel entry points. Each
-phase uses the serial implementation when fewer than two work slices exist.
+``Python/gc.c``.  After parallel interpreter-root marking, the serial
+``update_refs`` is replaced by ``update_refs_with_splits()``, followed by
+parallel subtraction and reachability marking. Serial fallbacks remain for
+dispatches that cannot use the pool.
 
-**Phase 0: update_refs (serial, with split recording).**  Walks the GC
+**Phase 0: interpreter-root marking (parallel).** Expands known interpreter
+roots into a shared queue and dispatches the active worker set to mark their
+reachable subgraphs. Allocation or dispatch failure uses the serial root-mark
+path.
+
+**Phase 1: update_refs (serial, with split recording).**  Walks the GC
 list and sets ``gc_refs = ob_refcnt`` for every object.  Simultaneously
 records split points -- pointers into the GC list at
-``_PyGC_PARALLEL_WORK_CHUNK`` (8192) object intervals -- into a growable
+``_PyGC_SPLIT_INTERVAL`` (8192) object intervals -- into a growable
 ``_PyGCSplitVector``.  The split vector enables O(1) parallel
 partitioning without an extra list traversal.
 
-**Phase 1: subtract_refs (parallel).**  Decrements ``gc_refs`` for
+**Phase 2: subtract_refs (parallel).**  Decrements ``gc_refs`` for
 internal references.  Each worker is assigned a contiguous range of
 split-vector entries.  Serial and parallel traversal use the same callback;
 in a parallel-GC build it uses atomic operations because references cross
@@ -289,12 +284,12 @@ The shared callback identity also lets ``_PyGC_VisitStackRef()`` skip borrowed
 or embedded stack references, whose counts are not represented in
 ``Py_REFCNT``.
 
-**Phase 2: mark (parallel).**  Workers scan their split-vector segments
+**Phase 3: mark (parallel).**  Workers scan their split-vector segments
 for roots (objects with nonzero ``gc_refs``), mark them, and traverse each
 discovered subgraph locally -- no work-stealing.  This affects load balance,
 not the requirement that every discovered root be fully traversed.
 
-**Phase 3: sweep (serial).**  Main thread sweeps the GC list.  Objects
+**Phase 4: sweep (serial).**  Main thread sweeps the GC list.  Objects
 with the COLLECTING flag still set are moved to the unreachable list.
 Reachable objects have ``_gc_prev`` restored as doubly-linked list
 pointers.
@@ -336,8 +331,8 @@ Free-Threaded Build: Page-Based Architecture
 
 The free-threaded parallel GC uses ``ob_gc_bits`` (a ``uint8_t`` on ``PyObject``)
 for marking and ``ob_tid`` (repurposed during stop-the-world) for ``gc_refs``
-storage. The current port deliberately limits free-threaded parallel execution
-to ``mark_heap``.
+storage. The restored design parallelises root propagation and all three heap
+phases before serial finalization and deletion.
 
 **Page-based work distribution.**  Free-threaded Python uses mimalloc for memory
 allocation.  Objects live on mimalloc pages, which are natural units of
@@ -362,23 +357,24 @@ UNREACHABLE::
     }
 
 Only the worker that observes the bit set before the atomic clear queues the
-object for traversal. The ``ALIVE`` root-propagation pass is upstream serial
-code.
+object for traversal. The ``ALIVE`` root-propagation pass also uses the
+persistent pool when parallel collection is active.
 
 **Phases:**
 
-1. ``mark_alive`` serially pre-marks objects reachable from interpreter roots
-   before ``deduce_unreachable_heap``.
-2. ``update_refs`` serially computes reference-count differences using
-   ``gc_visit_heaps``. This remains serial because ``visit_decref`` may lazily
-   initialise referents absent from the page walk.
+1. ``mark_alive`` pre-marks objects reachable from interpreter roots using the
+   persistent pool, with a serial fallback.
+2. ``update_refs`` computes reference-count differences in parallel. A barrier
+   separates page initialization from reference subtraction so referents can
+   be initialized safely before the compute phase.
 3. Pages are assigned to worker buckets, then thread stacks are scanned
    serially to account for deferred references. ``MARK_HEAP`` then finds roots
    (nonzero ``gc_refs``) and marks reachable objects in parallel, using work
    stealing for transitive closure. If page assignment fails, the upstream
    serial ``mark_heap_visitor`` runs instead.
-4. ``scan_heap`` serially collects unreachable objects. This remains serial
-   because it merges reference counts and rewrites deferred frame references.
+4. ``scan_heap`` uses an atomic page counter for dynamic distribution. Each
+   worker restores object state and accumulates private results, which the
+   collecting thread merges. Shutdown collection retains the serial path.
 
 Shared Infrastructure
 ---------------------
@@ -397,66 +393,58 @@ the same worker's deque. The active free-threaded path uses its deques directly.
 **Synchronization**. Idle helpers park on per-worker condition variables;
 the collecting thread waits for helper completion on a separate condition.
 The epoch-based barrier in ``pycore_gc_barrier.h`` is used for the GIL startup
-handshake; the current free-threaded work descriptor has no internal barrier.
+handshake and for multi-stage free-threaded work such as ``update_refs``. It is
+resized to the active participant count for each dispatch.
 
-**Termination.** The GIL mark phase drains local work without stealing.
-Free-threaded ``MARK_HEAP`` uses an atomic outstanding-work count covering root
-scanners and queued or in-flight objects. Workers terminate only when that
-count reaches zero, or stop early when a shared error is reported.
+**Termination.** The active GIL marking paths drain each worker's local work
+without stealing. Free-threaded ``MARK_HEAP`` drains local deques, steals from
+other active workers, and requires repeated idle rounds before a worker exits.
+A shared error flag ends unsuccessful work.
 
 Worker Thread Lifecycle
 -----------------------
 
 Helpers are OS threads created via ``PyThread_start_joinable_thread``. In the
 free-threaded build, worker 0 is the existing collecting thread rather than a
-new helper. Helpers in both builds deliberately do not create or bind persistent
-Python thread states, so they do not appear in interpreter thread-state
-enumeration.
-
-The helpers invoke ``tp_traverse`` under the documented C-API contract: the
-callback may run on any thread, and only the collecting thread's state remains
-attached while the world is stopped.
+new helper. GIL helpers create and fully bind persistent ``PyThreadState``
+objects. Free-threaded helpers also create persistent states, then install the
+state and interpreter pointers in thread-local storage while running, without
+a full bind. Both arrangements support debug-build reference accounting in
+``tp_traverse`` implementations.
 
 Between collections helpers park on per-worker condition variables, without
 spinning or polling. The persistent pool avoids per-collection thread creation
 overhead.
 
-Before ``fork()``, CPython quiesces an enabled pool. The parent makes a
-best-effort restart after the fork; if helper recreation fails, the error is
-cleared and parallel GC is disabled so collection remains serial. The child
-does not recreate helpers in the after-fork hook and remains serial until an
-explicit ``gc.enable_parallel()`` creates an active pool. This policy applies
-to both build variants.
-
-In the free-threaded build, the worker-argument allocation is owned by its
-interpreter's ``_PyGCThreadPool``. It is not process-global.
+The restored design does not install special parallel-GC fork hooks. Fork
+behavior remains a validation item and no restart or child-disable behavior is
+claimed here. The free-threaded pool's helper-argument allocation is currently
+file-static, matching the original implementation.
 
 Thresholds and Fallback
 -----------------------
 
-Both implementations use a provisional work unit of 8192 candidate objects.
-They remain serial unless at least two units are present, and cap active
-participants at the number of available units. This avoids waking an entire
-configured pool for a small collection. The value must be revisited using
-current-port measurements before submission.
+The GIL implementation records a split-vector waypoint every 8192 candidate
+objects. That interval controls list partitioning only; it does not select or
+cap the active worker count. The free-threaded implementation has no matching
+8192-object threshold.
 
 The GIL build uses serial code when the feature is disabled, workers are not
 active, or a phase has fewer than two work slices. In the
-free-threaded build, page-assignment failure falls back to serial ``mark_heap``.
-A parallel-mark error restores reference counts and aborts the collection.
-Root propagation, ``update_refs``, and ``scan_heap`` remain serial. Worker
-allocation or creation failure fails ``gc.enable_parallel()`` or interpreter
-startup rather than silently falling back.
-
-Current-port measurements are still needed to validate this provisional grain
-and establish a useful break-even point.
+free-threaded build, page-assignment failure uses the serial heap path. A
+parallel update or mark error aborts the collection through its documented
+cleanup path. Shutdown uses serial ``scan_heap``. Worker allocation or creation
+failure fails ``gc.enable_parallel()`` rather than silently changing the
+configured design.
 
 Worker Selection
 ----------------
 
-The configured count is an upper bound. Each collection activates at most one
-worker per 8192 candidate objects; the provisional grain must be validated by
-current-port measurements.
+The fixed count of 16 is an upper bound. Both implementations use the same
+stochastic hill-climbing controller. It occasionally tries an adjacent worker
+count, measures the next collection's cost per candidate, keeps an improvement,
+and otherwise restores the previous count. The active count starts at 4 and is
+bounded to the inclusive range 2 through 16.
 
 Memory Overhead
 ---------------
@@ -484,19 +472,19 @@ reachable and unreachable objects as serial GC. Traversal and worklist order
 are not guaranteed. Weak-reference callbacks and ``__del__`` methods remain on
 the collecting thread in serial phases.
 
-**No change to generational thresholds.**  Parallel GC affects reference
-subtraction and marking in the GIL build, and marking in the free-threaded
-build. It does not change when collections are triggered.
+**No change to generational thresholds.** Parallel GC changes which threads
+execute selected collector phases; it does not change when collections are
+triggered.
 
-**``tp_traverse`` follows the current calling contract.** Extension callbacks
-are invoked concurrently by GC helper threads while mutators are excluded by
-the GIL or stop-the-world mechanism. CPython documents that ``tp_traverse`` may
-run on any thread and that only one thread state is attached during GC. This
-implementation leaves only the collecting thread's state attached. This is a
-central correctness invariant and should be called out explicitly in review.
+**``tp_traverse`` execution context.** Extension callbacks are invoked by GC
+helper threads while mutators are excluded by the GIL or stop-the-world
+mechanism. GIL helpers use fully bound persistent thread states. Free-threaded
+helpers install pre-created states in TLS without full binding. This distinction
+is a central correctness and lifecycle invariant and should be reviewed
+explicitly.
 
-**No new required environment variables.**  ``PYTHON_PARALLEL_GC`` and
-``-X parallel_gc`` are optional convenience mechanisms.
+**No startup controls.** Parallel GC adds no environment variable, ``-X``
+option, or ``PyConfig`` field.
 
 
 Security Implications
@@ -517,9 +505,9 @@ successful claim; the free-threaded path uses CPython's sequentially consistent
 paths, but the ordering argument still requires review; a passing test run is
 not a proof of the memory model.
 
-**Worker thread state.** Helpers do not attach a ``PyThreadState``. The
-collecting thread remains the sole attached state, matching the documented
-``tp_traverse`` contract.
+**Worker thread state.** GIL helpers bind persistent ``PyThreadState`` objects;
+free-threaded helpers install persistent states in TLS without full binding.
+Creation and teardown order are part of the lifecycle audit.
 
 **Synchronization.** Workers do not acquire the GIL, but the implementation
 does introduce mutexes, condition variables, atomics, and deque protocols.
@@ -546,9 +534,10 @@ through the existing error path.
 Resource Consumption
 --------------------
 
-The API caps the configured worker count at 64. Initial deque storage is about
-32 KiB per worker on a 64-bit build and grows with demand. Both builds release
-their pools in ``gc.disable_parallel()``.
+The implementation caps the pool at 16 workers. Initial deque storage is about
+32 KiB per worker on a 64-bit build and grows with demand. The free-threaded
+build releases its pool in ``gc.disable_parallel()``; the GIL build stops its
+helpers but retains the pool for restart.
 
 
 Performance Impact
@@ -625,18 +614,19 @@ commit ``333071231d``. No proposal has yet been made to ``python/cpython``.
 
 Key files (GIL build):
 
-- ``Python/gc_parallel.c`` -- parallel subtract_refs and reachability marking
+- ``Python/gc_parallel.c`` -- parallel root marking, subtract_refs, and
+  reachability marking
 - ``Include/internal/pycore_gc_parallel.h`` -- data structures, API
 - ``Python/gc.c`` -- integration points (``update_refs_with_splits``,
   parallel calls in ``deduce_unreachable``)
 
 Key files (free-threaded build):
 
-- ``Python/gc_free_threading_parallel.c`` -- page assignment, parallel
-  ``mark_heap``, worker pool, and fork hooks
+- ``Python/gc_free_threading_parallel.c`` -- page assignment, parallel root,
+  ``update_refs``, ``mark_heap``, and ``scan_heap`` phases, and worker pool
 - ``Include/internal/pycore_gc_ft_parallel.h`` -- data structures, API
-- ``Python/gc_free_threading.c`` -- serial root/update/scan integration and
-  optional parallel ``mark_heap``
+- ``Python/gc_free_threading.c`` -- integration and serial fallbacks for all
+  four parallel free-threaded phases
 
 Key files (shared):
 
@@ -664,8 +654,8 @@ Open Issues
 - **Default activation policy**: Should parallel GC auto-enable above a
   certain heap size, or remain strictly opt-in?
 
-- **Worker count default**: Should ``num_workers`` default to
-  ``os.cpu_count() // 2`` or require explicit specification?
+- **Worker ceiling**: Validate the fixed maximum of 16 on the supported
+  platforms and representative hardware.
 
 - **Platform support**: Current-port development and testing has covered Linux
   AArch64. Linux x86-64, macOS, and Windows builds have not been tested.

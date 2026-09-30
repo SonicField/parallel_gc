@@ -6,7 +6,8 @@ Performance benchmarks for CPython's parallel garbage collector.
 
 | Script | What it measures |
 |--------|------------------|
-| `gc_perf_benchmark.py` | Mixed-workload throughput; optional synthetic collection and throughput tests at one worker count |
+| `gc_perf_benchmark.py` | Mixed-workload throughput; optional synthetic collection and throughput tests with adaptive workers |
+| `gc_adaptive_benchmark.py` | Worker-controller response across changing workload phases |
 | `gc_production_experiment.py` | Cyclic garbage production and collection under realistic workloads |
 | `gc_locality_benchmark.py` | Serial/parallel comparison for contiguous circular chains |
 | `gc_creation_analysis.py` | Object creation patterns and their impact on parallel GC |
@@ -39,7 +40,7 @@ build-benchmark-gil/python benchmarks/gc_perf_benchmark.py --quick
 build-benchmark-ft/python benchmarks/gc_perf_benchmark.py --quick
 
 # Standard mixed-workload run
-<build>/python benchmarks/gc_perf_benchmark.py --workers 8
+<build>/python benchmarks/gc_perf_benchmark.py
 
 # Longer run with synthetic workloads; --full alone does not enable them
 <build>/python benchmarks/gc_perf_benchmark.py --full --include-synthetic
@@ -53,7 +54,7 @@ Run other benchmarks:
 
 ```bash
 # Locality analysis
-<build>/python benchmarks/gc_locality_benchmark.py --size 1000000 --workers 8
+<build>/python benchmarks/gc_locality_benchmark.py --size 1000000
 
 # Production workload simulation
 <build>/python benchmarks/gc_production_experiment.py
@@ -108,9 +109,12 @@ Operations per second in a workload that continuously creates and collects objec
   scripts have their own settings.
 - **Statistics**: Results report mean and standard deviation via
   `statistics.mean` and `statistics.stdev`, and retain every raw sample.
-- **Same-binary comparison**: Parallel vs serial comparisons use the same Python binary — `gc.enable_parallel(N)` vs `gc.disable_parallel()` — not different builds.
-- **Worker count**: `--workers N` selects the maximum number of threads
-  executing collector work in either build.
+- **Same-binary comparison**: Parallel vs serial comparisons use the same
+  Python binary — `gc.enable_parallel()` versus `gc.disable_parallel()` — not
+  different builds.
+- **Worker selection**: The pool has a fixed ceiling of 16. The adaptive
+  controller starts at four active workers and selects the active count for
+  subsequent collections.
 - **Heap construction**: Serial and parallel collection passes rebuild
   equivalent heaps; they do not collect the same heap twice.
 - **Run order**: `gc_perf_benchmark.py` alternates measured serial and parallel
@@ -129,7 +133,8 @@ Operations per second in a workload that continuously creates and collects objec
 These produce PGO+LTO optimized GIL and free-threaded builds. Debug builds
 (`--with-pydebug`) are not suitable for performance comparison. Publishable
 results must record the exact CPython commit, command line, compiler, affinity,
-NUMA policy, repository dirty state, requested worker count, all raw samples,
+NUMA policy, repository dirty state, configured ceiling and observed adaptive
+worker counts, all raw samples,
 and every rerun.
 
 ## Results Directory

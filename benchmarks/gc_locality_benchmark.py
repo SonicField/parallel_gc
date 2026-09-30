@@ -10,7 +10,7 @@ for parallel GC traversal, but with real cyclic garbage to collect.
 
 Usage:
     python gc_locality_benchmark.py
-    python gc_locality_benchmark.py --size 500000 --workers 8 --survivor-ratio 0.8
+    python gc_locality_benchmark.py --size 500000 --survivor-ratio 0.8
 """
 
 import gc
@@ -94,7 +94,7 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
     print(f"Heap size: {size:,} objects")
     garbage_pct = round((1 - survivor_ratio) * 100)
     print(f"Survivor ratio: {survivor_ratio} ({garbage_pct}% garbage)")
-    print(f"Workers: {workers}")
+    print(f"Parallel GC worker ceiling: {workers}")
     print(f"Iterations: {iterations} (after {warmup} warmup)")
     print()
 
@@ -133,11 +133,11 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
 
     # Parallel benchmark
     print()
-    print(f"Running PARALLEL benchmark ({workers} workers)...")
+    print("Running PARALLEL benchmark (adaptive workers)...")
     gc.disable()
-    gc.enable_parallel(num_workers=workers)
+    gc.enable_parallel()
     config = gc.get_parallel_config()
-    if not config.get('enabled') or config.get('num_workers') != workers:
+    if not config.get('enabled'):
         raise RuntimeError(f"parallel GC activation failed: {config!r}")
     parallel_stats = run_gc_timing(create_heap_with_garbage, iterations=iterations)
     gc.collect()
@@ -146,6 +146,11 @@ def run_benchmark(size, workers, survivor_ratio=0.8, iterations=5, warmup=2):
     print(f"  Mean: {parallel_stats['mean']:.2f}ms")
     print(f"  Max: {parallel_stats['max']:.2f}ms")
     print(f"  Collected: {parallel_stats['collected']}")
+    phase_timing = gc.get_parallel_stats().get('phase_timing', {})
+    if phase_timing:
+        print("  Last parallel collection phases:")
+        for phase, nanoseconds in sorted(phase_timing.items()):
+            print(f"    {phase}: {nanoseconds / 1e6:.3f}ms")
 
     # Comparison
     print()
@@ -170,8 +175,6 @@ def main():
     parser = argparse.ArgumentParser(description="High-Locality GC Benchmark")
     parser.add_argument('--size', '-s', type=int, default=500000,
                         help='Number of objects in heap (default: 500000)')
-    parser.add_argument('--workers', '-w', type=int, default=8,
-                        help='Number of parallel workers (default: 8)')
     parser.add_argument('--survivor-ratio', '-r', type=float, default=0.8,
                         help='Fraction of objects that survive (default: 0.8)')
     parser.add_argument('--iterations', '-i', type=int, default=5,
@@ -185,10 +188,13 @@ def main():
     if not config.get('available', False):
         print("ERROR: parallel GC is not available in this build")
         return 2
+    gc.enable_parallel()
+    workers = gc.get_parallel_config()['num_workers']
+    gc.disable_parallel()
 
     run_benchmark(
         size=args.size,
-        workers=args.workers,
+        workers=workers,
         survivor_ratio=args.survivor_ratio,
         iterations=args.iterations,
         warmup=args.warmup,

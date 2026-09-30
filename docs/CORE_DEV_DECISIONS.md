@@ -9,35 +9,36 @@ Decide whether the first proposal should expose all of:
 
 - `--with-parallel-gc`;
 - `gc.enable_parallel()`, `gc.disable_parallel()`, and
-  `gc.get_parallel_config()`;
-- `-X parallel_gc=N` and `PYTHON_PARALLEL_GC=N`;
-- `PyConfig.parallel_gc_workers`.
+  `gc.get_parallel_config()`.
 
-The implementation and tests currently support that complete surface, but it
-is isolated in the final API/configuration patch so it can be narrowed without
-changing either collector.
+The current implementation deliberately has no startup environment variable,
+`-X` option, or `PyConfig` field for selecting a worker count.
 
 ## Worker-count contract
 
-The configured value has one meaning in both builds: it is the maximum number
-of threads that may execute collector work, from 2 through 64. A GIL build
-uses that many helpers while the collecting thread coordinates them. In a
+The implementation uses a fixed maximum of 16 collector participants. A GIL
+build uses 16 helpers while the collecting thread coordinates them. In a
 free-threaded build, the collecting thread participates and the pool therefore
-creates exactly one fewer helper. A collection may activate fewer helpers and
-uses at most one participant per 8192 candidate objects. The grain remains a
-policy choice to revisit after benchmark results exist.
+creates 15 helpers.
 
-Startup accepts zero as disabled or 2 through 64 as a concurrency limit. A
-nonzero startup request fails initialization in a feature-off build rather
-than being silently ignored.
+A shared stochastic hill-climbing controller starts at 4 workers, randomly
+tries an adjacent count, and retains it only when measured cost per candidate
+improves. The GIL collector records list waypoints every 8192 candidate objects
+for work partitioning, but that split interval does not cap the active worker
+count.
+
+`gc.enable_parallel()` takes no worker-count argument. Whether 16 should remain
+the long-term maximum is a policy question to revisit with benchmark evidence;
+it is not selected through startup configuration.
 
 ## Initial implementation scope
 
-The proposed GIL implementation parallelizes reference subtraction and
-reachability marking. The proposed free-threaded implementation parallelizes
-only `mark_heap`; its root propagation, reference setup, scan, finalization,
-and deletion remain upstream serial code. Expanding either scope should be a
-follow-up backed by independent correctness and performance evidence.
+The proposed GIL implementation parallelizes interpreter-root marking,
+reference subtraction, and reachability marking. The proposed free-threaded
+implementation parallelizes root propagation, `update_refs`, `mark_heap`, and
+`scan_heap`. Finalization and deletion remain serial in both builds. These are
+the restored original phase boundaries; narrowing them would be a design
+change, not presentation cleanup.
 
 ## Landing requirements
 
