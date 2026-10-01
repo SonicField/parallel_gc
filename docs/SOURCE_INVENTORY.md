@@ -6,7 +6,7 @@ This inventory describes every modified or untracked path in
 material outside the submodule.
 
 The current fork commit is
-`84be8d65bef72ff98c68a0e6523503ff039b21c8`. Status notation used when the
+`86c83d41f5ae6df6558130b978d1d0a09a036a05`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
@@ -134,7 +134,8 @@ parallel GC.
   marking and graph reachability cases.
 - **New** `Lib/test/test_gc_parallel_fork.py` — covers ordinary and finalizer
   forks, parent-state preservation, child controller reset, and child
-  collection in both collector builds.
+  collection in both collector builds. It retains a skipped subinterpreter
+  cleanup case blocked by the equivalent feature-off upstream crash.
 - **New** `Lib/test/test_gc_parallel_properties.py` — exercises shared graph
   invariants, split boundaries, helper participation, worker counts, and
   repeated reconfiguration.
@@ -175,7 +176,7 @@ parallel GC.
 
 ## Path-set verification
 
-At commit `84be8d65be`, the source differs from the recorded upstream base at
+At commit `86c83d41f5`, the source differs from the recorded upstream base at
 53 paths: 39 modified files and 14 additions. The CPython worktree was clean
 when that revision was recorded in the parent repository.
 

@@ -12,7 +12,7 @@ The GIL integration mapping is documented separately in
 - Baseline's upstream comparison point:
   `2e64e36a2b1f8ebb2a6f24ad5c8f75388047d039`
 - Current port under audit:
-  `84be8d65bef72ff98c68a0e6523503ff039b21c8`
+  `86c83d41f5ae6df6558130b978d1d0a09a036a05`
 - Port's upstream parent:
   `333071231d3a46cccc32d7f44b99328c3299d0b1`
 

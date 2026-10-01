@@ -35,7 +35,7 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `84be8d65bef72ff98c68a0e6523503ff039b21c8`, on
+`SonicField/cpython` commit `86c83d41f5ae6df6558130b978d1d0a09a036a05`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
 with submodules therefore obtains the exact reviewed source.
@@ -143,6 +143,15 @@ to train the new controller. The GIL and free-threaded regression tests cover
 ordinary and finalizer forks with bounded child waits. See the
 [fork architecture](docs/FORK_ARCHITECTURE.md) for the lifecycle contract and
 its explicit exclusion of raw extension-level `fork()` calls.
+
+Subinterpreter cleanup after a fork could not be tested as a parallel-GC
+property. Current upstream-based GIL and free-threaded controls both crash when
+the main interpreter forks while an otherwise idle legacy subinterpreter
+exists, without enabling parallel GC anywhere. The intended parallel-GC test
+is retained but skipped with that reason. If CPython's underlying lifecycle is
+fixed, the test should be enabled: pools belonging to subinterpreters that the
+child is about to delete must be abandoned without joining parent-only helper
+threads.
 
 GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
 helpers also own persistent thread states; they install those states in

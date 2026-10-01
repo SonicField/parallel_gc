@@ -8,7 +8,7 @@ For build instructions see [GETTING_STARTED.md](GETTING_STARTED.md).
 For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
 The canonical proposal is [pep-parallel-gc.rst](pep-parallel-gc.rst).
 
-This document describes the `cpython/` submodule at fork commit `84be8d65be`,
+This document describes the `cpython/` submodule at fork commit `86c83d41f5`,
 based on `python/cpython` commit `333071231d`.
 
 ---

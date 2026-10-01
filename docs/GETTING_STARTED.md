@@ -42,7 +42,7 @@ benchmarks, and project-level test workflow.
 ### Current port status
 
 The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `84be8d65bef72ff98c68a0e6523503ff039b21c8`, on
+`SonicField/cpython` commit `86c83d41f5ae6df6558130b978d1d0a09a036a05`, on
 branch `parallel-gc-upstream-port`. It is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
 
