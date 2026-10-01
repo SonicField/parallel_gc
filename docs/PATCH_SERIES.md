@@ -49,15 +49,16 @@ before this patch is prepared.
 ## 6. Fidelity and lifecycle tests
 
 Restore the original lifecycle, configuration, graph-correctness, abandoned
-page, adaptive-worker, and low-level primitive tests. Fork behavior remains a
-validation item; the restored implementation does not add special fork hooks.
+page, adaptive-worker, and low-level primitive tests. Add the shared GIL/FT
+fork regressions for ordinary and finalizer forks, parent-state preservation,
+child controller reset, and post-fork collection.
 
 ## 7. Integration and regression validation
 
 Add API/configuration tests, deque and split-vector tests, GIL/FT graph
 properties, lifecycle and reconfiguration tests, allocation/collection races,
-external-inspection coverage, and helper-participation proof. Validate fork
-behavior without claiming an implementation protocol that is not present.
+external-inspection coverage, and helper-participation proof. Validate the
+child pool-replacement protocol through CPython's supported fork hooks.
 
 ## 8. Documentation and NEWS
 

@@ -91,6 +91,7 @@ jobs:
             test_gc
             test_gc_ws_deque
             test_gc_parallel
+            test_gc_parallel_fork
             test_gc_parallel_properties
             test_capi.test_config
             test_capi.test_misc

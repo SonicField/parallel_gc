@@ -6,7 +6,7 @@ This inventory describes every modified or untracked path in
 material outside the submodule.
 
 The current fork commit is
-`624d4bc8f3a37b701a55d14c9923b1f999f14a83`. Status notation used when the
+`84be8d65bef72ff98c68a0e6523503ff039b21c8`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
@@ -26,11 +26,13 @@ snapshot was prepared:
   mutex and condition-variable wrappers and the reusable GIL-pool startup
   barrier.
 - **New** `Include/internal/pycore_gc_ft_parallel.h` — defines free-threaded
-  worker-pool, page-bucket, work-descriptor, marking, and lifecycle interfaces.
+  worker-pool, page-bucket, work-descriptor, marking, lifecycle, and child-fork
+  recovery interfaces.
 - **New** `Include/internal/pycore_gc_parallel.h` — defines GIL collector state,
-  workers, phases, split vectors, and lifecycle/collection interfaces.
+  workers, phases, split vectors, and lifecycle, collection, and child-fork
+  recovery interfaces.
 - **New** `Include/internal/pycore_gc_random_walk.h` — defines the shared
-  stochastic random-walk worker-count controller.
+  stochastic random-walk worker-count controller and reset operation.
 - **New** `Include/internal/pycore_ws_deque.h` — implements the shared Chase-Lev
   deque and the GIL collector's local work buffer.
 - **Modified** `Objects/mimalloc/segment.c` — implements enumeration and counting
@@ -60,6 +62,8 @@ snapshot was prepared:
   teardown.
 - **Modified** `Python/pystate.c` — makes interpreter clearing defensively
   finalize any remaining per-interpreter parallel-GC pool.
+- **Modified** `Modules/posixmodule.c` — replaces inherited parallel-GC pools
+  in the child before user after-fork callbacks run.
 - **Modified** `Include/internal/pycore_uniqueid.h` and `Python/uniqueid.c` —
   provide the stop-the-world batch unique-ID release used by parallel
   free-threaded `scan_heap`.
@@ -128,6 +132,9 @@ parallel GC.
   allocation, and serial/parallel equivalence.
 - **New** `Lib/test/test_gc_parallel_mark_alive.py` — covers GIL interpreter-root
   marking and graph reachability cases.
+- **New** `Lib/test/test_gc_parallel_fork.py` — covers ordinary and finalizer
+  forks, parent-state preservation, child controller reset, and child
+  collection in both collector builds.
 - **New** `Lib/test/test_gc_parallel_properties.py` — exercises shared graph
   invariants, split boundaries, helper participation, worker counts, and
   repeated reconfiguration.
@@ -168,8 +175,8 @@ parallel GC.
 
 ## Path-set verification
 
-At commit `624d4bc8f3`, the source differs from the recorded upstream base at
-51 paths: 38 modified files and 13 additions. The CPython worktree was clean
+At commit `84be8d65be`, the source differs from the recorded upstream base at
+53 paths: 39 modified files and 14 additions. The CPython worktree was clean
 when that revision was recorded in the parent repository.
 
 The only classification ambiguity is

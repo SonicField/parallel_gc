@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`.
+`SonicField/cpython` commit `84be8d65bef72ff98c68a0e6523503ff039b21c8`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 
@@ -81,11 +81,13 @@ Run the common focused set in both parallel builds:
 ```bash
 build-port-gil/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed
 
 build-port-ft/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 
@@ -98,11 +100,13 @@ the parallel collector itself:
 ```bash
 build-baseline-gil/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed
 
 build-baseline-ft/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed \
     test_free_threading.test_gc
 ```
 
@@ -205,12 +209,14 @@ Run the affected-area tests with leak detection disabled:
 ASAN_OPTIONS=detect_leaks=0 \
     build-port-gil-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed
 
 ASAN_OPTIONS=detect_leaks=0 \
     build-port-ft-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 

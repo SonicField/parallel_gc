@@ -8,7 +8,7 @@ For build instructions see [GETTING_STARTED.md](GETTING_STARTED.md).
 For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
 The canonical proposal is [pep-parallel-gc.rst](pep-parallel-gc.rst).
 
-This document describes the `cpython/` submodule at fork commit `624d4bc8f3`,
+This document describes the `cpython/` submodule at fork commit `84be8d65be`,
 based on `python/cpython` commit `333071231d`.
 
 ---
@@ -581,9 +581,16 @@ file-static allocation shared by the FT pool lifecycle.
 
 ### 3.8 Fork Lifecycle
 
-The restored baseline does not install special parallel-GC fork hooks. Fork
-lifecycle behavior remains a required validation item and is not currently a
-claimed property.
+The parent retains its existing helpers and learned adaptive state across a
+supported CPython fork. Only the calling thread survives in the child, so the
+child abandons the copied pool without joining vanished threads or operating on
+copied synchronization objects. It then constructs new helpers and resets the
+shared adaptive controller to its four-worker starting state.
+
+If the fork occurs in a finalizer or another GC callback, the current
+collection finishes in the child but cannot update the reset controller. The
+full lifecycle contract, hook ordering, failure behavior, and verification
+requirements are recorded in [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md).
 
 ---
 

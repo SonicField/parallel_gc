@@ -34,7 +34,8 @@ Run these modules in both parallel builds:
 ```bash
 <build>/python -m test -v \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed
 
 # Add these in the free-threaded build:
 build-port-ft/python -m test -v \
@@ -46,6 +47,7 @@ build-port-ft/python -m test -v \
 | `test_gc` | All four builds | Existing cyclic-GC behavior and integration |
 | `test_gc_ws_deque` | All four builds | Shared deque, barrier, and local-buffer primitives |
 | `test_gc_parallel` | All four builds | Public API, unavailable-build behavior, configuration, lifecycle, and process/thread scenarios |
+| `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation, child pool replacement and reset, ordinary fork, and finalizer fork |
 | `test_gc_ft_parallel` | Free-threaded | End-to-end free-threaded graph and pool behavior |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
@@ -110,12 +112,14 @@ The exact affected-area commands are:
 ASAN_OPTIONS=detect_leaks=0 \
     build-port-gil-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed
 
 ASAN_OPTIONS=detect_leaks=0 \
     build-port-ft-asan/python -m test -j4 --timeout=180 \
     test_gc test_gc_ws_deque test_gc_parallel \
-    test_gc_parallel_properties test_capi.test_config test_embed \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_capi.test_config test_embed \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 

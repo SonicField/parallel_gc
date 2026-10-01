@@ -42,7 +42,7 @@ benchmarks, and project-level test workflow.
 ### Current port status
 
 The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`, on
+`SonicField/cpython` commit `84be8d65bef72ff98c68a0e6523503ff039b21c8`, on
 branch `parallel-gc-upstream-port`. It is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
 
@@ -109,6 +109,7 @@ Run the focused tests in the GIL build:
     test_gc \
     test_gc_ws_deque \
     test_gc_parallel \
+    test_gc_parallel_fork \
     test_gc_parallel_properties \
     test_capi.test_config \
     test_embed
@@ -121,6 +122,7 @@ Run the corresponding free-threaded set in its build directory:
     test_gc \
     test_gc_ws_deque \
     test_gc_parallel \
+    test_gc_parallel_fork \
     test_gc_parallel_properties \
     test_capi.test_config \
     test_embed \
@@ -186,9 +188,12 @@ implementation changes a reference count.
 
 ## Fork behavior
 
-Fork lifecycle behavior has not yet been validated. The restored baseline does
-not install special parallel-GC fork hooks; this is an explicit verification
-item rather than a claimed property.
+Supported CPython forks leave the parent pool and its adaptive history intact.
+The child replaces inherited helpers and synchronization state, resets its
+adaptive controller to four workers, and excludes an inherited in-progress
+collection from adaptive learning. This includes a fork from `__del__`. See
+[FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) for the precise contract, hook
+ordering, tests, and unsupported raw-fork case.
 
 ## Repository layout
 
@@ -205,21 +210,22 @@ Important files in the current port:
 
 | File | Purpose |
 |------|---------|
-| `Python/gc_parallel.c` | GIL parallel collector |
-| `Python/gc_free_threading_parallel.c` | Free-threaded parallel collector phases |
-| `Python/gc.c` | GIL integration |
-| `Python/gc_free_threading.c` | Free-threaded integration |
-| `Include/internal/pycore_ws_deque.h` | Work-stealing deque and local buffer |
-| `Include/internal/pycore_gc_barrier.h` | Worker synchronization |
-| `Modules/gcmodule.c` | Runtime API |
+| `cpython/Python/gc_parallel.c` | GIL parallel collector |
+| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel collector phases |
+| `cpython/Python/gc.c` | GIL integration |
+| `cpython/Python/gc_free_threading.c` | Free-threaded integration |
+| `cpython/Include/internal/pycore_ws_deque.h` | Work-stealing deque and local buffer |
+| `cpython/Include/internal/pycore_gc_barrier.h` | Worker synchronization |
+| `cpython/Modules/gcmodule.c` | Runtime API |
 
 ## Reading order
 
 1. [Architecture](ARCHITECTURE.md) for control flow and invariants.
-2. [Build and Test](BUILD_AND_TEST.md) for the validation matrix.
-3. [Benchmarking](BENCHMARKING.md) for measurement requirements.
-4. [Design Post](DESIGN_POST.md) for algorithm background.
-5. [PEP draft](pep-parallel-gc.rst) for the proposed upstream interface.
+2. [Fork Architecture](FORK_ARCHITECTURE.md) for process-lifecycle behavior.
+3. [Build and Test](BUILD_AND_TEST.md) for the validation matrix.
+4. [Benchmarking](BENCHMARKING.md) for measurement requirements.
+5. [Design Post](DESIGN_POST.md) for algorithm background.
+6. [PEP draft](pep-parallel-gc.rst) for the proposed upstream interface.
 
 ## Performance status
 

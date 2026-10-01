@@ -12,7 +12,7 @@ The GIL integration mapping is documented separately in
 - Baseline's upstream comparison point:
   `2e64e36a2b1f8ebb2a6f24ad5c8f75388047d039`
 - Current port under audit:
-  `624d4bc8f3a37b701a55d14c9923b1f999f14a83`
+  `84be8d65bef72ff98c68a0e6523503ff039b21c8`
 - Port's upstream parent:
   `333071231d3a46cccc32d7f44b99328c3299d0b1`
 
@@ -60,7 +60,7 @@ new tests or CPython CI is not evidence of parity with the baseline.
 | Worker thread state | Baseline helper thread-state and accounting fields | Restored | MATCH |
 | Deque allocation failure | Baseline behavior | Explicit propagation; no silent work loss | CHANGED; final failure-path audit required |
 | Synchronization failures | Baseline native-operation handling | Restored | MATCH |
-| Fork lifecycle | No baseline-specific hooks | Reduced-port hooks removed | MATCH |
+| Fork lifecycle | No baseline-specific hooks | Parent unchanged; child pool replacement and adaptive reset | APPROVED ADDITION: required for persistent-pool correctness |
 | GIL mark-alive tests | 34-test dedicated module | Restored exactly | MATCH |
 | FT tests | 36 tests in `test_gc_ft_parallel.py` | Restored exactly | MATCH |
 | General parallel tests | 35 tests in `test_gc_parallel.py` | Restored exactly | MATCH |
@@ -86,12 +86,12 @@ These blob identifiers make the intended source exact rather than descriptive:
 | Path | Baseline blob | Current-port blob | Status |
 |---|---|---|---|
 | `Include/internal/pycore_gc_barrier.h` | `f77578d8db82d184788d2c19023a357a007591a1` | `f77578d8db82d184788d2c19023a357a007591a1` | MATCH |
-| `Include/internal/pycore_gc_ft_parallel.h` | `816d74deecfcddf6164479de43bc5d8d9d4dcd5e` | `96c242bb4a2c52392a092cc5b8b13af363f40201` | APPROVED DIFFERENCE: rollback state |
-| `Include/internal/pycore_gc_parallel.h` | `b6c9da7225077ba8adb94a515fc6f384cdc739c0` | `2977d32000434b8ca719d9de231017d7275455b7` | APPROVED DIFFERENCES: fixed ceiling, threshold, rollback state, visitor declaration |
-| `Include/internal/pycore_gc_random_walk.h` | `36fcd08d813de99d07391b781555685aa77c4362` | `b64ccbbf84ed6653af3573f29668d3eae6202de2` | APPROVED DIFFERENCE: reject regressions and walk back |
+| `Include/internal/pycore_gc_ft_parallel.h` | `816d74deecfcddf6164479de43bc5d8d9d4dcd5e` | `547fca1c40f9464975aa646c86a9ff7484295fc7` | APPROVED DIFFERENCES: rollback and child-fork state |
+| `Include/internal/pycore_gc_parallel.h` | `b6c9da7225077ba8adb94a515fc6f384cdc739c0` | `057fe2bad8aa3cc373ccc970a8f295483d70e97c` | APPROVED DIFFERENCES: fixed ceiling, threshold, rollback and child-fork state, visitor declaration |
+| `Include/internal/pycore_gc_random_walk.h` | `36fcd08d813de99d07391b781555685aa77c4362` | `e745cbb66eda04a4af588d6042f9cd927e08e5a7` | APPROVED DIFFERENCES: reject regressions, exact candidate normalization, shared reset |
 | `Include/internal/pycore_ws_deque.h` | `fd268cd416eba16d1e5dea513e191e7a1e899c97` | `fd268cd416eba16d1e5dea513e191e7a1e899c97` | MATCH |
-| `Python/gc_free_threading_parallel.c` | `753b9bfb9144b8530ca03c6fe40f7af065c431ab` | `b8c4a4e24ff1c6acb68d88199e157a16fbb54134` | APPROVED DIFFERENCE: initialize rollback state |
-| `Python/gc_parallel.c` | `21dd4468d05cc644882a74805eeb047ae9931426` | `40120b54c92fb673682fec52e4b4cdcc244b7398` | APPROVED DIFFERENCES: current list bit, complete pre-mark draining, rollback state |
+| `Python/gc_free_threading_parallel.c` | `753b9bfb9144b8530ca03c6fe40f7af065c431ab` | `70362d722423f519f3a35b065a41cd982a8d38d0` | APPROVED DIFFERENCES: initialize rollback state, exact cost observability, child pool recovery |
+| `Python/gc_parallel.c` | `21dd4468d05cc644882a74805eeb047ae9931426` | `ccdd93492a2b129957bbf4ea30dca247fb2c736c` | APPROVED DIFFERENCES: current list bit, complete pre-mark draining, rollback state, child pool recovery |
 
 The current versions are not accepted as equivalent merely because portions of
 their control flow or APIs have the same names.

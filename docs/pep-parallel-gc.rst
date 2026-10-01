@@ -465,10 +465,16 @@ Between collections helpers park on per-worker condition variables, without
 spinning or polling. The persistent pool avoids per-collection thread creation
 overhead.
 
-The restored design does not install special parallel-GC fork hooks. Fork
-behavior remains a validation item and no restart or child-disable behavior is
-claimed here. The free-threaded pool's helper-argument allocation is currently
-file-static, matching the original implementation.
+For forks made through CPython's supported fork protocol, the parent retains
+its existing helpers and adaptive history. The child replaces inherited worker
+and synchronization state, creates new helpers, and resets adaptive learning
+to the four-worker starting point. A collection inherited through a finalizer
+fork completes without training the child's reset controller. Raw ``fork()``
+calls that bypass CPython's protocol are outside this guarantee.
+
+The free-threaded pool's helper-argument allocation is currently file-static,
+matching the original implementation. The detailed lifecycle design and tests
+are maintained in ``docs/FORK_ARCHITECTURE.md`` in the project repository.
 
 Thresholds and Fallback
 -----------------------
@@ -697,7 +703,7 @@ Reference Implementation
 =========================
 
 The project repository is https://github.com/SonicField/parallel_gc. Its
-``cpython`` submodule records fork commit ``624d4bc8f3`` on branch
+``cpython`` submodule records fork commit ``84be8d65be`` on branch
 ``SonicField/cpython:parallel-gc-upstream-port``, based on ``python/cpython``
 commit ``333071231d``. No proposal has yet been made to ``python/cpython``.
 

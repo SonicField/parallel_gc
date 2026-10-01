@@ -35,7 +35,7 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `624d4bc8f3a37b701a55d14c9923b1f999f14a83`, on
+`SonicField/cpython` commit `84be8d65bef72ff98c68a0e6523503ff039b21c8`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
 with submodules therefore obtains the exact reviewed source.
@@ -124,6 +124,7 @@ From a configured build directory, run:
     test_gc \
     test_gc_ws_deque \
     test_gc_parallel \
+    test_gc_parallel_fork \
     test_gc_parallel_properties \
     test_capi.test_config \
     test_embed
@@ -134,9 +135,14 @@ For the free-threaded build, also run `test_gc_ft_parallel` and
 
 ## Fork behavior
 
-Fork lifecycle behavior has not yet been validated. The restored baseline does
-not install special parallel-GC fork hooks; this remains an explicit item in
-the verification plan.
+Forks made through CPython's supported fork protocol retain the parent's pool
+unchanged and replace the child's inherited pool with new helpers. The child
+adaptive controller restarts at four workers with no parent measurement. If a
+finalizer forks, the child completes the inherited collection without using it
+to train the new controller. The GIL and free-threaded regression tests cover
+ordinary and finalizer forks with bounded child waits. See the
+[fork architecture](docs/FORK_ARCHITECTURE.md) for the lifecycle contract and
+its explicit exclusion of raw extension-level `fork()` calls.
 
 GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
 helpers also own persistent thread states; they install those states in
@@ -179,6 +185,7 @@ the free-threaded build. Full metadata, raw samples, and qualifications are in
 
 - [Getting Started](docs/GETTING_STARTED.md)
 - [Architecture Guide](docs/ARCHITECTURE.md)
+- [Fork Architecture](docs/FORK_ARCHITECTURE.md)
 - [Build and Test Guide](docs/BUILD_AND_TEST.md)
 - [Benchmarking Guide](docs/BENCHMARKING.md)
 - [Proposed Patch Series](docs/PATCH_SERIES.md)

@@ -17,16 +17,18 @@ than being mistaken for byte-for-byte identity.
 | `Lib/test/test_free_threading/test_gc.py` | 5 | 0 | `b06fa492f00caa43b19cf72ea731126d3e3aee10` |
 | `Lib/test/test_gc_ft_parallel.py` | 36 | 0 | `e45ffb9ab5c2ec89301c26360033884ec54b1776` |
 | `Lib/test/test_gc_parallel.py` | 35 | 0 | `a9f8f457de9f30e5badd3f8b5f600ba9c497b915` |
-| `Lib/test/test_gc_parallel_mark_alive.py` | 34 | 3 | `04b81fa25cdb21e2c324c86e0e6792edf4543fb6` |
+| `Lib/test/test_gc_parallel_mark_alive.py` | 34 | 4 | `04b81fa25cdb21e2c324c86e0e6792edf4543fb6` |
+| `Lib/test/test_gc_parallel_fork.py` | 0 | 2 | — |
 | `Lib/test/test_gc_parallel_properties.py` | 16 | 0 | `fbea7ccd8be48e0d576291316984f64bc066ce59` |
 | `Lib/test/test_gc_ws_deque.py` | 31 | 3 | `52c65263acd8a365d5f33d7023a4c17b1b515d93` |
-| **Total** | **157** | **6** | |
+| **Total** | **157** | **9** | |
 
 The current files are not byte-for-byte copies. They contain the no-startup-
 configuration API adaptation, cross-platform subprocess/test-harness fixes,
-and additional coverage for the GIL threshold and complete pre-mark deque
-draining. Those edits were reviewed as test adaptations; they do not authorize
-weakening the baseline assertions.
+and additional coverage for the GIL threshold, exact adaptive normalization,
+complete pre-mark deque draining, and the GIL/FT fork lifecycle. Those edits
+were reviewed as test adaptations; they do not authorize weakening the
+baseline assertions.
 
 The baseline also modifies existing assertions or support code in:
 

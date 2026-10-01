@@ -188,9 +188,15 @@ candidate count to the same shared normalization function.
 
 ## Fork safety
 
-The restored design does not install special parallel-GC fork hooks. Fork
-behavior therefore remains a validation item; this document does not claim a
-pool restart or child-disable protocol that the implementation does not have.
+The parent pool survives a supported CPython fork unchanged. The child cannot
+use copied worker handles or synchronization state because the corresponding
+threads no longer exist. Child recovery therefore abandons the copied pool,
+creates replacement helpers, and resets the adaptive controller. A collection
+that began before the fork is excluded from the child's new learning history.
+
+This behavior is exercised for ordinary forks and forks from `__del__` in both
+collector builds. [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) is the normative
+engineering record.
 
 ## Atomic operations
 
