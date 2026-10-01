@@ -183,9 +183,8 @@ not a worker-count heuristic.
 The private adaptive timing intentionally runs from each implementation's
 internal collection start point through the serial post-delete cleanup
 boundary, because the objective is broader collection cost rather than
-helper-only speed. The GIL controller divides by split-vector entries (an
-8192-object work proxy); the free-threaded controller uses its exact candidate
-count.
+helper-only speed. Both collectors pass elapsed nanoseconds and their exact
+candidate count to the same shared normalization function.
 
 ## Fork safety
 

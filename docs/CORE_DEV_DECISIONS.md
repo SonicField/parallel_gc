@@ -30,10 +30,10 @@ records list waypoints every 8192 candidate objects for work partitioning and
 stays serial below 16,384 candidates; the split interval does not cap the
 active worker count.
 
-The controller's work denominator differs by implementation: GIL uses the
-split-vector entry count as an 8192-object proxy, while free-threaded uses the
-exact candidate count. Core review should decide whether that distinction is
-acceptable or should be a later algorithm change backed by fresh measurements.
+Both implementations normalize elapsed time with the exact candidate count in
+the same shared function. Objects ultimately collected are deliberately not the
+denominator: the collector must examine live candidates too, and a collection
+that reclaims nothing still performs graph work.
 
 `gc.enable_parallel()` takes no worker-count argument. Whether 16 should remain
 the long-term maximum is a policy question to revisit with benchmark evidence;

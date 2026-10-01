@@ -350,7 +350,7 @@ subtraction have serial equivalents. Residual marking falls back to
 
 The fixed implementation maximum of 16 is an upper bound. The shared
 stochastic controller starts at `min(4, maximum)`. The first valid parallel
-collection establishes a cost-per-work-unit baseline. Thereafter an accepted
+collection establishes a cost-per-candidate baseline. Thereafter an accepted
 worker count refreshes the baseline on every collection and has a 20% chance
 of proposing an unbiased adjacent count. The next valid collection measures
 that trial: a lower cost is retained; otherwise the controller returns to the
@@ -680,6 +680,13 @@ collector records from the start of `gc_collect_internal()` through
 `delete_garbage()` and then updates the controller, before legacy-finalizer
 bookkeeping.
 
+Both collectors know the exact candidate count during reference
+initialization, before parallel reachability begins. The number ultimately
+collected is known only after reachability, finalization, and resurrection
+handling. Candidate count is the normalization input because every candidate
+can contribute scanning or traversal work; dividing by collected objects would
+be undefined for a collection that examines a live heap and reclaims nothing.
+
 A `gc.callbacks` start-to-stop interval is a useful same-binary measure of the
 complete collection call, but it is not synonymous with one stopped-world
 pause. In the free-threaded collector application threads run during queued
@@ -852,11 +859,9 @@ when the parallel heap phases improve.
 
 7. **Adaptive measurements include serial cleanup.** The controller uses
    elapsed time through its post-delete cleanup boundary, not only helper
-   execution. The GIL
-   denominator is the split-vector entry count (proportional to candidate
-   count at 8192-object intervals); the free-threaded denominator is its exact
-   candidate count. GIL collections below the serial threshold do not update
-   the controller.
+   execution. Both implementations call the same normalization function with
+   elapsed nanoseconds and their exact candidate count. GIL collections below
+   the serial threshold do not update the controller.
 
 ---
 

@@ -501,9 +501,8 @@ collections and remains within 2 through 16.
 
 The private measured interval extends from each implementation's internal
 collection start point through the serial post-delete cleanup boundary, rather
-than timing helper execution alone. The GIL build uses the split-vector entry
-count as its work denominator; this is proportional to candidates in
-8192-object units. The free-threaded build uses its exact candidate count.
+than timing helper execution alone. Both builds pass elapsed nanoseconds and
+their exact candidate count to the same shared normalization function.
 Sub-threshold GIL collections do not update the controller.
 
 Memory Overhead

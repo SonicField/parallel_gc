@@ -38,7 +38,7 @@ merged generation list.
 | `_PyGC_ParallelMoveUnreachable(interp, base, unreachable)` with serial fallback | `deduce_unreachable()` initializes `unreachable`, then calls `move_unreachable()` | Preserve the exact baseline ordering and fallback. |
 | Record `last_generation` | Baseline `gc_collect_region()` entry | Put at `gc_collect_main()` after `GENERATION_AUTO` has been resolved and before `deduce_unreachable()`. |
 | Reset private adaptive timing state | Baseline `_PyGC_Collect()` entry | Reset the unchanged `parallel_gc` timing fields in `gc_collect_main()`, after its entry assertions and before the `collecting` compare-and-exchange. This does not alter upstream GC timing. |
-| Record `cleanup_end_ns` and call `_PyGC_RandomWalkUpdate()` | End of baseline `gc_collect_region()`, immediately after legacy-finalizer handling and list validation | Current `gc_collect_main()` has the same post-cleanup point. Preserve the exact update arguments, including `split_vector.count`. |
+| Record `cleanup_end_ns` and call `_PyGC_RandomWalkUpdate()` | End of baseline `gc_collect_region()`, immediately after legacy-finalizer handling and list validation | Current `gc_collect_main()` has the same post-cleanup point. Pass the exact candidate count, matching the free-threaded collector, rather than the baseline's coarse split-vector proxy. |
 
 The 8192-object split interval remains the work-partitioning granularity. The
 approved serial threshold is two complete slices (16,384 candidates): below
