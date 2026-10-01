@@ -26,7 +26,7 @@ not claim that the proposal is ready to land in CPython.
 ## Current checkpoint
 
 - CPython fork: `SonicField/cpython`, branch `parallel-gc-upstream-port`, local
-  revision `86c83d41f5ae6df6558130b978d1d0a09a036a05`.
+  revision `ef4a38003270996f6b2127b005ea7706fefe739c`.
 - Parent project: `SonicField/parallel_gc`, branch `main`.
 - Both repositories contain unpushed local commits.
 - Current documented performance evidence is useful but predates the current
@@ -236,8 +236,8 @@ platform, sanitizer, provenance, API, or process gate is unknown.
 
 | Step | Status | Evidence or blocker |
 |------|--------|---------------------|
-| 1. Correct CI | Not started | Current workflow uses obsolete environment activation. |
-| 2. Publish checkpoint | Not started | Both repositories have unpushed local commits. |
+| 1. Correct CI | In progress | Contract repaired; test-isolation follow-up awaits remote CI. |
+| 2. Publish checkpoint | In progress | Initial checkpoint published; follow-up commits remain local. |
 | 3. Tooling | Not started | README marks Makefile and tools as legacy. |
 | 4. Failure paths and ownership | Not started | Tests and design approval required before repair. |
 | 5. Patch series | Not started | Proposed ordering exists; review branch does not. |
@@ -269,3 +269,30 @@ blocked result. Each entry must record:
 - Remaining uncertainty: none of the nine steps has yet passed its acceptance
   conditions.
 - Commit: recorded by the commit containing this document.
+
+### 2026-10-01: first corrected four-build CI run
+
+- Step served: 1, correct the current CI contract.
+- Hypothesis: explicit runtime activation, fixed-ceiling assertions, complete
+  focused-suite selection, and benchmark-harness tests accurately represent
+  the restored collector contract.
+- Procedure: GitHub Actions run
+  [36844525501](https://github.com/SonicField/parallel_gc/actions/runs/36844525501).
+- Result: runtime configuration verification passed in all four jobs and the
+  free-threaded feature-on job passed completely. Both feature-off jobs found
+  tests that treated API presence as feature availability. A setup-time skip
+  also leaked disabled ordinary-GC state into `test_capi.test_misc`. The GIL
+  feature-on job reached the newly selected mark-alive suite but its stochastic
+  worker-transition test exceeded the three-minute timeout.
+- Interpretation: the activation contract is correct; test isolation and
+  deterministic dispatch coverage required repair before the matrix could be
+  accepted.
+- Repair: CPython commit `ef4a380032` uses configuration availability guards,
+  avoids mutation before a setup skip, and replaces performance-dependent
+  stochastic dispatch coverage with deterministic real-collector dispatches
+  at 2, 4, 8, and 16 workers.
+- Local verification: the exact GIL feature-on, FT feature-on, GIL feature-off,
+  and FT feature-off test sequences passed. The respective totals were 572,
+  635, 528, and 593 tests. The benchmark harness passed 6/6 with all four
+  binaries.
+- Remaining uncertainty: the repaired matrix has not yet run on GitHub.
