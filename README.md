@@ -1,8 +1,28 @@
 # Parallel Garbage Collection for CPython
 
-This repository is an experimental implementation of parallel cyclic garbage
-collection for GIL and free-threaded CPython builds. Parallel collection is
-optional at build time and runtime.
+This project develops and evaluates parallel cyclic garbage collection for GIL
+and free-threaded CPython builds. Parallel collection is optional at build time
+and runtime.
+
+The project deliberately spans two repositories:
+
+- The `cpython/` submodule is the `SonicField/cpython` fork. It contains the
+  implementation, CPython integration, focused correctness tests, build-system
+  changes, and CPython-facing documentation that could form an upstream
+  proposal.
+- This outer `parallel_gc` repository contains the design material, project CI,
+  benchmark drivers, raw performance results, and reproducibility records.
+  The outer repository pins the exact CPython fork commit being evaluated.
+
+The performance work is not optional supporting material. General-purpose
+Python benchmark suites such as `pyperformance` are useful for detecting broad
+interpreter regressions, but they do not reliably create large cyclic heaps,
+trigger substantial collections, or distinguish collector throughput and
+pause behavior. They therefore cannot, by themselves, determine whether
+parallel GC works. The dedicated benchmarks in this repository provide that
+evidence under controlled heap shapes, sustained workloads, and alternating
+serial/parallel measurements. They are necessarily substantial and
+experimental, so they do not belong in the main CPython tree.
 
 ## Repository status
 

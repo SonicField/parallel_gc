@@ -1,6 +1,16 @@
 # Parallel GC Benchmarks
 
-Performance benchmarks for CPython's parallel garbage collector.
+Performance benchmarks for CPython's parallel garbage collector. These tools
+are a necessary half of the project, not optional demonstrations: they test the
+large cyclic heaps, sustained collection load, pause behavior, throughput, and
+adaptive worker response that determine whether parallel collection is useful.
+
+General-purpose suites such as `pyperformance` are still useful regression
+checks for overall interpreter performance, but they do not reliably exercise
+or isolate cyclic-GC work. A `pyperformance` run alone is therefore not a
+parallel-GC performance evaluation. This specialist infrastructure lives in
+the outer `parallel_gc` repository because its size, workload models, raw
+results, and experimental iteration do not belong in the CPython source tree.
 
 ## Scripts
 

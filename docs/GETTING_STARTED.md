@@ -5,6 +5,27 @@ free-threaded CPython builds. The two implementations share deque and
 synchronization primitives, but have separate worker pools and integrate with
 different serial collectors.
 
+## Understand the two repositories
+
+The project has two necessary parts:
+
+- `SonicField/cpython` contains the implementation and the material that could
+  ultimately be proposed to CPython: core source, build integration, focused
+  correctness tests, and CPython-facing documentation. It is checked out here
+  as the `cpython/` submodule.
+- `SonicField/parallel_gc` contains the specialist performance laboratory:
+  benchmark workloads and harnesses, raw results, reproducibility records,
+  design documents, and project-level CI. It records the exact CPython commit
+  to which each body of evidence applies.
+
+This split is deliberate. Collector performance depends on heap shape, cyclic
+garbage volume, collection frequency, pause behavior, sustained application
+load, and adaptive worker selection. General-purpose suites such as
+`pyperformance` are valuable broad regression checks, but do not reliably
+exercise or observe those conditions. The larger GC-specific benchmark system
+is essential to evaluating this project, while being too specialised and
+experimental for the CPython source tree.
+
 ## Obtain the source
 
 Clone the complete parent repository first:

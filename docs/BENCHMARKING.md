@@ -2,6 +2,27 @@
 
 How to run the current benchmark tools and produce reviewable results.
 
+## Why this benchmark suite is required
+
+Parallel GC cannot be evaluated solely with a general-purpose Python benchmark
+suite. Tools such as `pyperformance` remain useful for detecting broad
+interpreter regressions, but many of their workloads create too little cyclic
+garbage, run too few substantial collections, or report only whole-program
+time. A neutral `pyperformance` result does not show that parallel collection
+is effective, ineffective, or even meaningfully exercised.
+
+The benchmark system in this repository is therefore part of the required
+evidence for the project. It controls cyclic heap shape and size, exercises
+sustained allocation and collection, alternates serial and parallel runs,
+records collection and callback intervals as well as throughput, and observes
+the adaptive worker controller. Its drivers, workload models, raw results, and
+provenance records live outside the CPython fork because they are large,
+specialist experimental infrastructure rather than an appropriate addition to
+CPython's regression-test tree.
+
+Use `pyperformance` as a complementary whole-interpreter regression check, not
+as a substitute for the measurements documented here.
+
 ## Quick Start
 
 ```bash
