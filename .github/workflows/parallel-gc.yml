@@ -21,21 +21,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: GIL, parallel GC enabled
+          - name: GIL, parallel GC feature-on
             configure: --with-pydebug --with-parallel-gc
-            workers: "4"
+            parallel_gc: true
             free_threaded: false
-          - name: Free-threaded, parallel GC enabled
+          - name: Free-threaded, parallel GC feature-on
             configure: --disable-gil --with-pydebug --with-parallel-gc
-            workers: "4"
+            parallel_gc: true
             free_threaded: true
           - name: GIL, feature-off control
             configure: --with-pydebug
-            workers: "0"
+            parallel_gc: false
             free_threaded: false
           - name: Free-threaded, feature-off control
             configure: --disable-gil --with-pydebug
-            workers: "0"
+            parallel_gc: false
             free_threaded: true
 
     steps:
@@ -59,9 +59,8 @@ jobs:
 
       - name: Verify selected configuration
         env:
-          EXPECTED_AVAILABLE: ${{ matrix.workers != '0' && '1' || '0' }}
+          EXPECTED_AVAILABLE: ${{ matrix.parallel_gc && '1' || '0' }}
           EXPECTED_FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
-          PYTHON_PARALLEL_GC: ${{ matrix.workers }}
         run: |
           build-ci/python - <<'PY'
           import gc
@@ -73,18 +72,20 @@ jobs:
           expected_free_threaded = os.environ["EXPECTED_FREE_THREADED"] == "1"
           assert config["available"] is expected_available, config
           assert sys._is_gil_enabled() is not expected_free_threaded
+          assert config["enabled"] is False, config
+          assert config["num_workers"] == 0, config
           if expected_available:
+              gc.enable_parallel()
+              config = gc.get_parallel_config()
               assert config["enabled"] is True, config
-              assert config["num_workers"] == 4, config
-          else:
-              assert config["enabled"] is False, config
-              assert config["num_workers"] == 0, config
+              assert config["num_workers"] == 16, config
+              assert config["adaptive_workers"] == 4, config
           print(config)
           PY
 
       - name: Run affected-area tests
         env:
-          PYTHON_PARALLEL_GC: ${{ matrix.workers }}
+          PARALLEL_GC_AVAILABLE: ${{ matrix.parallel_gc && '1' || '0' }}
           FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
         run: |
           tests=(
@@ -99,8 +100,13 @@ jobs:
           )
           if [[ "$FREE_THREADED" == "1" ]]; then
             tests+=(test_free_threading.test_gc)
-            if [[ "$PYTHON_PARALLEL_GC" != "0" ]]; then
+            if [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
               tests+=(test_gc_ft_parallel)
             fi
+          elif [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
+            tests+=(test_gc_parallel_mark_alive)
           fi
           build-ci/python -m test -q --timeout=180 "${tests[@]}"
+
+      - name: Run benchmark harness unit tests
+        run: build-ci/python -m unittest -v benchmarks.test_gc_perf_benchmark
