@@ -200,6 +200,7 @@ the free-threaded build. Full metadata, raw samples, and qualifications are in
 - [Proposed Patch Series](docs/PATCH_SERIES.md)
 - [Current Source Inventory](docs/SOURCE_INVENTORY.md)
 - [Core-Developer Decisions](docs/CORE_DEV_DECISIONS.md)
+- [Core-Developer Sprint Readiness Plan](docs/CORE_DEV_SPRINT_READINESS_PLAN.md)
 - [Design Post](docs/DESIGN_POST.md)
 - [PEP Draft](docs/pep-parallel-gc.rst)
 
