@@ -1,0 +1,80 @@
+name: Full CPython test suite
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full-test-suite:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GIL, parallel GC feature-on
+            configure: --with-pydebug --with-parallel-gc
+            free_threaded: false
+          - name: Free-threaded, parallel GC feature-on
+            configure: --disable-gil --with-pydebug --with-parallel-gc
+            free_threaded: true
+
+    steps:
+      - name: Check out project and CPython fork
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Install CPython build dependencies
+        run: sudo ./cpython/.github/workflows/posix-deps-apt.sh
+
+      - name: Configure
+        run: |
+          mkdir build-full
+          cd build-full
+          ../cpython/configure ${{ matrix.configure }}
+
+      - name: Build
+        run: make -C build-full -j2
+
+      - name: Verify selected configuration
+        env:
+          EXPECTED_FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          build-full/python - <<'PY'
+          import gc
+          import os
+          import sys
+
+          config = gc.get_parallel_config()
+          expected_free_threaded = os.environ["EXPECTED_FREE_THREADED"] == "1"
+          assert config["available"] is True, config
+          assert config["enabled"] is False, config
+          assert sys._is_gil_enabled() is not expected_free_threaded
+          print(config)
+          PY
+
+      - name: Run full CPython regression suite
+        run: |
+          set -o pipefail
+          build-full/python -m test -q -j2 \
+              --timeout=300 \
+              --fail-env-changed \
+              --randseed=20260929 \
+              2>&1 | tee full-test.log
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: full-test-log-${{ matrix.free_threaded && 'free-threaded' || 'gil' }}
+          path: full-test.log
+          if-no-files-found: warn

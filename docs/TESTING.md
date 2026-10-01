@@ -64,6 +64,43 @@ Run the broad suite independently in each feature-on, first-class build. This ca
 integration failures in areas such as startup, extension traversal, object
 lifetime, and threading that focused GC tests may miss.
 
+The `Full CPython test suite` GitHub Actions workflow provides a manual gate
+for the authoritative `cpython/` submodule revision. It builds both the GIL and
+free-threaded configurations with `--with-parallel-gc`, runs the complete
+default regression set without module exclusions, and retains each job's test
+log as an artifact. It runs only through `workflow_dispatch`; ordinary pushes
+continue to use the faster four-configuration focused matrix.
+
+The broad workflow verifies the supported default state, in which parallel GC
+is compiled but not enabled at runtime. The focused matrix separately enables
+the collector and exercises its GIL and free-threaded behavior.
+
+To start the workflow in the GitHub UI, open **Actions**, select
+**Full CPython test suite**, choose **Run workflow**, select the `main` branch,
+and confirm **Run workflow**.
+
+Alternatively, trigger it from the command line after pushing the parent
+repository commit:
+
+```bash
+gh workflow run full-cpython-tests.yml \
+    --repo SonicField/parallel_gc \
+    --ref main
+```
+
+Find the resulting run and follow it to completion with:
+
+```bash
+gh run list \
+    --repo SonicField/parallel_gc \
+    --workflow full-cpython-tests.yml \
+    --limit 1
+
+gh run watch RUN_ID \
+    --repo SonicField/parallel_gc \
+    --exit-status
+```
+
 Missing optional dependencies and the known upstream multiprocessing issue
 must be recorded, not silently converted into a clean result.
 Use these exact broad-suite command shapes on the current host:
