@@ -66,7 +66,7 @@ jobs:
         run: |
           set -o pipefail
           build-full/python -m test -q -j2 \
-              --timeout=300 \
+              --timeout=600 \
               --fail-env-changed \
               --randseed=20260929 \
               2>&1 | tee full-test.log

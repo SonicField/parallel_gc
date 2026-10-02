@@ -75,6 +75,11 @@ The broad workflow verifies the supported default state, in which parallel GC
 is compiled but not enabled at runtime. The focused matrix separately enables
 the collector and exercises its GIL and free-threaded behavior.
 
+CI uses a ten-minute per-test-file timeout because
+`test_gc_parallel_mark_alive` deliberately constructs and repeatedly collects
+large graphs in a debug build. The timeout remains a bounded deadlock detector;
+the workload is not reduced for slower runners.
+
 To start the workflow in the GitHub UI, open **Actions**, select
 **Full CPython test suite**, choose **Run workflow**, select the `main` branch,
 and confirm **Run workflow**.

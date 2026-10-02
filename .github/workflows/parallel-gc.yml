@@ -106,7 +106,7 @@ jobs:
           elif [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
             tests+=(test_gc_parallel_mark_alive)
           fi
-          build-ci/python -m test -q --timeout=180 "${tests[@]}"
+          build-ci/python -m test -q --timeout=600 "${tests[@]}"
 
       - name: Run benchmark harness unit tests
         run: build-ci/python -m unittest -v benchmarks.test_gc_perf_benchmark

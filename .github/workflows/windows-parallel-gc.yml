@@ -98,7 +98,7 @@ jobs:
           else {
               $tests += 'test_gc_parallel_mark_alive'
           }
-          & "${{ matrix.python }}" -m test -q --timeout=300 $tests
+          & "${{ matrix.python }}" -m test -q --timeout=600 $tests
           if ($LASTEXITCODE -ne 0) {
               exit $LASTEXITCODE
           }
@@ -113,7 +113,7 @@ jobs:
       - name: Run full CPython regression suite
         run: |
           & "${{ matrix.python }}" -m test -q -j2 `
-              --timeout=300 `
+              --timeout=600 `
               --fail-env-changed `
               --randseed=20260929 2>&1 | Tee-Object -FilePath full-test.log
           if ($LASTEXITCODE -ne 0) {
