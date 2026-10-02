@@ -101,6 +101,32 @@ gh run watch RUN_ID \
     --exit-status
 ```
 
+### Windows feature-on gate
+
+The `Windows parallel GC` workflow is a manual portability gate. It builds
+64-bit debug CPython with parallel GC enabled in both GIL and free-threaded
+modes, verifies that the expected runtime is active, performs an immediate
+collection after pool startup, and runs the focused GC tests. It deliberately
+starts with x64; Windows ARM64 is the next stage after the x64 workflow is
+green. Parallel GC does not support 32-bit targets.
+
+Trigger and follow the workflow with:
+
+```bash
+gh workflow run windows-parallel-gc.yml \
+    --repo SonicField/parallel_gc \
+    --ref main
+
+gh run list \
+    --repo SonicField/parallel_gc \
+    --workflow windows-parallel-gc.yml \
+    --limit 1
+
+gh run watch RUN_ID \
+    --repo SonicField/parallel_gc \
+    --exit-status
+```
+
 Missing optional dependencies and the known upstream multiprocessing issue
 must be recorded, not silently converted into a clean result.
 Use these exact broad-suite command shapes on the current host:
@@ -206,5 +232,7 @@ flags, worker counts, seeds, warmups, samples, and raw results.
 - ThreadSanitizer cannot run until `libtsan` is available.
 - The parent CI enforces all four GIL/free-threaded and
   feature-on/feature-off configurations on Ubuntu.
-- Native feature-on Linux x86-64, Windows, and macOS validation has not been
-  run. The standard feature-off CPython workflow has passed on the fork.
+- Native feature-on Linux x86-64 focused validation runs in the parent matrix.
+- Windows feature-on validation is being established on x64 before ARM64.
+- Native feature-on macOS validation has not been run. The standard feature-off
+  CPython workflow has passed on the fork.

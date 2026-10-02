@@ -1,0 +1,104 @@
+name: Windows parallel GC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Windows x64, ${{ matrix.name }}
+    runs-on: windows-2025
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GIL
+            free_threaded: false
+            python: 'cpython\PCbuild\amd64\python_d.exe'
+          - name: Free-threaded
+            free_threaded: true
+            python: 'cpython\PCbuild\amd64t\python_d.exe'
+
+    steps:
+      - name: Check out project and CPython fork
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Build CPython with parallel GC
+        env:
+          FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          $arguments = @('-e', '-v', '-d', '-p', 'x64', '--parallel-gc')
+          if ($env:FREE_THREADED -eq '1') {
+              $arguments += '--disable-gil'
+          }
+          & .\cpython\PCbuild\build.bat @arguments
+          if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+          }
+
+      - name: Verify and activate parallel GC
+        env:
+          FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          $script = @'
+          import gc
+          import os
+          import sys
+
+          config = gc.get_parallel_config()
+          expected_free_threaded = os.environ['FREE_THREADED'] == '1'
+          assert config['available'] is True, config
+          assert config['enabled'] is False, config
+          assert sys._is_gil_enabled() is not expected_free_threaded
+
+          gc.disable()
+          gc.enable_parallel()
+          config = gc.get_parallel_config()
+          assert config['enabled'] is True, config
+          assert config['num_workers'] == 16, config
+          assert config['adaptive_workers'] == 4, config
+          gc.collect()
+          gc.disable_parallel()
+          assert gc.get_parallel_config()['enabled'] is False
+          print(config)
+          '@
+          & "${{ matrix.python }}" -c $script
+          if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+          }
+
+      - name: Run focused parallel GC tests
+        env:
+          FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          $tests = @(
+              'test_gc',
+              'test_gc_ws_deque',
+              'test_gc_parallel',
+              'test_gc_parallel_fork',
+              'test_gc_parallel_properties',
+              'test_capi.test_config',
+              'test_capi.test_misc',
+              'test_embed'
+          )
+          if ($env:FREE_THREADED -eq '1') {
+              $tests += 'test_free_threading.test_gc'
+              $tests += 'test_gc_ft_parallel'
+          }
+          else {
+              $tests += 'test_gc_parallel_mark_alive'
+          }
+          & "${{ matrix.python }}" -m test -q --timeout=300 $tests
+          if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+          }
