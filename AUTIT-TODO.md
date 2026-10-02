@@ -3,10 +3,12 @@
 ## Purpose
 
 This document records source-quality issues found while reviewing the parallel
-GC implementation at CPython revision
-`86c83d41f5ae6df6558130b978d1d0a09a036a05`. It exists so that core developers
-can see which risks are already known, which have been reproduced, and how we
-intend to investigate and repair them.
+GC implementation. The initial audit used CPython revision
+`86c83d41f5ae6df6558130b978d1d0a09a036a05`; the status was last reconciled
+through revision `331aaae905af55ec15aa61ee9e8cf18d290a1f1c`. It exists so that
+core developers can see which risks are already known, which have been
+reproduced, which have been repaired locally, and how we intend to investigate
+and repair the remainder.
 
 This is a readiness backlog, not evidence that the collector design is unsound.
 The performance design, phase structure, atomic ordering, barriers, work
@@ -39,16 +41,18 @@ The relevant principles are:
 
 | ID | Severity | State | Issue |
 |----|----------|-------|-------|
-| A1 | BUG | Reproduced | Free-threaded lifecycle APIs race under concurrent use. |
+| A1 | BUG | Repaired; Linux verified | Free-threaded lifecycle APIs race under concurrent use. |
 | A2 | BUG | Source-proven | Partial GIL helper creation has no safe rollback. |
-| A3 | BUG | Source-proven | Partial free-threaded helper creation frees live state. |
-| A4 | BUG | Source-proven | Free-threaded worker arguments have process-global ownership. |
+| A3 | BUG | Repaired; injection pending | Partial free-threaded helper creation frees live state. |
+| A4 | BUG | Repaired; Linux verified | Free-threaded worker arguments have process-global ownership. |
 | A5 | BUG | Source-proven | GIL split-vector allocation failures are ignored. |
 | A6 | BUG | Source-proven | Free-threaded unique-ID allocation failure is ignored. |
 | A7 | BUG | Hypothesis | Free-threaded scan failure may not restore temporary GC state. |
 | A8 | HARDENING | Source-proven | A GIL path silently removes a freed GC-list entry. |
 | A9 | HARDENING | Confirmed gap | Failure injection and dynamic-analysis coverage are missing. |
 | A10 | HARDENING | Reproduced | Added sources contain compiler warnings and unused alternatives. |
+| A11 | HARDENING | Source-proven | The GC barrier duplicates CPython's condition-variable operation layer. |
+| A12 | BUG | Source-proven | Worker-join failures are ignored before shared state is freed. |
 
 `Source-proven` means the unsafe control flow is directly visible but still
 needs a checked-in test that demonstrates the failure. `Hypothesis` means the
@@ -57,7 +61,7 @@ until fault injection reproduces it.
 
 ## A1. Free-threaded lifecycle APIs race under concurrent use
 
-Severity: **BUG**. State: **reproduced**.
+Severity: **BUG**. State: **repaired locally; Linux verified**.
 
 The free-threaded implementations of `gc.enable_parallel()`,
 `gc.disable_parallel()`, and the pool accessors read and mutate interpreter
@@ -91,6 +95,14 @@ Required discussion: approve the lifecycle synchronization design before code
 is changed. This must not silently introduce synchronization into collection
 hot paths.
 
+Local repair status: revision `6ce79c0c65a0c9bec32ce8d30fa44c0131e238f5`
+serializes lifecycle operations, makes pool ownership per-interpreter, waits
+for every helper to become ready before publishing the pool, and adds focused
+concurrency, immediate-collection, configuration-coherence, and
+multi-interpreter tests. Parent matrix run `36922821632` passed the GIL and
+free-threaded feature-on and feature-off configurations on Linux. ASan and
+TSan evidence remain outstanding under A9.
+
 ## A2. Partial GIL helper creation has no safe rollback
 
 Severity: **BUG**. State: **source-proven**.
@@ -111,9 +123,13 @@ running, join only valid handles, and permit a later successful enable.
 Acceptance condition: startup publishes the pool only after every helper is
 ready, and every partial state has one bounded rollback path.
 
+The independent problem of a failed `PyThread_join_thread()` call is tracked
+under A12. Repairing startup rollback must not treat an unsuccessful join as
+proof that a helper has terminated.
+
 ## A3. Partial free-threaded helper creation frees live state
 
-Severity: **BUG**. State: **source-proven**.
+Severity: **BUG**. State: **repaired locally; failure injection pending**.
 
 When free-threaded helper creation fails after one or more successful starts,
 the failure path frees the shared argument array, worker states, handles,
@@ -132,9 +148,15 @@ Acceptance condition: started helpers receive a shutdown signal and are joined
 before any referenced storage is released. A pool is not reported as enabled
 unless every required helper resource exists.
 
+Local repair status: revision `6ce79c0c65a0c9bec32ce8d30fa44c0131e238f5`
+implements shutdown and joining of successfully created helpers before
+freeing their state, pre-creates required thread states, and publishes the pool
+only after the startup handshake completes. Deterministic failure injection at
+every creation position is still required before this item is closed.
+
 ## A4. Free-threaded worker arguments have process-global ownership
 
-Severity: **BUG**. State: **source-proven**.
+Severity: **BUG**. State: **repaired locally; Linux verified**.
 
 `_pool_worker_args` is a file-static allocation, while `_PyGCThreadPool` is
 owned by an interpreter. Initializing another interpreter overwrites the
@@ -149,6 +171,11 @@ run both under ASan and TSan.
 Acceptance condition: every allocation needed by a pool is reachable from and
 freed by that pool alone. No mutable process-global storage participates in
 per-interpreter pool lifetime.
+
+Local repair status: revision `6ce79c0c65a0c9bec32ce8d30fa44c0131e238f5`
+moves worker arguments into `_PyGCThreadPool` and adds a test with two live
+interpreters owning independent pools. The Linux matrix passed; Windows and
+dynamic-analysis evidence remain outstanding.
 
 ## A5. GIL split-vector allocation failures are ignored
 
@@ -278,6 +305,87 @@ warnings, and every removed fragment is shown to be unreachable. Cleanup must
 be a separate behavior-preserving commit and must not reorder atomics or alter
 phase boundaries.
 
+## A11. The GC barrier duplicates CPython's condition-variable operation layer
+
+Severity: **HARDENING**. State: **source-proven**.
+
+`pycore_gc_barrier.h` defines `_PyGC_MUTEX_*` and `_PyGC_COND_*` platform
+operations directly in terms of pthreads or Windows SRW locks and condition
+variables. CPython already implements the corresponding `PyMUTEX_*` and
+`PyCOND_*` operations in `Python/condvar.h`; `pycore_condvar.h` currently
+exposes only their platform-dependent types.
+
+The duplication is not currently a demonstrated failure on CPython's supported
+Windows target, but it creates two portability contracts. The GC copy bypasses
+CPython's condition-variable initialization and error-return conventions and
+assumes native Windows condition variables rather than respecting the
+`_PY_EMULATED_WIN_CV` abstraction.
+
+Falsifying review: build and exercise the barrier tests on supported POSIX and
+Windows configurations, compare every operation and failure convention with
+`Python/condvar.h`, and determine whether any supported configuration has
+different types or semantics. A proposed consolidation must demonstrate that
+barrier epochs, wakeups, resizing, and atomic ordering are unchanged.
+
+Acceptance condition: either the barrier uses one authoritative CPython
+condition-variable operation layer, or the separate layer has a documented and
+tested reason to exist. Initialization, wait, broadcast, and teardown failures
+must have an explicit policy.
+
+Required discussion: moving or exposing CPython's private condition-variable
+implementation changes internal layering, while replacing the barrier could
+change synchronization behaviour. No such change should be made as incidental
+Windows cleanup.
+
+## A12. Worker-join failures are ignored before shared state is freed
+
+Severity: **BUG**. State: **source-proven**.
+
+Both persistent-pool implementations call `PyThread_join_thread()` without
+checking its return value. The free-threaded partial-start rollback and its
+debug-only direct-worker test path do the same. A non-zero result does not
+establish that the helper has terminated, but the following cleanup frees
+thread arguments, worker state, deques, condition variables, and pool storage
+that the helper may still reference.
+
+This is distinct from A2 and A3: those items concern which helpers are started
+and which handles are valid. A12 concerns the result of joining a valid handle
+during normal shutdown or rollback.
+
+Falsifying test: add a debug-only join-failure hook and exercise failure for
+each helper during normal disable and partial-start rollback. Demonstrate that
+the implementation never frees helper-referenced storage unless termination is
+known. Where the platform can produce a real join failure safely, retain that
+as an integration test rather than relying only on the hook.
+
+Acceptance condition: every join result is checked, and the failure policy
+preserves memory safety. If CPython cannot recover after a valid helper fails to
+join, that unrecoverable boundary must be explicit and tested rather than
+silently continuing cleanup.
+
+Required discussion: the safe response may be fatal termination or deliberate
+retention of state because ordinary recovery cannot prove the helper stopped.
+That policy decision must be made separately from the recoverable
+thread-creation failure discussed in A2.
+
+## Platform audit status
+
+Revision `331aaae905af55ec15aa61ee9e8cf18d290a1f1c` records the mechanical MSVC
+repairs found by the initial Windows source audit: removal of an unused
+`<stdatomic.h>` include, replacement of test-only variable-length arrays with
+compile-time-sized arrays, and addition of the shared random-walk header to the
+Visual Studio project metadata.
+
+The production collectors already use CPython's portable
+`PyThread_start_joinable_thread()`, `PyThread_join_thread()`, `PyMutex`, atomic,
+and memory APIs rather than defining native Windows/POSIX alternatives. The
+custom counting semaphore is not interchangeable with CPython's
+`_PySemaphore`: the latter has a Windows maximum count of ten, while parallel
+GC can post up to sixteen worker tokens.
+
+These source findings are not Windows execution evidence. The manual Windows
+GIL and free-threaded workflow must pass before Windows portability is claimed.
+
 ## Repair plan
 
 ### Phase 0: preserve and classify the baseline
@@ -296,13 +404,18 @@ marked as still awaiting one.
 
 ### Phase 1: make pool ownership and lifecycle safe
 
-1. Move free-threaded worker arguments into per-pool ownership (A4).
-2. Agree and implement free-threaded lifecycle serialization (A1).
+1. Complete cross-platform and dynamic-analysis verification of the repaired
+   per-pool worker-argument ownership (A4).
+2. Complete cross-platform and dynamic-analysis verification of the repaired
+   free-threaded lifecycle serialization (A1).
 3. Implement bounded partial-start rollback for the GIL pool (A2).
-4. Implement bounded partial-start rollback for the free-threaded pool (A3).
+4. Complete deterministic failure-injection verification of the repaired
+   free-threaded rollback (A3).
 5. Audit initialization and finalization of every mutex, condition variable,
    barrier, handle, worker state, and Python thread state.
-6. Run repeated enable, collect, disable, interpreter-create, and
+6. Define and implement the failed-join policy without freeing live state
+   (A12).
+7. Run repeated enable, collect, disable, interpreter-create, and
    interpreter-destroy sequences under ASan and TSan.
 
 Exit criterion: no helper survives a failed enable, no pool frees another
@@ -339,9 +452,11 @@ from a fundamental heap-state violation.
 2. Add or separate `gc.collect_async()` coverage and proposal scope.
 3. Remove only proven-unused functions and fix warnings in a standalone
    behavior-preserving commit (A10).
-4. Run focused tests, the four-build matrix, broad GIL and free-threaded tests,
+4. Resolve the duplicated condition-variable operation layer without changing
+   barrier semantics (A11).
+5. Run focused tests, the four-build matrix, broad GIL and free-threaded tests,
    ASan, TSan, and applicable reference-leak checks.
-5. Re-run the full optimized GIL and free-threaded ABBA benchmarks to verify
+6. Re-run the full optimized GIL and free-threaded ABBA benchmarks to verify
    that safety work did not change throughput, pause behaviour, dispatch
    threshold, or adaptive selection beyond normal variance.
 
