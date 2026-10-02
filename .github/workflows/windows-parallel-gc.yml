@@ -14,7 +14,7 @@ jobs:
   build-and-test:
     name: Windows x64, ${{ matrix.name }}
     runs-on: windows-2025
-    timeout-minutes: 90
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
@@ -102,3 +102,28 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
               exit $LASTEXITCODE
           }
+
+      - name: Run benchmark harness unit tests
+        run: |
+          & "${{ matrix.python }}" -m unittest -v benchmarks.test_gc_perf_benchmark
+          if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+          }
+
+      - name: Run full CPython regression suite
+        run: |
+          & "${{ matrix.python }}" -m test -q -j2 `
+              --timeout=300 `
+              --fail-env-changed `
+              --randseed=20260929 2>&1 | Tee-Object -FilePath full-test.log
+          if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+          }
+
+      - name: Upload full CPython test log
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: windows-full-test-log-${{ matrix.free_threaded && 'free-threaded' || 'gil' }}
+          path: full-test.log
+          if-no-files-found: warn

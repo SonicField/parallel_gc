@@ -103,12 +103,18 @@ gh run watch RUN_ID \
 
 ### Windows feature-on gate
 
-The `Windows parallel GC` workflow is a manual portability gate. It builds
-64-bit debug CPython with parallel GC enabled in both GIL and free-threaded
-modes, verifies that the expected runtime is active, performs an immediate
-collection after pool startup, and runs the focused GC tests. It deliberately
-starts with x64; Windows ARM64 is the next stage after the x64 workflow is
-green. Parallel GC does not support 32-bit targets.
+The `Windows parallel GC` workflow is a manual portability and regression gate.
+It builds 64-bit debug CPython with parallel GC enabled in both GIL and
+free-threaded modes, verifies that the expected runtime is active, performs an
+immediate collection after pool startup, runs the focused GC tests and parent
+benchmark-harness unit tests, and then runs the complete default CPython
+regression suite without module exclusions. Each full-suite log is retained as
+an artifact. It deliberately starts with x64; Windows ARM64 is the next stage
+after the x64 workflow is green. Parallel GC does not support 32-bit targets.
+
+As on Linux, the focused tests explicitly activate parallel GC. The full
+CPython suite verifies the supported default runtime state, in which the
+feature is compiled in but is not automatically enabled.
 
 Trigger and follow the workflow with:
 
