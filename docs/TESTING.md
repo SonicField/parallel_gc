@@ -80,6 +80,14 @@ CI uses a ten-minute per-test-file timeout because
 large graphs in a debug build. The timeout remains a bounded deadlock detector;
 the workload is not reduced for slower runners.
 
+The full workflows use CPython's standard evidence-preserving rerun mode. An
+initial failure is printed and retained in the uploaded log, then the failed
+test is rerun verbosely. This is necessary for current upstream intermittent
+tests rather than a parallel-GC exception. In particular,
+`test_external_inspection.test_tlbc_cache_refresh_after_growth` reproduced its
+transient remote-memory read failure locally in both feature-on and feature-off
+free-threaded builds.
+
 To start the workflow in the GitHub UI, open **Actions**, select
 **Full CPython test suite**, choose **Run workflow**, select the `main` branch,
 and confirm **Run workflow**.

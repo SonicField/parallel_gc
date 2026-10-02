@@ -68,6 +68,8 @@ jobs:
           build-full/python -m test -q -j2 \
               --timeout=600 \
               --fail-env-changed \
+              --rerun \
+              --verbose3 \
               --randseed=20260929 \
               2>&1 | tee full-test.log
 

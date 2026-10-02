@@ -115,6 +115,8 @@ jobs:
           & "${{ matrix.python }}" -m test -q -j2 `
               --timeout=600 `
               --fail-env-changed `
+              --rerun `
+              --verbose3 `
               --randseed=20260929 2>&1 | Tee-Object -FilePath full-test.log
           if ($LASTEXITCODE -ne 0) {
               exit $LASTEXITCODE
