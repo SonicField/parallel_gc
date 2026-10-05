@@ -1,0 +1,25 @@
+disabled-combined.json
+======================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 10:21:16.344777
+End date: 2026-10-05 10:25:26.507675
+
+enabled-combined.json
+=====================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 10:22:30.321814
+End date: 2026-10-05 10:24:11.385772
+
++--------------+------------------------+-----------------------+--------------+------------------------+
+| Benchmark    | disabled-combined.json | enabled-combined.json | Change       | Significance           |
++==============+========================+=======================+==============+========================+
+| gc_traversal | 1.57 ms                | 1.98 ms               | 1.26x slower | Significant (t=-52.20) |
++--------------+------------------------+-----------------------+--------------+------------------------+
