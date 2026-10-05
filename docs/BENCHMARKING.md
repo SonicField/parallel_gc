@@ -23,6 +23,77 @@ CPython's regression-test tree.
 Use `pyperformance` as a complementary whole-interpreter regression check, not
 as a substitute for the measurements documented here.
 
+## Whole-interpreter regression with pyperformance
+
+The `pyperformance/` submodule pins the unmodified upstream benchmark suite.
+Project-owned activation and verification code lives under
+`benchmarks/pyperformance_support/`. Do not patch the submodule to enable
+parallel GC.
+
+Create the benchmark driver environment once:
+
+```bash
+python3 -m venv .venvs/pyperformance-driver
+
+.venvs/pyperformance-driver/bin/python -m pip install \
+    --requirement pyperformance/pyperformance/requirements/requirements.txt
+
+.venvs/pyperformance-driver/bin/python -m pip install \
+    --no-deps \
+    --editable ./pyperformance \
+    --editable ./benchmarks/pyperformance_support
+```
+
+The target CPython build must contain its normal optional standard-library
+modules. At minimum, `zlib` is required to construct the benchmark virtual
+environment. A full suite also requires the dependencies used by its selected
+benchmarks. Install CPython's build dependencies before configuring the
+optimized interpreter.
+
+Run a short end-to-end check before spending hours on a campaign:
+
+```bash
+.venvs/pyperformance-driver/bin/python \
+    benchmarks/run_pyperformance.py abba \
+    --python build-benchmark-gil/python \
+    --benchmarks telco \
+    --run-style debug \
+    --output-dir benchmarks/results/pyperformance/gil-smoke
+```
+
+The debug run verifies the machinery. Its timings are not performance
+evidence.
+
+Run the complete comparison with the same optimized binary in both modes:
+
+```bash
+.venvs/pyperformance-driver/bin/python \
+    benchmarks/run_pyperformance.py abba \
+    --python build-benchmark-gil/python \
+    --benchmarks default \
+    --run-style rigorous \
+    --output-dir benchmarks/results/pyperformance/gil-full
+```
+
+Repeat the command with the optimized free-threaded binary and a separate
+output directory.
+
+The runner uses the order disabled, enabled, enabled, disabled. It preserves
+all four raw JSON suites, combines the two runs for each mode, writes the
+standard pyperformance comparison, and records repository and executable
+provenance in `campaign.json`. This ABBA order cancels first-order linear drift;
+it does not remove random variance or machine interference.
+
+Every pyperf worker loads the project support package before measured code.
+The support package applies the requested mode, verifies the resulting
+`gc.get_parallel_config()` state, and records that state through a pyperf hook.
+The runner rejects a result when any benchmark lacks the expected attestation.
+
+The runtime ABBA comparison does not measure the cost of compiling parallel-GC
+support into CPython. Measure that separately with matched optimized builds:
+one configured without `--with-parallel-gc`, and one configured with the
+feature but kept runtime-disabled.
+
 ## Quick Start
 
 ```bash

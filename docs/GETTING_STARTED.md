@@ -5,9 +5,9 @@ free-threaded CPython builds. The two implementations share deque and
 synchronization primitives, but have separate worker pools and integrate with
 different serial collectors.
 
-## Understand the two repositories
+## Understand the repositories
 
-The project has two necessary parts:
+The project has two project repositories:
 
 - `SonicField/cpython` contains the implementation and the material that could
   ultimately be proposed to CPython: core source, build integration, focused
@@ -18,6 +18,11 @@ The project has two necessary parts:
   design documents, and project-level CI. It records the exact CPython commit
   to which each body of evidence applies.
 
+The parent repository also pins the official `python/pyperformance` suite as
+the `pyperformance/` submodule. The project does not modify that suite.
+Project-owned code activates parallel GC, verifies the mode inside every
+worker, runs ABBA comparisons, and records provenance outside the submodule.
+
 This split is deliberate. Collector performance depends on heap shape, cyclic
 garbage volume, collection frequency, pause behavior, sustained application
 load, and adaptive worker selection. General-purpose suites such as
@@ -25,6 +30,10 @@ load, and adaptive worker selection. General-purpose suites such as
 exercise or observe those conditions. The larger GC-specific benchmark system
 is essential to evaluating this project, while being too specialised and
 experimental for the CPython source tree.
+
+A pyperformance regression blocks the proposal even when the GC-specific
+benchmarks improve. See [BENCHMARKING.md](BENCHMARKING.md) for the verified
+runner and the division of responsibility between the two benchmark systems.
 
 ## Obtain the source
 

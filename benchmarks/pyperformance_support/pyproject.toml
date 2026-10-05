@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parallel-gc-pyperformance-support"
+version = "0.1.0"
+description = "Activation and verification support for parallel_gc pyperformance runs"
+requires-python = ">=3.10"
+
+[project.entry-points."pyperf.hook"]
+parallel_gc = "parallel_gc_pyperformance.hook:ParallelGCHook"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["parallel_gc_pyperformance*"]

@@ -4,7 +4,7 @@ This project develops and evaluates parallel cyclic garbage collection for GIL
 and free-threaded CPython builds. Parallel collection is optional at build time
 and runtime.
 
-The project deliberately spans two repositories:
+The project uses two project repositories and one pinned benchmark dependency:
 
 - The `cpython/` submodule is the `SonicField/cpython` fork. It contains the
   implementation, CPython integration, focused correctness tests, build-system
@@ -13,6 +13,9 @@ The project deliberately spans two repositories:
 - This outer `parallel_gc` repository contains the design material, project CI,
   benchmark drivers, raw performance results, and reproducibility records.
   The outer repository pins the exact CPython fork commit being evaluated.
+- The `pyperformance/` submodule pins the unmodified upstream Python benchmark
+  suite used for whole-interpreter regression testing. Parallel-GC activation,
+  ABBA orchestration, and result provenance remain in this outer repository.
 
 The performance work is not optional supporting material. General-purpose
 Python benchmark suites such as `pyperformance` are useful for detecting broad
@@ -23,6 +26,11 @@ parallel GC works. The dedicated benchmarks in this repository provide that
 evidence under controlled heap shapes, sustained workloads, and alternating
 serial/parallel measurements. They are necessarily substantial and
 experimental, so they do not belong in the main CPython tree.
+
+This distinction does not make pyperformance optional. A broad pyperformance
+regression is a release blocker even when the specialist GC benchmarks improve.
+The two suites answer different questions and both form part of the performance
+evidence.
 
 ## Repository status
 

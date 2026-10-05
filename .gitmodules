@@ -2,3 +2,6 @@
 	path = cpython
 	url = https://github.com/SonicField/cpython.git
 	branch = parallel-gc-upstream-port
+[submodule "pyperformance"]
+	path = pyperformance
+	url = https://github.com/python/pyperformance.git

@@ -4,10 +4,14 @@
 *.pyc
 __pycache__/
 build/
+*.egg-info/
 build-upstream-*/
 build-port-*/
 build-baseline-*/
 build-benchmark-*/
+build-pyperformance-*/
+.pyperformance/
+.venvs/
 
 # Editor files
 *.swp
@@ -24,6 +28,8 @@ build-benchmark-*/
 # Benchmark output (keep scripts, ignore output)
 *.json
 !.nbs/**/*.json
+!benchmarks/results/pyperformance/*.json
+!benchmarks/results/pyperformance/**/*.json
 
 # NBS framework runtime state (ephemeral team coordination)
 .nbs/
