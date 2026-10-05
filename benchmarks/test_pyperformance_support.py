@@ -315,6 +315,19 @@ class RunnerTests(unittest.TestCase):
             record = runner.require_distinct_targets(baseline, candidate)
         self.assertNotEqual(record["baseline"], record["candidate"])
 
+    def test_binary_comparison_accepts_explicit_source_trees(self):
+        args = runner.parse_args([
+            "binary-abba",
+            "--baseline-python", "baseline/python",
+            "--baseline-source", "baseline/source",
+            "--candidate-python", "candidate/python",
+            "--candidate-source", "candidate/source",
+            "--mode", "enabled",
+            "--output-dir", "results",
+        ])
+        self.assertEqual(args.baseline_source, "baseline/source")
+        self.assertEqual(args.candidate_source, "candidate/source")
+
     def test_parse_venv_path(self):
         output = (
             "Virtual environment path: /tmp/work/venv/cpython3.16 "

@@ -349,7 +349,7 @@ def git_record(path):
     return {"revision": revision, "dirty": bool(status), "status": status}
 
 
-def target_record(target_python):
+def target_record(target_python, source=None):
     code = """
 import gc, json, sys, sysconfig
 print(json.dumps({
@@ -367,6 +367,8 @@ print(json.dumps({
     path = Path(target_python).resolve()
     record["executable"] = str(path)
     record["executable_sha256"] = sha256_file(path)
+    if source:
+        record["source_repository"] = git_record(source)
     return record
 
 
@@ -405,7 +407,7 @@ def write_campaign_record(output_dir, args, runs, result_files):
         "run_style": args.run_style,
         "affinity": args.affinity,
         "target_python": str(Path(args.python).resolve()),
-        "target": target_record(args.python),
+        "target": target_record(args.python, args.source),
         "parallel_gc_repository": git_record(PROJECT_ROOT),
         "cpython_repository": git_record(PROJECT_ROOT / "cpython"),
         "pyperformance_repository": git_record(PYPERFORMANCE_ROOT),
@@ -438,8 +440,12 @@ def write_binary_campaign_record(output_dir, args, runs, result_files):
         "run_style": args.run_style,
         "affinity": args.affinity,
         "targets": {
-            "baseline": target_record(args.baseline_python),
-            "candidate": target_record(args.candidate_python),
+            "baseline": target_record(
+                args.baseline_python, args.baseline_source
+            ),
+            "candidate": target_record(
+                args.candidate_python, args.candidate_source
+            ),
         },
         "parallel_gc_repository": git_record(PROJECT_ROOT),
         "cpython_repository": git_record(PROJECT_ROOT / "cpython"),
@@ -638,6 +644,7 @@ def add_benchmark_args(parser):
 
 def add_common_args(parser):
     parser.add_argument("--python", required=True, help="optimized target Python")
+    parser.add_argument("--source", help="source tree used to build --python")
     add_benchmark_args(parser)
 
 
@@ -671,7 +678,9 @@ def parse_args(argv=None):
     )
     add_benchmark_args(binary_abba)
     binary_abba.add_argument("--baseline-python", required=True)
+    binary_abba.add_argument("--baseline-source")
     binary_abba.add_argument("--candidate-python", required=True)
+    binary_abba.add_argument("--candidate-source")
     binary_abba.add_argument(
         "--mode", required=True, choices=("enabled", "disabled")
     )
@@ -702,6 +711,14 @@ def main(argv=None):
         if not target.is_file():
             raise CampaignError(f"target Python does not exist: {target}")
         setattr(args, attribute, str(target))
+    for attribute in ("source", "baseline_source", "candidate_source"):
+        value = getattr(args, attribute, None)
+        if value is None:
+            continue
+        source = Path(value).resolve()
+        if not source.is_dir():
+            raise CampaignError(f"target source tree does not exist: {source}")
+        setattr(args, attribute, str(source))
     args.func(args)
 
 
