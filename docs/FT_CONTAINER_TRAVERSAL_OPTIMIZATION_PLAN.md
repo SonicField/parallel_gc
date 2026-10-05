@@ -1,6 +1,6 @@
 # Free-threaded container traversal optimization plan
 
-**Status:** In progress. Steps 0 and 1 are complete; list verification is next.
+**Status:** In progress. Steps 0 through 2 are complete; tuple investigation is next.
 
 ## Terminal goal
 
@@ -170,6 +170,8 @@ Atomic commit: parent repository only, `Add FT container traversal verification 
 
 ### Step 2: Retain or reject the list specialization
 
+**Status:** Complete on 2026-10-05. The specialization was retained as CPython commit `06f1d674a4`.
+
 Write the list correctness tests before retaining the exploratory implementation. Run them on the clean baseline, then validate their sensitivity with temporary mutations. Apply only the exact-list direct traversal mechanism, preserving the shared visit operation and generic fallback.
 
 Run focused debug tests, optimized baseline/candidate enabled ABBA, disabled control ABBA, final assembly inspection, hardware-counter comparison, sanitizer checks, and the mandatory performance guardrails.
@@ -280,5 +282,9 @@ Atomic parent commit: `Record cumulative container traversal verification`.
 | 2026-10-05 | List | Evidence archive | Campaign files and the exact experimental patch were preserved. The baseline executable hash was not recoverable because the build had been overwritten. | Step 0 complete; evidence is exploratory rather than submission-grade. | `benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/README.md` |
 | 2026-10-05 | Container workloads | Verification substrate | Five graph-validating workloads, explicit mode attestation, mismatch rejection, binary ABBA support, and source provenance passed 39 harness tests and actual free-threaded smoke runs. | Step 1 harness complete. | Parent commits `99ef64a` and `67c7230` |
 | 2026-10-05 | Container workloads | Clean baseline | A clean optimized FT binary completed disabled/enabled/enabled/disabled rigorous runs. Both halves reproduced large list and tuple penalties, split and Unicode-dictionary gains, and a smaller general-dictionary penalty. | Baseline accepted; it supports type-specific investigation and rejects treating all dictionary layouts as one performance case. | `benchmarks/results/pyperformance/investigations/ft-container-clean-baseline-2026-10-05/` |
+| 2026-10-05 | List | Initial mutation sensitivity | Omitting index zero did not fail the liveness-only test because a later reachability phase recovered the early propagation miss. | Final heap outcome is insufficient to verify the early fast path; add direct debug observation. | `benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md` |
+| 2026-10-05 | List | Direct mutation sensitivity | The debug probe failed when index zero was omitted and when a list subtype was sent through the exact-list path. | Sensitivity established; both mutations removed. | `benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md` |
+| 2026-10-05 | List | Optimized binary ABBA | Enabled halves measured 2.23 to 1.38 milliseconds and 2.24 to 1.37 milliseconds. Both disabled halves were neutral. | The fixed 20 percent gate passed in both halves. | `benchmarks/results/pyperformance/investigations/ft-exact-list-enabled-abba-2026-10-05/` and `ft-exact-list-disabled-control-abba-2026-10-05/` |
+| 2026-10-05 | List | Final per-type verification | Debug GIL/FT, ASan, standard PGO, assembly, counters, adaptive exercise, and eight 500,000-object heap guardrails passed. | Retained as CPython commit `06f1d674a4`; Step 2 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md` |
 
 Append one row after every baseline, mutation check, rejected hypothesis, retained change, regression, or inconclusive run. Do not replace older rows when the conclusion changes.

@@ -1,0 +1,25 @@
+baseline-combined.json
+======================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 11:57:52.257249
+End date: 2026-10-05 12:02:40.537019
+
+candidate-combined.json
+=======================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 11:59:06.013224
+End date: 2026-10-05 12:01:28.165161
+
++----------------------------+------------------------+-------------------------+--------------+-----------------+
+| Benchmark                  | baseline-combined.json | candidate-combined.json | Change       | Significance    |
++============================+========================+=========================+==============+=================+
+| parallel_gc_list_traversal | 1.55 ms                | 1.55 ms                 | 1.00x faster | Not significant |
++----------------------------+------------------------+-------------------------+--------------+-----------------+
