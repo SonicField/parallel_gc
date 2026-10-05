@@ -1,6 +1,6 @@
 # Free-threaded container traversal optimization plan
 
-**Status:** Draft for review. This document authorizes no implementation or commit.
+**Status:** In progress. Steps 0 and 1 are complete; list verification is next.
 
 ## Terminal goal
 
@@ -25,7 +25,7 @@ Planning does not authorize implementation. The human reviewer approves the acce
 ### Observations
 
 - CPython is at `01a89cbeb8` plus an uncommitted experimental list fast path in `Python/gc_free_threading_parallel.c`.
-- The parent repository base is `f9f0a44ff56b9fe518cb41827f63f3f75b9476e0`; unrelated parent changes remain uncommitted and outside this work's commit boundary.
+- The parent repository is at `67c72309211869e2bfdc9c09c383fdae5c584186`; unrelated parent changes remain uncommitted and outside this work's commit boundary.
 - The exact experimental diff has SHA-256 `b7520df6e6992d6c41424e82fc20412c785f8ab6099076abf4e8bef9c7f8a976` and is archived with the exploratory results.
 - The clean optimized free-threaded baseline measured `gc_traversal` at approximately 2.81 milliseconds with parallel GC enabled and 1.57 milliseconds disabled.
 - That benchmark contains approximately 499,500 list edges, most of which are repeated references to objects already marked alive.
@@ -34,6 +34,8 @@ Planning does not authorize implementation. The human reviewer approves the acce
 - The uncommitted exact-list traversal experiment passed the four focused free-threaded parallel-GC test files and measured approximately 1.98 milliseconds enabled and 1.57 milliseconds disabled in one rigorous ABBA campaign.
 - Temporary instrumentation observed 508,499 propagation attempts, 6,665 successful first marks, and 501,834 already-alive results.
 - CPython's existing `list_traverse` and `tuple_traverse` visit elements in reverse index order. `dict_traverse` has separate split-table, combined-Unicode, and general-key paths.
+- A clean optimized free-threaded binary from `01a89cbeb8` completed a rigorous disabled/enabled/enabled/disabled baseline campaign for all five controlled container workloads.
+- Both campaign halves reproduced the same result: enabling the unoptimized parallel path made exact-list traversal approximately 1.43-1.44 times slower and exact-tuple traversal approximately 1.38-1.39 times slower. It made split dictionaries approximately 1.26-1.27 times faster and combined-Unicode dictionaries approximately 1.36-1.37 times faster, while making general-key dictionaries approximately 1.08-1.09 times slower.
 
 ### Interpretations
 
@@ -144,7 +146,7 @@ Before accepting a test set, temporarily introduce representative defects and sh
 
 ### Step 0: Protect and identify the exploratory state
 
-**Status:** Complete on 2026-10-05, pending the atomic parent commit described below.
+**Status:** Complete on 2026-10-05.
 
 Record the current CPython diff, revision, parent revision, optimized build identity, and all raw list experiment paths. Do not commit the current list patch.
 
@@ -155,6 +157,8 @@ Exit condition: another person can reconstruct which source and binary produced 
 Atomic commit: parent repository only, `Record FT container traversal optimization plan and baseline`.
 
 ### Step 1: Add the verification substrate
+
+**Status:** Complete on 2026-10-05.
 
 Add project-owned list-, tuple-, and dictionary-dominant workloads with graph-shape assertions and baseline/candidate ABBA support. Add unit tests for workload construction, mode attestation, sample retention, and refusal of mismatched work. Do not change CPython collector code in this step.
 
@@ -274,5 +278,7 @@ Atomic parent commit: `Record cumulative container traversal verification`.
 | 2026-10-05 | Shared mark helper | Exploratory | Forced inlining removed the standalone helper symbol but left enabled `gc_traversal` at approximately 2.83 milliseconds. | Falsified as a useful standalone optimization; reverted. | `benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/forced-inline/` |
 | 2026-10-05 | List | Exploratory | One optimized enabled/disabled ABBA measured approximately 1.98 versus 1.57 milliseconds after exact-list direct traversal, compared with 2.81 versus 1.57 milliseconds at the clean baseline. | Failed to falsify; confirmatory baseline/candidate ABBA and contract tests remain mandatory. | `benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/direct-list/` |
 | 2026-10-05 | List | Evidence archive | Campaign files and the exact experimental patch were preserved. The baseline executable hash was not recoverable because the build had been overwritten. | Step 0 complete; evidence is exploratory rather than submission-grade. | `benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/README.md` |
+| 2026-10-05 | Container workloads | Verification substrate | Five graph-validating workloads, explicit mode attestation, mismatch rejection, binary ABBA support, and source provenance passed 39 harness tests and actual free-threaded smoke runs. | Step 1 harness complete. | Parent commits `99ef64a` and `67c7230` |
+| 2026-10-05 | Container workloads | Clean baseline | A clean optimized FT binary completed disabled/enabled/enabled/disabled rigorous runs. Both halves reproduced large list and tuple penalties, split and Unicode-dictionary gains, and a smaller general-dictionary penalty. | Baseline accepted; it supports type-specific investigation and rejects treating all dictionary layouts as one performance case. | `benchmarks/results/pyperformance/investigations/ft-container-clean-baseline-2026-10-05/` |
 
 Append one row after every baseline, mutation check, rejected hypothesis, retained change, regression, or inconclusive run. Do not replace older rows when the conclusion changes.

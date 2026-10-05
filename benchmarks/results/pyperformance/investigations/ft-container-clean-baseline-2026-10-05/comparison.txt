@@ -1,0 +1,33 @@
+disabled-combined.json
+======================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 11:14:36.276482
+End date: 2026-10-05 11:32:47.878796
+
+enabled-combined.json
+=====================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision 01a89cbeb8
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-05 11:19:07.847919
+End date: 2026-10-05 11:28:17.303345
+
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
+| Benchmark                          | disabled-combined.json | enabled-combined.json | Change       | Significance           |
++====================================+========================+=======================+==============+========================+
+| parallel_gc_dict_general_traversal | 3.28 ms                | 3.56 ms               | 1.08x slower | Significant (t=-11.87) |
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
+| parallel_gc_dict_split_traversal   | 1.87 ms                | 1.47 ms               | 1.27x faster | Significant (t=43.70)  |
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
+| parallel_gc_dict_unicode_traversal | 1.55 ms                | 1.14 ms               | 1.36x faster | Significant (t=50.00)  |
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
+| parallel_gc_list_traversal         | 1.54 ms                | 2.22 ms               | 1.44x slower | Significant (t=-84.61) |
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
+| parallel_gc_tuple_traversal        | 1.65 ms                | 2.28 ms               | 1.38x slower | Significant (t=-83.22) |
++------------------------------------+------------------------+-----------------------+--------------+------------------------+
