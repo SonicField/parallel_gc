@@ -1,0 +1,7 @@
+[project]
+name = "pyperformance_bm_parallel_gc_dict_split_traversal"
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "parallel_gc_dict_split_traversal"
+extra_opts = ["--container", "dict-split"]

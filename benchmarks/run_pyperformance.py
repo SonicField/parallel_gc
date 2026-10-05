@@ -21,7 +21,18 @@ MODE_ENV = "PARALLEL_GC_PYPERFORMANCE_MODE"
 RUN_ID_ENV = "PYPERFORMANCE_RUNID"
 HOOK_NAME = "parallel_gc"
 ABBA_MODES = ("disabled", "enabled", "enabled", "disabled")
+BINARY_ABBA_LABELS = ("baseline", "candidate", "candidate", "baseline")
 INHERITED_ENV = f"{MODE_ENV},{RUN_ID_ENV}"
+WORK_METADATA = (
+    "parallel_gc_graph_kind",
+    "parallel_gc_graph_container_nodes",
+    "parallel_gc_graph_auxiliary_nodes",
+    "parallel_gc_graph_edges",
+    "parallel_gc_graph_levels",
+    "parallel_gc_graph_split_width",
+    "parallel_gc_collections_per_loop",
+    "parallel_gc_measured_collections_per_loop",
+)
 RUN_STYLE_ARGS = {
     None: None,
     "fast": "--fast",
@@ -76,6 +87,14 @@ def benchmarks_arg(benchmarks):
     return f"--benchmarks={benchmarks}"
 
 
+def manifest_arg(manifest):
+    return f"--manifest={Path(manifest).resolve()}"
+
+
+def manifest_args(manifest):
+    return [manifest_arg(manifest)] if manifest else []
+
+
 def require_driver():
     try:
         import pyperf  # noqa: F401
@@ -114,7 +133,7 @@ def show_target_venv(target_python, work_root):
     return parse_venv_path(result.stdout)
 
 
-def ensure_target_venv(target_python, work_root, benchmarks):
+def ensure_target_venv(target_python, work_root, benchmarks, manifest):
     require_target_module(target_python, "zlib")
     venv_root = show_target_venv(target_python, work_root)
     venv_python = target_venv_python(venv_root)
@@ -125,6 +144,7 @@ def ensure_target_venv(target_python, work_root, benchmarks):
                 "create",
                 "--python",
                 target_python,
+                *manifest_args(manifest),
                 benchmarks_arg(benchmarks),
                 f"--inherit-environ={INHERITED_ENV}",
             ),
@@ -206,12 +226,15 @@ def run_suite(
     output,
     work_root,
     benchmarks,
+    manifest,
     run_style,
     affinity,
     timeout,
     append=False,
 ):
-    venv_python = ensure_target_venv(target_python, work_root, benchmarks)
+    venv_python = ensure_target_venv(
+        target_python, work_root, benchmarks, manifest
+    )
     config = preflight(venv_python, mode, work_root)
 
     output = output.resolve()
@@ -220,6 +243,7 @@ def run_suite(
         "run",
         "--python",
         target_python,
+        *manifest_args(manifest),
         benchmarks_arg(benchmarks),
         f"--inherit-environ={INHERITED_ENV}",
         "--hook",
@@ -277,6 +301,27 @@ def require_matching_benchmarks(reference, observed, filename):
         )
 
 
+def result_work_signature(filename):
+    import pyperf
+
+    suite = pyperf.BenchmarkSuite.load(str(filename))
+    return tuple(
+        (
+            benchmark.get_name(),
+            *(benchmark.get_metadata().get(key) for key in WORK_METADATA),
+        )
+        for benchmark in suite
+    )
+
+
+def require_matching_work(reference, observed, filename):
+    if observed != reference:
+        raise CampaignError(
+            f"benchmark work differs in {filename}: "
+            f"expected={reference!r}, observed={observed!r}"
+        )
+
+
 def combine_results(inputs, output):
     import pyperf
 
@@ -318,7 +363,30 @@ print(json.dumps({
     result = run_command(
         [target_python, "-c", code], capture=True
     )
-    return json.loads(result.stdout)
+    record = json.loads(result.stdout)
+    path = Path(target_python).resolve()
+    record["executable"] = str(path)
+    record["executable_sha256"] = sha256_file(path)
+    return record
+
+
+def manifest_record(manifest):
+    if not manifest:
+        return None
+    path = Path(manifest).resolve()
+    return {"path": str(path), "sha256": sha256_file(path)}
+
+
+def require_distinct_targets(baseline, candidate):
+    hashes = {
+        "baseline": sha256_file(Path(baseline)),
+        "candidate": sha256_file(Path(candidate)),
+    }
+    if hashes["baseline"] == hashes["candidate"]:
+        raise CampaignError(
+            "baseline and candidate are the identical executable"
+        )
+    return hashes
 
 
 def write_campaign_record(output_dir, args, runs, result_files):
@@ -333,10 +401,46 @@ def write_campaign_record(output_dir, args, runs, result_files):
         "order": list(ABBA_MODES),
         "resumed": args.resume,
         "benchmarks": args.benchmarks,
+        "manifest": manifest_record(args.manifest),
         "run_style": args.run_style,
         "affinity": args.affinity,
         "target_python": str(Path(args.python).resolve()),
         "target": target_record(args.python),
+        "parallel_gc_repository": git_record(PROJECT_ROOT),
+        "cpython_repository": git_record(PROJECT_ROOT / "cpython"),
+        "pyperformance_repository": git_record(PYPERFORMANCE_ROOT),
+        "runs": runs,
+        "results": {
+            path.name: sha256_file(path)
+            for path in result_files
+        },
+    }
+    destination = output_dir / "campaign.json"
+    destination.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    return destination
+
+
+def write_binary_campaign_record(output_dir, args, runs, result_files):
+    record = {
+        "schema": 2,
+        "created_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "host": {
+            "node": platform.node(),
+            "platform": platform.platform(),
+            "machine": platform.machine(),
+        },
+        "comparison": "baseline-candidate",
+        "order": list(BINARY_ABBA_LABELS),
+        "mode": args.mode,
+        "resumed": args.resume,
+        "benchmarks": args.benchmarks,
+        "manifest": manifest_record(args.manifest),
+        "run_style": args.run_style,
+        "affinity": args.affinity,
+        "targets": {
+            "baseline": target_record(args.baseline_python),
+            "candidate": target_record(args.candidate_python),
+        },
         "parallel_gc_repository": git_record(PROJECT_ROOT),
         "cpython_repository": git_record(PROJECT_ROOT / "cpython"),
         "pyperformance_repository": git_record(PYPERFORMANCE_ROOT),
@@ -381,6 +485,7 @@ def run_abba(args):
     run_files = []
     runs = []
     reference_benchmarks = None
+    reference_work = None
     for index, mode in enumerate(ABBA_MODES, 1):
         filename = output_dir / f"{index:02d}-{mode}.json"
         if args.resume and filename.is_file():
@@ -392,6 +497,7 @@ def run_abba(args):
                 output=filename,
                 work_root=work_root,
                 benchmarks=args.benchmarks,
+                manifest=args.manifest,
                 run_style=args.run_style,
                 affinity=args.affinity,
                 timeout=args.timeout,
@@ -404,6 +510,11 @@ def run_abba(args):
             require_matching_benchmarks(
                 reference_benchmarks, observed_benchmarks, filename
             )
+        observed_work = result_work_signature(filename)
+        if reference_work is None:
+            reference_work = observed_work
+        else:
+            require_matching_work(reference_work, observed_work, filename)
         detail.update({"sequence": index, "mode": mode, "result": filename.name})
         runs.append(detail)
         run_files.append(filename)
@@ -422,6 +533,80 @@ def run_abba(args):
     print(f"ABBA campaign complete: {record}")
 
 
+def run_binary_abba(args):
+    require_distinct_targets(args.baseline_python, args.candidate_python)
+    output_dir = Path(args.output_dir).resolve()
+    if output_dir.exists() and any(output_dir.iterdir()) and not args.resume:
+        raise CampaignError(f"output directory is not empty: {output_dir}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    work_root = Path(args.work_root).resolve()
+    work_root.mkdir(parents=True, exist_ok=True)
+
+    targets = {
+        "baseline": args.baseline_python,
+        "candidate": args.candidate_python,
+    }
+    run_files = []
+    runs = []
+    reference_benchmarks = None
+    reference_work = None
+    for index, label in enumerate(BINARY_ABBA_LABELS, 1):
+        filename = output_dir / f"{index:02d}-{label}.json"
+        if args.resume and filename.is_file():
+            detail = {"resumed": True}
+        else:
+            detail = run_suite(
+                target_python=targets[label],
+                mode=args.mode,
+                output=filename,
+                work_root=work_root,
+                benchmarks=args.benchmarks,
+                manifest=args.manifest,
+                run_style=args.run_style,
+                affinity=args.affinity,
+                timeout=args.timeout,
+            )
+            detail["resumed"] = False
+        observed_benchmarks = validate_result(filename, args.mode)
+        if reference_benchmarks is None:
+            reference_benchmarks = observed_benchmarks
+        else:
+            require_matching_benchmarks(
+                reference_benchmarks, observed_benchmarks, filename
+            )
+        observed_work = result_work_signature(filename)
+        if reference_work is None:
+            reference_work = observed_work
+        else:
+            require_matching_work(reference_work, observed_work, filename)
+        detail.update({
+            "sequence": index,
+            "target": label,
+            "mode": args.mode,
+            "result": filename.name,
+        })
+        runs.append(detail)
+        run_files.append(filename)
+
+    baseline = output_dir / "baseline-combined.json"
+    candidate = output_dir / "candidate-combined.json"
+    combine_results((run_files[0], run_files[3]), baseline)
+    combine_results((run_files[1], run_files[2]), candidate)
+    validate_result(baseline, args.mode)
+    validate_result(candidate, args.mode)
+    require_matching_work(
+        result_work_signature(baseline),
+        result_work_signature(candidate),
+        candidate,
+    )
+
+    comparison = output_dir / "comparison.txt"
+    compare_results(baseline, candidate, comparison, work_root)
+    results = [*run_files, baseline, candidate, comparison]
+    record = write_binary_campaign_record(output_dir, args, runs, results)
+    print(f"Binary ABBA campaign complete: {record}")
+
+
 def run_single(args):
     work_root = Path(args.work_root).resolve()
     work_root.mkdir(parents=True, exist_ok=True)
@@ -431,15 +616,16 @@ def run_single(args):
         output=Path(args.output),
         work_root=work_root,
         benchmarks=args.benchmarks,
+        manifest=args.manifest,
         run_style=args.run_style,
         affinity=args.affinity,
         timeout=args.timeout,
     )
 
 
-def add_common_args(parser):
-    parser.add_argument("--python", required=True, help="optimized target Python")
+def add_benchmark_args(parser):
     parser.add_argument("--benchmarks", default="default")
+    parser.add_argument("--manifest")
     parser.add_argument(
         "--run-style",
         choices=("fast", "rigorous", "debug"),
@@ -448,6 +634,11 @@ def add_common_args(parser):
     parser.add_argument("--affinity")
     parser.add_argument("--timeout", type=int)
     parser.add_argument("--work-root", default=DEFAULT_WORK_ROOT)
+
+
+def add_common_args(parser):
+    parser.add_argument("--python", required=True, help="optimized target Python")
+    add_benchmark_args(parser)
 
 
 def parse_args(argv=None):
@@ -473,6 +664,24 @@ def parse_args(argv=None):
         help="reuse validated raw legs already present in the output directory",
     )
     abba.set_defaults(func=run_abba)
+
+    binary_abba = subparsers.add_parser(
+        "binary-abba",
+        help="run baseline/candidate/candidate/baseline campaign",
+    )
+    add_benchmark_args(binary_abba)
+    binary_abba.add_argument("--baseline-python", required=True)
+    binary_abba.add_argument("--candidate-python", required=True)
+    binary_abba.add_argument(
+        "--mode", required=True, choices=("enabled", "disabled")
+    )
+    binary_abba.add_argument("--output-dir", required=True)
+    binary_abba.add_argument(
+        "--resume",
+        action="store_true",
+        help="reuse validated raw legs already present in the output directory",
+    )
+    binary_abba.set_defaults(func=run_binary_abba)
     return parser.parse_args(argv)
 
 
@@ -480,10 +689,19 @@ def main(argv=None):
     args = parse_args(argv)
     require_checkout()
     require_driver()
-    target = Path(args.python).resolve()
-    if not target.is_file():
-        raise CampaignError(f"target Python does not exist: {target}")
-    args.python = str(target)
+    if args.manifest:
+        manifest = Path(args.manifest).resolve()
+        if not manifest.is_file():
+            raise CampaignError(f"benchmark manifest does not exist: {manifest}")
+        args.manifest = str(manifest)
+    for attribute in ("python", "baseline_python", "candidate_python"):
+        value = getattr(args, attribute, None)
+        if value is None:
+            continue
+        target = Path(value).resolve()
+        if not target.is_file():
+            raise CampaignError(f"target Python does not exist: {target}")
+        setattr(args, attribute, str(target))
     args.func(args)
 
 

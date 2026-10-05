@@ -240,6 +240,12 @@ class RunnerTests(unittest.TestCase):
             ("disabled", "enabled", "enabled", "disabled"),
         )
 
+    def test_binary_abba_order(self):
+        self.assertEqual(
+            runner.BINARY_ABBA_LABELS,
+            ("baseline", "candidate", "candidate", "baseline"),
+        )
+
     def test_run_style_mapping(self):
         self.assertEqual(runner.RUN_STYLE_ARGS["fast"], "--fast")
         self.assertEqual(runner.RUN_STYLE_ARGS["rigorous"], "--rigorous")
@@ -261,6 +267,13 @@ class RunnerTests(unittest.TestCase):
             "--benchmarks=-broken_one,-broken_two",
         )
 
+    def test_manifest_argument_is_absolute(self):
+        argument = runner.manifest_arg(Path("benchmarks/MANIFEST"))
+        self.assertEqual(
+            argument,
+            f"--manifest={Path('benchmarks/MANIFEST').resolve()}",
+        )
+
     def test_matching_benchmarks_accepts_identical_order(self):
         runner.require_matching_benchmarks(
             ("one", "two"), ("one", "two"), Path("result.json")
@@ -273,6 +286,34 @@ class RunnerTests(unittest.TestCase):
             runner.require_matching_benchmarks(
                 ("one", "two"), ("one", "three"), Path("result.json")
             )
+
+    def test_matching_work_rejects_different_graphs(self):
+        with self.assertRaisesRegex(runner.CampaignError, "work differs"):
+            runner.require_matching_work(
+                (("list", 1000, 499500),),
+                (("list", 1000, 499499),),
+                Path("result.json"),
+            )
+
+    def test_binary_comparison_rejects_identical_executables(self):
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = Path(directory) / "baseline"
+            candidate = Path(directory) / "candidate"
+            baseline.write_bytes(b"same")
+            candidate.write_bytes(b"same")
+            with self.assertRaisesRegex(
+                runner.CampaignError, "identical executable"
+            ):
+                runner.require_distinct_targets(baseline, candidate)
+
+    def test_binary_comparison_accepts_distinct_executables(self):
+        with tempfile.TemporaryDirectory() as directory:
+            baseline = Path(directory) / "baseline"
+            candidate = Path(directory) / "candidate"
+            baseline.write_bytes(b"before")
+            candidate.write_bytes(b"after")
+            record = runner.require_distinct_targets(baseline, candidate)
+        self.assertNotEqual(record["baseline"], record["candidate"])
 
     def test_parse_venv_path(self):
         output = (

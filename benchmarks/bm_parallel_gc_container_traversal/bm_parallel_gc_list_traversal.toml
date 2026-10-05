@@ -1,0 +1,7 @@
+[project]
+name = "pyperformance_bm_parallel_gc_list_traversal"
+dynamic = ["version"]
+
+[tool.pyperformance]
+name = "parallel_gc_list_traversal"
+extra_opts = ["--container", "list"]

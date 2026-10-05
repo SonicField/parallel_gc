@@ -1,0 +1,10 @@
+[benchmarks]
+
+name	metafile
+parallel_gc_list_traversal	<local:parallel_gc_container_traversal>
+parallel_gc_tuple_traversal	<local:parallel_gc_container_traversal>
+parallel_gc_dict_unicode_traversal	<local:parallel_gc_container_traversal>
+parallel_gc_dict_general_traversal	<local:parallel_gc_container_traversal>
+parallel_gc_dict_split_traversal	<local:parallel_gc_container_traversal>
+
+[group default]
