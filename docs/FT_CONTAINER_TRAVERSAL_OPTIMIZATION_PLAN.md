@@ -184,6 +184,8 @@ Atomic parent commit after the CPython commit: raw evidence, verdict, and submod
 
 ### Step 3: Investigate and, only if justified, specialize tuples
 
+**Status:** Complete on 2026-10-05. The specialization was retained as CPython commit `0205d62bcb`.
+
 Profile the clean list-retained build on the tuple workload before writing tuple code. If tuple traversal is not a material measured cost, record a falsified hypothesis and make no CPython commit.
 
 If the hypothesis survives, write and sensitivity-check the tuple contract tests. Implement only exact-tuple iteration while retaining `_PyTuple_MaybeUntrack`, the tracked-status recheck, alive-bit cleanup, traversal order, and generic fallback.
@@ -287,5 +289,8 @@ Atomic parent commit: `Record cumulative container traversal verification`.
 | 2026-10-05 | List | Optimized binary ABBA | Enabled halves measured 2.23 to 1.38 milliseconds and 2.24 to 1.37 milliseconds. Both disabled halves were neutral. | The fixed 20 percent gate passed in both halves. | `benchmarks/results/pyperformance/investigations/ft-exact-list-enabled-abba-2026-10-05/` and `ft-exact-list-disabled-control-abba-2026-10-05/` |
 | 2026-10-05 | List | Final per-type verification | Debug GIL/FT, ASan, standard PGO, assembly, counters, adaptive exercise, and eight 500,000-object heap guardrails passed. | Retained as CPython commit `06f1d674a4`; Step 2 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md` |
 | 2026-10-05 | Test infrastructure | Release lifecycle tests | The optimized run found two existing tests that unconditionally called a debug-only hook; the clean baseline reproduced both failures. Conditioning only the private-hook assertions made the optimized and debug runs pass while retaining public lifecycle coverage. | Repaired separately as CPython commit `d29fb102c4`. | `Lib/test/test_gc_ft_parallel.py` |
+| 2026-10-05 | Tuple | Pre-code profile | On the optimized list-retained build, `propagate_pool_visitproc`, `tuple_traverse`, and `_PyGC_TryMarkAlive` accounted for 37.00, 13.61, and 9.67 percent of samples. | The callback-removal hypothesis survived; tuple tests were justified. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
+| 2026-10-05 | Tuple | Mutation sensitivity | Tests failed when index zero was omitted, when untracked tuples retained the alive bit, and when tuple subtypes used the exact path. | Sensitivity established; all mutations removed. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
+| 2026-10-05 | Tuple | Final per-type verification | Enabled ABBA improved both halves by 1.59-1.64x; disabled ABBA was neutral; debug GIL/FT, ASan, standard PGO, assembly, counters, adaptive exercise, and eight large-heap guardrails passed. | Retained as CPython commit `0205d62bcb`; Step 3 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
 
 Append one row after every baseline, mutation check, rejected hypothesis, retained change, regression, or inconclusive run. Do not replace older rows when the conclusion changes.
