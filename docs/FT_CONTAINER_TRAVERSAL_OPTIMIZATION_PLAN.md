@@ -55,6 +55,8 @@ Planning does not authorize implementation. The human reviewer approves the acce
 - Do not visit an object that the corresponding existing `tp_traverse` would omit, and do not omit an object it would visit.
 - Preserve exact built-in traversal order, null handling, tuple untracking, alive-bit cleanup, and return behavior.
 - Specialize only when the resolved traversal function is the exact built-in traversal function. Subclasses, heap types, and types with custom traversal must retain the generic callback path.
+- Keep important container hot paths explicit in source. Parallel-aware PGO may optimize the surrounding collector but must not replace or be required for the exact-container specializations.
+- When CPython is configured with `--with-parallel-gc`, its normal PGO build must collect representative profiles from the enabled parallel collector in both GIL and free-threaded builds. Runtime activation remains unchanged.
 - Do not modify upstream pyperformance benchmarks. Type-specific performance workloads belong to `parallel_gc`.
 - Do not accept a speedup that damages GIL behavior, large-heap throughput, pause behavior, adaptive behavior, or correctness.
 - If implementation requires a semantic adaptation, atomic change, new object-layout contract, or changed serial behavior, stop and discuss it before coding.
@@ -81,6 +83,14 @@ The 20 percent threshold is fixed before the confirmatory run because the explor
 
 **Falsified if:** the pre-change profile does not identify dictionary traversal or its callback as a material cost; a faithful implementation would duplicate or expose unsafe layout knowledge without an approved design; any dictionary layout or subclass test fails; both ABBA halves do not improve the enabled dictionary workload in the same direction; the improvement is less than 5 percent; the disabled control changes materially; or a mandatory guardrail regresses.
 
+### Parallel-aware PGO claim
+
+**Hypothesis:** Adding a focused enabled-parallel-GC workload to the standard PGO training of `--with-parallel-gc` builds improves the remaining helper, queue, synchronization, and phase-control code without changing runtime behavior or weakening the explicit container paths.
+
+**Falsified if:** either GIL or free-threaded training does not execute its parallel collector; profile data does not cover the intended parallel functions; feature-off PGO builds change; runtime default activation changes; optimized baseline/candidate measurements show no benefit in any trained parallel path; a broad interpreter or large-heap guardrail regresses; or build reliability deteriorates.
+
+The PGO workload is a secondary optimization. A favorable compiler decision is not evidence that an explicit exact-container path should be removed.
+
 “Falsified” here means that the proposed specialization is rejected. It does not imply that no other optimization can exist.
 
 ## Evidence protocol
@@ -92,7 +102,7 @@ Performance claims require two separate controls:
 1. Alternate optimized baseline and candidate binaries in A-B-B-A order with parallel GC enabled in both. This isolates the source change.
 2. Compare the same baseline and candidate binaries with parallel GC disabled. This checks that build drift or benchmark work did not create the apparent improvement.
 
-The candidate and baseline builds must use the same source base, compiler, configure flags, PGO training procedure, LTO setting, affinity, and benchmark inputs. Runs with unequal work, incomplete provenance, thermal disturbance, frequency-policy changes, or unexplained variance are inconclusive rather than positive or negative.
+The candidate and baseline builds must use the same source base, compiler, configure flags, PGO training procedure, LTO setting, affinity, and benchmark inputs. The parallel-aware PGO experiment is the sole exception: it intentionally varies only the PGO workload after the fully explicit collector source is fixed. Runs with other unequal work, incomplete provenance, thermal disturbance, frequency-policy changes, or unexplained variance are inconclusive rather than positive or negative.
 
 Before implementation, each type-specific workload must assert its graph shape, tracked status, node count, edge count, collection count, and requested collector mode. One-second smoke runs may validate plumbing but cannot support a performance claim.
 
@@ -202,7 +212,23 @@ Atomic CPython commit if retained: `Specialize FT parallel traversal for exact d
 
 Atomic parent commit: `Record exact-dictionary traversal verification`.
 
-### Step 6: Cumulative integration verification
+### Step 6: Train the enabled parallel collector during PGO
+
+Add a focused CPython-owned profile workload that runs only when the interpreter is configured with `--with-parallel-gc`. It must explicitly enable the collector and exercise representative GIL and free-threaded parallel collections, including the explicit list, tuple, and dictionary paths plus normal helper, queue, synchronization, adaptive, and phase-control work. The GIL workload must exceed its serial-selection boundary so the parallel path actually runs.
+
+Do not enable parallel GC for the entire existing PGO test suite and do not change the runtime default. The focused workload supplements the standard profile task so that unrelated interpreter profiles remain represented.
+
+Before implementation, define the exact functions and phases that the workload must cover. Add tests proving that feature-off builds skip the workload cleanly, feature-on builds enable the collector, both GIL and free-threaded variants complete representative parallel collections, and failures propagate instead of silently producing incomplete profiles.
+
+Build the fully specialized collector twice from identical source and configuration: once with the existing PGO task as the control and once with only the additional parallel-GC profile workload. Record function profile coverage, final assembly, executable hashes, and enabled and disabled binary ABBA results. Run broad pyperformance and large-heap guardrails to detect profile-budget displacement or other regressions.
+
+Exit condition: the PGO workload demonstrably trains both parallel collectors, improves at least one previously untrained parallel path, preserves the explicit container paths, and passes every build, correctness, disabled-mode, whole-interpreter, and large-heap guardrail. Otherwise record the negative result and retain the explicit specializations without the PGO change.
+
+Atomic CPython commit if retained: `Train parallel GC in optimized builds`.
+
+Atomic parent commit: `Record parallel-aware PGO verification`.
+
+### Step 7: Cumulative integration verification
 
 Run the focused parallel-GC tests in GIL and free-threaded debug and optimized builds, the full CPython test suite in feature-off and feature-on configurations, the parent repository test suite, Linux CI, Windows build and test CI, and the established fork and lifecycle tests.
 
@@ -223,6 +249,7 @@ Atomic parent commit: `Record cumulative container traversal verification`.
 | Focused free-threaded debug tests | Pass |
 | Focused GIL debug tests | Pass; no behavior change |
 | Optimized PGO+LTO build | Completes with recorded provenance |
+| Explicit hot path | Does not depend on PGO inlining or cloning decisions |
 | Baseline/candidate enabled ABBA | Meets the type's predeclared threshold in both halves |
 | Baseline/candidate disabled control | No material change |
 | Final AArch64 assembly | Expected callback/dispatch cost is absent from the specialized inner loop |
