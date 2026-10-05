@@ -28,7 +28,7 @@ The campaigns were run before the candidate commit was created. Their candidate 
 - AddressSanitizer free-threaded debug: all four focused files passed, 134 tests run and two skipped, with `detect_leaks=0` and `halt_on_error=1`.
 - The standard PGO task passed all 43 files: 10,470 tests run and 462 skipped.
 
-The optimized focused run exposed two pre-existing lifecycle-test failures: two tests call debug-only `gc._get_thread_pool_stats()` in a release build. The untouched baseline reproduces both failures. The list-specific optimized tests pass, and the other three focused files pass. This test portability defect is separate work and is not attributed to the list change.
+The optimized focused run initially exposed two pre-existing lifecycle-test failures: two tests called debug-only `gc._get_thread_pool_stats()` in a release build. The untouched baseline reproduced both failures. They were repaired separately in CPython commit `d29fb102c4` by retaining the public lifecycle assertions in every build and conditioning only the debug-hook assertions. The optimized four-file rerun then passed all 134 tests with 27 expected skips. This repair is not part of the list implementation commit.
 
 ## Binary ABBA
 
