@@ -1,0 +1,13 @@
+# started on Mon Oct  5 14:09:11 2026
+
+24232916337,,cycles,3.65%,6203782656,80.00,,
+<not supported>,,nvidia_cnvlink_pmu_0/cycles/,0.00%,0,100.00,,
+<not supported>,,nvidia_nvlink_c2c0_pmu_0/cycles/,0.00%,0,100.00,,
+<not supported>,,nvidia_nvlink_c2c1_pmu_0/cycles/,0.00%,0,100.00,,
+<not supported>,,nvidia_pcie_pmu_0/cycles/,0.00%,0,100.00,,
+<not supported>,,nvidia_scf_pmu_0/cycles/,0.00%,0,100.00,,
+<not supported>,,smmuv3_pmcg_5002/cycles/,0.00%,0,100.00,,
+63660936137,,instructions,0.42%,6124471904,79.00,,
+16097584032,,branches,0.30%,6196373728,80.00,,
+31249374,,branch-misses,5.75%,6203073472,80.00,,
+294581657,,cache-misses,12.76%,6198031520,80.00,,

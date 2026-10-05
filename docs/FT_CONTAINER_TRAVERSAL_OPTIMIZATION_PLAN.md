@@ -1,6 +1,6 @@
 # Free-threaded container traversal optimization plan
 
-**Status:** In progress. Steps 0 through 2 are complete; tuple investigation is next.
+**Status:** In progress. Steps 0 through 5 are complete; parallel-aware PGO is next.
 
 ## Terminal goal
 
@@ -200,6 +200,8 @@ Atomic parent commit: `Record exact-tuple traversal verdict`.
 
 ### Step 4: Investigate the dictionary design boundary
 
+**Status:** Complete on 2026-10-05. The approved boundary is one internal macro that owns `dict_traverse` reference enumeration. Serial traversal supplies `Py_VISIT`; FT parallel propagation supplies its direct visit operation.
+
 Profile the tuple-retained build on each dictionary storage layout before writing dictionary code. Compare the exact behavior of `dict_traverse` with available internal dictionary helpers.
 
 If faithful reuse requires a new private API, an extraction from `Objects/dictobject.c`, duplicated storage-layout logic, or any new concurrency assumption, stop and present the alternatives for approval. This is a hard design gate, not permission to choose the smallest patch.
@@ -209,6 +211,8 @@ Exit condition: either the dictionary hypothesis is rejected with evidence or th
 Atomic parent commit: `Record FT dictionary traversal design verdict`. There is no CPython implementation commit at this gate.
 
 ### Step 5: If approved, specialize dictionaries
+
+**Status:** Complete on 2026-10-05. The specialization was retained as CPython commit `3459fbefd8`.
 
 Write and sensitivity-check tests for all three dictionary layouts before collector code. Implement the approved exact-dictionary path without changing `dict_traverse` semantics or generic subtype handling.
 
@@ -292,5 +296,10 @@ Atomic parent commit: `Record cumulative container traversal verification`.
 | 2026-10-05 | Tuple | Pre-code profile | On the optimized list-retained build, `propagate_pool_visitproc`, `tuple_traverse`, and `_PyGC_TryMarkAlive` accounted for 37.00, 13.61, and 9.67 percent of samples. | The callback-removal hypothesis survived; tuple tests were justified. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
 | 2026-10-05 | Tuple | Mutation sensitivity | Tests failed when index zero was omitted, when untracked tuples retained the alive bit, and when tuple subtypes used the exact path. | Sensitivity established; all mutations removed. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
 | 2026-10-05 | Tuple | Final per-type verification | Enabled ABBA improved both halves by 1.59-1.64x; disabled ABBA was neutral; debug GIL/FT, ASan, standard PGO, assembly, counters, adaptive exercise, and eight large-heap guardrails passed. | Retained as CPython commit `0205d62bcb`; Step 3 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md` |
+| 2026-10-05 | Dictionary | Pre-code profile | Callback, `dict_traverse`, and mark-helper samples were material in general, split, and Unicode layouts. | The callback-removal hypothesis survived for every layout. | `benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md` |
+| 2026-10-05 | Dictionary | Design boundary | Existing helpers did not expose reference enumeration independently of callback dispatch. | Approved one shared internal macro for layout enumeration, with serial and parallel callers supplying their own reference operation; Step 4 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md` |
+| 2026-10-05 | Dictionary | Mutation sensitivity | Tests failed when either value-only layout skipped slot zero, when general dictionaries visited key before value, and when a subtype used the exact path. | Sensitivity established; all mutations removed. | `benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md` |
+| 2026-10-05 | Dictionary | Disabled-control recheck | The first complete control contained one significant 4 percent split-table regression leg. An isolated repeat was neutral in both halves and combined. | Stable serial-path regression falsified; retain both result sets. | `benchmarks/results/pyperformance/investigations/ft-exact-dict-split-disabled-recheck-2026-10-05/` |
+| 2026-10-05 | Dictionary | Final per-type verification | Enabled ABBA improved general dictionaries by 1.24-1.26x, split dictionaries by 1.25-1.29x, and Unicode dictionaries by 1.14-1.15x. Debug GIL/FT, ASan, standard PGO, assembly, counters, adaptive exercise, and eight large-heap guardrails passed. | Retained as CPython commit `3459fbefd8`; Step 5 complete. | `benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md` |
 
 Append one row after every baseline, mutation check, rejected hypothesis, retained change, regression, or inconclusive run. Do not replace older rows when the conclusion changes.
