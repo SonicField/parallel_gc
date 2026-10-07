@@ -1,0 +1,278 @@
+{
+  "affinity": "0-31",
+  "benchmarks": "-dask,-fastapi,-genshi,-xdsl",
+  "comparison": "baseline-candidate",
+  "cpython_repository": {
+    "dirty": true,
+    "revision": "3459fbefd8a11d39b5c46774e05ba28352fef943",
+    "status": [
+      " M Makefile.pre.in",
+      " M configure",
+      " M configure.ac",
+      " M pyconfig.h.in",
+      "?? Lib/test/test_parallel_gc_profile.py",
+      "?? Tools/build/parallel_gc_profile.py"
+    ]
+  },
+  "created_utc": "2026-10-06T17:43:25.527390+00:00",
+  "host": {
+    "machine": "aarch64",
+    "node": "devbig340.ncg1.facebook.com",
+    "platform": "Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.40"
+  },
+  "manifest": null,
+  "mode": "disabled",
+  "order": [
+    "baseline",
+    "candidate",
+    "candidate",
+    "baseline"
+  ],
+  "parallel_gc_repository": {
+    "dirty": true,
+    "revision": "d05ec88b193bb9ed468198858f7caac2344f252d",
+    "status": [
+      " m cpython",
+      " M docs/BENCHMARKING.md",
+      " M docs/CORE_DEV_SPRINT_READINESS_PLAN.md",
+      " ? pyperformance",
+      "?? benchmarks/results/pyperformance/ft-full-2026-10-03/",
+      "?? benchmarks/results/pyperformance/ft-smoke/",
+      "?? benchmarks/results/pyperformance/gil-full-2026-10-02/",
+      "?? benchmarks/results/pyperformance/gil-smoke-2/",
+      "?? benchmarks/results/pyperformance/gil-smoke/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v3-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v4-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-full-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v3-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v4-2026-10-05/",
+      "?? build-control-ft/",
+      "?? build-fidelity-ft/",
+      "?? build-fidelity-gil/",
+      "?? cpython-original/",
+      "?? cpython-upstream-port/",
+      "?? docs/PERFORMANCE_INVESTIGATION_PLAN.md",
+      "?? docs/pep-parallel-gc-v2.rst"
+    ]
+  },
+  "pyperformance_repository": {
+    "dirty": true,
+    "revision": "ccc0aeb7ad46d65b6dcd4160e0fdda4d885852dd",
+    "status": [
+      "?? pyperformance/data-files/benchmarks/bm_2to3/vendor/src/lib2to3.egg-info/"
+    ]
+  },
+  "results": {
+    "01-baseline.json": "50853cbc80797fa674463b030839f45c8d776a076ffe616b4e299ed310392bab",
+    "02-candidate.json": "44ec871d2fd344fe85a074adc7926f08b224a5003f964274872bc2b120b048bc",
+    "03-candidate.json": "53966a1a032fd35f881b38c5ed370cdfb7cd52f5796cd5add7cc15f953778029",
+    "04-baseline.json": "580dba9a6d91abed540067c8e69c7a74e7fb338960d7dfadfbd7db0cdf8e7a0f",
+    "baseline-combined.json": "d5e7dbd81d33c86e5fbac2d5e7706a7dfc4abc7242eca2ee8b803282fa6cf9f9",
+    "candidate-combined.json": "107abb9c0f6664f2a7b34fa2d96f9f0f6cbaa0f8d8ba9767f45abeb496f0ffce",
+    "comparison.txt": "bd24bf40d3fbcadab6e2b38fcae94be8e0dcf2b4a9da84c51f0d41a9cc2f0671"
+  },
+  "resumed": false,
+  "run_style": "rigorous",
+  "runs": [
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/tmp/parallel-gc-pgo-control-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06/01-baseline.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "result": "01-baseline.json",
+      "resumed": false,
+      "sequence": 1,
+      "target": "baseline"
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/tmp/parallel-gc-pgo-candidate-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06/02-candidate.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "result": "02-candidate.json",
+      "resumed": false,
+      "sequence": 2,
+      "target": "candidate"
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/tmp/parallel-gc-pgo-candidate-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06/03-candidate.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "result": "03-candidate.json",
+      "resumed": false,
+      "sequence": 3,
+      "target": "candidate"
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/tmp/parallel-gc-pgo-control-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06/04-baseline.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "result": "04-baseline.json",
+      "resumed": false,
+      "sequence": 4,
+      "target": "baseline"
+    }
+  ],
+  "schema": 2,
+  "targets": {
+    "baseline": {
+      "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-devel-prefix/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-devel-prefix/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-devel-prefix/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-devel-prefix/usr/include'",
+      "executable": "/tmp/parallel-gc-pgo-control-ft/python",
+      "executable_sha256": "7e732087dab5f45b85167c1067537a27809afe40cc3d0df0d741e16f7a6f3e2b",
+      "gil_enabled": false,
+      "git": [
+        "CPython",
+        "heads/parallel-gc-upstream-port-dirty",
+        "3459fbefd8"
+      ],
+      "parallel_config": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "source_repository": {
+        "dirty": true,
+        "revision": "3459fbefd8a11d39b5c46774e05ba28352fef943",
+        "status": [
+          " M Makefile.pre.in",
+          " M configure",
+          " M configure.ac",
+          " M pyconfig.h.in",
+          "?? Lib/test/test_parallel_gc_profile.py",
+          "?? Tools/build/parallel_gc_profile.py"
+        ]
+      },
+      "version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:3459fbefd8, Oct  5 2026, 15:27:38) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+    },
+    "candidate": {
+      "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-devel-prefix/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-devel-prefix/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-devel-prefix/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-devel-prefix/usr/include'",
+      "executable": "/tmp/parallel-gc-pgo-candidate-ft/python",
+      "executable_sha256": "ff5b3b4570fec2e6b7c0f1b202f41a933b3163718ac24d7052e247612c5715f8",
+      "gil_enabled": false,
+      "git": [
+        "CPython",
+        "heads/parallel-gc-upstream-port-dirty",
+        "3459fbefd8"
+      ],
+      "parallel_config": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true
+      },
+      "source_repository": {
+        "dirty": true,
+        "revision": "3459fbefd8a11d39b5c46774e05ba28352fef943",
+        "status": [
+          " M Makefile.pre.in",
+          " M configure",
+          " M configure.ac",
+          " M pyconfig.h.in",
+          "?? Lib/test/test_parallel_gc_profile.py",
+          "?? Tools/build/parallel_gc_profile.py"
+        ]
+      },
+      "version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:3459fbefd8, Oct  5 2026, 18:10:36) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+    }
+  }
+}
