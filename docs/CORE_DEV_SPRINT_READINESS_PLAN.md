@@ -146,6 +146,9 @@ the optimized benchmark campaign for both collector builds. Add optimized
 feature-off controls to measure compile-time overhead separately from runtime
 serial-versus-parallel behavior.
 
+The current offender inventory and evidence-led optimization sequence are in
+[`PERFORMANCE_INVESTIGATION_PLAN.md`](PERFORMANCE_INVESTIGATION_PLAN.md).
+
 Acceptance evidence:
 
 - Logs name the exact clean CPython and parent revisions.

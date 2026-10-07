@@ -337,9 +337,9 @@ portion of free-threaded collection.
 ## Benchmark results
 
 The current full results were collected with optimized PGO+LTO CPython 3.16
-builds on the same 72-core AArch64 host. They establish useful large-heap
-regions for both collectors and also expose negative regions; they are not a
-claim that every workload improves.
+builds on the same 72-core AArch64 host. They establish useful regions in the
+500,000-requested-object synthetic graphs for both collectors and also expose
+negative regions; they are not a claim that every workload improves.
 
 | Build | Mixed throughput | 500K requested heaps | Sustained synthetics |
 |-------|------------------|----------------------|----------------------|
@@ -349,9 +349,34 @@ claim that every workload improves.
 The free-threaded sustained aggregate contains a material negative result:
 the finalizer-heavy `ai_workload` was -14.7% in throughput and +105% in mean
 callback interval. A diagnostic run found similar candidate totals but fewer,
-larger parallel collections; the recorded phase timings were dominated by
-serial finalization and deallocation. That is a falsifiable explanation to
-investigate, not proof of a single cause.
+larger parallel collections and suggested that serial finalization and
+deallocation dominated the additional time. No durable raw phase record
+accompanies the published result. Treat that observation as a hypothesis, not
+as evidence of the cause.
+
+### Free-threaded finalizer/BRC hypothesis
+
+The leading hypothesis is that serial finalization and deletion perform many
+decrements from the collecting thread against objects owned by other threads.
+Those decrements cannot use the owner-local BRC path. They instead use shared
+atomic or queued reference-count processing. A finalizer-driven deallocation
+cascade can therefore turn into sustained cross-thread BRC traffic after the
+parallel graph phases have completed.
+
+The existing published result does not isolate the serial tail or count
+owner-local, shared-atomic, and queued BRC operations during finalization. It
+therefore does not establish this mechanism.
+
+A focused experiment must hold graph topology, survivor ratio, finalizer work,
+and candidate count constant while changing object ownership. One case creates
+the finalizer graph on the collecting thread. Another creates the same graph
+on non-collecting threads. Instrumentation must count each BRC path during the
+serial finalization and deletion interval. The hypothesis is rejected if the
+cross-thread-owned case does not produce both more shared or queued BRC work
+and a corresponding increase in the serial tail.
+
+This investigation can explain a performance boundary. It does not expand the
+scope of the initial PEP to include BRC changes or parallel finalization.
 
 - [GIL full result](../benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md)
 - [Free-threaded full result](../benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md)
