@@ -206,6 +206,60 @@ result for each component.
 ./python ../benchmarks/gc_perf_benchmark.py --full --include-synthetic
 ```
 
+### gc_adaptive_benchmark.py — Adaptive-versus-fixed worker experiment
+
+The adaptive controller's effectiveness is a benchmark question, not a unit
+test invariant. Its final worker count is stochastic and workload-dependent;
+different workloads are not required to end at different counts. This
+benchmark compares the controller with explicit fixed-worker controls without
+adding a worker-count option to the runtime API.
+
+Each invocation is one experimental arm in a fresh process. The script
+disables automatic collection, freshly enables parallel GC, primes the helper
+pool with a verified parallel collection, and then records only explicit
+collections. A fixed arm uses `_testinternalcapi` immediately before every
+recorded collection. Workload construction performs no hidden collections.
+
+Run adaptive and fixed arms in ABBA order with the same optimized binary,
+seed, workload parameters, CPU affinity, and host conditions. For example,
+from the project root:
+
+```bash
+PYTHON=/path/to/optimized/python
+RESULTS=benchmarks/results/adaptive-workers/fixed-4
+mkdir -p "$RESULTS"
+
+run_arm() {
+    "$PYTHON" benchmarks/gc_adaptive_benchmark.py \
+        --workers "$1" \
+        --cycles 3 \
+        --collections-per-phase 20 \
+        --seed 42 \
+        --json > "$RESULTS/$2.json"
+}
+
+run_arm adaptive adaptive-a1
+run_arm 4 fixed-4-b1
+run_arm 4 fixed-4-b2
+run_arm adaptive adaptive-a2
+```
+
+Repeat the campaign for fixed counts 2, 4, 8, and 16 to measure the fixed
+performance curve. Do not infer effectiveness from the controller's endpoint.
+Compare distributions of `elapsed_ns` and `parallel_ns_per_candidate` within
+the JSON `observations` array for each workload phase across the paired ABBA
+arms. The JSON document also records the protocol parameters, interpreter,
+platform, and parallel-GC configuration; record the project and CPython commits
+with the campaign as required elsewhere in this document.
+
+Every observation records `workers_used`, the exact candidate delta, and a
+build-specific dispatch counter. GIL reports collection attempts; FT reports
+phase dispatches, so the absolute counter deltas are not comparable across
+builds. They establish that a collection used parallel machinery. The GIL
+`small_cycles` phase is below the serial-selection threshold, so a zero
+dispatch delta and null parallel cost are expected there. With `--json`, JSON
+is written to standard output and progress is written to standard error.
+
 ### gc_creation_analysis.py — Multi-Threaded Allocation Impact
 
 Investigates how multi-threaded object creation affects parallel GC performance through heap distribution analysis.

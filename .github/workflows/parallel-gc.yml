@@ -116,5 +116,6 @@ jobs:
         run: |
           build-ci/python -m unittest -v \
             benchmarks.test_container_traversal_benchmark \
+            benchmarks.test_gc_adaptive_benchmark \
             benchmarks.test_gc_perf_benchmark \
             benchmarks.test_pyperformance_support
