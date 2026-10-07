@@ -198,6 +198,25 @@ line from `Tools/build/parallel_gc_profile.py`. Ruff 0.15.17 reproduced the
 same one-line diff locally and passed after the deletion. The repair is
 CPython revision `8eb4af7dbf`; it does not change executable behavior.
 
+Parent matrix run `37655285492` exposed a stochastic adaptive-controller test
+that compared the final worker counts of two workloads. Instrumentation showed
+that neither workload reached the GIL collector's parallel threshold in a
+clean process: both made zero parallel collection attempts and left the worker
+count at four. Its result therefore depended on unrelated heap state and could
+not establish adaptation. CPython revision `669ed6b17e` replaces that claim
+with deterministic controller tests for accept, reject, persistence, bounds,
+reset, and invalid measurements; lifecycle tests for enable and re-enable;
+and an integration test that verifies every generated collection crosses the
+threshold, dispatches parallel work, remains in bounds, and advances the
+controller. Timing and workload-optimality claims were removed from the unit
+suite and remain benchmark questions.
+
+At `669ed6b17e`, all three affected modules passed in GIL and free-threaded
+debug builds: 154 tests with 58 skips in GIL and 119 tests with 22 skips in
+free-threaded. The same modules passed under AddressSanitizer in both builds.
+The five new or changed GIL tests also passed under ThreadSanitizer without a
+diagnostic. A feature-off GIL build compiled the changed internal test module.
+
 The amended local matrix selection explicitly ran `test_gc_ft_parallel` in
 all four configurations. The GIL feature-on build ran all 17 lazy lifecycle
 and startup-failure tests; the GIL feature-off build skipped those 17 tests
