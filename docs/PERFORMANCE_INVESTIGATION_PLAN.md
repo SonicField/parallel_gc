@@ -41,6 +41,8 @@ The exact-container traversal work reversed the previous free-threaded `btree_gc
 
 `sqlite_synth` remains slower in both builds. The GIL pairs were 37.7% and 38.4% slower, producing a combined 38.1% regression. The free-threaded pairs were 10.0% and 10.7% slower, producing a combined 10.4% regression. This cross-build and within-campaign reproduction makes it the next shared investigation target. It does not identify the cause.
 
+A subsequent fixed-loop diagnostic isolated the shared trigger to creation of the process's first thread. One unrelated thread reproduced nearly the entire slowdown without parallel GC, and the workload performed no cyclic collection. The method, results, rejected explanations, and remaining uncertainty are recorded in [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
+
 The supplementary PGO workload was tested separately with full control, candidate, candidate, control campaigns while parallel GC remained disabled. The GIL candidate/control geomean was 0.993831 and the free-threaded geomean was 0.998143. No significant slowdown reproduced across both builds. With 122 uncorrected simultaneous tests, benchmark-specific PGO claims still require focused repetition.
 
 ## Excluded harness artifact: `bench_mp_pool`
@@ -194,7 +196,7 @@ Exit condition: the final evidence is produced from clean published revisions an
 |-------|--------|---------------------|
 | Baseline campaigns | Complete | Post-PGO GIL and FT campaigns completed all workloads at substantive CPython revision `d396f837b9`; the raw evidence and report are committed. |
 | Baseline offender inventory | Complete | `sqlite_synth` is the only large regression reproduced in both current builds; FT `float` and GIL `create_gc_cycles` remain build-specific targets. |
-| Focused reproductions | Next | Reproduce `sqlite_synth` alone in both builds and record collection counts and timing attribution before profiling. |
+| Focused reproductions | In progress | The `sqlite_synth` diagnostic found zero collections and reproduced the cost with one unrelated thread; a rigorous already-threaded pool/no-pool control remains. |
 | AArch64 assembly audit | In progress | The completed traversal audit led to retained exact-container paths; `sqlite_synth` has not yet been attributed to a source path. |
 | Hardware-counter profiles | In progress | Previous traversal profiles are retained; no `sqlite_synth` counter result exists yet. |
 | Proven-cause optimizations | In progress | Exact list, tuple, and dictionary traversal changes were independently tested and retained; no `sqlite_synth` change is authorized yet. |
@@ -232,3 +234,17 @@ Full disabled, enabled, enabled, disabled experiments then used one parallel-awa
 `sqlite_synth` remained 38.1% slower in the GIL build and 10.4% slower in the free-threaded build. Both halves of both campaigns reproduced the direction and magnitude. Decision: preserve the complete evidence, run all GitHub regression configurations, then investigate `sqlite_synth` as a shared cost. Do not change collector code until focused timing and collection evidence locates the additional work.
 
 Evidence: [`pgo-runtime-abba-arm64-2026-10-07.md`](../benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md).
+
+### 2026-10-07: `sqlite_synth` isolated to the first-thread transition
+
+A fixed-loop diagnostic ran the unmodified pyperformance `bench_sqlite()` function in fresh GIL and free-threaded processes. Each process ran one warmup and five measurements at 131,072 loops; three fresh processes were used for each mode.
+
+The measured workload triggered no cyclic collections. Disabling automatic GC did not change the parallel-enabled result. Enabling and then disabling the pool retained the slowdown.
+
+One unrelated Python thread, created and joined without enabling parallel GC, reproduced 38.9% slowdown in the GIL build and 11.4% in the free-threaded build. Direct observation showed glibc's `__libc_single_threaded` flag change from 1 to 0 after either one unrelated thread or pool creation and remain 0 after thread exit. Creating 15 unrelated threads did not add material cost beyond the first.
+
+In already-threaded diagnostic processes, enabling the pool added approximately 1.2% in each build. That small difference did not use randomized ABBA ordering and is not yet an established effect size.
+
+Decision: classify most of the current `sqlite_synth` regression as the process's irreversible first-thread transition, with parallel GC acting as the trigger. Do not attribute it to graph traversal or collection phases. Before considering a design change, run a rigorous already-threaded pool/no-pool comparison and measure the lower-level hot path. Immediate versus lazy pool creation is a design trade-off and requires explicit discussion.
+
+Evidence: [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
