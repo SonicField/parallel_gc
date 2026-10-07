@@ -193,6 +193,11 @@ Runs `37615265794` and `37615268403` passed the full Linux and Windows GIL and
 free-threaded suites at those older revisions. None of these three runs tests
 GIL lazy-pool revision `7ec0874a7d`.
 
+CPython lint run `37655164456` failed because Ruff removed one extra blank
+line from `Tools/build/parallel_gc_profile.py`. Ruff 0.15.17 reproduced the
+same one-line diff locally and passed after the deletion. The repair is
+CPython revision `8eb4af7dbf`; it does not change executable behavior.
+
 The amended local matrix selection explicitly ran `test_gc_ft_parallel` in
 all four configurations. The GIL feature-on build ran all 17 lazy lifecycle
 and startup-failure tests; the GIL feature-off build skipped those 17 tests
