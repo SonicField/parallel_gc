@@ -93,31 +93,37 @@ Falsifier: following any advertised quick-start command changes the CPython
 checkout, builds without the intended feature flag, or reuses incompatible
 objects between configurations.
 
-### 4. Repair resource-failure and multi-interpreter pool ownership
+### 4. Repair resource failure and make pool creation lazy
 
-Address the two source-level lifecycle risks identified by the audit:
+The free-threaded worker-argument allocation now belongs to its pool. The remaining lifecycle work is:
 
-1. partial helper-thread creation in both collectors; and
-2. the file-static free-threaded `_pool_worker_args` allocation despite
-   per-interpreter pools.
+1. make partial helper startup transactional in both collectors;
+2. separate enabled policy from a live pool; and
+3. fall back to serial collection after startup failure without automatic retry.
 
-Design and approve the tests before changing the implementation. The intended
-direction is fault injection for failure after the Nth helper creation and
-per-pool ownership of free-threaded worker arguments. This direction is not an
-authorization to change collector phases or atomic ordering.
+Design and approve the tests before changing the implementation. The complete
+state, failure, fork, test, and performance proposal is in
+[`LAZY_POOL_CREATION_PLAN.md`](LAZY_POOL_CREATION_PLAN.md). This direction is
+not an authorization to change collector phases, thresholds, or atomic
+ordering.
 
 Acceptance evidence:
 
 - Injected thread-creation failure cannot deadlock, join uninitialized handles,
   or leave running helpers referencing freed state.
-- Two interpreters can independently enable, collect, disable, and destroy
-  free-threaded pools repeatedly.
+- Enabling parallel GC creates no helper before a collection selects parallel
+  work.
+- A failed startup completes the collection serially, warns once, and makes no
+  automatic retry.
+- Two interpreters can independently arm, collect, disable, and destroy pools
+  repeatedly.
 - ASan reports no use-after-free for the lifecycle tests.
-- Both normal single-interpreter paths retain their existing behavior.
+- Active pools retain the existing collection algorithms and adaptive policy.
 
-Falsifier: any partial-start path leaves a helper running, waits on an
-unreachable barrier count, frees live worker state, or gives one interpreter
-ownership of another interpreter's allocation.
+Falsifier: enable alone creates a helper, any partial-start path leaves a
+helper running, waits on an unreachable barrier count, frees live worker
+state, retries automatically, or prevents the serial collection from
+completing.
 
 ### 5. Create the actual reviewable CPython patch series
 

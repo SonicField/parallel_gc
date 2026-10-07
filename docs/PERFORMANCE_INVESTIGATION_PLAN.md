@@ -43,6 +43,8 @@ The exact-container traversal work reversed the previous free-threaded `btree_gc
 
 A subsequent fixed-loop diagnostic isolated the shared trigger to creation of the process's first thread. One unrelated thread reproduced nearly the entire slowdown without parallel GC, and the workload performed no cyclic collection. The method, results, rejected explanations, and remaining uncertainty are recorded in [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
 
+The proposed cross-collector response is documented in [`LAZY_POOL_CREATION_PLAN.md`](LAZY_POOL_CREATION_PLAN.md). It requires transactional startup, lazy helper creation, serial fallback after failure, and no automatic retry. The plan is not implementation authorization until its five approval points are resolved.
+
 The supplementary PGO workload was tested separately with full control, candidate, candidate, control campaigns while parallel GC remained disabled. The GIL candidate/control geomean was 0.993831 and the free-threaded geomean was 0.998143. No significant slowdown reproduced across both builds. With 122 uncorrected simultaneous tests, benchmark-specific PGO claims still require focused repetition.
 
 ## Excluded harness artifact: `bench_mp_pool`
