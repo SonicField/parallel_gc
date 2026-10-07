@@ -33,13 +33,13 @@ Run these modules in both parallel builds:
 
 ```bash
 <build>/python -m test -v \
-    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_fork test_gc_parallel_properties \
     test_capi.test_config test_embed
 
 # Add these in the free-threaded build:
 build-port-ft/python -m test -v \
-    test_gc_ft_parallel test_free_threading.test_gc
+    test_free_threading.test_gc
 ```
 
 | Test module | Applicable build | Main evidence |
@@ -48,7 +48,7 @@ build-port-ft/python -m test -v \
 | `test_gc_ws_deque` | All four builds | Shared deque, barrier, and local-buffer primitives |
 | `test_gc_parallel` | All four builds | Public API, unavailable-build behavior, configuration, lifecycle, and process/thread scenarios |
 | `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation; armed GIL child or replacement FT pool; reset; ordinary, callback, and finalizer forks |
-| `test_gc_ft_parallel` | Free-threaded | End-to-end free-threaded graph and pool behavior |
+| `test_gc_ft_parallel` | All four builds | GIL lazy-pool lifecycle and injected startup failures; free-threaded graph and pool behavior; explicit feature-off skips |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
 | `test_embed` | All four builds | Embedded-runtime regression coverage |
@@ -182,6 +182,29 @@ and the upstream multiprocessing `Value` `NameError`. The unchanged
 free-threaded build passed its documented broad command with 48,041 tests
 across 484 files, 3,507 skips, and no failures.
 
+GitHub run `37615218042` checked parent revision `45462b0` and CPython revision
+`d396f837b9`. All four builds and affected-area selections passed. All four
+jobs then failed in the benchmark-harness step because the clean runner did
+not contain the pinned `pyperf` dependency. The same command reproduced two
+`ModuleNotFoundError` failures locally; installing the pinned pyperformance
+requirements in isolated GIL and free-threaded user sites changed both results
+to 40 passing tests.
+Runs `37615265794` and `37615268403` passed the full Linux and Windows GIL and
+free-threaded suites at those older revisions. None of these three runs tests
+GIL lazy-pool revision `7ec0874a7d`.
+
+The amended local matrix selection explicitly ran `test_gc_ft_parallel` in
+all four configurations. The GIL feature-on build ran all 17 lazy lifecycle
+and startup-failure tests; the GIL feature-off build skipped those 17 tests
+because the feature was unavailable. The complete focused selections passed:
+658 tests with 72 skips for GIL feature-on, 614 with 107 skips for GIL
+feature-off, 685 with 46 skips for free-threaded feature-on, and 679 with 142
+skips for free-threaded feature-off. The GIL builds were fresh builds of
+`7ec0874a7d`; the existing free-threaded binaries were `d396f837b9` and
+`3459fbefd8`, so the free-threaded runs verify the broadened test selection but
+are not current-revision rebuilds. GitHub confirmation of the amended matrix
+at one parent and submodule revision remains outstanding.
+
 Test counts are snapshots rather than a contract. Always retain the runner's
 summary, seed, failures, skips, and exact command.
 
@@ -202,7 +225,7 @@ The exact affected-area commands are:
 ```bash
 ASAN_OPTIONS=detect_leaks=0 \
     build-port-gil-asan/python -m test -j4 --timeout=180 \
-    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_fork test_gc_parallel_properties \
     test_capi.test_config test_embed
 

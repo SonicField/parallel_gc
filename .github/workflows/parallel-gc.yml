@@ -90,6 +90,7 @@ jobs:
         run: |
           tests=(
             test_gc
+            test_gc_ft_parallel
             test_gc_ws_deque
             test_gc_parallel
             test_gc_parallel_fork
@@ -100,13 +101,16 @@ jobs:
           )
           if [[ "$FREE_THREADED" == "1" ]]; then
             tests+=(test_free_threading.test_gc)
-            if [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
-              tests+=(test_gc_ft_parallel)
-            fi
           elif [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
             tests+=(test_gc_parallel_mark_alive)
           fi
           build-ci/python -m test -q --timeout=600 "${tests[@]}"
+
+      - name: Install benchmark test dependencies
+        run: |
+          build-ci/python -m ensurepip
+          build-ci/python -m pip install \
+              --requirement pyperformance/pyperformance/requirements/requirements.txt
 
       - name: Run benchmark harness unit tests
         run: |
