@@ -43,7 +43,7 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `86c83d41f5ae6df6558130b978d1d0a09a036a05`, on
+`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
 with submodules therefore obtains the exact reviewed source.
@@ -113,12 +113,21 @@ gc.collect_async()
 gc.disable_parallel()
 ```
 
-`gc.enable_parallel()` creates a pool with a fixed maximum of 16 workers. The
-stochastic random-walk controller tries adjacent worker counts and walks back
-after a regression. There is no environment-variable, `-X`, or `PyConfig`
-startup control. In a build without parallel-GC support, the runtime enable and
-disable functions raise `RuntimeError`, while
+In a GIL build, `gc.enable_parallel()` arms the collector without creating a
+thread. The fixed 16-helper pool is created on the first collection with at
+least 16,384 candidates and enough work splits. Smaller collections remain
+serial. The free-threaded build currently creates its 15 helpers when enabled;
+making that pool lazy is separate work. The stochastic random-walk controller
+tries adjacent participant counts and walks back after a regression. There is
+no environment-variable, `-X`, or `PyConfig` startup control. In a build
+without parallel-GC support, the runtime enable and disable functions raise
+`RuntimeError`, while
 `gc.get_parallel_config()` reports that the feature is unavailable.
+
+If a GIL pool cannot start, the triggering collection completes serially, one
+`RuntimeWarning` is emitted after collection state is safe, and later
+collections remain serial. An explicit `gc.enable_parallel()` permits one new
+attempt. `pool_active` and `startup_failed` expose this state.
 
 `gc.get_parallel_stats()` exposes implementation diagnostics and phase
 timings. `gc.collect_async()` schedules the normal collector and returns
@@ -144,11 +153,14 @@ For the free-threaded build, also run `test_gc_ft_parallel` and
 ## Fork behavior
 
 Forks made through CPython's supported fork protocol retain the parent's pool
-unchanged and replace the child's inherited pool with new helpers. The child
-adaptive controller restarts at four workers with no parent measurement. If a
-finalizer forks, the child completes the inherited collection without using it
-to train the new controller. The GIL and free-threaded regression tests cover
-ordinary and finalizer forks with bounded child waits. See the
+and adaptive history unchanged. A GIL child abandons inherited helpers,
+becomes armed, resets its controller to four, and creates no replacement
+thread during child recovery. Its first later eligible collection starts the
+new pool. The free-threaded child currently creates replacement helpers during
+recovery. If a callback or finalizer forks during collection, the child
+finishes that inherited collection serially without training the reset
+controller. The GIL and free-threaded regression tests cover ordinary and
+finalizer forks with bounded child waits. See the
 [fork architecture](docs/FORK_ARCHITECTURE.md) for the lifecycle contract and
 its explicit exclusion of raw extension-level `fork()` calls.
 
@@ -185,6 +197,12 @@ These are same-binary serial/parallel comparisons, not general CPython
 performance claims. Callback intervals are not strictly stop-the-world time in
 the free-threaded build. Full metadata, raw samples, and qualifications are in
 [the benchmarking guide](docs/BENCHMARKING.md) and the linked result files.
+
+A rigorous PGO+LTO GIL ABBA run of `sqlite_synth` measured 1.421316 us with
+parallel GC disabled and 1.429422 us while armed, a 0.57% difference reported
+as not significant. The armed workload retained one OS thread throughout. This
+replaces the former 38.1% penalty caused by eager creation triggering glibc's
+first-thread transition.
 
 ## Key files
 

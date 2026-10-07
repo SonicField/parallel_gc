@@ -8,7 +8,7 @@ For build instructions see [GETTING_STARTED.md](GETTING_STARTED.md).
 For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
 The canonical proposal is [pep-parallel-gc.rst](pep-parallel-gc.rst).
 
-This document describes the `cpython/` submodule at fork commit `86c83d41f5`,
+This document describes the `cpython/` submodule at fork commit `7ec0874a7d`,
 based on `python/cpython` commit `333071231d`.
 
 ---
@@ -34,7 +34,8 @@ There are two independent implementations, selected at compile time:
 Both implementations use the Chase-Lev deque in `pycore_ws_deque.h`; the GIL
 path also uses its local-buffer helpers. Their dispatch and termination
 strategies differ. Idle workers are selected and woken through per-worker
-condition variables. The GIL pool also uses a startup barrier; the
+condition variables. The GIL pool uses a cancellable mutex-and-condition
+startup handshake so partial thread creation can be rolled back; the
 free-threaded pool resizes an internal phase barrier for each active dispatch.
 
 **Important:** The two implementations are mutually exclusive. GIL builds guard
@@ -316,8 +317,11 @@ shared objects cheaply.
 ```
 gc.enable_parallel()
   |
-  _PyGC_ParallelInit()
-  _PyGC_ParallelStart()
+  _PyGC_ParallelInit() -> ARMED, no helpers
+  |
+eligible collection (at least 16,384 candidates and two splits)
+  |
+  _PyGC_ParallelStart() -> ACTIVE
   |
   [... GC collections ...]
   |
@@ -326,16 +330,27 @@ gc.disable_parallel()
   _PyGC_ParallelStop()
 ```
 
-Workers are persistent while parallel GC is enabled and sleep on their own
-`wake_cond`. `dispatch_and_wait()` signals the count selected by the adaptive
-controller and waits for completion on `done_cond`. Each has a growing
-`_PyWSDeque` and a 1024-item `_PyGCLocalBuffer`.
+Enabling first creates only the split vector and adaptive controller. Pool
+queues, deque storage, worker thread states, and native helpers are created by
+the first eligible collection. After startup, workers persist and sleep on
+their own `wake_cond`. `dispatch_and_wait()` signals the count selected by the
+adaptive controller and waits for completion on `done_cond`. Each has a
+growing `_PyWSDeque` and a 1024-item `_PyGCLocalBuffer`.
+
+Startup is transactional. The collecting thread creates every worker thread
+state before native threads, records each successfully created handle, and
+waits for readiness through a cancellable condition variable. Failure wakes
+and joins only created helpers, deletes every created thread state, frees pool
+resources, finishes the collection serially, and enters `FAILED`. One warning
+is delivered after the collection state is restored. No later collection
+retries until an explicit `gc.enable_parallel()` re-arms the collector.
 
 GIL helper threads create and bind persistent `PyThreadState` objects so debug
 reference-count accounting and traversal callbacks have valid thread state.
 
-`gc.disable_parallel()` stops the GIL helpers but retains the pool. Re-enabling
-restarts it with the same fixed maximum.
+`gc.disable_parallel()` stops GIL helpers but may retain reusable pool storage.
+Re-enabling returns to `ARMED`; it does not restart helpers until another
+eligible collection.
 
 ### 2.6 Serial Fallback Conditions
 
@@ -343,8 +358,8 @@ The GIL collector uses serial code when parallel GC is disabled, workers are
 not active, the collection has fewer than 16,384 candidates, the split vector
 cannot describe usable work, or a phase cannot dispatch. Pre-mark and
 subtraction have serial equivalents. Residual marking falls back to
-`move_unreachable()`. Initialization and thread-creation errors fail
-`gc.enable_parallel()`; they are not collection-time serial fallbacks.
+`move_unreachable()`. Lazy pool initialization and thread-creation failures
+are collection-time serial fallbacks with bounded diagnostics.
 
 ### 2.7 Worker Count
 
@@ -584,8 +599,10 @@ file-static allocation shared by the FT pool lifecycle.
 The parent retains its existing helpers and learned adaptive state across a
 supported CPython fork. Only the calling thread survives in the child, so the
 child abandons the copied pool without joining vanished threads or operating on
-copied synchronization objects. It then constructs new helpers and resets the
-shared adaptive controller to its four-worker starting state.
+copied synchronization objects. The free-threaded implementation then
+constructs new helpers and resets the shared adaptive controller to its
+four-worker starting state. The GIL implementation instead becomes `ARMED` and
+defers replacement helpers until a later eligible collection.
 
 If the fork occurs in a finalizer or another GC callback, the current
 collection finishes in the child but cannot update the reset controller. The
@@ -708,8 +725,9 @@ All in `Modules/gcmodule.c`.
 
 ### gc.enable_parallel()
 
-- **GIL:** `_PyGC_ParallelInit()` plus `_PyGC_ParallelStart()` create the fixed
-  16-worker pool; the collecting thread only coordinates.
+- **GIL:** `_PyGC_ParallelInit()` creates the controller in `ARMED`; no helper
+  is created until an eligible collection calls `_PyGC_ParallelStart()` to
+  create the fixed 16-helper pool. The collecting thread only coordinates.
 - **Free-threaded:** `_PyGC_ThreadPoolInit()`; the collecting thread is one of
   the 16 participants, so the pool creates 15 helpers.
 - The adaptive controller may activate fewer participants for a collection.
@@ -727,9 +745,10 @@ Returns availability, enabled state, and the fixed worker limit. Enabled builds
 also report the adaptive worker count. The free-threaded build currently emits
 a `parallel_cleanup` capability key inherited from the prototype, although
 finalization and `tp_clear` deletion remain serial; the name and usefulness of
-that field require API review. Before initialization, `num_workers` is zero.
-After disabling, the GIL build continues to report 16 because it retains the
-stopped pool; the free-threaded build reports zero because it destroys it.
+that field require API review. GIL builds additionally report `pool_active`
+and `startup_failed`. `num_workers` is the configured limit while enabled, not
+a claim that those threads already exist. Disabled builds report zero even if
+the GIL implementation retains reusable storage.
 
 ### gc.get_parallel_stats()
 

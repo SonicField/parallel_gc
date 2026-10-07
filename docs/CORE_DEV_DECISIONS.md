@@ -39,6 +39,28 @@ that reclaims nothing still performs graph work.
 the long-term maximum is a policy question to revisit with benchmark evidence;
 it is not selected through startup configuration.
 
+## Pool-start contract
+
+The implemented GIL contract separates policy from resources.
+`gc.enable_parallel()` enters an armed state without creating native threads.
+The first collection with at least 16,384 candidates and two usable work
+splits starts the 16-helper pool transactionally. A startup failure rolls back
+all partial resources, completes the collection serially, emits one warning
+after collection state is safe, and disables further attempts. A later
+explicit enable request resets the adaptive controller and permits one retry.
+
+GIL child-fork recovery also becomes armed without creating helpers. The
+parent is unchanged, and a child collection inherited from a callback or
+finalizer finishes serially before later eligible work may start a pool. The
+free-threaded implementation remains eager pending the separate implementation
+and stop-the-world lifecycle work recorded in
+[`LAZY_POOL_CREATION_PLAN.md`](LAZY_POOL_CREATION_PLAN.md).
+
+The GIL API exposes `pool_active`, `startup_failed`, a monotonic startup-failure
+counter, and a bounded error code. These names and whether the free-threaded
+implementation should expose identical fields remain reviewable public-surface
+questions.
+
 The current free-threaded configuration dictionary includes a
 `parallel_cleanup` key inherited from the prototype even though finalization
 and `tp_clear` deletion are serial. Its name and whether it belongs in the

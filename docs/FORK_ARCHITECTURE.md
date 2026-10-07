@@ -17,9 +17,10 @@ parallel-GC protocol.
 
 ## The problem
 
-Both collectors use persistent native worker threads. A POSIX fork duplicates
-memory but retains only the calling thread in the child. Without explicit
-recovery, the child inherits:
+Both collectors use persistent native worker threads after their pools have
+started. A GIL collector may instead be armed with no helpers. A POSIX fork
+duplicates memory but retains only the calling thread in the child. Without
+explicit recovery, a child of an active pool inherits:
 
 - worker handles for threads that no longer exist;
 - worker `PyThreadState` pointers that CPython removes after the fork;
@@ -56,14 +57,21 @@ from the parent. Before Python execution resumes, child recovery must:
 2. Discard inherited thread handles and worker `PyThreadState` pointers.
 3. Reinitialize every pool synchronization primitive and dispatch counter.
 4. Reset all worker queues and per-dispatch state to an empty, idle state.
-5. Create and bind replacement helper threads for the child interpreter.
-6. Preserve whether parallel GC was enabled and preserve the configured
+5. Preserve whether parallel GC was enabled and preserve the configured
    maximum of 16 workers.
-7. Reset the adaptive controller for the child's workload.
+6. Reset the adaptive controller for the child's workload.
 
-If replacement helpers cannot be created, CPython's after-fork recovery fails
-fatally rather than return to Python with a partially live pool that can
-deadlock.
+The GIL implementation then leaves the child `ARMED`. It creates no native
+thread during after-fork recovery; a later eligible collection starts a new
+pool transactionally. A child of `ARMED` remains armed, a child of `DISABLED`
+remains disabled, and a child of `FAILED` remains failed until an explicit
+enable request.
+
+The free-threaded implementation currently creates replacement helpers during
+after-fork recovery. If that replacement fails, CPython's recovery fails
+fatally rather than return to Python with a partially live pool. Converting the
+free-threaded implementation to the GIL armed-child model is planned but is
+not part of the current GIL change.
 
 ## Adaptive state
 
@@ -95,9 +103,14 @@ sites therefore occur while the helpers are idle. They include:
 - ordinary application code between collections.
 
 When a finalizer calls `fork()`, the calling thread survives in both processes.
-The parent completes the collection with its existing pool. The child first
-recovers its pool, then completes the inherited collection's remaining serial
-work. That inherited collection is excluded from adaptive learning.
+The parent completes the collection with its existing pool. The GIL child
+reinitializes its controller without creating helpers, then completes the
+inherited collection's remaining work serially. A per-collection latch also
+forces serial completion after a fork from the start callback, where no
+parallel phase has run yet. Normal collection exit clears the latch. The
+free-threaded child completes the inherited serial tail after replacing its
+helpers. In both implementations, the inherited collection is excluded from
+adaptive learning.
 
 The implementation must not assume that `gcstate->collecting` is clear during
 child recovery.
@@ -117,9 +130,10 @@ fork()
 PyOS_AfterFork_Parent()         resume world
                                                             reinitialize runtime locks
                                                             remove vanished thread states
-                                                            recover parallel-GC pool
+                                                            recover parallel-GC state
                                                             reset adaptive state
-                                                            create child helpers
+                                                            GIL: remain armed
+                                                            FT: create child helpers
                                                             resume Python execution
 ```
 
@@ -131,23 +145,24 @@ before user after-fork callbacks or other Python code can request a collection.
 ## Implementation boundaries
 
 The common lifecycle entry points belong in CPython's internal GC interfaces.
-The GIL and free-threaded collectors retain separate pool reconstruction code
-because their worker topology differs:
+The GIL and free-threaded collectors retain separate recovery code because
+their worker topology and current startup policy differ:
 
 - every GIL pool worker is a helper thread;
 - free-threaded worker zero is the collecting thread and workers 1 through 15
   are helpers.
 
-The two paths share the adaptive reset definition and the externally visible
-fork contract. Recovery must not alter collection algorithms, atomic ordering,
-work partitioning, or the parent process's controller state.
+The two paths share the adaptive reset definition and parent-preservation
+contract. Recovery must not alter collection algorithms, atomic ordering, work
+partitioning, or the parent process's controller state.
 
 ## Existing multi-interpreter boundary
 
 The kernel initially copies every interpreter into the child, but CPython's
 after-fork recovery deliberately deletes every interpreter except the main
-interpreter before returning to Python. Parallel-GC recovery therefore rebuilds
-the surviving main interpreter's pool only.
+interpreter before returning to Python. Parallel-GC recovery therefore
+recovers only the surviving main interpreter's controller. The GIL path does
+not build a pool at this point.
 
 Current upstream-based feature-off GIL and free-threaded builds terminate the
 child with `SIGSEGV` when the main interpreter forks while an otherwise idle
@@ -173,10 +188,13 @@ waits:
    large collection in the child.
 3. Verify that the parent retains its adaptive worker count and previous cost.
 4. Verify that the child begins at four workers with no previous cost.
-5. Verify that the inherited collection does not update child adaptive state.
-6. Verify that a subsequent child collection produces a new adaptive
+5. In the GIL build, verify that child recovery creates no helper and that the
+   controller remains armed until an eligible collection.
+6. Verify that the inherited collection does not update child adaptive state
+   or dispatch GIL helpers.
+7. Verify that a subsequent child collection produces a new adaptive
    measurement.
-7. Repeat the lifecycle to expose stale handles, queues, and synchronization
+8. Repeat the lifecycle to expose stale handles, queues, and synchronization
    state.
 
 The feature-off GIL and free-threaded builds must retain normal CPython fork

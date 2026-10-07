@@ -1,0 +1,25 @@
+disabled-combined.json
+======================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision d396f837b9
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-07 06:23:33.843682
+End date: 2026-10-07 06:26:00.449649
+
+enabled-combined.json
+=====================
+
+Performance version: 1.14.0
+Python version: 3.16.0a0 (64-bit) revision d396f837b9
+Report on Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34
+Number of logical CPUs: 72
+Start date: 2026-10-07 06:24:10.464090
+End date: 2026-10-07 06:25:21.378953
+
++--------------+------------------------+-----------------------+--------------+-----------------+
+| Benchmark    | disabled-combined.json | enabled-combined.json | Change       | Significance    |
++==============+========================+=======================+==============+=================+
+| sqlite_synth | 1.42 us                | 1.43 us               | 1.01x slower | Not significant |
++--------------+------------------------+-----------------------+--------------+-----------------+

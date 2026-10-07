@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `86c83d41f5ae6df6558130b978d1d0a09a036a05`.
+`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 

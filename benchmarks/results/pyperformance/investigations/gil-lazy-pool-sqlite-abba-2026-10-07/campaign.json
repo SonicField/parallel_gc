@@ -1,0 +1,215 @@
+{
+  "affinity": null,
+  "benchmarks": "sqlite_synth",
+  "cpython_repository": {
+    "dirty": true,
+    "revision": "d396f837b9ab1f23573b404f70848584dff83bc7",
+    "status": [
+      " M Include/internal/pycore_gc_parallel.h",
+      " M Lib/test/test_gc_ft_parallel.py",
+      " M Lib/test/test_gc_parallel_fork.py",
+      " M Modules/_testinternalcapi/test_ws_deque.c",
+      " M Modules/clinic/gcmodule.c.h",
+      " M Modules/gcmodule.c",
+      " M Python/gc.c",
+      " M Python/gc_parallel.c"
+    ]
+  },
+  "created_utc": "2026-10-07T13:25:59.601201+00:00",
+  "host": {
+    "machine": "aarch64",
+    "node": "devbig340.ncg1.facebook.com",
+    "platform": "Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34"
+  },
+  "manifest": null,
+  "order": [
+    "disabled",
+    "enabled",
+    "enabled",
+    "disabled"
+  ],
+  "parallel_gc_repository": {
+    "dirty": true,
+    "revision": "153e08806b3cf6f923820eafa90c287b57a59f4e",
+    "status": [
+      " m cpython",
+      " ? pyperformance",
+      "?? benchmarks/results/pyperformance/ft-full-2026-10-03/",
+      "?? benchmarks/results/pyperformance/ft-smoke/",
+      "?? benchmarks/results/pyperformance/gil-full-2026-10-02/",
+      "?? benchmarks/results/pyperformance/gil-smoke-2/",
+      "?? benchmarks/results/pyperformance/gil-smoke/",
+      "?? benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v3-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v2-2026-10-05/",
+      "?? build-control-ft/",
+      "?? build-fidelity-ft/",
+      "?? build-fidelity-gil/",
+      "?? build-lazy-gil-asan/",
+      "?? cpython-original/",
+      "?? cpython-upstream-port/",
+      "?? docs/pep-parallel-gc-v2.rst"
+    ]
+  },
+  "pyperformance_repository": {
+    "dirty": true,
+    "revision": "ccc0aeb7ad46d65b6dcd4160e0fdda4d885852dd",
+    "status": [
+      "?? pyperformance/data-files/benchmarks/bm_2to3/vendor/src/lib2to3.egg-info/"
+    ]
+  },
+  "results": {
+    "01-disabled.json": "22a4c4b513d02715711f4e9bdc7df519f69ed2f872c44539a376a0beabed5343",
+    "02-enabled.json": "8cbcf47f5549a3ada86b3941038a2744bde33f1bd88707567865339fd6c3d670",
+    "03-enabled.json": "717a0e60396a78814333a5e539d951a10cdf7cf4a96296694b4211c5da38ed30",
+    "04-disabled.json": "e2f940a14dbc0533e73e25521bccb69db3d6c5c6d91dc7197fc0ac6333fa913f",
+    "comparison.txt": "a879b52879349c2ad94994ff1ea5d584af27b6fa1d933c0d38cf717221457081",
+    "disabled-combined.json": "339f189c59a9ed88e4e5097ccfd7886aed9b1c023322042ed54486c4d343fe7a",
+    "enabled-combined.json": "3d0e3af4b8025a251b0f2f880ba2e0b07f7dd8006517f30e5c977d82593186a0"
+  },
+  "resumed": false,
+  "run_style": "rigorous",
+  "runs": [
+    {
+      "command": [
+        "/data/users/alexturner/parallel_gc/.pyperformance/venv/cpython3.16-a64c84915a03-compat-31b33d68c68a/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python",
+        "--benchmarks=sqlite_synth",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/01-disabled.json",
+        "--rigorous"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "01-disabled.json",
+      "resumed": false,
+      "sequence": 1
+    },
+    {
+      "command": [
+        "/data/users/alexturner/parallel_gc/.pyperformance/venv/cpython3.16-a64c84915a03-compat-31b33d68c68a/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python",
+        "--benchmarks=sqlite_synth",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/02-enabled.json",
+        "--rigorous"
+      ],
+      "mode": "enabled",
+      "preflight": {
+        "adaptive_workers": 4,
+        "available": true,
+        "enabled": true,
+        "num_workers": 16,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "02-enabled.json",
+      "resumed": false,
+      "sequence": 2
+    },
+    {
+      "command": [
+        "/data/users/alexturner/parallel_gc/.pyperformance/venv/cpython3.16-a64c84915a03-compat-31b33d68c68a/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python",
+        "--benchmarks=sqlite_synth",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/03-enabled.json",
+        "--rigorous"
+      ],
+      "mode": "enabled",
+      "preflight": {
+        "adaptive_workers": 4,
+        "available": true,
+        "enabled": true,
+        "num_workers": 16,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "03-enabled.json",
+      "resumed": false,
+      "sequence": 3
+    },
+    {
+      "command": [
+        "/data/users/alexturner/parallel_gc/.pyperformance/venv/cpython3.16-a64c84915a03-compat-31b33d68c68a/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python",
+        "--benchmarks=sqlite_synth",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/04-disabled.json",
+        "--rigorous"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "04-disabled.json",
+      "resumed": false,
+      "sequence": 4
+    }
+  ],
+  "schema": 1,
+  "target": {
+    "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' 'PKG_CONFIG_PATH=/tmp/parallel-gc-devel-prefix/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-devel-prefix/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-devel-prefix/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-devel-prefix/usr/include'",
+    "executable": "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python",
+    "executable_sha256": "65b174b0d9bdebade18a10eb905c7cfab7421be7256f2d48ab0272f0db0510b7",
+    "gil_enabled": true,
+    "git": [
+      "CPython",
+      "heads/parallel-gc-upstream-port-dirty",
+      "d396f837b9"
+    ],
+    "parallel_config": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "version": "3.16.0a0 (heads/parallel-gc-upstream-port-dirty:d396f837b9, Oct  7 2026, 06:19:10) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+  },
+  "target_python": "/data/users/alexturner/parallel_gc/build-pyperformance-gil/python"
+}

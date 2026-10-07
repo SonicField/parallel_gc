@@ -51,7 +51,7 @@ benchmarks, and project-level test workflow.
 ### Current port status
 
 The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `86c83d41f5ae6df6558130b978d1d0a09a036a05`, on
+`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`, on
 branch `parallel-gc-upstream-port`. It is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
 
@@ -154,12 +154,14 @@ gc.collect_async()
 gc.disable_parallel()
 ```
 
-`gc.enable_parallel()` creates a pool with a fixed maximum of 16 workers. In a
-GIL build the collecting thread coordinates the helpers. In a free-threaded
-build it participates as worker zero, so the pool creates exactly one fewer
-helper. The shared stochastic random-walk controller starts at four workers,
-tries adjacent counts, and walks back after a regression within the 2--16
-range. In a build without parallel-GC support,
+In a GIL build, `gc.enable_parallel()` arms the collector but creates no
+helper. The fixed 16-helper pool starts when a collection first reaches 16,384
+candidates and has enough work splits; the collecting thread coordinates it.
+In a free-threaded build, enabling currently creates 15 helpers and the
+collecting thread participates as worker zero. The shared stochastic
+random-walk controller starts at four participants, tries adjacent counts, and
+walks back after a regression within the 2--16 range. In a build without
+parallel-GC support,
 `gc.enable_parallel()` and `gc.disable_parallel()` raise
 `RuntimeError`, while `gc.get_parallel_config()` reports `available` as false.
 
@@ -198,9 +200,13 @@ implementation changes a reference count.
 ## Fork behavior
 
 Supported CPython forks leave the parent pool and its adaptive history intact.
-The child replaces inherited helpers and synchronization state, resets its
-adaptive controller to four workers, and excludes an inherited in-progress
-collection from adaptive learning. This includes a fork from `__del__`. See
+The GIL child abandons inherited helpers, reinitializes synchronization state,
+becomes armed, and resets its adaptive controller to four without starting a
+thread during recovery. A later eligible collection starts its pool. The
+free-threaded child currently creates replacement helpers immediately. Both
+collectors exclude an inherited in-progress collection from adaptive learning;
+the GIL child also forces its remainder down the serial path. This includes a
+fork from `__del__`. See
 [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) for the precise contract, hook
 ordering, tests, and unsupported raw-fork case.
 

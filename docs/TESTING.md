@@ -47,7 +47,7 @@ build-port-ft/python -m test -v \
 | `test_gc` | All four builds | Existing cyclic-GC behavior and integration |
 | `test_gc_ws_deque` | All four builds | Shared deque, barrier, and local-buffer primitives |
 | `test_gc_parallel` | All four builds | Public API, unavailable-build behavior, configuration, lifecycle, and process/thread scenarios |
-| `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation, child pool replacement and reset, ordinary fork, and finalizer fork |
+| `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation; armed GIL child or replacement FT pool; reset; ordinary, callback, and finalizer forks |
 | `test_gc_ft_parallel` | Free-threaded | End-to-end free-threaded graph and pool behavior |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
@@ -119,7 +119,7 @@ gh run watch RUN_ID \
 The `Windows parallel GC` workflow is a manual portability and regression gate.
 It builds 64-bit debug CPython with parallel GC enabled in both GIL and
 free-threaded modes, verifies that the expected runtime is active, performs an
-immediate collection after pool startup, runs the focused GC tests and parent
+immediate eligible collection after GIL activation, runs the focused GC tests and parent
 benchmark-harness unit tests, and then runs the complete default CPython
 regression suite without module exclusions. Each full-suite log is retained as
 an artifact. It deliberately starts with x64; Windows ARM64 is the next stage
@@ -168,10 +168,19 @@ Historical broad status from predecessor commit `9da963f754`:
 
 - The free-threaded broad active run passed 47,914 tests across 481 files,
   including `test_external_inspection`.
+
 - The GIL broad active run passed 48,103 tests across 483 files, including
   `test_capi`, `test_pickle`, and `test_external_inspection`.
 - Focused feature-off controls passed 203 tests in the GIL build and 211 tests
   in the free-threaded build.
+
+Current GIL lazy-start commit `7ec0874a7d` passed the documented local broad
+command: 48,224 tests across 486 files, with 3,518 skips and no failures. The
+four exclusions are the dependency-sensitive tests described above; a prior
+unexcluded diagnostic reproduced their existing `_ctypes`/ensurepip failures
+and the upstream multiprocessing `Value` `NameError`. The unchanged
+free-threaded build passed its documented broad command with 48,041 tests
+across 484 files, 3,507 skips, and no failures.
 
 Test counts are snapshots rather than a contract. Always retain the runner's
 summary, seed, failures, skips, and exact command.

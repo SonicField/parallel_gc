@@ -12,8 +12,9 @@ The complete path-by-path scope is listed in
 
 Add `pycore_ws_deque.h` and `pycore_gc_barrier.h`, together with their
 `_testinternalcapi` coverage and build-system registration. The deque is shared
-by both collectors; the local-buffer helpers and startup barrier are used by
-the GIL collector.
+by both collectors; the local-buffer helpers and synchronization wrappers are
+used by the GIL collector. Its lifecycle uses those wrappers for a cancellable
+startup handshake rather than a fixed participant barrier.
 
 ## 2. GIL collector
 
@@ -58,7 +59,8 @@ child controller reset, and post-fork collection.
 Add API/configuration tests, deque and split-vector tests, GIL/FT graph
 properties, lifecycle and reconfiguration tests, allocation/collection races,
 external-inspection coverage, and helper-participation proof. Validate the
-child pool-replacement protocol through CPython's supported fork hooks.
+fork protocol through CPython's supported hooks: armed child recovery for GIL,
+and the current replacement protocol for free-threaded builds.
 
 ## 8. Documentation and NEWS
 

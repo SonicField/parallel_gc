@@ -6,7 +6,7 @@ This inventory describes every modified or untracked path in
 material outside the submodule.
 
 The current fork commit is
-`86c83d41f5ae6df6558130b978d1d0a09a036a05`. Status notation used when the
+`7ec0874a7d`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
@@ -23,8 +23,8 @@ snapshot was prepared:
   layout change; worker limits and work-partitioning constants live in the
   implementation-specific parallel-GC headers.
 - **New** `Include/internal/pycore_gc_barrier.h` — provides checked POSIX/Windows
-  mutex and condition-variable wrappers and the reusable GIL-pool startup
-  barrier.
+  mutex and condition-variable wrappers used by the GIL pool's cancellable
+  startup handshake.
 - **New** `Include/internal/pycore_gc_ft_parallel.h` — defines free-threaded
   worker-pool, page-bucket, work-descriptor, marking, lifecycle, and child-fork
   recovery interfaces.
@@ -41,9 +41,9 @@ snapshot was prepared:
   free-threaded persistent pool, parallel root propagation, `update_refs`,
   `mark_heap`, and `scan_heap`, work stealing, and error propagation.
 - **New** `Python/gc_parallel.c` — implements the GIL persistent worker pool,
-  split-vector dispatch, parallel interpreter-root marking, reference
-  subtraction and reachability marking, serial fallback support, and adaptive
-  worker selection.
+  armed/active/failed lifecycle, transactional lazy startup, split-vector
+  dispatch, parallel interpreter-root marking, reference subtraction and
+  reachability marking, serial failure fallback, and adaptive worker selection.
 
 ## Core collector integration and lifecycle
 
@@ -51,8 +51,9 @@ snapshot was prepared:
   parallel-GC state for the GIL and free-threaded implementations.
 - **Modified** `Python/gc.c` — integrates split recording, candidate counting,
   interpreter-root pre-marking, reference subtraction, reachability marking,
-  the small-collection serial threshold,
-  private adaptive timing, and serial fallback into the GIL cyclic collector.
+  the small-collection serial threshold, first-use pool startup, warning
+  delivery after safe collection cleanup, private adaptive timing, and serial
+  fallback into the GIL cyclic collector.
 - **Modified** `Python/gc_free_threading.c` — integrates parallel root
   propagation, page assignment, `update_refs`, `mark_heap`, `scan_heap`, and
   private adaptive timing while retaining serial fallbacks and serial stack,
@@ -62,8 +63,9 @@ snapshot was prepared:
   teardown.
 - **Modified** `Python/pystate.c` — makes interpreter clearing defensively
   finalize any remaining per-interpreter parallel-GC pool.
-- **Modified** `Modules/posixmodule.c` — replaces inherited parallel-GC pools
-  in the child before user after-fork callbacks run.
+- **Modified** `Modules/posixmodule.c` — recovers inherited parallel-GC state
+  in the child before user after-fork callbacks run. The GIL child becomes
+  armed without helpers; the free-threaded child currently replaces helpers.
 - **Modified** `Include/internal/pycore_uniqueid.h` and `Python/uniqueid.c` —
   provide the stop-the-world batch unique-ID release used by parallel
   free-threaded `scan_heap`.
@@ -79,8 +81,8 @@ snapshot was prepared:
 - **Modified** `Modules/gcmodule.c` — implements `gc.enable_parallel()`,
   `gc.disable_parallel()`, `gc.get_parallel_config()`,
   `gc.get_parallel_stats()`, and `gc.collect_async()`. `enable_parallel()`
-  takes no worker-count argument; the internal maximum is 16 and the adaptive
-  controller selects the active count.
+  takes no worker-count argument; GIL enable is lazy, the internal maximum is
+  16, and the adaptive controller selects the active count.
 
 There is no environment-variable, `-X`, or `PyConfig` startup interface for
 parallel GC.
@@ -176,7 +178,7 @@ parallel GC.
 
 ## Path-set verification
 
-At commit `86c83d41f5`, the source differs from the recorded upstream base at
+At commit `7ec0874a7d`, the source differs from the recorded upstream base at
 53 paths: 39 modified files and 14 additions. The CPython worktree was clean
 when that revision was recorded in the parent repository.
 

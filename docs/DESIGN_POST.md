@@ -190,9 +190,12 @@ candidate count to the same shared normalization function.
 
 The parent pool survives a supported CPython fork unchanged. The child cannot
 use copied worker handles or synchronization state because the corresponding
-threads no longer exist. Child recovery therefore abandons the copied pool,
-creates replacement helpers, and resets the adaptive controller. A collection
-that began before the fork is excluded from the child's new learning history.
+threads no longer exist. GIL child recovery therefore abandons copied helpers,
+reinitializes the controller in the armed state, and creates no thread. A later
+eligible collection starts the replacement pool. Free-threaded recovery
+currently creates replacement helpers immediately. Both reset the adaptive
+controller. A collection that began before the fork is excluded from the
+child's new learning history and the GIL child finishes it serially.
 
 This behavior is exercised for ordinary forks and forks from `__del__` in both
 collector builds. [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) is the normative
@@ -226,10 +229,12 @@ gc.disable_parallel()
 The configuration reports availability, whether the collector is enabled, and
 the currently selected worker count.
 
-The runtime API takes no worker-count argument. It creates a pool with a fixed
-maximum of 16, and the adaptive controller selects the active count for each
-collection. There is no environment-variable, `-X`, or `PyConfig` startup
-control.
+The runtime API takes no worker-count argument. In the GIL build, enable arms
+the collector and the first eligible collection creates a pool with a fixed
+maximum of 16 helpers. In the free-threaded build, enable currently creates a
+pool with 15 helpers because the collecting thread is participant zero. The
+adaptive controller selects the active participant count for each collection.
+There is no environment-variable, `-X`, or `PyConfig` startup control.
 
 ## Design heritage
 

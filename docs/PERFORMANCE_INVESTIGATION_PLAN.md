@@ -250,3 +250,23 @@ In already-threaded diagnostic processes, enabling the pool added approximately 
 Decision: classify most of the current `sqlite_synth` regression as the process's irreversible first-thread transition, with parallel GC acting as the trigger. Do not attribute it to graph traversal or collection phases. Before considering a design change, run a rigorous already-threaded pool/no-pool comparison and measure the lower-level hot path. Immediate versus lazy pool creation is a design trade-off and requires explicit discussion.
 
 Evidence: [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
+
+### 2026-10-07: GIL lazy startup removes the first-thread regression
+
+CPython commit `7ec0874a7d` changed GIL activation from eager pool creation to
+an armed state. The first collection with at least 16,384 candidates and two
+usable splits starts the pool transactionally. Smaller collections create no
+thread.
+
+A rigorous PGO+LTO `sqlite_synth` ABBA campaign measured 1.421316 microseconds
+disabled and 1.429422 microseconds armed. The 0.57 percent difference was
+reported as not significant. A direct run of the unmodified benchmark function
+at 131,072 loops retained one OS thread and reported `pool_active == false`
+before and after the workload.
+
+This result supports the first-thread-transition hypothesis and rejects a
+remaining regression near the former 38.1 percent magnitude. It does not
+measure first-use pool startup or large-collection steady state; those remain
+separate required experiments.
+
+Evidence: [`gil-lazy-pool-sqlite-abba-2026-10-07`](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/).

@@ -25,7 +25,55 @@ A fixed-loop diagnostic then established:
 
 The diagnostic is recorded in [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
 
-The current GIL startup failure path is also incomplete. If thread creation fails after some workers have entered the fixed startup barrier, those workers wait for participants that were never created. Cleanup then attempts to join them and can deadlock. Worker thread-state creation failure only prints a warning and allows startup to continue.
+## GIL implementation result
+
+The GIL phase is implemented in CPython commit `7ec0874a7d`. The
+free-threaded collector remains eager and is still governed by the plan below.
+
+The GIL implementation provides the explicit five-state lifecycle,
+transactional startup, serial failure recovery, bounded diagnostics, explicit
+retry, and armed-child fork recovery described here. Deterministic tests fail
+each of the 16 worker-thread-state creation positions and each of the 16 native
+thread creation positions. Tests also cover resource failure, exact threshold
+behavior, repeated active-pool reuse, warning failure, shutdown in every stable
+state, and forks from ordinary code, a GC start callback, and a finalizer.
+
+Verification completed locally:
+
+- GIL debug focused suite: 222 tests run, 59 expected skips, success.
+- GIL broad suite with the documented unavailable-dependency exclusions:
+  48,224 tests across 486 files, 3,518 skips, success.
+- Free-threaded debug focused suite: 174 tests run, 26 expected skips,
+  success; no free-threaded behavior was changed.
+- Free-threaded broad suite with the documented unavailable-dependency
+  exclusions: 48,041 tests across 484 files, 3,507 skips, success.
+- Parent benchmark-harness suite in the pyperformance environment: 40 tests,
+  success.
+- GIL AddressSanitizer lifecycle and fork suites: 26 tests, one expected skip,
+  success.
+- GIL leak-hunting lifecycle repetitions: `[1, 0, 0]`, reported by the CPython
+  runner as acceptable.
+- PGO+LTO boundary observation: 16,383 candidates retained one OS thread;
+  16,384 candidates started 16 helpers; disable returned the process to one.
+
+The rigorous PGO+LTO `sqlite_synth` ABBA result was 1.421316 microseconds with
+parallel GC disabled and 1.429422 microseconds while armed. The 0.57 percent
+difference was not significant. A separate 131,072-loop observation remained
+at one OS thread and `pool_active == false` throughout. This rejects the former
+38.1 percent eager-start penalty for this workload. Raw results, combined
+files, comparison, executable hash, and repository states are in
+[`gil-lazy-pool-sqlite-abba-2026-10-07`](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/).
+
+The remaining acceptance work is Linux and Windows CI, first-use and
+steady-state large-graph performance, and the separate free-threaded
+lazy-start implementation and evidence.
+
+Before commit `7ec0874a7d`, the GIL startup failure path was incomplete. If
+thread creation failed after workers entered the fixed startup barrier, those
+workers waited for participants that were never created and cleanup could
+deadlock while joining them. Worker thread-state creation failure only printed
+a warning and allowed startup to continue. The transactional implementation
+replaces that protocol.
 
 Lazy creation must not move that unsafe startup protocol into collection. Transactional startup is a prerequisite.
 
@@ -72,7 +120,9 @@ Proposed fields and meanings:
 
 `gc.get_parallel_stats()` should add a monotonic `pool_startup_failures` counter and a bounded `last_pool_startup_error` code. It must not retain an exception object or an unbounded platform error string in interpreter state.
 
-The distinction between `ARMED` and `ACTIVE` is required for tests, operations, fork recovery, and honest diagnostics. The exact public field names require API review before implementation.
+The distinction between `ARMED` and `ACTIVE` is required for tests, operations,
+fork recovery, and honest diagnostics. The implemented public field names
+remain subject to core-developer API review.
 
 ## Transactional pool startup
 
@@ -254,9 +304,10 @@ The change is not accepted solely because tests pass.
 
 The expected result is removal of the first-thread cost from armed-but-unused workloads, not concealment of startup latency. The first-use measurement must report the complete pool-creation cost.
 
-## Documentation changes after implementation
+## Documentation consistency
 
-The current documents describe eager creation and therefore must be updated together after behaviour is verified:
+The following documents must remain synchronized with the implemented
+behavior:
 
 - `README.md` and `docs/GETTING_STARTED.md` for user-visible enable/disable behaviour;
 - `docs/ARCHITECTURE.md` and `docs/DESIGN_POST.md` for state and startup sequencing;
@@ -266,7 +317,8 @@ The current documents describe eager creation and therefore must be updated toge
 - the active PEP draft for lazy persistence, observability, failure, and fork semantics;
 - `docs/TESTING.md` for fault-injection and threshold-boundary commands.
 
-No document should continue to state that `gc.enable_parallel()` returns only after a complete pool exists.
+No document should state that GIL `gc.enable_parallel()` returns only after a
+complete pool exists. The free-threaded implementation is still eager.
 
 ## Atomic implementation sequence
 
@@ -281,13 +333,17 @@ No document should continue to state that `gc.enable_parallel()` returns only af
 
 Each source commit must preserve the existing algorithms and atomic order. Any required algorithm change, threshold change, or atomic-order change is a hard blocker for discussion rather than an implementation detail.
 
-## Approval points before coding
+## GIL decisions applied
 
-The following details require explicit agreement before implementation:
+The GIL implementation applies the following agreed decisions:
 
-1. Whether `FAILED` becomes `ARMED` on a later explicit `gc.enable_parallel()` call, as proposed, or remains permanently failed for the interpreter lifetime.
-2. The public names of `pool_active`, `startup_failed`, and the bounded failure-code statistic.
-3. Whether the GIL build retains stopped pool storage after disable or destroys it to match FT.
-4. The exact safe point for delivering the one-time warning.
-5. Whether first-use pool startup should occur in the first eligible collection or whether that collection should run serially and prepare the pool only for later collections.
-6. The proposed fork contract: pre-fork waits out `STARTING`, an `ACTIVE` child becomes `ARMED`, and any inherited collection is forced serial until its existing cleanup completes.
+1. An explicit enable after `FAILED` becomes `ARMED` and permits one retry.
+2. Configuration uses `pool_active` and `startup_failed`; statistics use
+   `pool_startup_failures` and `last_pool_startup_error`.
+3. GIL disable stops helpers and may retain reusable pool storage.
+4. The one-time warning is delivered after the collecting flag is cleared; a
+   warning-delivery exception is cleared.
+5. The first eligible collection starts the pool and uses it immediately.
+6. An `ACTIVE` GIL child becomes `ARMED`; an inherited collection is forced
+   serial through cleanup. GIL lifecycle transitions are serialized by the
+   GIL, so the free-threaded pre-fork lifecycle-lock work remains separate.
