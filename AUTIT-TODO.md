@@ -100,8 +100,9 @@ serializes lifecycle operations, makes pool ownership per-interpreter, waits
 for every helper to become ready before publishing the pool, and adds focused
 concurrency, immediate-collection, configuration-coherence, and
 multi-interpreter tests. Parent matrix run `36922821632` passed the GIL and
-free-threaded feature-on and feature-off configurations on Linux. ASan and
-TSan evidence remain outstanding under A9.
+free-threaded feature-on and feature-off configurations on Linux. Focused GIL
+ASan and TSan evidence is now recorded, but the complete both-build sanitizer
+requirement remains outstanding under A9.
 
 ## A2. Partial GIL helper creation has no safe rollback
 
@@ -262,10 +263,12 @@ Required discussion: any behavioral change here requires explicit approval.
 Severity: **HARDENING**. State: **confirmed gap**.
 
 The current tests exercise normal collection, properties, fork recovery,
-work-stealing, the adaptive controller, and many graph shapes. They do not
-systematically inject helper-creation, thread-state, split-vector, scan-array,
-or unique-ID allocation failures. The project also lacks current ASan and TSan
-evidence for both active collector builds.
+work-stealing, the adaptive controller, and many graph shapes. GIL lazy-pool
+tests now inject every helper-thread-state and native-thread creation failure
+position, and the focused GIL selection passes under ASan and TSan. Equivalent
+failure injection and current sanitizer evidence are still missing for the
+free-threaded build, as are systematic split-vector, scan-array, and unique-ID
+allocation failures.
 
 Some tests are weak falsifiers. For example, the statistics test accepts an
 unchanged `collections_attempted` counter even though its stated purpose is to

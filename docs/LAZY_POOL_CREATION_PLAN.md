@@ -51,6 +51,11 @@ Verification completed locally:
   success.
 - GIL AddressSanitizer lifecycle and fork suites: 26 tests, one expected skip,
   success.
+- GIL ThreadSanitizer focused suite: 222 tests, 59 expected skips, success with
+  no ThreadSanitizer diagnostics. The run used GCC 11.5.0 on AArch64 and
+  `TSAN_OPTIONS='halt_on_error=1 die_after_fork=0'`; `die_after_fork=0` is needed
+  because GCC ThreadSanitizer otherwise terminates any child that starts a
+  thread after a multithreaded fork.
 - GIL leak-hunting lifecycle repetitions: `[1, 0, 0]`, reported by the CPython
   runner as acceptable.
 - PGO+LTO boundary observation: 16,383 candidates retained one OS thread;
@@ -64,9 +69,9 @@ at one OS thread and `pool_active == false` throughout. This rejects the former
 files, comparison, executable hash, and repository states are in
 [`gil-lazy-pool-sqlite-abba-2026-10-07`](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/).
 
-The remaining acceptance work is Linux and Windows CI, first-use and
-steady-state large-graph performance, and the separate free-threaded
-lazy-start implementation and evidence.
+The remaining acceptance work is Linux and Windows CI, free-threaded
+ThreadSanitizer evidence, first-use and steady-state large-graph performance,
+and the separate free-threaded lazy-start implementation and evidence.
 
 Before commit `7ec0874a7d`, the GIL startup failure path was incomplete. If
 thread creation failed after workers entered the fixed startup barrier, those

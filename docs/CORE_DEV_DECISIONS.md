@@ -84,6 +84,7 @@ sustained case is a documented negative region. Remaining gates are:
 
 - clean-revision repeats of the optimized GIL and free-threaded benchmark
   results, plus optimized feature-off controls;
-- ThreadSanitizer once a usable runtime is available;
+- a free-threaded ThreadSanitizer run to complement the passing focused GIL
+  run;
 - Linux x86-64 plus native Windows and macOS validation;
 - a published port revision and a NEWS entry tied to a real CPython issue.

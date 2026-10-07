@@ -220,9 +220,19 @@ ASAN_OPTIONS=detect_leaks=0 \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 
-ThreadSanitizer is currently blocked because `libtsan` is unavailable in the
-environment; no TSan pass should be claimed until that runtime is installed
-and both build modes have been exercised.
+ThreadSanitizer is usable on the AArch64 development host. The GCC package's
+`libtsan.so` linker script referred to `/usr/lib64/libtsan.so.0.0.0`, but that
+runtime file was not installed. The matching
+`libtsan-11.5.0-15.el9.aarch64` package is available from the configured
+repository. Installing it, or extracting it to a local library directory and
+supplying that directory through `LDFLAGS=-Wl,-rpath,...`, permits
+`--with-thread-sanitizer` builds.
+
+The focused GIL build at `7ec0874a7d` passed 222 tests with 59 expected skips
+and no ThreadSanitizer diagnostic. Use `TSAN_OPTIONS=die_after_fork=0` for the
+fork tests: GCC ThreadSanitizer otherwise rejects starting threads in a child
+of a multithreaded process. Free-threaded ThreadSanitizer evidence remains
+outstanding, so this is not yet the required both-build sanitizer result.
 
 The focused commands above also pass debug reference-leak checks with
 `-R 3:3`: 213 tests in the GIL build and 229 tests in the free-threaded build,

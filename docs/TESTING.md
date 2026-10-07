@@ -214,9 +214,33 @@ ASAN_OPTIONS=detect_leaks=0 \
     test_gc_ft_parallel test_free_threading.test_gc
 ```
 
-ThreadSanitizer is currently blocked by the absence of `libtsan`. This is a
-verification gap, not a pass. Once the runtime is available, run the same
-focused suite against separate GIL and free-threaded TSan builds.
+The GIL build at CPython revision `7ec0874a7d` passed the focused
+ThreadSanitizer selection with 222 tests and 59 expected skips. No
+ThreadSanitizer diagnostic was emitted. The build used GCC 11.5.0 on AArch64
+and was configured with:
+
+```bash
+../cpython/configure \
+    --with-pydebug \
+    --with-parallel-gc \
+    --with-thread-sanitizer
+```
+
+The focused command was:
+
+```bash
+TSAN_OPTIONS='halt_on_error=1 die_after_fork=0 suppressions=cpython/Tools/tsan/suppressions.txt handle_segv=0' \
+    build-lazy-gil-tsan/python -m test -v \
+    test_gc \
+    test_gc_ft_parallel \
+    test_gc_parallel_mark_alive \
+    test_gc_parallel_fork \
+    test_gc_ws_deque
+```
+
+GCC ThreadSanitizer requires `die_after_fork=0` for these fork tests because
+the child intentionally creates a new helper pool. A separate free-threaded
+ThreadSanitizer run remains outstanding.
 
 The same focused suites pass debug reference-leak checks with `-R 3:3` in both
 feature-on builds: 213 tests in the GIL build and 229 tests in the
@@ -257,7 +281,8 @@ flags, worker counts, seeds, warmups, samples, and raw results.
 
 ## Open verification gaps
 
-- ThreadSanitizer cannot run until `libtsan` is available.
+- The GIL focused ThreadSanitizer selection passes; equivalent free-threaded
+  ThreadSanitizer evidence remains outstanding.
 - The parent CI enforces all four GIL/free-threaded and
   feature-on/feature-off configurations on Ubuntu.
 - Native feature-on Linux x86-64 focused validation runs in the parent matrix.
