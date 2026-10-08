@@ -47,8 +47,8 @@ build-port-ft/python -m test -v \
 | `test_gc` | All four builds | Existing cyclic-GC behavior and integration |
 | `test_gc_ws_deque` | All four builds | Shared deque, barrier, and local-buffer primitives |
 | `test_gc_parallel` | All four builds | Public API, unavailable-build behavior, configuration, lifecycle, and process/thread scenarios |
-| `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation; armed GIL child or replacement FT pool; reset; ordinary, callback, and finalizer forks |
-| `test_gc_ft_parallel` | All four builds | GIL lazy-pool lifecycle and injected startup failures; free-threaded graph and pool behavior; explicit feature-off skips |
+| `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation; armed child recovery without thread creation; reset; ordinary, callback, and finalizer forks |
+| `test_gc_ft_parallel` | All four builds | GIL and FT lazy-pool lifecycle and injected startup failures; free-threaded graph and pool behavior; explicit feature-off skips |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
 | `test_embed` | All four builds | Embedded-runtime regression coverage |
@@ -285,9 +285,17 @@ TSAN_OPTIONS='halt_on_error=1 die_after_fork=0 suppressions=cpython/Tools/tsan/s
     test_gc_ws_deque
 ```
 
-GCC ThreadSanitizer requires `die_after_fork=0` for these fork tests because
-the child intentionally creates a new helper pool. A separate free-threaded
-ThreadSanitizer run remains outstanding.
+GCC ThreadSanitizer requires `die_after_fork=0` for these fork tests because a
+later child collection intentionally creates a new helper pool.
+
+The free-threaded lazy-pool implementation at CPython revision `195830171f`
+passed `test_gc_ft_parallel`, `test_gc_parallel_fork`, `test_gc_ws_deque`, and
+`test_free_threading.test_gc` under GCC 11.5.0 ThreadSanitizer on AArch64: 155
+tests run, 25 expected skips, and no ThreadSanitizer diagnostic. Its configure
+flags were `--disable-gil --with-pydebug --with-parallel-gc
+--with-thread-sanitizer`. `LIBRARY_PATH` and the executable rpath selected the
+locally extracted GCC runtime because this host's linker script points at an
+unavailable system path.
 
 The same focused suites pass debug reference-leak checks with `-R 3:3` in both
 feature-on builds: 213 tests in the GIL build and 229 tests in the

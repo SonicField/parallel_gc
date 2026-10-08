@@ -25,10 +25,10 @@ A fixed-loop diagnostic then established:
 
 The diagnostic is recorded in [`sqlite-thread-transition-2026-10-07.md`](../benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md).
 
-## GIL implementation result
+## Implementation result
 
 The GIL phase is implemented in CPython commit `7ec0874a7d`. The
-free-threaded collector remains eager and is still governed by the plan below.
+free-threaded phase is implemented in CPython commit `195830171f`.
 
 The GIL implementation provides the explicit five-state lifecycle,
 transactional startup, serial failure recovery, bounded diagnostics, explicit
@@ -37,6 +37,15 @@ each of the 16 worker-thread-state creation positions and each of the 16 native
 thread creation positions. Tests also cover resource failure, exact threshold
 behavior, repeated active-pool reuse, warning failure, shutdown in every stable
 state, and forks from ordinary code, a GC start callback, and a finalizer.
+
+The free-threaded implementation uses the same state and failure contract. It
+creates no helper in `gc.enable_parallel()`, starts 15 helpers transactionally
+at the first collection, and runs that collection serially if startup fails.
+Supported fork preparation waits for any lifecycle transaction before
+stopping the world. Child recovery abandons copied helpers, resets the
+controller, leaves the collector armed, and creates no replacement helper.
+Deterministic tests fail all 15 free-threaded helper thread-state creation
+positions and all 15 native-thread creation positions.
 
 Verification completed locally:
 
@@ -60,6 +69,14 @@ Verification completed locally:
   runner as acceptable.
 - PGO+LTO boundary observation: 16,383 candidates retained one OS thread;
   16,384 candidates started 16 helpers; disable returned the process to one.
+- Free-threaded debug focused suite at `195830171f`: 368 tests run, 39 expected
+  skips, success.
+- Free-threaded AddressSanitizer focused suite at `195830171f`: 368 tests run,
+  39 expected skips, success with no sanitizer diagnostic.
+- Free-threaded ThreadSanitizer lifecycle, fork, deque, and upstream FT GC
+  suite at `195830171f`: 155 tests run, 25 expected skips, success with no
+  sanitizer diagnostic. The run used GCC 11.5.0 on AArch64 and
+  `TSAN_OPTIONS='halt_on_error=1 die_after_fork=0'`.
 
 The rigorous PGO+LTO `sqlite_synth` ABBA result was 1.421316 microseconds with
 parallel GC disabled and 1.429422 microseconds while armed. The 0.57 percent
@@ -69,9 +86,9 @@ at one OS thread and `pool_active == false` throughout. This rejects the former
 files, comparison, executable hash, and repository states are in
 [`gil-lazy-pool-sqlite-abba-2026-10-07`](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/).
 
-The remaining acceptance work is Linux and Windows CI, free-threaded
-ThreadSanitizer evidence, first-use and steady-state large-graph performance,
-and the separate free-threaded lazy-start implementation and evidence.
+The remaining acceptance work is Linux and Windows CI, broad CPython
+regression testing, and optimized free-threaded pyperformance and project
+benchmark comparisons.
 
 Before commit `7ec0874a7d`, the GIL startup failure path was incomplete. If
 thread creation failed after workers entered the fixed startup barrier, those

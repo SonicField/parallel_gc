@@ -18,7 +18,7 @@ parallel-GC protocol.
 ## The problem
 
 Both collectors use persistent native worker threads after their pools have
-started. A GIL collector may instead be armed with no helpers. A POSIX fork
+started. Either collector may instead be armed with no helpers. A POSIX fork
 duplicates memory but retains only the calling thread in the child. Without
 explicit recovery, a child of an active pool inherits:
 
@@ -54,24 +54,18 @@ The child must never dispatch through synchronization or thread state copied
 from the parent. Before Python execution resumes, child recovery must:
 
 1. Confirm that no parallel phase was active at the fork boundary.
-2. Discard inherited thread handles and worker `PyThreadState` pointers.
-3. Reinitialize every pool synchronization primitive and dispatch counter.
-4. Reset all worker queues and per-dispatch state to an empty, idle state.
-5. Preserve whether parallel GC was enabled and preserve the configured
+2. Discard inherited thread handles, worker `PyThreadState` pointers, queues,
+   and synchronization state without joining parent-only helpers.
+3. Leave the child without a pool or helper thread.
+4. Preserve whether parallel GC was enabled and preserve the configured
    maximum of 16 workers.
-6. Reset the adaptive controller for the child's workload.
+5. Reset the adaptive controller for the child's workload.
 
-The GIL implementation then leaves the child `ARMED`. It creates no native
-thread during after-fork recovery; a later eligible collection starts a new
-pool transactionally. A child of `ARMED` remains armed, a child of `DISABLED`
-remains disabled, and a child of `FAILED` remains failed until an explicit
-enable request.
-
-The free-threaded implementation currently creates replacement helpers during
-after-fork recovery. If that replacement fails, CPython's recovery fails
-fatally rather than return to Python with a partially live pool. Converting the
-free-threaded implementation to the GIL armed-child model is planned but is
-not part of the current GIL change.
+Both implementations then leave an enabled child `ARMED`. They create no
+native thread during after-fork recovery; a later eligible collection starts a
+new pool transactionally. A child of `ARMED` remains armed, a child of
+`DISABLED` remains disabled, and a child of `FAILED` remains failed until an
+explicit enable request.
 
 ## Adaptive state
 
@@ -103,14 +97,12 @@ sites therefore occur while the helpers are idle. They include:
 - ordinary application code between collections.
 
 When a finalizer calls `fork()`, the calling thread survives in both processes.
-The parent completes the collection with its existing pool. The GIL child
-reinitializes its controller without creating helpers, then completes the
-inherited collection's remaining work serially. A per-collection latch also
-forces serial completion after a fork from the start callback, where no
-parallel phase has run yet. Normal collection exit clears the latch. The
-free-threaded child completes the inherited serial tail after replacing its
-helpers. In both implementations, the inherited collection is excluded from
-adaptive learning.
+The parent completes the collection with its existing pool. The child resets
+its controller without creating helpers, then completes the inherited
+collection's remaining work serially. A per-collection latch also forces
+serial completion after a fork from the start callback. Normal collection
+exit clears the latch. In both implementations, the inherited collection is
+excluded from adaptive learning.
 
 The implementation must not assume that `gcstate->collecting` is clear during
 child recovery.
@@ -123,17 +115,18 @@ The lifecycle integrates with CPython's fork protocol as follows:
 calling thread                 parent                       child
 --------------                 ------                       -----
 PyOS_BeforeFork()
+  acquire FT pool lifecycle lock
   stop Python world
   verify GC dispatch idle
 fork()
                                existing helpers survive     helper threads absent
-PyOS_AfterFork_Parent()         resume world
+PyOS_AfterFork_Parent()         release lifecycle lock
+                               resume world
                                                             reinitialize runtime locks
                                                             remove vanished thread states
                                                             recover parallel-GC state
                                                             reset adaptive state
-                                                            GIL: remain armed
-                                                            FT: create child helpers
+                                                            remain armed
                                                             resume Python execution
 ```
 
@@ -146,7 +139,7 @@ before user after-fork callbacks or other Python code can request a collection.
 
 The common lifecycle entry points belong in CPython's internal GC interfaces.
 The GIL and free-threaded collectors retain separate recovery code because
-their worker topology and current startup policy differ:
+their worker topology differs:
 
 - every GIL pool worker is a helper thread;
 - free-threaded worker zero is the collecting thread and workers 1 through 15
@@ -188,10 +181,10 @@ waits:
    large collection in the child.
 3. Verify that the parent retains its adaptive worker count and previous cost.
 4. Verify that the child begins at four workers with no previous cost.
-5. In the GIL build, verify that child recovery creates no helper and that the
+5. In both builds, verify that child recovery creates no helper and that the
    controller remains armed until an eligible collection.
 6. Verify that the inherited collection does not update child adaptive state
-   or dispatch GIL helpers.
+   or dispatch helpers.
 7. Verify that a subsequent child collection produces a new adaptive
    measurement.
 8. Repeat the lifecycle to expose stale handles, queues, and synchronization
