@@ -1,4 +1,5 @@
 import importlib.util
+import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -87,9 +88,23 @@ class JsonDocumentTests(unittest.TestCase):
 
 
 class PoolWarmupTests(unittest.TestCase):
+    def test_dispatch_counter_prefers_release_safe_test_hook(self):
+        test_module = SimpleNamespace(
+            parallel_gc_dispatch_count=lambda: 37,
+        )
+        with mock.patch.dict(sys.modules, {"_testinternalcapi": test_module}):
+            self.assertEqual(
+                benchmark.dispatch_counter(),
+                ("test_parallel_dispatches", 37),
+            )
+
     def test_warmup_requires_an_eligible_parallel_dispatch(self):
         events = []
-        with mock.patch.object(benchmark, "gc", FakeGC(events)):
+        no_test_hook = SimpleNamespace()
+        with (
+            mock.patch.object(benchmark, "gc", FakeGC(events)),
+            mock.patch.dict(sys.modules, {"_testinternalcapi": no_test_hook}),
+        ):
             benchmark.prime_parallel_pool(target_objects=1)
         self.assertEqual(events, ["collect"])
 
@@ -103,7 +118,11 @@ class PoolWarmupTests(unittest.TestCase):
             return 0
 
         fake_gc.collect = serial_collect
-        with mock.patch.object(benchmark, "gc", fake_gc):
+        no_test_hook = SimpleNamespace()
+        with (
+            mock.patch.object(benchmark, "gc", fake_gc),
+            mock.patch.dict(sys.modules, {"_testinternalcapi": no_test_hook}),
+        ):
             with self.assertRaisesRegex(RuntimeError, "did not dispatch"):
                 benchmark.prime_parallel_pool(target_objects=1)
 
@@ -125,7 +144,11 @@ class PhaseRunnerTests(unittest.TestCase):
             fake_gc.workers = count
 
         observations = []
-        with mock.patch.object(benchmark, "gc", fake_gc):
+        no_test_hook = SimpleNamespace()
+        with (
+            mock.patch.object(benchmark, "gc", fake_gc),
+            mock.patch.dict(sys.modules, {"_testinternalcapi": no_test_hook}),
+        ):
             benchmark.run_phase(
                 "test",
                 self.make_phase(events),
@@ -162,7 +185,11 @@ class PhaseRunnerTests(unittest.TestCase):
     def test_adaptive_mode_never_calls_fixed_worker_control(self):
         events = []
         observations = []
-        with mock.patch.object(benchmark, "gc", FakeGC(events)):
+        no_test_hook = SimpleNamespace()
+        with (
+            mock.patch.object(benchmark, "gc", FakeGC(events)),
+            mock.patch.dict(sys.modules, {"_testinternalcapi": no_test_hook}),
+        ):
             benchmark.run_phase(
                 "test",
                 self.make_phase(events),

@@ -125,6 +125,19 @@ def candidate_total():
 
 def dispatch_counter():
     """Return the build-specific parallel-dispatch counter name and value."""
+    try:
+        import _testinternalcapi
+    except ImportError:
+        _testinternalcapi = None
+    if _testinternalcapi is not None:
+        get_test_count = getattr(
+            _testinternalcapi,
+            "parallel_gc_dispatch_count",
+            None,
+        )
+        if get_test_count is not None:
+            return "test_parallel_dispatches", get_test_count()
+
     stats = get_parallel_stats()
     if "collections_attempted" in stats:
         return "gil_collection_attempts", stats["collections_attempted"]
