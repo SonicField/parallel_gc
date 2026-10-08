@@ -1,0 +1,214 @@
+{
+  "affinity": "0-31",
+  "benchmarks": "-dask,-fastapi,-genshi,-networkx,-networkx_connected_components,-networkx_k_core,-xdsl",
+  "cpython_repository": {
+    "dirty": false,
+    "revision": "c67363fa59543ef5d572383af927f1cff88514a1",
+    "status": []
+  },
+  "created_utc": "2026-10-08T18:23:21.953677+00:00",
+  "host": {
+    "machine": "aarch64",
+    "node": "devbig340.ncg1.facebook.com",
+    "platform": "Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.40"
+  },
+  "manifest": null,
+  "order": [
+    "disabled",
+    "enabled",
+    "enabled",
+    "disabled"
+  ],
+  "parallel_gc_repository": {
+    "dirty": true,
+    "revision": "ed053b621c8cf0325d7b2d691099a679de4b3832",
+    "status": [
+      " M cpython",
+      " ? pyperformance",
+      "?? benchmarks/results/arm64-316-1958301-ft-lazy-full-2026-10-08.md",
+      "?? benchmarks/results/pyperformance/ft-full-2026-10-03/",
+      "?? benchmarks/results/pyperformance/ft-lazy-full-2026-10-08/",
+      "?? benchmarks/results/pyperformance/ft-lazy-smoke-2026-10-08/",
+      "?? benchmarks/results/pyperformance/ft-smoke/",
+      "?? benchmarks/results/pyperformance/gil-full-2026-10-02/",
+      "?? benchmarks/results/pyperformance/gil-smoke-2/",
+      "?? benchmarks/results/pyperformance/gil-smoke/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v3-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v2-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-2026-10-05/",
+      "?? benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v2-2026-10-05/",
+      "?? build-ci-check-gil-off/",
+      "?? build-ci-check-gil-on/",
+      "?? build-control-ft/",
+      "?? build-fidelity-ft/",
+      "?? build-fidelity-gil/",
+      "?? build-lazy-ft-asan/",
+      "?? build-lazy-ft-tsan/",
+      "?? build-lazy-gil-asan/",
+      "?? build-lazy-gil-tsan/",
+      "?? build-overnight-20261007-ft/",
+      "?? build-overnight-20261007-gil/",
+      "?? cpython-original/",
+      "?? cpython-upstream-port/",
+      "?? docs/pep-parallel-gc-v2.rst"
+    ]
+  },
+  "pyperformance_repository": {
+    "dirty": true,
+    "revision": "ccc0aeb7ad46d65b6dcd4160e0fdda4d885852dd",
+    "status": [
+      "?? pyperformance/data-files/benchmarks/bm_2to3/vendor/src/lib2to3.egg-info/"
+    ]
+  },
+  "results": {
+    "01-disabled.json": "21e7ab3e8c65f6c5a076ba2e181a78e6ac7aed13ebaea0c764392c0bda032be2",
+    "02-enabled.json": "b187988038724335c1181ee921c09089aa93eff368de64d53eff940113d4e130",
+    "03-enabled.json": "3b61234020e14293ee68cf542d2c0786b81160caa6aaa094d8ef3e1f453e1eb1",
+    "04-disabled.json": "0eb022c749ade606f815e5193abc91b995df91ee499d445f67b9d3998965751a",
+    "comparison.txt": "7b9581deb34d872b5b14898d4d1044f080b1550cdd7c7078fc0b9ec5eb582980",
+    "disabled-combined.json": "c9d6a94168c2f114194ecd9c1fb3efd45f72f9c690e1b8bb229fa197f34fee43",
+    "enabled-combined.json": "7ce46cbe50464f7ff79146886a9920afac0b1a0313e0362076b2a74f43c3b403"
+  },
+  "resumed": true,
+  "run_style": "rigorous",
+  "runs": [
+    {
+      "mode": "disabled",
+      "result": "01-disabled.json",
+      "resumed": true,
+      "sequence": 1
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-benchmark-195-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-networkx,-networkx_connected_components,-networkx_k_core,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/ft-lazy-full-2026-10-08/02-enabled.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "enabled",
+      "preflight": {
+        "adaptive_workers": 4,
+        "available": true,
+        "enabled": true,
+        "num_workers": 16,
+        "parallel_cleanup": true,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "02-enabled.json",
+      "resumed": false,
+      "sequence": 2
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-benchmark-195-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-networkx,-networkx_connected_components,-networkx_k_core,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/ft-lazy-full-2026-10-08/03-enabled.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "enabled",
+      "preflight": {
+        "adaptive_workers": 4,
+        "available": true,
+        "enabled": true,
+        "num_workers": 16,
+        "parallel_cleanup": true,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "03-enabled.json",
+      "resumed": false,
+      "sequence": 3
+    },
+    {
+      "command": [
+        "/tmp/parallel-gc-pyperformance-driver/bin/python",
+        "-m",
+        "pyperformance",
+        "run",
+        "--python",
+        "/data/users/alexturner/parallel_gc/build-benchmark-195-ft/python",
+        "--benchmarks=-dask,-fastapi,-genshi,-networkx,-networkx_connected_components,-networkx_k_core,-xdsl",
+        "--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID",
+        "--hook",
+        "parallel_gc",
+        "--output",
+        "/data/users/alexturner/parallel_gc/benchmarks/results/pyperformance/ft-lazy-full-2026-10-08/04-disabled.json",
+        "--rigorous",
+        "--affinity",
+        "0-31",
+        "--timeout",
+        "3600"
+      ],
+      "mode": "disabled",
+      "preflight": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "result": "04-disabled.json",
+      "resumed": false,
+      "sequence": 4
+    }
+  ],
+  "schema": 1,
+  "target": {
+    "config_args": "'--with-parallel-gc' '--disable-gil' '--enable-optimizations' '--with-lto' 'PKG_CONFIG_PATH=/tmp/parallel-gc-devel-prefix-20261008/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-devel-prefix-20261008/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-devel-prefix-20261008/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-devel-prefix-20261008/usr/include'",
+    "executable": "/data/users/alexturner/parallel_gc/build-benchmark-195-ft/python",
+    "executable_sha256": "1fd1e93ae30e910016a5517e6533a3b5b10533abc1962d760c66cb52be5f5e7a",
+    "gil_enabled": false,
+    "git": [
+      "CPython",
+      "heads/parallel-gc-upstream-port-dirty",
+      "195830171f"
+    ],
+    "parallel_config": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "parallel_cleanup": true,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "source_repository": {
+      "dirty": false,
+      "revision": "c67363fa59543ef5d572383af927f1cff88514a1",
+      "status": []
+    },
+    "version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:195830171f, Oct  8 2026, 03:16:52) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+  },
+  "target_python": "/data/users/alexturner/parallel_gc/build-benchmark-195-ft/python"
+}

@@ -28,7 +28,8 @@ The diagnostic is recorded in [`sqlite-thread-transition-2026-10-07.md`](../benc
 ## Implementation result
 
 The GIL phase is implemented in CPython commit `7ec0874a7d`. The
-free-threaded phase is implemented in CPython commit `195830171f`.
+free-threaded phase is implemented in CPython commit `195830171f`; release-build
+test guards were completed in `c67363fa59` without changing collector code.
 
 The GIL implementation provides the explicit five-state lifecycle,
 transactional startup, serial failure recovery, bounded diagnostics, explicit
@@ -86,9 +87,17 @@ at one OS thread and `pool_active == false` throughout. This rejects the former
 files, comparison, executable hash, and repository states are in
 [`gil-lazy-pool-sqlite-abba-2026-10-07`](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/).
 
-The remaining acceptance work is Linux and Windows CI, broad CPython
-regression testing, and optimized free-threaded pyperformance and project
-benchmark comparisons.
+The optimized free-threaded rigorous ABBA campaign measured `sqlite_synth` at
+1.308446 microseconds disabled and 1.308610 microseconds enabled. The 0.013
+percent difference was not significant. Python startup was also neutral. This
+rejects the former 10.4 percent eager-start penalty for the measured workloads.
+The full analysis and raw-result links are in
+[`arm64-316-1958301-ft-lazy-analysis-2026-10-08.md`](../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md).
+
+The remaining acceptance work is Linux and Windows CI and broad CPython
+regression testing. Performance follow-up remains necessary for the
+free-threaded sustained `ai_workload` and pyperformance `float` regressions;
+these are active-collector questions rather than lazy-start failures.
 
 Before commit `7ec0874a7d`, the GIL startup failure path was incomplete. If
 thread creation failed after workers entered the fixed startup barrier, those
