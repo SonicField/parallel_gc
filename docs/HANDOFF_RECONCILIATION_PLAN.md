@@ -185,3 +185,23 @@ readiness checkpoint as its dated baseline instead of a live commit count.
 Recorded the required Linux, Windows and macOS runs without claiming new passes.
 Source-pair capture in CI and a macOS workflow are follow-up CI work, not part
 of this documentation commit. Alex still performs remote pushes.
+
+### 15 October 2026: CI preparation after documentation commits
+
+Committed revision-aware documentation as `333f4dd`. Started CI work separately:
+added a manual macOS four-build workflow with full-suite tests in both
+feature-on builds, and one shared source-record action used by all platform
+workflows. The macOS dependency/configuration setup follows the checked-in
+CPython macOS workflow. Source evidence is retained before compilation, and
+checkout mismatches stop the build. Local fixture and syntax checks are
+recorded separately from hosted results; no remote workflow has been started
+by the assistant. Alex must push CPython first, then the parent, and dispatch
+the manual Linux full-suite, Windows and macOS workflows.
+
+Local CI checks: all four workflow YAML files and the composite action parse;
+20 POSIX workflow blocks plus the source action pass `bash -n`; the macOS
+manual trigger, four build combinations and conditional full-suite selection
+pass structural checks. The source-record fixture suite covers matching
+revisions, wrong workflow SHA, unpinned CPython HEAD and dirty tracked source.
+PowerShell execution, artifact upload and hosted compilation/tests are not
+verified locally. These checks do not establish a passing platform matrix.

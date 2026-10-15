@@ -55,7 +55,7 @@ still pending:
 | Linux, `parallel-gc.yml` | GIL and FT, feature-on and feature-off; focused collector and parent harness tests. | Pending new run. |
 | Linux, `full-cpython-tests.yml` | GIL and FT feature-on builds; full default CPython suite. | Pending new run. |
 | Windows, `windows-parallel-gc.yml` | GIL and FT feature-on builds; focused collector and parent harness tests, then full default CPython suite. | Pending new run. |
-| macOS | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | Workflow not yet present at this documentation checkpoint. |
+| macOS, `macos-parallel-gc.yml` | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | Workflow added; first hosted run pending. |
 
 Full default-suite runs begin with parallel policy disabled. Focused tests
 explicitly exercise activation and parallel dispatch. Report skipped tests,
@@ -78,8 +78,11 @@ does not validate a newer pair. Do not call the publication checkpoint
 validated until all required jobs for that pair have recorded passes and
 remaining coverage limits are stated.
 
-Source-pair capture in the workflows is a CI follow-up, not something these
-documentation edits have implemented. [TESTING.md](TESTING.md) gives dispatch
+Each workflow now verifies the parent revision and CPython gitlink/checkout
+before building and retains `ci-source.txt` as a per-job artifact. It records
+requested flags; the subsequent runtime configuration check verifies the build.
+This capture has local fixture checks but no hosted result yet.
+[TESTING.md](TESTING.md) gives dispatch
 and log commands; the [handoff log](HANDOFF_RECONCILIATION_PLAN.md) tracks
 publication work. Updating this evidence record does not require rewriting
 the architectural narrative or changing hashes in historical reports.

@@ -33,6 +33,12 @@ jobs:
           submodules: recursive
           persist-credentials: false
 
+      - name: Record tested source pair
+        uses: ./.github/actions/record-source
+        with:
+          artifact-name: windows-source-${{ matrix.free_threaded && 'ft' || 'gil' }}
+          build-flags: PCbuild/build.bat -e -v -d -p x64 --parallel-gc ${{ matrix.free_threaded && '--disable-gil' || '' }}
+
       - name: Build CPython with parallel GC
         env:
           FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}

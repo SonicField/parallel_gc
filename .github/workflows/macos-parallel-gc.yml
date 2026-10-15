@@ -1,0 +1,156 @@
+name: macOS parallel GC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: macOS, ${{ matrix.name }}
+    runs-on: macos-26
+    timeout-minutes: 240
+    env:
+      HOMEBREW_NO_ANALYTICS: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+      HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+      PYTHONSTRICTEXTENSIONBUILD: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GIL, parallel GC feature-on
+            configure: --with-pydebug --with-parallel-gc
+            parallel_gc: true
+            free_threaded: false
+          - name: Free-threaded, parallel GC feature-on
+            configure: --disable-gil --with-pydebug --with-parallel-gc
+            parallel_gc: true
+            free_threaded: true
+          - name: GIL, feature-off control
+            configure: --with-pydebug
+            parallel_gc: false
+            free_threaded: false
+          - name: Free-threaded, feature-off control
+            configure: --disable-gil --with-pydebug
+            parallel_gc: false
+            free_threaded: true
+
+    steps:
+      - name: Check out project and CPython fork
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Record tested source pair
+        uses: ./.github/actions/record-source
+        with:
+          artifact-name: macos-source-${{ matrix.free_threaded && 'ft' || 'gil' }}-${{ matrix.parallel_gc && 'on' || 'off' }}
+          build-flags: ${{ matrix.configure }} --with-openssl=Homebrew/openssl@3.5
+
+      - name: Install CPython build dependencies
+        run: |
+          brew bundle --file=cpython/Misc/Brewfile
+          brew install make
+
+      - name: Configure
+        run: |
+          mkdir build-macos
+          cd build-macos
+          MACOSX_DEPLOYMENT_TARGET=10.15 \
+          GDBM_CFLAGS="-I$(brew --prefix gdbm)/include" \
+          GDBM_LIBS="-L$(brew --prefix gdbm)/lib -lgdbm" \
+          ../cpython/configure ${{ matrix.configure }} \
+              --with-openssl="$(brew --prefix openssl@3.5)"
+
+      - name: Build
+        run: gmake -C build-macos -j2
+
+      - name: Verify selected configuration
+        env:
+          EXPECTED_AVAILABLE: ${{ matrix.parallel_gc && '1' || '0' }}
+          EXPECTED_FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          build-macos/python - <<'PY'
+          import gc
+          import os
+          import sys
+
+          config = gc.get_parallel_config()
+          expected_available = os.environ['EXPECTED_AVAILABLE'] == '1'
+          expected_ft = os.environ['EXPECTED_FREE_THREADED'] == '1'
+          assert config['available'] is expected_available, config
+          assert config['enabled'] is False, config
+          assert config['num_workers'] == 0, config
+          assert sys._is_gil_enabled() is not expected_ft
+          if expected_available:
+              gc.enable_parallel()
+              config = gc.get_parallel_config()
+              assert config['enabled'] is True, config
+              assert config['num_workers'] == 16, config
+              assert config['adaptive_workers'] == 4, config
+              gc.disable_parallel()
+          print(config)
+          PY
+
+      - name: Run focused collector tests
+        env:
+          PARALLEL_GC_AVAILABLE: ${{ matrix.parallel_gc && '1' || '0' }}
+          FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
+        run: |
+          tests=(
+            test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel
+            test_gc_parallel_fork test_gc_parallel_properties
+            test_parallel_gc_profile test_capi.test_config test_capi.test_misc
+            test_embed
+          )
+          if [[ "$FREE_THREADED" == "1" ]]; then
+            tests+=(test_free_threading.test_gc)
+          elif [[ "$PARALLEL_GC_AVAILABLE" == "1" ]]; then
+            tests+=(test_gc_parallel_mark_alive)
+          fi
+          set -o pipefail
+          build-macos/python -m test -q --timeout=600 "${tests[@]}" \
+              2>&1 | tee focused-test.log
+
+      - name: Install benchmark test dependencies
+        run: |
+          build-macos/python -m ensurepip
+          build-macos/python -m pip install \
+              --requirement pyperformance/pyperformance/requirements/requirements.txt
+
+      - name: Run benchmark harness unit tests
+        run: |
+          set -o pipefail
+          build-macos/python -m unittest -v \
+              benchmarks.test_container_traversal_benchmark \
+              benchmarks.test_gc_adaptive_benchmark \
+              benchmarks.test_gc_perf_benchmark \
+              benchmarks.test_pyperformance_support \
+              2>&1 | tee harness-test.log
+
+      - name: Run full CPython regression suite
+        if: matrix.parallel_gc
+        run: |
+          set -o pipefail
+          build-macos/python -m test -q -j2 \
+              --timeout=600 --fail-env-changed --rerun --verbose3 \
+              --randseed=20260929 2>&1 | tee full-test.log
+
+      - name: Retain test logs
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: macos-test-logs-${{ matrix.free_threaded && 'ft' || 'gil' }}-${{ matrix.parallel_gc && 'on' || 'off' }}
+          path: |
+            focused-test.log
+            harness-test.log
+            full-test.log
+          if-no-files-found: warn

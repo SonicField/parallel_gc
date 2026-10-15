@@ -33,6 +33,12 @@ jobs:
           submodules: recursive
           persist-credentials: false
 
+      - name: Record tested source pair
+        uses: ./.github/actions/record-source
+        with:
+          artifact-name: linux-full-source-${{ matrix.free_threaded && 'ft' || 'gil' }}
+          build-flags: ${{ matrix.configure }}
+
       - name: Install CPython build dependencies
         run: sudo ./cpython/.github/workflows/posix-deps-apt.sh
 

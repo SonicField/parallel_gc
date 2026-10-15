@@ -1,0 +1,45 @@
+name: Record tested source pair
+description: Verify and retain the parent and CPython revisions before building.
+
+inputs:
+  artifact-name:
+    description: Unique artifact name for this matrix job.
+    required: true
+  build-flags:
+    description: Build arguments requested by this job; configuration is verified later.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Verify checkout and record source
+      shell: bash
+      env:
+        CI_BUILD_FLAGS: ${{ inputs.build-flags }}
+      run: |
+        set -euo pipefail
+        ci_parent=$(git rev-parse HEAD)
+        ci_recorded=$(git rev-parse HEAD:cpython)
+        ci_checked_out=$(git -C cpython rev-parse HEAD)
+        {
+          printf 'parent_revision=%s\n' "$ci_parent"
+          printf 'cpython_gitlink=%s\n' "$ci_recorded"
+          printf 'cpython_checkout=%s\n' "$ci_checked_out"
+          printf 'runner_os=%s\n' "$RUNNER_OS"
+          printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+          printf 'requested_build_flags=%s\n' "$CI_BUILD_FLAGS"
+          printf 'run_url=https://github.com/%s/actions/runs/%s\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID"
+          printf 'run_attempt=%s\n' "$GITHUB_RUN_ATTEMPT"
+        } | tee ci-source.txt
+        test "$ci_parent" = "$GITHUB_SHA"
+        test "$ci_recorded" = "$ci_checked_out"
+        git diff --exit-code HEAD -- cpython
+        git -C cpython diff --exit-code HEAD
+
+    - name: Retain source record
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ci-source.txt
+        if-no-files-found: error

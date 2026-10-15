@@ -128,6 +128,44 @@ gh run watch RUN_ID \
     --exit-status
 ```
 
+### macOS matrix and full-suite gate
+
+The manual `macOS parallel GC` workflow uses CPython's current macOS runner
+label and `Misc/Brewfile`, with the same Homebrew OpenSSL and gdbm configure
+setup as its upstream macOS workflow. It runs GIL and FT feature-on and
+feature-off debug builds. All four run focused collector and parent benchmark
+harness tests; both feature-on builds also run the full default CPython suite.
+Full-suite runtime policy starts disabled, as on Linux and Windows. Each job
+retains source-pair evidence and any test logs produced before a failure.
+The first hosted result is pending; local syntax checks are not portability
+evidence.
+
+After pushing the parent commit, trigger it with:
+
+```bash
+HTTPS_PROXY=http://fwdproxy:8080 \
+HTTP_PROXY=http://fwdproxy:8080 \
+gh workflow run macos-parallel-gc.yml \
+    --repo SonicField/parallel_gc \
+    --ref main
+```
+
+Use `gh run list --workflow macos-parallel-gc.yml` and `gh run watch RUN_ID`
+with `--repo SonicField/parallel_gc` and the proxy environment above to follow
+the run. All platform workflows retain a `ci-source.txt` artifact identifying
+the parent/source pair, runner architecture, run attempt and requested flags.
+[VALIDATION.md](VALIDATION.md) is the outcome record.
+
+The shared source-record action has local fixture tests, independent of a
+CPython build:
+
+```bash
+python3 .github/actions/record-source/test_record_source.py -v
+```
+
+These check matching and mismatched revisions and dirty tracked CPython source
+in temporary repositories. They do not exercise GitHub artifact upload.
+
 ### Windows feature-on gate
 
 The `Windows parallel GC` workflow is a manual portability and regression gate.
