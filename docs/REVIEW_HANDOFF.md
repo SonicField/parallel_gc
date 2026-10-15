@@ -6,11 +6,13 @@ This package is for Matt and Pablo to learn how the collectors work, reproduce
 the experiments and discuss the proposal. It is not a formal CPython PR or a
 claim that the implementation is ready to land.
 
-The reviewed source is `SonicField/cpython` commit
-`c67363fa59543ef5d572383af927f1cff88514a1`, based on `python/cpython` commit
-`333071231d3a46cccc32d7f44b99328c3299d0b1`. The parent repository pins that
-source as its `cpython/` submodule. The handoff was reconciled on 12 October
-2026. Publication and CI confirmation for this checkpoint are pending.
+The parent repository's `cpython/` gitlink selects the implementation from
+`SonicField/cpython`. The port is based on `python/cpython` commit
+`333071231d3a46cccc32d7f44b99328c3299d0b1`. Use the checkout commands below to
+identify the exact parent/source pair, rather than assuming that this page
+tracks a branch tip. The narrative was reconciled on 12 October 2026;
+[VALIDATION.md](VALIDATION.md) records that dated source baseline, measured
+revisions, earlier CI and publication checks still pending.
 
 ## What the design is trying to achieve
 
@@ -49,7 +51,7 @@ benchmark system belongs in the parent, not in CPython's regression-test tree.
 
 ## Read, build and explore
 
-Once this checkpoint is published, start with the complete parent checkout:
+Start with the complete published parent checkout:
 
 ```bash
 git clone --recurse-submodules https://github.com/SonicField/parallel_gc.git
@@ -116,13 +118,11 @@ Latest project measurements used optimized PGO+LTO Python 3.16 on one
 intervals are not direct FT stop-the-world pauses. The raw results, executable
 hashes, sample dispersion and exclusions remain in the linked reports.
 
-Earlier Linux and Windows full workflows passed at collector `d396f837b9`
-(runs `37615265794` and `37615268403`). The later four-build matrix passed in
-run `37663869128`, before the current local commits. These are historical
-results. The current checkpoint needs remote matrix and full-suite repeats;
-live GitHub status was unavailable during this reconciliation. Full workflows
-run CPython's default runtime state, with support compiled in but disabled;
-focused tests explicitly exercise active collectors. See [Testing](TESTING.md).
+The [validation record](VALIDATION.md) separates older remote passes from
+the required runs for the parent/source pair being published. Earlier success
+does not validate later code. Full workflows run CPython's default runtime
+state, with support compiled in but disabled; focused tests explicitly
+exercise active collectors. See [Testing](TESTING.md).
 
 ## Known work to discuss
 
@@ -141,7 +141,7 @@ Subinterpreter cleanup after fork remains untested because feature-off controls
 also crash in that upstream scenario. Extension `tp_traverse` compatibility,
 exact provenance/licensing, memory use and first-use startup latency need
 further review. Native macOS active-collector evidence is missing; current
-Windows and Linux x86-64 evidence must be repeated after the FT lifecycle work.
+platform runs and outcomes are tracked in [VALIDATION.md](VALIDATION.md).
 CPython-facing `Doc/library/gc.rst` still has stale configuration wording;
 the parent architecture and discussion draft describe this checkpoint.
 

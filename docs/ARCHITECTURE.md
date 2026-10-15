@@ -9,8 +9,10 @@ For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
 The discussion starting point is [pep-parallel-gc-v2.rst](pep-parallel-gc-v2.rst).
 Start with [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for evidence and known defects.
 
-This document describes the `cpython/` submodule at fork commit `c67363fa59`,
-based on `python/cpython` commit `333071231d`.
+This narrative was reconciled against the October source baseline recorded in
+[VALIDATION.md](VALIDATION.md). The parent revision's `cpython/` gitlink selects
+the source in a new checkout; later collector changes require checking this
+narrative against that source. The port's upstream base is `333071231d`.
 
 ---
 

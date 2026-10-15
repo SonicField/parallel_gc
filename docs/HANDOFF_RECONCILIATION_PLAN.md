@@ -81,8 +81,9 @@ gh workflow run windows-parallel-gc.yml \
 ```
 
 For each run, verify the parent `headSha` and checked-out CPython commit, not
-just the branch name. [TESTING.md](TESTING.md) explains how to find and watch
-the runs. A new public recursive clone must obtain the same CPython pointer.
+just the branch name. Record job outcomes and retained evidence in
+[VALIDATION.md](VALIDATION.md). [TESTING.md](TESTING.md) explains how to find and
+watch the runs. A new public recursive clone must obtain the same CPython pointer.
 
 ## Progress log
 
@@ -169,3 +170,18 @@ Final combined validation passed for all 19 changed/new documents (17 Markdown
 and two RST), including tracked evidence beneath linked result directories.
 All 56 inventory paths were checked against the actual source diff. The staged
 diff and CPython worktree remained empty.
+
+### 15 October 2026: discrete commits and revision-aware evidence
+
+Alex requested separate commits for the handoff docs, the discussion draft,
+and revision tracking. Committed handoff documentation as `93bc7d1`, then the
+discussion draft and removal of superseded PEP files as `9449cea`. Both are
+parent documentation commits; the CPython gitlink is unchanged.
+
+Added [VALIDATION.md](VALIDATION.md) as the single evidence/status entry point.
+The README and handoff now identify source through the parent gitlink; dated
+benchmark and inventory hashes remain historical provenance. Marked the
+readiness checkpoint as its dated baseline instead of a live commit count.
+Recorded the required Linux, Windows and macOS runs without claiming new passes.
+Source-pair capture in CI and a macOS workflow are follow-up CI work, not part
+of this documentation commit. Alex still performs remote pushes.

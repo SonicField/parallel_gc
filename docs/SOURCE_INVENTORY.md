@@ -5,9 +5,10 @@ This inventory describes every changed path in
 `333071231d3a46cccc32d7f44b99328c3299d0b1`. It excludes archived project
 material outside the submodule.
 
-The current fork commit is
-`c67363fa59`. Status notation used when the
-snapshot was prepared:
+This inventory is a snapshot at fork commit `c67363fa59`, not a live listing
+of every later checkout. The parent gitlink selects the current source;
+[VALIDATION.md](VALIDATION.md) explains how to identify it. Status notation
+used when this snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
 - **New**: file added by the port.

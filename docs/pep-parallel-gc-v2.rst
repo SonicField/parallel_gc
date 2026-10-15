@@ -25,7 +25,9 @@ Post-History:
 
    The source and evidence were reconciled on 12 October 2026 against CPython
    ``c67363fa59``; this discussion framing was revised on 15 October.
-   Publication and current-checkpoint CI remain pending.
+   The `validation record <VALIDATION.md>`_ tracks dated evidence and pending
+   publication checks. This document's reconciliation date does not identify
+   the source selected by a later checkout; the parent's gitlink does.
 
 
 Abstract
@@ -747,8 +749,9 @@ and neither result establishes correctness on untested paths or platforms.
 
 Earlier Linux and Windows full workflows passed at ``d396f837b9``; a later
 four-build matrix passed before the current local commits. Those runs do not
-validate ``c67363fa59``. Current-checkpoint remote matrix and full-suite runs
-are pending, and live GitHub status was unavailable during reconciliation.
+validate ``c67363fa59`` or subsequent source. The
+`validation record <VALIDATION.md>`_ tracks required runs and results for each
+published source pair; live GitHub status was unavailable during reconciliation.
 Full-suite workflows use the default disabled runtime policy; focused tests
 explicitly activate parallel GC. The
 `testing guide <TESTING.md>`_, `lazy-pool record <LAZY_POOL_CREATION_PLAN.md>`_
@@ -888,11 +891,12 @@ The implementation is primarily contained in these files:
 
 The project repository contains the architecture, fork design, test matrix,
 benchmark protocol, raw performance records, and unresolved source audit. The
-informal-review checkpoint is CPython
-``c67363fa59543ef5d572383af927f1cff88514a1``, pinned by the parent. Publication
-and current-checkpoint CI are pending. The `review handoff <REVIEW_HANDOFF.md>`_
-records the entry path and distinguishes older remote runs from current local
-evidence.
+parent revision's ``cpython`` gitlink selects the implementation for a checkout;
+it does not automatically follow the fork branch's latest tip. The
+`review handoff <REVIEW_HANDOFF.md>`_ records the entry path. The
+`validation record <VALIDATION.md>`_ identifies the dated review baseline,
+benchmark revisions and CI outcomes. Historical measurements remain attached
+to their original source, not silently relabelled as results for newer code.
 
 
 Open Decisions and Blockers

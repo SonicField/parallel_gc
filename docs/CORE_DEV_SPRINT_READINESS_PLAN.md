@@ -29,14 +29,14 @@ documentation pass and the remaining publication checks.
 - Record exact commands, revisions, results, failures, and skipped checks.
 - The assistant may create local commits. Alex performs remote pushes.
 
-## Current checkpoint
+## Reconciliation baseline: 12 October 2026
 
 - CPython fork: `SonicField/cpython`, branch `parallel-gc-upstream-port`,
   revision `c67363fa59543ef5d572383af927f1cff88514a1`.
 - Parent: `SonicField/parallel_gc`, branch `main`; the pre-handoff committed
   checkpoint is `ce6dcecbdf1ed6fa8270ea1928cd1e339262a784`.
-- Parent and CPython have seven and four local commits ahead of their origin
-  tracking refs. This documentation pass is uncommitted for evening review.
+- At reconciliation, parent and CPython had seven and four local commits ahead
+  of their origin tracking refs. These counts are historical, not live status.
 - Both collectors use lazy transactional startup, warning/serial fallback,
   explicit retry, and armed child-fork recovery.
 - Latest project evidence measures GIL collector `669ed6b17e` and FT
@@ -48,6 +48,10 @@ documentation pass and the remaining publication checks.
 - Known source and performance failures remain documented in
   [AUTIT-TODO.md](../AUTIT-TODO.md) and the handoff. Live GitHub status could
   not be retrieved through this environment's destination filter.
+
+Use the parent's `cpython/` gitlink for the source selected by a later checkout.
+[VALIDATION.md](VALIDATION.md) is the single entry point for dated test evidence
+and pending platform runs; this baseline does not advance when commits are made.
 
 ## Readiness steps
 

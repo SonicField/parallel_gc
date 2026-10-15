@@ -4,11 +4,11 @@ This document describes the evidence needed for the authoritative `cpython/`
 submodule. See [BUILD_AND_TEST.md](BUILD_AND_TEST.md)
 for commands and [BENCHMARKING.md](BENCHMARKING.md) for performance work.
 
-The informal-review source checkpoint is `c67363fa59`. Current local results,
-older CI results and pending publication checks are distinguished in
-[REVIEW_HANDOFF.md](REVIEW_HANDOFF.md). Do not infer current remote success
-from a predecessor run. The later captured matrix run `37663869128` passed
-all four jobs before the current local commits; that success is historical.
+The parent revision's `cpython/` gitlink selects the source to test.
+[VALIDATION.md](VALIDATION.md) records local evidence, older CI, required new
+runs and the source pair attached to each result. Do not infer current remote
+success from a predecessor run or a branch name. The
+[review handoff](REVIEW_HANDOFF.md) describes the design and reading path.
 
 ## Four-build policy
 

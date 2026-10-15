@@ -11,8 +11,9 @@ under Alex Turner's guidance using
 [Verifiable Practice](https://github.com/SonicField/verifiable-practice).
 
 For an informal engineering review, start with the
-[review handoff](docs/REVIEW_HANDOFF.md). It names the source checkpoint,
-reading path, evidence, known defects and pending publication checks.
+[review handoff](docs/REVIEW_HANDOFF.md). It explains the reading path and
+known defects. The [validation record](docs/VALIDATION.md) distinguishes dated
+evidence from the source pair selected by your checkout and pending CI runs.
 
 The project uses two project repositories and one pinned benchmark dependency:
 
@@ -52,13 +53,14 @@ cd parallel_gc
 git submodule update --init --recursive
 ```
 
-The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `c67363fa59543ef5d572383af927f1cff88514a1`, on
-branch `parallel-gc-upstream-port`. The port is based on CPython commit
+The authoritative source is the commit recorded by this parent revision's
+`cpython/` submodule, from `SonicField/cpython` branch
+`parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
-with submodules obtains the commit recorded by that parent revision. This
-local handoff checkpoint still needs publication; verify it with
-`git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
+with submodules obtains that recorded commit, not the branch's latest tip.
+Verify it with `git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
+Publication and platform-test evidence is recorded in
+[VALIDATION.md](docs/VALIDATION.md), with exact revisions for each result.
 
 The root `Makefile` and scripts under `tools/` still describe the older project
 workflow. Use the explicit current-port commands below for build, test,
@@ -254,6 +256,7 @@ first-thread transition.
 - [Design Post](docs/DESIGN_POST.md)
 - [Discussion draft](docs/pep-parallel-gc-v2.rst)
 - [Review Handoff](docs/REVIEW_HANDOFF.md)
+- [Validation Record](docs/VALIDATION.md)
 - [Handoff Reconciliation Plan and Log](docs/HANDOFF_RECONCILIATION_PLAN.md)
 
 ## Links
