@@ -3,6 +3,11 @@
 The current port deliberately leaves policy questions separate from the
 collector mechanics. These are the decisions to resolve during the sprint.
 
+Reconciled on 12 October 2026 for CPython `c67363fa59`. The
+[review handoff](REVIEW_HANDOFF.md) names the exact checkpoint and evidence.
+Decisions below are discussion items, not authorization to change collector
+algorithms, atomic ordering or work distribution.
+
 ## Public surface
 
 Decide whether the first proposal should expose all of:
@@ -11,7 +16,8 @@ Decide whether the first proposal should expose all of:
 - `gc.enable_parallel()`, `gc.disable_parallel()`, and
   `gc.get_parallel_config()`;
 - diagnostic `gc.get_parallel_stats()`; and
-- the orthogonal `gc.collect_async()` scheduling API.
+- the orthogonal `gc.collect_async()` scheduling API, which is outside the
+  [discussion PEP](pep-parallel-gc-v2.rst).
 
 The current implementation deliberately has no startup environment variable,
 `-X` option, or `PyConfig` field for selecting a worker count.
@@ -39,9 +45,17 @@ that reclaims nothing still performs graph work.
 the long-term maximum is a policy question to revisit with benchmark evidence;
 it is not selected through startup configuration.
 
+Serial execution is deliberately outside the FT worker search. Its
+discontinuous cost can trap an adjacent local walk before it discovers a faster
+parallel count beyond a slower intermediate one. This does not establish that
+two participants always beat serial or that the walk finds a global optimum.
+The fixed/adaptive experiment found fixed 16 faster than adaptive in the three
+tested FT phases; convergence and workload-change behavior remain benchmark
+questions.
+
 ## Pool-start contract
 
-The implemented GIL contract separates policy from resources.
+Both implemented contracts separate policy from resources.
 `gc.enable_parallel()` enters an armed state without creating native threads.
 The first collection with at least 16,384 candidates and two usable work
 splits starts the 16-helper pool transactionally. A startup failure rolls back
@@ -51,15 +65,19 @@ explicit enable request resets the adaptive controller and permits one retry.
 
 GIL child-fork recovery also becomes armed without creating helpers. The
 parent is unchanged, and a child collection inherited from a callback or
-finalizer finishes serially before later eligible work may start a pool. The
-free-threaded implementation remains eager pending the separate implementation
-and stop-the-world lifecycle work recorded in
+finalizer finishes serially before later eligible work may start a pool.
+FT also arms without helpers and creates 15 helpers at the first collection,
+before stopping the world. Its lifecycle mutex serializes the collection-start
+decision, configuration and lifecycle operations. Supported fork preparation
+acquires that mutex before stop-the-world; the parent releases it before
+resuming the world. Child recovery creates no helper and leaves an enabled
+collector armed. The implementation and verification are recorded in
 [`LAZY_POOL_CREATION_PLAN.md`](LAZY_POOL_CREATION_PLAN.md).
 
-The GIL API exposes `pool_active`, `startup_failed`, a monotonic startup-failure
-counter, and a bounded error code. These names and whether the free-threaded
-implementation should expose identical fields remain reviewable public-surface
-questions.
+Both feature-on APIs expose `pool_active`, `startup_failed`, a monotonic
+startup-failure counter and a bounded error code. The public diagnostic names
+and schema remain reviewable. Disabled or failed configurations report zero
+`num_workers` even if reusable GIL storage is retained.
 
 The current free-threaded configuration dictionary includes a
 `parallel_cleanup` key inherited from the prototype even though finalization
@@ -75,16 +93,36 @@ implementation parallelizes root propagation, `update_refs`, `mark_heap`, and
 the restored original phase boundaries; narrowing them would be a design
 change, not presentation cleanup.
 
+## Failure and compatibility decisions
+
+Unchecked join results require a separate policy: cleanup cannot assume a
+helper terminated when joining it failed. GIL split-vector allocation, FT
+unique-ID allocation and FT scan rollback need fault-injection investigation.
+See [AUTIT-TODO.md](../AUTIT-TODO.md) for source-visible hazards, hypotheses and
+repaired items. Thread-start rollback is implemented; these remaining failures
+are not made safe merely by calling startup transactional.
+
+Extension `tp_traverse` runs on helper threads, and FT helpers install their
+thread states without the GIL helper's full bind. Agree an extension
+compatibility test set. Complete the exact CinderX source/provenance/licensing
+mapping. Retain the subinterpreter/fork skip until the feature-off control no
+longer crashes.
+
 ## Landing requirements
 
 The current Linux AArch64 functional and performance evidence is strong enough
-for design discussion, not landing. Both build modes improve all eight
-requested 500,000-object heaps, while the free-threaded finalizer-heavy
-sustained case is a documented negative region. Remaining gates are:
+for design discussion, not landing. Latest project results show a GIL 1.08x
+collection geomean with an unstable negative graph result, and FT 1.24x with
+all eight requested shapes improving. FT sustained AI throughput and callback
+interval, and pyperformance `float`, remain negative results. Remaining gates
+include:
 
 - clean-revision repeats of the optimized GIL and free-threaded benchmark
   results, plus optimized feature-off controls;
-- a free-threaded ThreadSanitizer run to complement the passing focused GIL
-  run;
-- Linux x86-64 plus native Windows and macOS validation;
+- wider fault-injection and race analysis beyond the passing local GIL and FT
+  ASan/TSan selections;
+- current-revision Linux x86-64 and Windows repeats plus native macOS
+  active-collector validation;
+- explicit first-use latency and memory measurements;
+- public API decisions and an agreed performance regression limit;
 - a published port revision and a NEWS entry tied to a real CPython issue.

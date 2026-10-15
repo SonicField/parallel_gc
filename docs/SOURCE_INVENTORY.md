@@ -1,12 +1,12 @@
 # Current CPython Port Source Inventory
 
-This inventory describes every modified or untracked path in
+This inventory describes every changed path in
 `cpython/` relative to its recorded `python/cpython` main base,
 `333071231d3a46cccc32d7f44b99328c3299d0b1`. It excludes archived project
 material outside the submodule.
 
 The current fork commit is
-`7ec0874a7d`. Status notation used when the
+`c67363fa59`. Status notation used when the
 snapshot was prepared:
 
 - **Modified**: file from the `python/cpython` base changed by the port.
@@ -16,13 +16,16 @@ snapshot was prepared:
 
 ## Collector engines and shared primitives
 
+- **Modified** `Include/internal/pycore_dict.h` and `Objects/dictobject.c` —
+  expose one inline dictionary-layout traversal shared by serial and exact-dict
+  FT parallel visitors, preserving key/value visitation and subclass fallback.
 - **Modified** `Include/internal/mimalloc/mimalloc/internal.h` — declares the
   abandoned-pool page visitor and page-count helpers needed to include pages
   owned by exited threads in free-threaded collection.
 - **Modified** `Include/internal/pycore_gc.h` — carries the baseline source
   layout change; worker limits and work-partitioning constants live in the
   implementation-specific parallel-GC headers.
-- **New** `Include/internal/pycore_gc_barrier.h` — provides checked POSIX/Windows
+- **New** `Include/internal/pycore_gc_barrier.h` — provides portable POSIX/Windows
   mutex and condition-variable wrappers used by the GIL pool's cancellable
   startup handshake.
 - **New** `Include/internal/pycore_gc_ft_parallel.h` — defines free-threaded
@@ -57,15 +60,17 @@ snapshot was prepared:
 - **Modified** `Python/gc_free_threading.c` — integrates parallel root
   propagation, page assignment, `update_refs`, `mark_heap`, `scan_heap`, and
   private adaptive timing while retaining serial fallbacks and serial stack,
-  finalization, and cleanup processing.
-- **Modified** `Python/pylifecycle.c` — starts configured pools during main
-  interpreter initialization and finalizes pools before interpreter thread-state
-  teardown.
+  finalization, and cleanup processing; serializes collection start with the
+  lifecycle mutex, attempts lazy startup before stop-the-world, and delivers
+  startup warnings after safe collection cleanup.
+- **Modified** `Python/pylifecycle.c` — finalizes pools before interpreter
+  thread-state teardown; no startup worker-count configuration is added.
 - **Modified** `Python/pystate.c` — makes interpreter clearing defensively
   finalize any remaining per-interpreter parallel-GC pool.
 - **Modified** `Modules/posixmodule.c` — recovers inherited parallel-GC state
   in the child before user after-fork callbacks run. The GIL child becomes
-  armed without helpers; the free-threaded child currently replaces helpers.
+  armed without helpers; FT uses the same recovery and takes its lifecycle
+  mutex before stop-the-world, releasing it in the parent before world restart.
 - **Modified** `Include/internal/pycore_uniqueid.h` and `Python/uniqueid.c` —
   provide the stop-the-world batch unique-ID release used by parallel
   free-threaded `scan_heap`.
@@ -81,7 +86,7 @@ snapshot was prepared:
 - **Modified** `Modules/gcmodule.c` — implements `gc.enable_parallel()`,
   `gc.disable_parallel()`, `gc.get_parallel_config()`,
   `gc.get_parallel_stats()`, and `gc.collect_async()`. `enable_parallel()`
-  takes no worker-count argument; GIL enable is lazy, the internal maximum is
+  takes no worker-count argument; enable is lazy in both builds, the internal maximum is
   16, and the adaptive controller selects the active count.
 
 There is no environment-variable, `-X`, or `PyConfig` startup interface for
@@ -90,11 +95,12 @@ parallel GC.
 ## Build-system inputs and generated outputs
 
 - **Modified** `Makefile.pre.in` — adds both collector implementation objects to
-  POSIX builds.
+  POSIX builds and runs supplementary parallel-GC training before PGO merge.
 - **Modified** `Modules/Setup.stdlib.in` — adds the deque/primitives test source
   to `_testinternalcapi`.
 - **Modified** `configure.ac` — defines `--with-parallel-gc`, emits
-  `Py_PARALLEL_GC`, and rejects 32-bit targets. This is the authoritative
+  `Py_PARALLEL_GC`, selects supplementary PGO training and rejects 32-bit
+  targets. This is the authoritative
   Autoconf input.
 - **Modified, generated** `configure` — canonically regenerated Autoconf output
   containing the feature option and macro definition.
@@ -128,7 +134,8 @@ parallel GC.
   become abandoned.
 - **New** `Lib/test/test_gc_ft_parallel.py` — covers free-threaded graph
   correctness, concurrent collection/allocation, abandoned pages, and pool
-  lifecycle/reconfiguration.
+  lifecycle/reconfiguration, exact-container traversal and both builds' lazy
+  state, startup fault injection, fallback, warnings and explicit retry.
 - **New** `Lib/test/test_gc_parallel.py` — covers the public API, feature-off
   behavior, worker validation, timing statistics, abandoned pages, concurrent
   allocation, and serial/parallel equivalence.
@@ -149,7 +156,11 @@ parallel GC.
 - **Modified** `Modules/_testinternalcapi/parts.h` — declares its initialization
   entry point.
 - **New** `Modules/_testinternalcapi/test_ws_deque.c` — provides low-level deque
-  ordering, growth, OOM, reset, and concurrent owner/thief test hooks.
+  ordering, growth, OOM, reset, concurrent owner/thief, deterministic random-walk,
+  startup failure, fixed-worker and dispatch-observation test hooks.
+- **New** `Tools/build/parallel_gc_profile.py` and
+  `Lib/test/test_parallel_gc_profile.py` — supply and verify PGO training that
+  activates the relevant collector and exercises exact container layouts.
 
 ## Windows platform integration
 
@@ -161,9 +172,9 @@ parallel GC.
   new internal headers to the Windows core project.
 - **Modified** `PCbuild/pythoncore.vcxproj.filters` — places those collector
   sources and headers in the corresponding Visual Studio filters.
-- **Modified** `PCbuild/_freeze_module.vcxproj` and
-  `PCbuild/_freeze_module.vcxproj.filters` — compile and classify both collector
-  sources in the bootstrap executable.
+- **Modified** `PCbuild/pcbuild.proj` — keeps parallel GC disabled in the
+  host `_freeze_module` tool, whose target width can differ from the real
+  interpreter. The real x64 GIL/FT builds retain the requested feature.
 - **Modified** `PCbuild/_testinternalcapi.vcxproj` — adds the deque/primitives C
   test part to the Windows `_testinternalcapi` project.
 - **Modified** `PCbuild/_testinternalcapi.vcxproj.filters` — places that C test
@@ -178,9 +189,17 @@ parallel GC.
 
 ## Path-set verification
 
-At commit `7ec0874a7d`, the source differs from the recorded upstream base at
-53 paths: 39 modified files and 14 additions. The CPython worktree was clean
+At commit `c67363fa59`, the source differs from the recorded upstream base at
+56 paths: 40 modified files and 16 additions. The CPython worktree was clean
 when that revision was recorded in the parent repository.
+
+Verify the path set with:
+
+```bash
+git -C cpython diff --name-status \
+    333071231d3a46cccc32d7f44b99328c3299d0b1 \
+    c67363fa59543ef5d572383af927f1cff88514a1
+```
 
 The only classification ambiguity is
 `Include/internal/pycore_global_strings.h`: the file contains hand-maintained

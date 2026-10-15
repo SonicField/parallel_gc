@@ -35,12 +35,11 @@ completion condition.
 
 Both builds use a Chase-Lev deque. The GIL path also stages work in a small
 local buffer, reducing owner-side deque operations. The free-threaded path
-pushes discovered objects directly onto its deque so other workers can steal
-them.
+uses deques for work stealing and local staging during root propagation.
 
 The shared barrier infrastructure supports:
 
-- a startup handshake in the GIL worker pool;
+- portable mutex/condition operations for a cancellable startup handshake;
 - phase boundaries in multi-stage worker-pool operations, including the
   free-threaded `update_refs` initialization and computation stages.
 
@@ -186,16 +185,25 @@ boundary, because the objective is broader collection cost rather than
 helper-only speed. Both collectors pass elapsed nanoseconds and their exact
 candidate count to the same shared normalization function.
 
+FT deliberately searches only within parallel execution. Serial can be a
+separate local minimum: two participants can be slower than serial while four
+are faster than both. A local walk that retreats into serial cannot necessarily
+cross that slower intermediate count. Excluding serial avoids this trap;
+local minima within 2–16 and noisy samples remain limitations. The controller
+does not guarantee discovery of the fastest configuration.
+
 ## Fork safety
 
 The parent pool survives a supported CPython fork unchanged. The child cannot
 use copied worker handles or synchronization state because the corresponding
 threads no longer exist. GIL child recovery therefore abandons copied helpers,
 reinitializes the controller in the armed state, and creates no thread. A later
-eligible collection starts the replacement pool. Free-threaded recovery
-currently creates replacement helpers immediately. Both reset the adaptive
-controller. A collection that began before the fork is excluded from the
-child's new learning history and the GIL child finishes it serially.
+eligible collection starts the replacement pool. Free-threaded recovery uses
+the same armed-child contract. Both reset the adaptive controller. A collection
+that began before the fork is excluded from the child's new learning history
+and completes serially in both implementations. FT fork preparation takes the
+lifecycle mutex before stopping the world so its owner can finish; the parent
+releases the mutex before resuming the world.
 
 This behavior is exercised for ordinary forks and forks from `__del__` in both
 collector builds. [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) is the normative
@@ -231,14 +239,23 @@ the currently selected worker count.
 
 The runtime API takes no worker-count argument. In the GIL build, enable arms
 the collector and the first eligible collection creates a pool with a fixed
-maximum of 16 helpers. In the free-threaded build, enable currently creates a
-pool with 15 helpers because the collecting thread is participant zero. The
+maximum of 16 helpers. In the free-threaded build, enable also arms without
+helpers; the first collection starts 15 helpers before stopping the world
+because the collecting thread is participant zero. The
 adaptive controller selects the active participant count for each collection.
 There is no environment-variable, `-X`, or `PyConfig` startup control.
 
+Thread creation is expensive, so helpers persist after first use. Lazy startup
+also avoids glibc's permanent first-thread transition in workloads that arm the
+feature but never use it. A failed transaction rolls back, finishes serially,
+warns once after safe cleanup and enters FAILED without automatic retry. An
+explicit enable permits another attempt. The
+[lazy-pool engineering record](LAZY_POOL_CREATION_PLAN.md) contains the state
+contract, fault-injection coverage and SQLite evidence.
+
 ## Design heritage
 
-The worker-pool, barrier, and Chase-Lev deque design draws on
+Earlier project records attribute worker-pool, barrier and deque heritage to
 [CinderX](https://github.com/facebookincubator/cinder) and the work-stealing
 literature:
 
@@ -253,26 +270,27 @@ threading and atomic abstractions.
 
 ## Evidence and open work
 
-Optimized PGO+LTO measurements on a 72-core AArch64 host found 1.26x (GIL) and
-1.22x (free-threaded) geometric-mean speedups across eight requested
-500,000-object heaps. The GIL sustained-synthetic throughput geomean improved
-9.5%; free-threaded improved 2.3%; mixed throughput was -0.2% and +19.5%
-respectively. The free-threaded finalizer-heavy sustained workload regressed
-14.7%, illustrating the serial-tail limit described above. These are measured
-regions, not a claim that parallel collection universally wins. See
-[BENCHMARKING.md](BENCHMARKING.md) for provenance, raw results, and metric
-definitions.
+The latest GIL project run at `669ed6b17e` reports a 1.08x collection geomean
+across eight requested 500,000-object shapes, with one unstable negative graph
+result. Mixed throughput is unchanged and mean callback interval increases 3%.
+FT collector `195830171f` reports a 1.24x collection geomean and mixed
+throughput improvement of 23.5%, but sustained AI throughput falls 9.9% and its
+mean interval rises 116%. FT pyperformance `float` is 10.5% slower. All these
+measurements use PGO+LTO on one AArch64 host. See
+[BENCHMARKING.md](BENCHMARKING.md) for raw evidence and the distinction between
+callback interval and stop-the-world time.
 
-The current port has functional build-and-test evidence on Linux AArch64, and
-the feature-off fork branch has passed the standard CPython GitHub Actions
-matrix. Feature-on Windows, macOS, and x86-64 runs remain required.
+Local Linux AArch64 tests include GIL and FT ASan/TSan selections. Earlier
+feature-on Linux x86-64 and Windows workflows passed at `d396f837b9`; current
+FT lifecycle changes require repeats. Active macOS evidence remains missing.
+See [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for the checkpoint and CI limits.
 
 Open work includes:
 
 - repeating both optimized performance runs from clean published commits and
   adding feature-off optimized controls;
-- evaluating whether the free-threaded collector also needs a small-collection
-  dispatch threshold;
+- attributing the remaining performance regressions without assuming their
+  causes or changing collector policy;
 - measuring memory cost and pause-time effects;
 - extending platform and sanitizer coverage.
 

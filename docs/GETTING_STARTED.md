@@ -5,6 +5,9 @@ free-threaded CPython builds. The two implementations share deque and
 synchronization primitives, but have separate worker pools and integrate with
 different serial collectors.
 
+Start with [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for the informal-review
+checkpoint, reading order and evidence limits.
+
 ## Understand the repositories
 
 The project has two project repositories:
@@ -31,8 +34,9 @@ exercise or observe those conditions. The larger GC-specific benchmark system
 is essential to evaluating this project, while being too specialised and
 experimental for the CPython source tree.
 
-A pyperformance regression blocks the proposal even when the GC-specific
-benchmarks improve. See [BENCHMARKING.md](BENCHMARKING.md) for the verified
+The proposal must account for pyperformance regressions even when GC-specific
+benchmarks improve. The discussion draft leaves the numerical acceptance limit
+open and records the negative results. See [BENCHMARKING.md](BENCHMARKING.md) for the verified
 runner and the division of responsibility between the two benchmark systems.
 
 ## Obtain the source
@@ -51,9 +55,14 @@ benchmarks, and project-level test workflow.
 ### Current port status
 
 The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`, on
+`SonicField/cpython` commit `c67363fa59543ef5d572383af927f1cff88514a1`, on
 branch `parallel-gc-upstream-port`. It is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
+
+This local checkpoint still needs publication. Verify what a clone actually
+contains with `git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
+The parent pointer selects the revision; the submodule branch setting does
+not automatically move it to the latest fork commit.
 
 The root `Makefile` and scripts under `tools/` target the older workflow; use
 the explicit commands in this guide for current-port validation.
@@ -116,10 +125,12 @@ Run the focused tests in the GIL build:
 ```bash
 ./python -m test -j4 \
     test_gc \
+    test_gc_ft_parallel \
     test_gc_ws_deque \
     test_gc_parallel \
     test_gc_parallel_fork \
     test_gc_parallel_properties \
+    test_gc_parallel_mark_alive \
     test_capi.test_config \
     test_embed
 ```
@@ -157,13 +168,24 @@ gc.disable_parallel()
 In a GIL build, `gc.enable_parallel()` arms the collector but creates no
 helper. The fixed 16-helper pool starts when a collection first reaches 16,384
 candidates and has enough work splits; the collecting thread coordinates it.
-In a free-threaded build, enabling currently creates 15 helpers and the
-collecting thread participates as worker zero. The shared stochastic
+In a free-threaded build, enabling also creates no helper. The first collection
+starts 15 helpers before stopping the world; the collecting thread participates
+as worker zero. The shared stochastic
 random-walk controller starts at four participants, tries adjacent counts, and
 walks back after a regression within the 2--16 range. In a build without
 parallel-GC support,
 `gc.enable_parallel()` and `gc.disable_parallel()` raise
 `RuntimeError`, while `gc.get_parallel_config()` reports `available` as false.
+
+In both builds startup failure rolls back partial resources and completes the
+collection serially. The collector warns once after safe cleanup and remains
+serial until explicit enable permits another attempt. Configuration separates
+`enabled`, `pool_active` and `startup_failed`.
+
+FT adaptation deliberately searches the parallel range only. A serial local
+minimum can prevent an adjacent walk from discovering a faster parallel count
+beyond an initially slower one. The controller does not guarantee a global
+optimum. See [DESIGN_POST.md](DESIGN_POST.md) for the reasoning.
 
 `gc.get_parallel_stats()` reports implementation diagnostics and private phase
 timings. `gc.collect_async()` schedules the ordinary collector and returns
@@ -203,9 +225,9 @@ Supported CPython forks leave the parent pool and its adaptive history intact.
 The GIL child abandons inherited helpers, reinitializes synchronization state,
 becomes armed, and resets its adaptive controller to four without starting a
 thread during recovery. A later eligible collection starts its pool. The
-free-threaded child currently creates replacement helpers immediately. Both
-collectors exclude an inherited in-progress collection from adaptive learning;
-the GIL child also forces its remainder down the serial path. This includes a
+free-threaded child follows the same armed recovery without starting helpers.
+Both collectors exclude an inherited in-progress collection from adaptive
+learning and force its remainder down the serial path. This includes a
 fork from `__del__`. See
 [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) for the precise contract, hook
 ordering, tests, and unsupported raw-fork case.
@@ -240,14 +262,15 @@ Important files in the current port:
 3. [Build and Test](BUILD_AND_TEST.md) for the validation matrix.
 4. [Benchmarking](BENCHMARKING.md) for measurement requirements.
 5. [Design Post](DESIGN_POST.md) for algorithm background.
-6. [PEP draft](pep-parallel-gc.rst) for the proposed upstream interface.
+6. [Discussion draft](pep-parallel-gc-v2.rst) for the design, experimental interface and open questions.
 
 ## Performance status
 
-Current optimized PGO+LTO measurements on Linux AArch64 show 1.26x and 1.22x
-geometric-mean speedups across eight requested 500,000-object heaps for the GIL
-and free-threaded builds respectively. Mixed-workload throughput was -0.2% for
-GIL and +19.5% for free-threaded. Sustained workloads include a known negative
-region: the free-threaded finalizer-heavy case regressed by 14.7%. These are
-same-binary serial/parallel measurements, not universal performance claims.
-See [BENCHMARKING.md](BENCHMARKING.md) for full results and interpretation.
+The latest GIL project campaign at `669ed6b17e` reports a 1.08x collection
+geomean, effectively unchanged mixed throughput, and a 3% higher mixed mean
+callback interval. FT collector `195830171f` reports a 1.24x collection
+geomean and 23.5% higher mixed throughput, but sustained AI throughput is 9.9%
+lower and its mean callback interval is 116% higher. FT pyperformance `float`
+is 10.5% slower. These same-binary results come from one AArch64 host.
+See [BENCHMARKING.md](BENCHMARKING.md) for exact revisions, raw samples,
+exclusions and interpretation.

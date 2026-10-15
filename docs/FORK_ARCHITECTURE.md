@@ -6,6 +6,10 @@ This document defines the required `fork()` behavior of the parallel garbage
 collectors. It is both an implementation guide and a permanent record of the
 reasoning behind the lifecycle protocol.
 
+Reconciled for CPython `c67363fa59` on 12 October 2026. Local lifecycle and
+fork evidence is in [LAZY_POOL_CREATION_PLAN.md](LAZY_POOL_CREATION_PLAN.md);
+current-checkpoint remote validation remains pending.
+
 The design applies to the GIL and free-threaded implementations when parallel
 GC has been enabled. It covers forks made through CPython's supported
 `PyOS_BeforeFork()`, `PyOS_AfterFork_Parent()`, and
@@ -155,7 +159,7 @@ The kernel initially copies every interpreter into the child, but CPython's
 after-fork recovery deliberately deletes every interpreter except the main
 interpreter before returning to Python. Parallel-GC recovery therefore
 recovers only the surviving main interpreter's controller. The GIL path does
-not build a pool at this point.
+not build a pool at this point; neither does the FT path.
 
 Current upstream-based feature-off GIL and free-threaded builds terminate the
 child with `SIGSEGV` when the main interpreter forks while an otherwise idle

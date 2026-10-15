@@ -9,6 +9,12 @@ conversation history or undocumented local state.
 This plan prepares the project for a design and implementation sprint. It does
 not claim that the proposal is ready to land in CPython.
 
+Reconciled on 12 October 2026. These nine steps include eventual submission
+work; they are not nine prerequisites for an informal engineering discussion.
+The [review handoff](REVIEW_HANDOFF.md) is the starting place for Matt and Pablo.
+The [handoff reconciliation plan](HANDOFF_RECONCILIATION_PLAN.md) records this
+documentation pass and the remaining publication checks.
+
 ## Working rules
 
 - Preserve the restored collector design and behavior.
@@ -25,14 +31,23 @@ not claim that the proposal is ready to land in CPython.
 
 ## Current checkpoint
 
-- CPython fork: `SonicField/cpython`, branch `parallel-gc-upstream-port`, local
-  revision `ef4a38003270996f6b2127b005ea7706fefe739c`.
-- Parent project: `SonicField/parallel_gc`, branch `main`.
-- Both repositories contain unpushed local commits.
-- Current documented performance evidence is useful but predates the current
-  source revision.
-- The current parent CI workflow contradicts the runtime-only activation
-  contract and is expected to fail against the current source.
+- CPython fork: `SonicField/cpython`, branch `parallel-gc-upstream-port`,
+  revision `c67363fa59543ef5d572383af927f1cff88514a1`.
+- Parent: `SonicField/parallel_gc`, branch `main`; the pre-handoff committed
+  checkpoint is `ce6dcecbdf1ed6fa8270ea1928cd1e339262a784`.
+- Parent and CPython have seven and four local commits ahead of their origin
+  tracking refs. This documentation pass is uncommitted for evening review.
+- Both collectors use lazy transactional startup, warning/serial fallback,
+  explicit retry, and armed child-fork recovery.
+- Latest project evidence measures GIL collector `669ed6b17e` and FT
+  `195830171f`. The later `c67363fa59` changes release-build tests only.
+- Current local FT debug, ASan, TSan and optimized lifecycle selections pass.
+  Broad full-suite/platform repeats after the FT change remain pending.
+- The CI activation contract is repaired. Matrix run `37663869128` passed at
+  the preceding published checkpoint; it does not cover the current local work.
+- Known source and performance failures remain documented in
+  [AUTIT-TODO.md](../AUTIT-TODO.md) and the handoff. Live GitHub status could
+  not be retrieved through this environment's destination filter.
 
 ## Readiness steps
 
@@ -95,11 +110,11 @@ objects between configurations.
 
 ### 4. Repair resource failure and make pool creation lazy
 
-The free-threaded worker-argument allocation now belongs to its pool. The remaining lifecycle work is:
-
-1. make partial helper startup transactional in both collectors;
-2. separate enabled policy from a live pool; and
-3. fall back to serial collection after startup failure without automatic retry.
+Both implementations now separate enabled policy from a live pool and use
+transactional partial-start rollback with serial fallback and no automatic
+retry. GIL repair is `7ec0874a7d`; FT is `195830171f`. Deterministic startup
+failure tests and local ASan/TSan evidence exist in both modes. Repeat on the
+published checkpoint and retain the separate failed-join policy task (A12).
 
 Design and approve the tests before changing the implementation. The complete
 state, failure, fork, test, and performance proposal is in
@@ -245,15 +260,30 @@ platform, sanitizer, provenance, API, or process gate is unknown.
 
 | Step | Status | Evidence or blocker |
 |------|--------|---------------------|
-| 1. Correct CI | In progress | Contract repaired; test-isolation follow-up awaits remote CI. |
-| 2. Publish checkpoint | In progress | Initial checkpoint published; follow-up commits remain local. |
-| 3. Tooling | Not started | README marks Makefile and tools as legacy. |
-| 4. Failure paths and ownership | Not started | Tests and design approval required before repair. |
-| 5. Patch series | Not started | Proposed ordering exists; review branch does not. |
-| 6. Current evidence | Not started | Existing broad/performance evidence predates current revision. |
-| 7. Readability | Not started | Must follow behavioral stabilization. |
-| 8. PEP and provenance | Not started | Depends on final sprint revision and evidence. |
-| 9. Landing gates | Not started | Track independently from sprint readiness. |
+| 1. Correct CI | Implemented; current repeat pending | Explicit activation and four configurations; prior matrix `37663869128` passed. |
+| 2. Publish checkpoint | Pending current publication | Current local commits and this handoff need review/push; fresh public clone unverified. |
+| 3. Tooling | Deferred, disclosed | README directs readers to explicit commands; legacy Makefile/tools remain. |
+| 4. Failure paths and ownership | Startup implemented; join policy open | Both-mode all-position injection and local sanitizers; A12 remains unresolved. |
+| 5. Patch series | Future submission work | Proposed dependency order exists; current history remains snapshot plus incremental commits. |
+| 6. Current evidence | Partial | GIL/FT optimized project results and FT lazy pyperformance recorded; broad current/platform repeats and feature-off optimized controls pending. |
+| 7. Readability | Deferred | Warnings/dead alternatives and explanatory comments remain audit work; no behavior-changing cleanup authorized. |
+| 8. PEP and provenance | Handoff docs reconciled; provenance open | New discussion draft selected; exact heritage/licensing and public API decisions remain. |
+| 9. Landing gates | Tracked separately | See gate table below; informal discussion does not claim all gates passed. |
+
+## Landing gate status at this checkpoint
+
+| Gate | State | Evidence or missing work |
+|------|-------|--------------------------|
+| GIL and FT ASan/TSan | Passed local selections; wider coverage pending | Lazy-pool record names selections, revisions and options. Phase allocation failures remain untested. |
+| Linux AArch64 correctness/performance | Partial | Local focused/sanitizer and optimized evidence; latest broad FT repeat pending. |
+| Linux x86-64 and Windows | Passed earlier checkpoint; current repeat pending | Full runs `37615265794`/`37615268403` at `d396f837b9`. |
+| Native macOS active collector | Not started | Standard feature-off workflow is not active-GC evidence. |
+| Source failure policies | In progress | A5/A6/A7/A8/A12 remain; scan rollback is still a hypothesis. |
+| Performance limits and adaptation | Open | Known regressions, no global-optimum/convergence claim, no agreed overhead limit. |
+| Current GIL full pyperformance | Pending | Full sweep predates lazy startup; focused SQLite after startup change is neutral. |
+| Optimized feature-off controls | Pending | PGO-training controls do not measure compile-time feature overhead. |
+| Extension compatibility and provenance | Pending | Agree traversal test set and exact copied-source/licensing mapping. |
+| Public API/process metadata/NEWS | Pending | Discussion PEP provisional; no issue/PEP number or upstream PR created here. |
 
 ## Progress log
 
@@ -305,3 +335,21 @@ blocked result. Each entry must record:
   635, 528, and 593 tests. The benchmark harness passed 6/6 with all four
   binaries.
 - Remaining uncertainty: the repaired matrix has not yet run on GitHub.
+
+### 12 October 2026: informal-review handoff reconciliation
+
+- Goal: give Matt and Pablo a reproducible starting place without requiring all
+  eventual landing work to finish first.
+- Procedure: reread VP, inspect source lifecycle/configuration/controller and
+  the upstream-base path diff, then compare entry guides, PEP, source audit,
+  benchmark reports and CI workflows with those sources.
+- Observed gaps: eager FT descriptions, obsolete child recovery, stale
+  benchmark headlines, repaired startup defects still listed as open, missing
+  PGO/dictionary paths in the inventory, and an unselected newer PEP draft.
+- Action: reconcile the parent documents, select the newer discussion draft,
+  add the review entry page and record separate local, historical CI and
+  current publication states. Collector code and measurements are unchanged.
+- Remaining work: evening review/commit, push CPython then parent, verify a
+  public recursive clone, repeat matrix and manual Linux/Windows full suites.
+- Verification details and final status belong in
+  [HANDOFF_RECONCILIATION_PLAN.md](HANDOFF_RECONCILIATION_PLAN.md).

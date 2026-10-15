@@ -4,6 +4,12 @@ This document describes the evidence needed for the authoritative `cpython/`
 submodule. See [BUILD_AND_TEST.md](BUILD_AND_TEST.md)
 for commands and [BENCHMARKING.md](BENCHMARKING.md) for performance work.
 
+The informal-review source checkpoint is `c67363fa59`. Current local results,
+older CI results and pending publication checks are distinguished in
+[REVIEW_HANDOFF.md](REVIEW_HANDOFF.md). Do not infer current remote success
+from a predecessor run. The later captured matrix run `37663869128` passed
+all four jobs before the current local commits; that success is historical.
+
 ## Four-build policy
 
 The GIL and free-threaded collectors are first-class implementations. Every
@@ -40,6 +46,12 @@ Run these modules in both parallel builds:
 # Add these in the free-threaded build:
 build-port-ft/python -m test -v \
     test_free_threading.test_gc
+
+# Add this in the GIL feature-on build:
+build-port-gil/python -m test -v test_gc_parallel_mark_alive
+
+# PGO workload tests apply to both build modes:
+<build>/python -m test -v test_parallel_gc_profile
 ```
 
 | Test module | Applicable build | Main evidence |
@@ -50,6 +62,8 @@ build-port-ft/python -m test -v \
 | `test_gc_parallel_fork` | POSIX feature-on builds | Parent preservation; armed child recovery without thread creation; reset; ordinary, callback, and finalizer forks |
 | `test_gc_ft_parallel` | All four builds | GIL and FT lazy-pool lifecycle and injected startup failures; free-threaded graph and pool behavior; explicit feature-off skips |
 | `test_gc_parallel_properties` | Both feature-on builds | Deterministic reachability, split-boundary, helper-participation, and threaded properties |
+| `test_gc_parallel_mark_alive` | GIL feature-on | Known-root marking, deque drainage and deterministic dispatch integration |
+| `test_parallel_gc_profile` | GIL and FT | Supplementary PGO workload and expected collector participation |
 | `test_capi.test_config` | All four builds | Public configuration layout and defaults |
 | `test_embed` | All four builds | Embedded-runtime regression coverage |
 | `test_free_threading.test_gc` | Free-threaded | Existing free-threaded GC regression coverage |
@@ -297,7 +311,7 @@ flags were `--disable-gil --with-pydebug --with-parallel-gc
 locally extracted GCC runtime because this host's linker script points at an
 unavailable system path.
 
-The same focused suites pass debug reference-leak checks with `-R 3:3` in both
+Earlier focused suites passed debug reference-leak checks with `-R 3:3` in both
 feature-on builds: 213 tests in the GIL build and 229 tests in the
 free-threaded build, with no positive leaked references or memory blocks.
 
@@ -336,11 +350,12 @@ flags, worker counts, seeds, warmups, samples, and raw results.
 
 ## Open verification gaps
 
-- The GIL focused ThreadSanitizer selection passes; equivalent free-threaded
-  ThreadSanitizer evidence remains outstanding.
+- Local GIL and FT ThreadSanitizer selections pass. Collection-phase allocation
+  injection and wider race coverage remain incomplete.
 - The parent CI enforces all four GIL/free-threaded and
   feature-on/feature-off configurations on Ubuntu.
 - Native feature-on Linux x86-64 focused validation runs in the parent matrix.
-- Windows feature-on validation is being established on x64 before ARM64.
+- Windows x64 feature-on full runs passed at the older `d396f837b9` checkpoint;
+  current FT lifecycle repeats and Windows ARM64 remain pending.
 - Native feature-on macOS validation has not been run. The standard feature-off
   CPython workflow has passed on the fork.

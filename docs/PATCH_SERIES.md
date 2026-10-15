@@ -1,10 +1,11 @@
 # Proposed CPython Patch Series
 
-This is the proposed review order for the `cpython/` submodule commit. The
-fork currently contains one snapshot implementation commit; it can be split into
-this dependency order before any proposal to `python/cpython`. Generated files
-must first be regenerated canonically, and every resulting commit must pass
-both GIL and free-threaded builds.
+This is a proposed dependency order for a later submission series, not the
+current Git history. The fork at `c67363fa59` contains the initial snapshot
+plus separate repair, test and performance commits. Preparing a buildable
+review series remains future work and is not required for the informal review.
+Generated files must be verified through their canonical generators, and every
+applicable resulting commit must build in GIL and FT configurations.
 The complete path-by-path scope is listed in
 [SOURCE_INVENTORY.md](SOURCE_INVENTORY.md).
 
@@ -32,7 +33,7 @@ the mimalloc boundary independently.
 
 ## 4. Free-threaded collector
 
-Add page bucketing, the persistent pool, parallel root propagation,
+Add page bucketing, the lazy persistent pool, parallel root propagation,
 `update_refs`, `mark_heap`, and `scan_heap`, work stealing, error recovery,
 unique-ID batching, and integration with the serial fallback and cleanup
 paths. Keep this patch dormant behind both `Py_GIL_DISABLED` and
@@ -42,7 +43,8 @@ paths. Keep this patch dormant behind both `Py_GIL_DISABLED` and
 
 Add `--with-parallel-gc`, the no-argument `gc` control, configuration,
 statistics, and asynchronous-collection functions, interpreter shutdown,
-sysconfig exposure, Windows build support, generated Clinic output, and
+lazy startup, warning/fallback/retry, sysconfig exposure, Windows build support,
+generated Clinic output, and
 generated global-string files. The worker ceiling is the internal constant 16;
 there is no startup worker-count interface. The public API set should be agreed
 before this patch is prepared.
@@ -60,7 +62,8 @@ Add API/configuration tests, deque and split-vector tests, GIL/FT graph
 properties, lifecycle and reconfiguration tests, allocation/collection races,
 external-inspection coverage, and helper-participation proof. Validate the
 fork protocol through CPython's supported hooks: armed child recovery for GIL,
-and the current replacement protocol for free-threaded builds.
+and FT, with lifecycle ordering before stop-the-world and an inherited
+collection forced serial in the child.
 
 ## 8. Documentation and NEWS
 
@@ -79,4 +82,6 @@ number is assigned; do not invent one for the draft series.
 - Preserve CRLF in Visual Studio project files.
 - Build and run the focused suite in all four GIL/free-threaded,
   feature-on/feature-off configurations after every applicable patch.
-- Do not include removed experiments or public telemetry in the series.
+- Keep unrelated experiments outside the series. Decide the diagnostic API
+  scope explicitly; the discussion PEP currently includes provisional stats
+  and excludes `gc.collect_async()`.

@@ -1,7 +1,7 @@
 # Build and Test Guide
 
 The active port is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`.
+`SonicField/cpython` commit `c67363fa59543ef5d572383af927f1cff88514a1`.
 The root `Makefile` and scripts under `tools/` target the older project workflow
 and must not be cited as current-port build or test evidence.
 
@@ -16,8 +16,10 @@ GIL and free-threaded builds are both first-class configurations. A change is
 not ready for review merely because it works in one of them.
 
 The current implementation requires a 64-bit target and either POSIX or
-Windows threads. Native validation has so far been performed only on Linux
-AArch64.
+Windows threads. Current local evidence is Linux AArch64. Earlier feature-on
+Linux x86-64 and Windows workflows passed at `d396f837b9`; the current FT
+lifecycle checkpoint requires repeats. Active macOS evidence is missing.
+See [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for the evidence boundary.
 
 | Directory | Configuration | Purpose |
 |-----------|---------------|---------|
@@ -80,8 +82,9 @@ Run the common focused set in both parallel builds:
 
 ```bash
 build-port-gil/python -m test -v \
-    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_fork test_gc_parallel_properties \
+    test_gc_parallel_mark_alive \
     test_capi.test_config test_embed
 
 build-port-ft/python -m test -v \
@@ -99,12 +102,12 @@ the parallel collector itself:
 
 ```bash
 build-baseline-gil/python -m test -v \
-    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_fork test_gc_parallel_properties \
     test_capi.test_config test_embed
 
 build-baseline-ft/python -m test -v \
-    test_gc test_gc_ws_deque test_gc_parallel \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
     test_gc_parallel_fork test_gc_parallel_properties \
     test_capi.test_config test_embed \
     test_free_threading.test_gc
@@ -140,7 +143,29 @@ free-threaded `test_free_threading` umbrella package imports the unavailable
 optional `_ctypes` module. Individual tests may still report ordinary resource
 or dependency skips; retain those in the test log.
 
-### Current validation status
+### Current local evidence
+
+FT collector `195830171f` passed the 368-test debug and ASan focused selection
+with 39 expected skips. Its lifecycle/fork/deque/upstream-FT-GC TSan selection
+passed 155 tests with 25 skips and no diagnostic. Optimized FT lifecycle tests
+passed all 25 cases. Test-only revision `c67363fa59` makes release guards match
+the private test APIs. GIL source is unchanged by the FT lazy-start commit.
+
+The [lazy-pool record](LAZY_POOL_CREATION_PLAN.md) retains source revisions,
+test counts, sanitizer settings and benchmark evidence. Broad FT results
+recorded before the lazy change are not current-checkpoint broad verification.
+Publication, a fresh public recursive clone, and remote four-build/Linux/
+Windows full-suite repeats remain pending. Use the manual workflow commands
+in [TESTING.md](TESTING.md).
+
+The supplementary PGO task has its own focused tests:
+
+```bash
+build-port-gil/python -m test -v test_parallel_gc_profile
+build-port-ft/python -m test -v test_parallel_gc_profile
+```
+
+### Historical validation
 
 The affected-area matrix below passed in all four debug configurations before
 the final design-restoration commit:
@@ -231,9 +256,10 @@ supplying that directory through `LDFLAGS=-Wl,-rpath,...`, permits
 The focused GIL build at `7ec0874a7d` passed 222 tests with 59 expected skips
 and no ThreadSanitizer diagnostic. Use `TSAN_OPTIONS=die_after_fork=0` for the
 fork tests: GCC ThreadSanitizer otherwise rejects starting threads in a child
-of a multithreaded process. Free-threaded ThreadSanitizer evidence remains
-outstanding, so this is not yet the required both-build sanitizer result.
+of a multithreaded process. The FT lazy-start selection at `195830171f` also
+passed under GCC 11.5.0 TSan: 155 tests, 25 expected skips, no diagnostic.
+These are bounded test selections, not exhaustive memory/race coverage.
 
-The focused commands above also pass debug reference-leak checks with
+Earlier focused commands also passed debug reference-leak checks with
 `-R 3:3`: 213 tests in the GIL build and 229 tests in the free-threaded build,
 with no positive leaked references or memory blocks.

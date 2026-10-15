@@ -203,7 +203,11 @@ The intended sequence is:
 3. On success, transition to `ACTIVE`, then enter the current FT collection and phase-dispatch code unchanged.
 4. On failure, transition to `FAILED`, then execute the current serial FT collection.
 
-This plan does not introduce a new FT heap-size threshold or change the minimum adaptive participant count. Whether FT should make a separate serial-versus-parallel eligibility decision is outside this change and requires its own evidence and approval.
+This plan does not introduce an FT heap-size threshold or change its minimum
+adaptive participant count. FT deliberately keeps serial execution outside the
+adjacent random walk: a serial local minimum can prevent discovery of a faster
+parallel count beyond a slower intermediate one. The walk has no global-optimum
+guarantee within its parallel range either. See [DESIGN_POST.md](DESIGN_POST.md).
 
 ## Warning contract
 
@@ -262,7 +266,9 @@ The child needs a per-collection `inherited_collection_serial` latch whenever th
 
 Without that latch, a child forked from a start callback could create helpers partway through a collection whose temporary state was copied from the parent. That transition is forbidden.
 
-Child recovery must not allocate a pool or create threads. The existing [`FORK_ARCHITECTURE.md`](FORK_ARCHITECTURE.md) requirement to replace helpers before returning to Python will be revised only after the implementation and fork tests establish this armed-child model.
+Child recovery must not allocate a pool or create threads.
+[`FORK_ARCHITECTURE.md`](FORK_ARCHITECTURE.md) now describes this implemented
+armed-child model in both builds.
 
 ## Tests written before implementation
 
@@ -348,8 +354,10 @@ behavior:
 - the active PEP draft for lazy persistence, observability, failure, and fork semantics;
 - `docs/TESTING.md` for fault-injection and threshold-boundary commands.
 
-No document should state that GIL `gc.enable_parallel()` returns only after a
-complete pool exists. The free-threaded implementation is still eager.
+Neither build's `gc.enable_parallel()` returns a complete native pool. Both
+arm without helper threads. The longer plan sections above retain their
+design requirements; the Implementation result section records completed
+local work. Remote checkpoint verification remains pending.
 
 ## Atomic implementation sequence
 

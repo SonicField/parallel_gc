@@ -1,14 +1,15 @@
 # Parallel GC Architecture
 
-**Audience:** CPython core developers reviewing this work for potential merge.
+**Audience:** CPython core developers learning and reviewing the design.
 Assumes familiarity with CPython's GC internals (`gc.c`, `gc_free_threading.c`,
 `PyGC_Head`, `ob_gc_bits`, mimalloc page layout) but not this project's design.
 
 For build instructions see [GETTING_STARTED.md](GETTING_STARTED.md).
 For design rationale and heritage see [DESIGN_POST.md](DESIGN_POST.md).
-The canonical proposal is [pep-parallel-gc.rst](pep-parallel-gc.rst).
+The discussion starting point is [pep-parallel-gc-v2.rst](pep-parallel-gc-v2.rst).
+Start with [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for evidence and known defects.
 
-This document describes the `cpython/` submodule at fork commit `7ec0874a7d`,
+This document describes the `cpython/` submodule at fork commit `c67363fa59`,
 based on `python/cpython` commit `333071231d`.
 
 ---
@@ -84,7 +85,8 @@ parallel threshold therefore applies to the exact combined list that the
 serial collector would process; it does not change when or which generations
 are selected.
 
-The serial `update_refs` is replaced by `update_refs_with_splits()`, followed by
+When parallel policy is enabled, serial `update_refs` is replaced by
+`update_refs_with_splits()`, followed for eligible collections by
 parallel interpreter-root marking and two parallel collector phases. Each
 parallel phase retains its baseline fallback behavior.
 
@@ -98,6 +100,9 @@ deduce_unreachable()
   +-- candidates < 16384?
   |     Yes: run subtract_refs() and move_unreachable() on the
   |     collecting thread; do not update the worker controller.
+  |
+  +-- if ARMED, ensure pool started before dispatch
+  |     Failure: serial remainder; warn after safe cleanup; enter FAILED.
   |
   +-- _PyGC_ParallelMarkAliveFromQueue()
   |     Parallel. Expands interpreter roots into a shared queue,
@@ -345,7 +350,8 @@ resources, finishes the collection serially, and enters `FAILED`. One warning
 is delivered after the collection state is restored. No later collection
 retries until an explicit `gc.enable_parallel()` re-arms the collector.
 
-GIL helper threads create and bind persistent `PyThreadState` objects so debug
+The collecting thread creates persistent `PyThreadState` objects; GIL helpers
+bind them so debug
 reference-count accounting and traversal callbacks have valid thread state.
 
 `gc.disable_parallel()` stops GIL helpers but may retain reusable pool storage.
@@ -372,6 +378,13 @@ that trial: a lower cost is retained; otherwise the controller returns to the
 previous worker count. Bounds are 2 and 16. The accepted count persists across
 collections while the pool exists. Sub-threshold GIL collections do not alter
 this state.
+
+The FT search deliberately excludes serial execution. Its cost is
+discontinuous with the parallel worker-count curve. An adjacent local walk
+that retreats to serial can fail to cross a slower intermediate parallel count
+and never discover a faster count beyond it. This is a design constraint, not
+a missing one-worker setting. Local minima within 2–16 remain possible too;
+the controller does not guarantee a global optimum.
 
 A GIL build uses that many helper threads while the collecting thread
 coordinates them. A free-threaded build counts the collecting thread as worker
@@ -577,12 +590,13 @@ runs worker zero's phase directly, and waits for the signalled helpers on
 `done_cond`. Work descriptors cover `PROPAGATE`, `UPDATE_REFS`, `MARK_HEAP`,
 and `SCAN_HEAP`.
 
-The helpers create persistent Python thread states and install their state and
+The collecting thread creates persistent Python thread states for helpers.
+Helpers install their state and
 interpreter pointers in thread-local storage while running, without a full
 bind. This supplies debug-build reference-count accounting for traversal
 callbacks.
 `gc.disable_parallel()` joins the helpers and destroys the complete
-free-threaded pool; a later enable always creates a new pool.
+free-threaded pool; a later enable arms without creating a pool.
 
 The adaptive controller selects the active participant count; there is no GIL
 split-size threshold or phase-specific cap in this collector. If page
@@ -591,21 +605,43 @@ parallel `update_refs` failure aborts the cycle because it cannot safely resume
 with the structurally different serial walk. Parallel marking errors restore
 reference state before aborting.
 
-The pool belongs to the interpreter. The baseline worker-argument array is a
-file-static allocation shared by the FT pool lifecycle.
+The pool and worker-argument array belong to the interpreter. A lifecycle mutex
+serializes enable, disable, configuration snapshots and the collection-start
+decision. Once collection is active, enable and disable reject changes.
+
+Enable enters `ARMED` without native threads. The first collection calls
+`_PyGC_ThreadPoolEnsureStarted()` before `gc_collect_internal()` stops the
+world. Thread-state creation and QSBR table growth can themselves require
+stop-the-world coordination, so startup inside the stopped world would risk
+deadlock. Startup creates 15 helpers transactionally, publishes only a ready
+pool, and enters `ACTIVE`. Failure cancels and joins created helpers, deletes
+their thread states, frees partial resources, clears the temporary exception
+and enters `FAILED`. The collection runs serially and warning delivery follows
+safe cleanup. An explicit enable is required for another attempt.
+
+Startup tests cover every helper/native-thread failure position. They do not
+resolve the separate unchecked-join result problem or all collection-phase
+allocation failures; see [AUTIT-TODO.md](../AUTIT-TODO.md).
 
 ### 3.8 Fork Lifecycle
 
 The parent retains its existing helpers and learned adaptive state across a
 supported CPython fork. Only the calling thread survives in the child, so the
 child abandons the copied pool without joining vanished threads or operating on
-copied synchronization objects. The free-threaded implementation then
-constructs new helpers and resets the shared adaptive controller to its
-four-worker starting state. The GIL implementation instead becomes `ARMED` and
-defers replacement helpers until a later eligible collection.
+copied synchronization objects. Both enabled collectors become `ARMED`, reset
+the controller to four and defer replacement helpers until a later eligible
+collection. `DISABLED` and `FAILED` children preserve those states.
+
+FT fork preparation acquires the lifecycle mutex before stopping the world.
+This lets another thread finish startup or teardown instead of pausing it while
+it holds the mutex. The parent releases the mutex before resuming the world.
+The child reinitializes the inherited mutex rather than unlocking a copied
+parent ownership state.
 
 If the fork occurs in a finalizer or another GC callback, the current
-collection finishes in the child but cannot update the reset controller. The
+collection finishes serially in the child and cannot update the reset
+controller. This applies to forks from start callbacks as well as finalizers.
+The
 full lifecycle contract, hook ordering, failure behavior, and verification
 requirements are recorded in [FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md).
 
@@ -635,8 +671,9 @@ Based on Chase & Lev 2005 and Le et al. 2013.
 - Each collector worker normally supplies a preallocated 256K-entry backing
   region (about 2 MiB on a 64-bit build), avoiding hot-path allocation and
   allowing growth beyond the standalone initial size
-- Growth allocation failure is reported to the collector; the collector never
-  silently continues with an incomplete graph
+- The deque reports growth allocation failure. Propagating that failure without
+  losing graph work is a required collector invariant; remaining allocation
+  failure paths are tracked in [AUTIT-TODO.md](../AUTIT-TODO.md).
 
 ### 4.2 Synchronisation
 
@@ -655,9 +692,10 @@ typedef struct {
 The barrier is portable across the POSIX and Windows implementations of the
 underlying mutex and condition-variable primitives. It is not the general
 dispatch mechanism. Both collectors use per-worker condition variables for
-targeted dispatch and a separate completion condition. The barrier is used for
-the GIL pool's startup handshake and resized to the selected participant count
-for the free-threaded `update_refs` phase boundary.
+targeted dispatch and a separate completion condition. The GIL startup
+handshake uses a cancellable condition protocol, not a fixed-count barrier.
+The FT phase barrier is resized to the selected participant count for the
+`update_refs` phase boundary.
 
 ### 4.3 GIL Local Work Buffers
 
@@ -728,8 +766,9 @@ All in `Modules/gcmodule.c`.
 - **GIL:** `_PyGC_ParallelInit()` creates the controller in `ARMED`; no helper
   is created until an eligible collection calls `_PyGC_ParallelStart()` to
   create the fixed 16-helper pool. The collecting thread only coordinates.
-- **Free-threaded:** `_PyGC_ThreadPoolInit()`; the collecting thread is one of
-  the 16 participants, so the pool creates 15 helpers.
+- **Free-threaded:** enter `ARMED` without a pool. The first collection calls
+  `_PyGC_ThreadPoolEnsureStarted()` before stop-the-world; the collecting
+  thread is one of the 16 participants, so successful startup creates 15 helpers.
 - The adaptive controller may activate fewer participants for a collection.
 - There is no startup configuration or caller-supplied worker count.
 - Calling the function while already enabled is a no-op.
@@ -745,7 +784,7 @@ Returns availability, enabled state, and the fixed worker limit. Enabled builds
 also report the adaptive worker count. The free-threaded build currently emits
 a `parallel_cleanup` capability key inherited from the prototype, although
 finalization and `tp_clear` deletion remain serial; the name and usefulness of
-that field require API review. GIL builds additionally report `pool_active`
+that field require API review. Both feature-on builds report `pool_active`
 and `startup_failed`. `num_workers` is the configured limit while enabled, not
 a claim that those threads already exist. Disabled builds report zero even if
 the GIL implementation retains reusable storage.
@@ -774,6 +813,8 @@ objects cheaply. See Section 2.4.
 
 ### Why persistent thread pool?
 
+Creating threads is expensive enough to consume useful collection savings.
+Both builds defer that cost until first use and reuse helpers after startup.
 Thread creation and joining are avoided between collections. Deque storage is
 retained and reused. Dispatch uses targeted condition-variable signals rather
 than a barrier broadcast.
@@ -852,7 +893,7 @@ when the parallel heap phases improve.
 | `docs/ARCHITECTURE.md` | This file |
 | `docs/DESIGN_POST.md` | Design rationale, CinderX heritage, optimisations |
 | `docs/GETTING_STARTED.md` | Reviewer quick start: build, test, evaluate |
-| `docs/pep-parallel-gc.rst` | Canonical proposal |
+| `docs/pep-parallel-gc-v2.rst` | Discussion starting point |
 
 ---
 
@@ -904,6 +945,9 @@ gc.collect()
   |  (2) candidates < 16384?
   |       Yes: serial subtract_refs + move_unreachable; return
   |
+  |       Otherwise ensure lazy pool startup before worker dispatch
+  |       Failure: serial remainder; warning after cleanup; FAILED
+  |
   |  (3) _PyGC_ParallelMarkAliveFromQueue(interp, base)
   |       Workers: expand and mark from interpreter roots
   |       or serial known-root fallback
@@ -923,6 +967,10 @@ gc.collect()
 ## Appendix B: Full Collection Flow (Free-threaded Build)
 
 ```
+  gc_collect_main()
+  |  serialize collection start; if ARMED, attempt pool startup
+  |  before stop-the-world; failure selects serial collection
+  |
   gc_collect_internal()
   |
   gc_mark_alive_from_roots(interp, state)                    [gc_free_threading.c]
@@ -949,7 +997,8 @@ gc.collect()
 
 ## Appendix C: Heritage
 
-Ported from [CinderX](https://github.com/facebookincubator/cinder).
-Key divergences: CPython atomic wrappers, multi-phase architecture,
-split-vector work distribution, thread-local work buffers, and the free-threaded
-integration. Provenance and licensing still need an upstream-readiness review.
+The prototype documents attribute parts of the worker-pool, barrier and deque
+heritage to CinderX. Exact source revisions, paths, copied portions and licensing
+conclusions are not yet mapped. Treat that attribution as an unresolved
+provenance task, not a verified statement that the whole collector was copied
+from CinderX. See [CORE_DEV_DECISIONS.md](CORE_DEV_DECISIONS.md).

@@ -390,23 +390,54 @@ portion of free-threaded collection.
 
 ## Benchmark results
 
-The current full results were collected with optimized PGO+LTO CPython 3.16
-builds on the same 72-core AArch64 host. They establish useful regions in the
-500,000-requested-object synthetic graphs for both collectors and also expose
-negative regions; they are not a claim that every workload improves.
+Latest recorded project campaigns use Python 3.16 PGO+LTO on one
+72-logical-CPU AArch64 host. These revisions matter: the GIL collector was
+`669ed6b17e`; FT was `195830171f` after lazy startup. Later `c67363fa59`
+changes release-build tests only. Parallel-GC phases were included in PGO.
 
-| Build | Mixed throughput | 500K requested heaps | Sustained synthetics |
-|-------|------------------|----------------------|----------------------|
-| GIL | -0.2% | all 8 faster; 1.26x geomean | +9.5% throughput geomean; -26% mean callback interval |
-| Free-threaded | +19.5% | all 8 faster; 1.22x geomean | +2.3% throughput geomean; +31% mean callback interval |
+| Build and revision | Mixed throughput | Eight requested 500,000-object shapes | Sustained results |
+|--------------------|------------------|--------------------------------------|-------------------|
+| GIL `669ed6b17e` | Effectively unchanged | 1.08x collection geomean; graph has an unstable negative mean | Throughput +7.6% geomean; AI mean callback interval +8%. |
+| FT `195830171f` | +23.5% | All eight faster; 1.24x collection geomean | Throughput +7.0% geomean; AI throughput −9.9%, mean callback interval +116%. |
 
-The free-threaded sustained aggregate contains a material negative result:
-the finalizer-heavy `ai_workload` was -14.7% in throughput and +105% in mean
-callback interval. A diagnostic run found similar candidate totals but fewer,
-larger parallel collections and suggested that serial finalization and
-deallocation dominated the additional time. No durable raw phase record
-accompanies the published result. Treat that observation as a hypothesis, not
-as evidence of the cause.
+GIL mixed mean callback interval increased 3% and maximum increased 21%.
+FT mixed mean interval decreased 26% and maximum decreased 60%, but sustained
+chain mean interval increased 13%. The FT AI maximum increased from 3.38 to
+14.39 seconds. These complete callback intervals are not direct FT
+stop-the-world pause measurements.
+
+Current reports and raw-data links:
+
+- [GIL and pre-lazy FT project analysis](../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md), including exact commands and the GIL variance.
+- [FT lazy-pool project, adaptive/fixed and pyperformance analysis](../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md).
+- [FT raw project report](../benchmarks/results/arm64-316-1958301-ft-lazy-full-2026-10-08.md).
+- [PGO training controls and earlier full runtime ABBA](../benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md). Its eager-start SQLite regressions are historical.
+- [GIL lazy SQLite ABBA](../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md), superseding that workload's eager-start result.
+
+The FT lazy pyperformance run completed 93 programs/119 named measurements,
+with four fresh-process rigorous ABBA legs and mode attestations. SQLite
+`+0.013%` and startup changes were not significant; `float` was 10.5%
+slower. `gc_traversal`, `create_gc_cycles` and `btree_gc_only` improved
+41.8%, 22.7% and 16.8%. Seven default programs were excluded: four dependency
+incompatibilities and three `networkx` variants because the build lacked
+`_bz2`. It is not a complete-default-suite result.
+
+The full GIL pyperformance sweep predates lazy startup. Focused GIL SQLite ABBA
+after lazy startup measured a non-significant 0.57% difference. A new full GIL
+sweep is pending; the focused result cannot establish neutrality for every
+program.
+
+FT adaptive/fixed experiments compare fixed 2, 4, 8 and 16 using the private
+test control. Fixed 16 is faster in the three tested phases. Adaptive arms
+improve on fixed 2 and 4, but do not reach fixed 16 within three cycles. The
+result does not establish convergence time, or that a longer run must converge.
+The adjacent controller cannot guarantee a global optimum. Serial is
+deliberately outside its FT search because the discontinuity can trap a local
+walk before a better parallel configuration is discovered.
+
+The FT AI finalization/BRC explanation and `float` work-distribution
+explanation remain hypotheses. The reports do not include the phase/counter
+measurements needed to attribute those regressions.
 
 ### Free-threaded finalizer/BRC hypothesis
 
@@ -432,16 +463,20 @@ and a corresponding increase in the serial tail.
 This investigation can explain a performance boundary. It does not expand the
 scope of the initial PEP to include BRC changes or parallel finalization.
 
-- [GIL full result](../benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md)
-- [Free-threaded full result](../benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md)
-- [Free-threaded standard result](../benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md)
+### Earlier evidence
 
-The GIL report records the dirty pre-commit worktree later committed as
-`92f992042c`; the free-threaded report records that commit directly. Final
-submission evidence should repeat both builds from clean, published commits
-and add feature-off optimized controls. New result sets must record exact
-commits, configuration flags, machine description, command line, raw samples,
-and variance.
+September records retain their original measurements and provenance:
+
+- [GIL September full result](../benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md).
+- [FT September full result](../benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md).
+- [FT September standard result](../benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md).
+
+Do not attribute those results to the current source. The GIL record includes a
+dirty-tree fingerprint; the FT record identifies `92f992042c`. The newer
+October analyses above are the handoff's primary evidence. Current-revision
+broad/platform repeats, optimized feature-off controls, a full GIL
+pyperformance rerun, first-use latency and explicit memory measurements remain
+pending. See [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md).
 
 ---
 

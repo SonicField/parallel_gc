@@ -4,6 +4,16 @@ This project develops and evaluates parallel cyclic garbage collection for GIL
 and free-threaded CPython builds. Parallel collection is optional at build time
 and runtime.
 
+Read the [PEP-shaped discussion draft](docs/pep-parallel-gc-v2.rst) for the
+design goals, how both collectors work, measured results and open questions.
+It is a starting point for discussion, not a formal proposal. Codex wrote it
+under Alex Turner's guidance using
+[Verifiable Practice](https://github.com/SonicField/verifiable-practice).
+
+For an informal engineering review, start with the
+[review handoff](docs/REVIEW_HANDOFF.md). It names the source checkpoint,
+reading path, evidence, known defects and pending publication checks.
+
 The project uses two project repositories and one pinned benchmark dependency:
 
 - The `cpython/` submodule is the `SonicField/cpython` fork. It contains the
@@ -43,10 +53,12 @@ git submodule update --init --recursive
 ```
 
 The authoritative source is the checked-in `cpython/` submodule at
-`SonicField/cpython` commit `7ec0874a7d219108401b9dd3ff966db80958ecac`, on
+`SonicField/cpython` commit `c67363fa59543ef5d572383af927f1cff88514a1`, on
 branch `parallel-gc-upstream-port`. The port is based on CPython commit
 `333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
-with submodules therefore obtains the exact reviewed source.
+with submodules obtains the commit recorded by that parent revision. This
+local handoff checkpoint still needs publication; verify it with
+`git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
 
 The root `Makefile` and scripts under `tools/` still describe the older project
 workflow. Use the explicit current-port commands below for build, test,
@@ -116,18 +128,24 @@ gc.disable_parallel()
 In a GIL build, `gc.enable_parallel()` arms the collector without creating a
 thread. The fixed 16-helper pool is created on the first collection with at
 least 16,384 candidates and enough work splits. Smaller collections remain
-serial. The free-threaded build currently creates its 15 helpers when enabled;
-making that pool lazy is separate work. The stochastic random-walk controller
+serial. The free-threaded build also arms without helpers and creates its 15
+helpers at the first collection, before stopping the world. The collecting
+thread participates as worker zero. The stochastic random-walk controller
 tries adjacent participant counts and walks back after a regression. There is
 no environment-variable, `-X`, or `PyConfig` startup control. In a build
 without parallel-GC support, the runtime enable and disable functions raise
 `RuntimeError`, while
 `gc.get_parallel_config()` reports that the feature is unavailable.
 
-If a GIL pool cannot start, the triggering collection completes serially, one
+If either pool cannot start, the triggering collection completes serially, one
 `RuntimeWarning` is emitted after collection state is safe, and later
 collections remain serial. An explicit `gc.enable_parallel()` permits one new
-attempt. `pool_active` and `startup_failed` expose this state.
+attempt. `pool_active` and `startup_failed` expose this state in both builds.
+
+The FT controller deliberately searches only the parallel range of 2–16
+participants. Serial execution has a discontinuous cost and can trap a local
+optimiser before it explores faster parallel configurations. The adjacent
+random walk does not guarantee a global optimum within its range either.
 
 `gc.get_parallel_stats()` exposes implementation diagnostics and phase
 timings. `gc.collect_async()` schedules the normal collector and returns
@@ -139,16 +157,19 @@ From a configured build directory, run:
 ```bash
 ./python -m test -j4 \
     test_gc \
+    test_gc_ft_parallel \
     test_gc_ws_deque \
     test_gc_parallel \
     test_gc_parallel_fork \
     test_gc_parallel_properties \
+    test_gc_parallel_mark_alive \
     test_capi.test_config \
     test_embed
 ```
 
-For the free-threaded build, also run `test_gc_ft_parallel` and
-`test_free_threading.test_gc`. See the build-and-test guide for the full matrix.
+`test_gc_ft_parallel` includes lifecycle tests for both builds; the mark-alive
+suite is GIL-specific. For FT, also run `test_free_threading.test_gc`.
+See the build-and-test guide for the full matrix.
 
 ## Fork behavior
 
@@ -156,8 +177,10 @@ Forks made through CPython's supported fork protocol retain the parent's pool
 and adaptive history unchanged. A GIL child abandons inherited helpers,
 becomes armed, resets its controller to four, and creates no replacement
 thread during child recovery. Its first later eligible collection starts the
-new pool. The free-threaded child currently creates replacement helpers during
-recovery. If a callback or finalizer forks during collection, the child
+new pool. Free-threaded child recovery likewise creates no helper and leaves
+an enabled collector armed. FT fork preparation takes the lifecycle lock
+before stopping the world; the parent releases it before resuming the world.
+If a callback or finalizer forks during collection, the child
 finishes that inherited collection serially without training the reset
 controller. The GIL and free-threaded regression tests cover ordinary and
 finalizer forks with bounded child waits. See the
@@ -181,17 +204,17 @@ implementation changes a reference count.
 
 ## Performance evidence
 
-Optimized PGO+LTO measurements on the current 72-core AArch64 host show that
-the implementation is worth further evaluation, while also identifying its
-limits:
+Latest recorded PGO+LTO measurements on the 72-logical-CPU AArch64 host are
+listed by revision in the [review handoff](docs/REVIEW_HANDOFF.md):
 
-- GIL: all eight requested 500,000-object heaps improved, with a 1.26x
-  collection-time geomean. Sustained synthetic throughput improved by 9.5%
-  geomean; the mixed workload was effectively neutral at -0.2%.
-- Free-threaded: all eight requested heaps improved, with a 1.22x geomean.
-  Mixed-workload throughput improved by 19.5%. Sustained synthetic throughput
-  improved by 2.3% geomean, but the finalizer-heavy workload regressed by
-  14.7% and its callback interval increased.
+- GIL at `669ed6b17e`: eight requested 500,000-object collection shapes gave a
+  1.08x geomean, including an unstable negative graph result. Mixed throughput
+  was effectively unchanged, but mean callback interval increased 3% and
+  maximum interval increased 21%. Sustained throughput improved 7.6% geomean.
+- FT collector `195830171f`: all eight shapes improved, with a 1.24x geomean;
+  mixed throughput improved 23.5%. Sustained AI throughput fell 9.9% and mean
+  callback interval increased 116%. Pyperformance `float` was 10.5% slower;
+  SQLite and startup were neutral in the rigorous ABBA comparison.
 
 These are same-binary serial/parallel comparisons, not general CPython
 performance claims. Callback intervals are not strictly stop-the-world time in
@@ -229,7 +252,9 @@ first-thread transition.
 - [Core-Developer Sprint Readiness Plan](docs/CORE_DEV_SPRINT_READINESS_PLAN.md)
 - [Parallel GC Source Audit TODO](AUTIT-TODO.md)
 - [Design Post](docs/DESIGN_POST.md)
-- [PEP Draft](docs/pep-parallel-gc.rst)
+- [Discussion draft](docs/pep-parallel-gc-v2.rst)
+- [Review Handoff](docs/REVIEW_HANDOFF.md)
+- [Handoff Reconciliation Plan and Log](docs/HANDOFF_RECONCILIATION_PLAN.md)
 
 ## Links
 
