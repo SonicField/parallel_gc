@@ -118,3 +118,9 @@ Resolved candidate identities:
 - Final correctness test: `be478ea01733664477eed823f5e85a2fbaa0f89f`.
 
 Excluded: every experimental collector change on `investigation/*`; no blanket merge of candidate parent gitlinks. PEP edits remain a separate unit from the documentation consolidation.
+
+### 16 October: preserve experiment evidence before consolidation
+
+Imported 42 historical evidence files from documentation candidate `c21af71` into the two dated investigation directories. Git blob comparisons match all 42 original files; all 12 campaign JSON files parse. The initial import appended final newlines to twelve JSON files; the byte comparison detected this and the original endings were restored before commit. No measurements were rerun or relabelled. Recorded patch files are experimental evidence, not changes to collector source.
+
+The repository ignores JSON/log results by default; these specific imported evidence files are explicitly included in the evidence commit. Historical patch/analysis files contain original trailing whitespace, reported by `git diff --check` and retained to preserve their bytes. New documentation is checked separately.

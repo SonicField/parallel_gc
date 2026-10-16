@@ -1,0 +1,50 @@
+== existing workloads (frame-rooted) ==
+  mixed: throughput                          cand vs base    +2.1%  halves    +1.7%    +2.4%  control   -0.1%  
+  mixed: latency mean                        cand vs base    -3.9%  halves    -3.5%    -4.3%  control   -0.4%  
+  mixed: latency max                         cand vs base   +15.4%  halves   +23.8%    +8.4%  control  +17.7%  
+  synthetic ai_workload: throughput          cand vs base    -1.8%  halves    -4.6%    +1.4%  control   +1.8%  
+  synthetic ai_workload: latency mean        cand vs base   +11.1%  halves    +5.2%   +16.6%  control   +0.6%   HN-FAIL
+  synthetic ai_workload: latency max         cand vs base   +18.5%  halves    +4.9%   +31.8%  control   +6.6%   HN-FAIL
+  synthetic chain: throughput                cand vs base   +19.7%  halves   +33.4%    +6.2%  control   +3.7%  
+  synthetic chain: latency mean              cand vs base   -14.1%  halves   -16.6%   -11.7%  control   -1.3%  
+  synthetic chain: latency max               cand vs base    -8.8%  halves    -6.4%   -10.9%  control   -0.1%  
+  synthetic graph: throughput                cand vs base    +2.1%  halves    +2.1%    +2.0%  control   +0.4%  
+  synthetic graph: latency mean              cand vs base    +0.6%  halves    +1.9%    -0.7%  control   +1.1%  
+  synthetic graph: latency max               cand vs base    +2.4%  halves    +7.0%    -3.9%  control  +21.0%  
+  collection chain: collect time             cand vs base    -6.5%  halves    -3.2%    -9.8%  control   +0.4%  
+  collection tree: collect time              cand vs base    -3.2%  halves    +4.1%    -9.9%  control   -4.4%  
+  collection wide_tree: collect time         cand vs base    -4.7%  halves    +0.9%    -9.9%  control   +0.8%  
+  collection graph: collect time             cand vs base    -3.2%  halves    -1.5%    -4.8%  control   -6.9%  
+  collection layered: collect time           cand vs base    -9.0%  halves    -5.9%   -12.0%  control   -8.4%  
+  collection independent: collect time       cand vs base    -1.0%  halves    +1.4%    -3.5%  control   +4.2%  
+  collection ai_workload: collect time       cand vs base    -6.9%  halves    +2.5%   -15.2%  control   -4.6%  
+  collection web_server: collect time        cand vs base    -2.3%  halves    +3.2%    -7.4%  control   +2.0%  
+== module-rooted workloads ==
+  mixed+module cache: throughput             cand vs base    +6.4%  halves    +6.6%    +6.2%  control   -0.9%  HB-PASS
+  mixed+module cache: latency mean           cand vs base   -13.4%  halves   -14.3%   -12.6%  control   +0.0%  HB-PASS
+  mixed+module cache: latency max            cand vs base    -9.5%  halves   +14.9%   -33.1%  control   -4.1%  
+  synthetic ai_workload (module): throughput cand vs base    +1.8%  halves    +4.9%    -1.1%  control   +1.6%  
+  synthetic ai_workload (module): latency mean cand vs base    -4.3%  halves   -10.6%    +2.1%  control   +4.4%  
+  synthetic ai_workload (module): latency max cand vs base    -1.1%  halves    -8.4%    +5.7%  control  +26.4%  
+  synthetic chain (module): throughput       cand vs base    -0.7%  halves    -0.4%    -1.0%  control   -3.7%  
+  synthetic chain (module): latency mean     cand vs base    +6.1%  halves   +17.4%    -3.9%  control   +3.0%   HN-FAIL
+  synthetic chain (module): latency max      cand vs base    +6.8%  halves   +19.0%    -4.0%  control   +6.8%  
+  synthetic graph (module): throughput       cand vs base    +3.0%  halves    +3.0%    +2.9%  control   -0.2%  
+  synthetic graph (module): latency mean     cand vs base    -0.5%  halves    -0.6%    -0.4%  control   +1.4%  
+  synthetic graph (module): latency max      cand vs base   -10.5%  halves    -6.6%   -14.2%  control  -17.4%  
+  collection (module) chain: collect time    cand vs base   -14.1%  halves   -16.4%   -11.8%  control   -0.8%  HB-PASS
+  collection (module) tree: collect time     cand vs base   -14.9%  halves   -21.5%    -7.3%  control   +0.1%  HB-PASS
+  collection (module) wide_tree: collect time cand vs base   -13.5%  halves   -15.3%   -11.7%  control   -1.8%  HB-PASS
+  collection (module) graph: collect time    cand vs base   -20.1%  halves   -20.5%   -19.6%  control   -3.8%  HB-PASS
+  collection (module) layered: collect time  cand vs base   -25.8%  halves   -27.9%   -23.5%  control   -7.1%  HB-PASS
+  collection (module) independent: collect time cand vs base   -16.6%  halves   -17.4%   -15.8%  control   -2.4%  HB-PASS
+  collection (module) ai_workload: collect time cand vs base   -14.4%  halves   -22.6%    -5.0%  control   +2.0%  HB-PASS
+  collection (module) web_server: collect time cand vs base   -12.3%  halves   -15.0%    -9.5%  control   +2.3%  HB-PASS
+
+HB passes: 10   HN failures: 3   (of 40 rows)
+
+within-build parallel vs serial (per file):
+  1-pgo-B2-ft: mixed thr +23.9% lat -25.8% | mixed+cache thr +21.0% lat -29.0%
+  2-pgo-Ccand-ft: mixed thr +26.3% lat -28.2% | mixed+cache thr +30.2% lat -39.0%
+  3-pgo-Ccand-ft: mixed thr +26.6% lat -28.6% | mixed+cache thr +29.8% lat -38.2%
+  4-pgo-B2-ft: mixed thr +23.5% lat -25.8% | mixed+cache thr +21.1% lat -29.1%

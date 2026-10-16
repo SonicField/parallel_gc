@@ -1,0 +1,16 @@
+{"heap_type": "chain", "rooting": "frame", "w2": {"mark_alive_ms": 10.592754, "total_ms": 42.863566}, "w16": {"mark_alive_ms": 2.696477, "total_ms": 22.05867}}
+{"heap_type": "chain", "rooting": "module", "w2": {"mark_alive_ms": 17.990658, "total_ms": 46.162673}, "w16": {"mark_alive_ms": 10.297583, "total_ms": 29.181018}}
+{"heap_type": "tree", "rooting": "frame", "w2": {"mark_alive_ms": 10.535345, "total_ms": 41.220284}, "w16": {"mark_alive_ms": 2.637884, "total_ms": 24.059587}}
+{"heap_type": "tree", "rooting": "module", "w2": {"mark_alive_ms": 17.678558, "total_ms": 46.361011}, "w16": {"mark_alive_ms": 9.955179, "total_ms": 30.013155}}
+{"heap_type": "wide_tree", "rooting": "frame", "w2": {"mark_alive_ms": 9.244452, "total_ms": 38.278844}, "w16": {"mark_alive_ms": 2.48825, "total_ms": 21.75217}}
+{"heap_type": "wide_tree", "rooting": "module", "w2": {"mark_alive_ms": 18.778474, "total_ms": 48.504778}, "w16": {"mark_alive_ms": 10.097805, "total_ms": 29.517886}}
+{"heap_type": "graph", "rooting": "frame", "w2": {"mark_alive_ms": 12.959659, "total_ms": 47.613985}, "w16": {"mark_alive_ms": 4.515441, "total_ms": 28.013453}}
+{"heap_type": "graph", "rooting": "module", "w2": {"mark_alive_ms": 25.654132, "total_ms": 60.971984}, "w16": {"mark_alive_ms": 16.770261, "total_ms": 39.831693}}
+{"heap_type": "layered", "rooting": "frame", "w2": {"mark_alive_ms": 17.970433, "total_ms": 53.245373}, "w16": {"mark_alive_ms": 4.477328, "total_ms": 27.785579}}
+{"heap_type": "layered", "rooting": "module", "w2": {"mark_alive_ms": 27.912173, "total_ms": 64.214483}, "w16": {"mark_alive_ms": 23.079353, "total_ms": 45.019461}}
+{"heap_type": "independent", "rooting": "frame", "w2": {"mark_alive_ms": 9.608231, "total_ms": 36.883405}, "w16": {"mark_alive_ms": 2.541755, "total_ms": 21.535368}}
+{"heap_type": "independent", "rooting": "module", "w2": {"mark_alive_ms": 17.66963, "total_ms": 45.527786}, "w16": {"mark_alive_ms": 9.723593, "total_ms": 28.125935}}
+{"heap_type": "ai_workload", "rooting": "frame", "w2": {"mark_alive_ms": 9.837834, "total_ms": 47.705057}, "w16": {"mark_alive_ms": 3.111714, "total_ms": 34.864663}}
+{"heap_type": "ai_workload", "rooting": "module", "w2": {"mark_alive_ms": 20.635934, "total_ms": 59.464384}, "w16": {"mark_alive_ms": 13.998583, "total_ms": 47.507552}}
+{"heap_type": "web_server", "rooting": "frame", "w2": {"mark_alive_ms": 10.26635, "total_ms": 41.08873}, "w16": {"mark_alive_ms": 5.091415, "total_ms": 25.49877}}
+{"heap_type": "web_server", "rooting": "module", "w2": {"mark_alive_ms": 18.95406, "total_ms": 48.781389}, "w16": {"mark_alive_ms": 9.909099, "total_ms": 29.754144}}

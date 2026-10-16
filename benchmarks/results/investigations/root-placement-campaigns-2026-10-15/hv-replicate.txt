@@ -1,0 +1,12 @@
+chain        frame   ma2=  9.2 ma16=  2.5 ratio=0.27 share16=0.12 total16=21.4
+chain        module  ma2= 17.0 ma16= 10.1 ratio=0.59 share16=0.35 total16=29.1
+graph        frame   ma2= 15.8 ma16=  5.2 ratio=0.33 share16=0.13 total16=39.0
+graph        module  ma2= 29.5 ma16= 23.2 ratio=0.79 share16=0.42 total16=55.3
+ai_workload  frame   ma2= 11.3 ma16=  3.6 ratio=0.32 share16=0.08 total16=42.4
+ai_workload  module  ma2= 23.8 ma16= 15.5 ratio=0.65 share16=0.27 total16=56.7
+chain        frame   ma2= 10.2 ma16=  2.9 ratio=0.28 share16=0.11 total16=25.7
+chain        module  ma2= 20.3 ma16= 10.1 ratio=0.50 share16=0.34 total16=29.5
+graph        frame   ma2= 11.8 ma16=  4.1 ratio=0.35 share16=0.15 total16=27.6
+graph        module  ma2= 23.8 ma16= 18.1 ratio=0.76 share16=0.43 total16=42.0
+ai_workload  frame   ma2= 10.6 ma16=  3.0 ratio=0.29 share16=0.09 total16=34.6
+ai_workload  module  ma2= 20.5 ma16= 12.2 ratio=0.60 share16=0.30 total16=41.4

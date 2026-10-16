@@ -1,0 +1,63 @@
+files: pgo-B2-ft=2 pgo-Ccand-ft=2
+[mixed workload] mode=parallel
+  throughput (/s)                              base=    3395.926 cand=    3467.621    +2.1% p=0.0000* BETTER
+  collection latency mean (ms)                 base=       2.735 cand=       2.639    -3.5% p=0.0000* BETTER
+  collection latency max (ms)                  base=       8.753 cand=      13.137   +50.1% p=0.2517  
+  time in GC callbacks (%)                     base=      60.041 cand=      59.097    -1.6% p=0.0000* BETTER
+[mixed workload] mode=serial  (CONTROL: identical code)
+  throughput (/s)                              base=    2723.389 cand=    2753.602    +1.1% p=0.0016* BETTER
+  collection latency mean (ms)                 base=       3.745 cand=       3.657    -2.4% p=0.0000* BETTER
+  collection latency max (ms)                  base=      14.098 cand=      14.559    +3.3% p=0.9300  
+  time in GC callbacks (%)                     base=      67.801 cand=      67.201    -0.9% p=0.0002* BETTER
+[synthetic ai_workload] mode=parallel
+  throughput (/s)                              base= 2924141.002 cand= 2806550.139    -4.0% p=0.2504  
+  collection latency mean (ms)                 base=    3161.193 cand=    3207.916    +1.5% p=0.6653  
+  collection latency max (ms)                  base=   15112.268 cand=   15418.882    +2.0% p=0.6342  
+  time in GC callbacks (%)                     base=      98.112 cand=      98.112    +0.0% p=0.9993  
+[synthetic ai_workload] mode=serial  (CONTROL: identical code)
+  throughput (/s)                              base= 3289735.330 cand= 3293026.077    +0.1% p=0.9568  
+  collection latency mean (ms)                 base=    2224.978 cand=    1857.013   -16.5% p=0.0865  
+  collection latency max (ms)                  base=    7314.387 cand=    5958.718   -18.5% p=0.2256  
+  time in GC callbacks (%)                     base=      98.992 cand=      99.041    +0.0% p=0.6071  
+[synthetic chain] mode=parallel
+  throughput (/s)                              base= 5887496.497 cand= 6012516.524    +2.1% p=0.6019  
+  collection latency mean (ms)                 base=    5142.176 cand=    5321.958    +3.5% p=0.5686  
+  collection latency max (ms)                  base=   33178.527 cand=   35990.456    +8.5% p=0.3155  
+  time in GC callbacks (%)                     base=      97.703 cand=      97.511    -0.2% p=0.2682  
+[synthetic chain] mode=serial  (CONTROL: identical code)
+  throughput (/s)                              base= 6183100.307 cand= 6190258.555    +0.1% p=0.9878  
+  collection latency mean (ms)                 base=    4707.147 cand=    5092.269    +8.2% p=0.2715  
+  collection latency max (ms)                  base=   28486.296 cand=   32023.564   +12.4% p=0.1714  
+  time in GC callbacks (%)                     base=      98.335 cand=      98.202    -0.1% p=0.6340  
+[synthetic graph] mode=parallel
+  throughput (/s)                              base= 2461081.737 cand= 2515575.049    +2.2% p=0.4894  
+  collection latency mean (ms)                 base=     197.403 cand=     188.551    -4.5% p=0.8414  
+  collection latency max (ms)                  base=     540.857 cand=     518.800    -4.1% p=0.7169  
+  time in GC callbacks (%)                     base=      86.050 cand=      86.113    +0.1% p=0.9700  
+[synthetic graph] mode=serial  (CONTROL: identical code)
+  throughput (/s)                              base= 1958805.703 cand= 1957609.625    -0.1% p=0.8852  
+  collection latency mean (ms)                 base=     220.863 cand=     240.277    +8.8% p=0.1069  
+  collection latency max (ms)                  base=     408.705 cand=     446.274    +9.2% p=0.2412  
+  time in GC callbacks (%)                     base=      88.822 cand=      89.549    +0.8% p=0.0968  
+[collection shapes] explicit gc.collect() time (ms), raw samples
+  chain parallel                               base=      90.719 cand=      90.455    -0.3% p=0.8042  
+  chain serial (control)                       base=     109.156 cand=     109.647    +0.5% p=0.3932  
+  tree parallel                                base=     101.731 cand=     100.554    -1.2% p=0.3189  
+  tree serial (control)                        base=     123.247 cand=     122.344    -0.7% p=0.1912  
+  wide_tree parallel                           base=     103.264 cand=     103.559    +0.3% p=0.7837  
+  wide_tree serial (control)                   base=     128.141 cand=     126.933    -0.9% p=0.7194  
+  graph parallel                               base=     142.028 cand=     131.074    -7.7% p=0.0010* BETTER
+  graph serial (control)                       base=     192.278 cand=     183.988    -4.3% p=0.0463  
+  layered parallel                             base=     119.562 cand=     105.848   -11.5% p=0.0018* BETTER
+  layered serial (control)                     base=     184.926 cand=     175.346    -5.2% p=0.0216  
+  independent parallel                         base=     123.024 cand=     117.424    -4.6% p=0.0116  
+  independent serial (control)                 base=     146.604 cand=     145.282    -0.9% p=0.6488  
+  ai_workload parallel                         base=     160.224 cand=     159.460    -0.5% p=0.8434  
+  ai_workload serial (control)                 base=     178.579 cand=     179.097    +0.3% p=0.8745  
+  web_server parallel                          base=     123.346 cand=     122.679    -0.5% p=0.6040  
+  web_server serial (control)                  base=     146.800 cand=     150.479    +2.5% p=0.0015* WORSE
+[within-build parallel/serial ratios, mean of runs]
+  pgo-B2-ft: mixed throughput +25.4%  latency -27.3%  collection geomean 1.24x  synthetic thr -1.5%  synthetic lat +21.0%
+  pgo-B2-ft: mixed throughput +24.0%  latency -26.7%  collection geomean 1.26x  synthetic thr +6.1%  synthetic lat +3.7%
+  pgo-Ccand-ft: mixed throughput +25.9%  latency -27.7%  collection geomean 1.28x  synthetic thr +3.1%  synthetic lat +17.7%
+  pgo-Ccand-ft: mixed throughput +25.9%  latency -28.0%  collection geomean 1.28x  synthetic thr +1.3%  synthetic lat +5.4%

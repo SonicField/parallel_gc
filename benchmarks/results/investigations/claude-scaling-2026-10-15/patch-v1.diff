@@ -1,0 +1,84 @@
+--- src-base/Python/gc_free_threading_parallel.c	2026-10-08 03:21:13.000000000 -0700
++++ patch-v1.c	2026-10-15 03:32:45.857475612 -0700
+@@ -1429,10 +1429,23 @@
+     int steal_attempts_since_work = 0;
+     const int MAX_STEAL_ATTEMPTS = pool->num_workers * 2;
+ 
++    (void)steal_attempts_since_work;
++    (void)MAX_STEAL_ATTEMPTS;
++    unsigned int share_tick = 0;
++
+     while (1) {
+         // Phase 1: Process local buffer (fast path - no fences!)
+         while (!_PyGCLocalBuffer_IsEmpty(local)) {
+-            steal_attempts_since_work = 0;
++            // EXPERIMENT: expose private work to thieves. Every 32 objects,
++            // if our deque is empty but the private buffer holds work, move
++            // half of it to the deque where idle workers can steal it.
++            if ((++share_tick & 31) == 0 && local->count >= 16 &&
++                _PyWSDeque_Size(&worker->deque) == 0) {
++                size_t n = local->count / 2;
++                for (size_t i = 0; i < n; i++) {
++                    _PyWSDeque_Push(&worker->deque, _PyGCLocalBuffer_Pop(local));
++                }
++            }
+             PyObject *obj = _PyGCLocalBuffer_Pop(local);
+             traverseproc traverse = Py_TYPE(obj)->tp_traverse;
+             if (traverse != NULL) {
+@@ -1567,10 +1580,35 @@
+             continue;  // Process stolen work
+         }
+ 
+-        // No work found anywhere
+-        steal_attempts_since_work++;
+-        if (steal_attempts_since_work >= MAX_STEAL_ATTEMPTS) {
+-            break;  // Give up - all workers appear idle
++        // EXPERIMENT: counter-based termination. We hold no work, so leave
++        // the active set. Re-enter it *before* stealing, so that
++        // propagate_active == 0 implies no worker holds or can create work.
++        _Py_atomic_add_int(&pool->propagate_active, -1);
++        int resumed = 0;
++        while (_Py_atomic_load_int(&pool->propagate_active) > 0) {
++            for (int offset = 1; offset < pool->num_workers && !resumed; offset++) {
++                _PyGCWorkerState *victim =
++                    &pool->workers[(worker_id + offset) % pool->num_workers];
++                if (_PyWSDeque_Size(&victim->deque) == 0) {
++                    continue;
++                }
++                _Py_atomic_add_int(&pool->propagate_active, 1);
++                size_t got = steal_batch_from_worker(worker, victim);
++                if (got > 0) {
++                    worker->objects_stolen += got;
++                    resumed = 1;
++                }
++                else {
++                    _Py_atomic_add_int(&pool->propagate_active, -1);
++                }
++            }
++            if (resumed) {
++                break;
++            }
++            _Py_yield();
++        }
++        if (!resumed) {
++            break;  // Closure complete
+         }
+     }
+ 
+@@ -2488,6 +2526,16 @@
+         }
+     }
+ 
++    // EXPERIMENT: every dispatched participant starts in the active set.
++    size_t participants = pool->adaptive_workers;
++    if (participants > (size_t)pool->num_workers) {
++        participants = (size_t)pool->num_workers;
++    }
++    if (participants < 1) {
++        participants = 1;
++    }
++    _Py_atomic_store_int(&pool->propagate_active, (int)participants);
++
+     // Dispatch to adaptive_workers (mirror of GIL parallel GC).
+     // FTP STW collections shouldn't release a lock that re-enters GC, so
+     // reentrant dispatch shouldn't happen — assert if it does.
