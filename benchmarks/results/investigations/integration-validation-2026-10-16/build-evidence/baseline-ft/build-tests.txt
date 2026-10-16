@@ -1,0 +1,17 @@
+Using random seed: 2778112429
+0:00:00 load avg: 3.37 mem: 34.3 MiB Run 6 tests in parallel using 6 worker processes (timeout: 5 min, worker timeout: 7 min 30 sec)
+0:00:00 load avg: 3.37 mem: 258.4 MiB [1/6] test_gc_ws_deque passed
+0:00:00 load avg: 3.37 mem: 231.1 MiB [2/6] test_parallel_gc_profile passed
+0:00:00 load avg: 3.37 mem: 164.1 MiB [3/6] test_gc_parallel_fork passed
+0:00:01 load avg: 3.37 mem: 235.8 MiB [4/6] test_gc_ft_parallel passed
+0:00:01 load avg: 3.37 mem: 92.1 MiB [5/6] test_decimal passed
+0:00:01 load avg: 3.37 mem: 53.8 MiB [6/6] test_gc passed
+
+== Tests result: SUCCESS ==
+
+All 6 tests OK.
+
+Total duration: 1.6 sec
+Total tests: run=948 skipped=73
+Total test files: run=6/6
+Result: SUCCESS

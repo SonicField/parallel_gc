@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Initial builds completed but native decimal was missing. Their campaign launcher is stopped and its last running leg has finished. Corrected fresh builds have started; hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. The first corrected full project ABBA leg is running; hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -20,7 +20,7 @@ Alex authorised CI and benchmarking after agreeing to retain the opt-in debug ve
 
 1. Project suite: baseline, current, current, baseline for GIL, then the same for FT. Every invocation uses unchanged `--full --include-synthetic --json`: five runs, 60-second sustained phases, four application threads and 500,000-object heaps. Serial and parallel results are produced within each invocation.
 2. Rigorous pyperformance binary ABBA for both modes, separately with parallel GC enabled and disabled. Use the full default selection; do not silently exclude failing benchmarks. Preserve failures as well as completed campaigns.
-3. Record every raw leg, per-workload means, both ABBA halves, build/driver provenance, source/harness hashes and skips/failures. Report program throughput, collection time and callback interval distinctly. Do not call an FT callback interval a stopped-world pause.
+3. Record every raw leg, per-workload means, both ABBA halves, build/driver provenance, source/harness hashes and skips/failures. Report program throughput, collection time and callback start-to-stop duration distinctly. Do not call an FT callback duration a stopped-world pause.
 4. The expected null baseline/current throughput and latency ratios are 1. No universal noise floor or new percentage acceptance threshold is adopted. Report changes and uncertainty; repeat unresolved differences before attributing them. Release acceptance criteria remain a separate decision.
 
 The project suite alone is estimated at about thirteen hours for eight invocations, based on historical 95-minute runs. Four PGO+LTO builds and sixteen rigorous pyperformance suites add substantial time; the whole sequence may take multiple days. These are estimates, not new measured durations.
@@ -63,19 +63,36 @@ The first parent-test attempt on the bare baseline executable failed to import `
 
 Stopped the still-waiting original campaign controller before it created results. Its replacement, `finish_tests_and_run.sh`, waits for all four successful build checks, verifies the completed GIL supplementary logs, runs the matching FT collector and parent checks in isolated test environments, and only then invokes the unchanged measurement launcher. A supplementary failure exits before any benchmark starts. Syntax checking passes; supplying a nonexistent build PID while the four-build marker is absent exits nonzero and creates no results directory. The real replacement controller is live and waiting for the FT builds. This prevents supplementary testing from overlapping measurements.
 
+### Four-build gate completed; corrected measurements started
+
+At 17:51 UTC all four optimized builds had passed the build gate. Both FT builds also passed the supplementary eleven-file collector/configuration/embedding selection, including `test_free_threading.test_gc`, and the four parent harness test modules. No supplementary test process remained when measurements began at 17:51:41 UTC. Native decimal was independently checked again in all four binaries; their executable hashes matched the post-build records.
+
+| Build | Six-file build check: tests / skips | Supplementary collector check: tests / skips | Parent harness tests |
+|-------|------------------------------------|---------------------------------------------|----------------------|
+| Baseline GIL | 948 / 85 | 682 / 91 | 67 passed |
+| Candidate GIL | 951 / 88 | 685 / 94 | 67 passed |
+| Baseline FT | 948 / 73 | 712 / 79 | 67 passed |
+| Candidate FT | 951 / 76 | 715 / 82 | 67 passed |
+
+The selections overlap; these counts must not be summed as unique tests. The GIL supplementary run skips two FT-only files; FT runs all eleven requested files. FT logs retain an `ImportError` emitted by `test_module_state_shared_in_global`: the existing C-API fixture is explicitly marked as an expected failure without the GIL because shared extension-module state is unsupported (upstream issue gh-117649). Both complete test runs report success. This is not a newly discovered parallel-GC crash.
+
+The [build-evidence directory](build-evidence/) preserves the four native-dependency preflights, selected test logs, executable hashes, post-build parallel profile checks and actual profile-use/LTO compiler-command excerpts. Full build logs remain at the scratch root, with their hashes in the excerpts. These prove the stated local build/test scope, not full CPython or hosted-platform completion.
+
+The corrected campaign records parent checkpoint `5440ac284672a631ffcdb5ef6a32544967fd2c45` and the fixed CPython source pair. Its first process is the baseline GIL `--full --include-synthetic` invocation, writing only to the new scratch root's `results/project/gil-1-baseline.json`. No corrected leg was complete when this entry was written. All eight project legs and sixteen pyperformance suites remain required; no performance result or readiness verdict is inferred from passing local tests.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
 
 | Requirement | Current state | Evidence needed for completion |
 |-------------|---------------|--------------------------------|
-| Corrected baseline/current GIL/FT PGO+LTO builds | Both GIL builds checked; baseline FT building, candidate FT queued | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
+| Corrected baseline/current GIL/FT PGO+LTO builds | Complete; supplementary local tests also passed | Four-build evidence preserved below; full CPython and hosted platform requirements remain separate |
 | Linux four-configuration matrix | Parent push reported; outcomes unknown | Run source pair, four job outcomes, focused collector/parent tests and feature-off skips |
 | GCC/Clang object checks | Parent push reported; outcomes unknown | Eight compiler/mode/build job outcomes and diagnostics; this is an unused-code gate, not every-warning acceptance |
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
-| Project full ABBA | Old incomplete attempt preserved; replacement not started | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
+| Project full ABBA | First corrected GIL baseline leg running; old attempt kept separate | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
 | pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
 | Analysis and handoff commits | Pending complete results | Per-workload negative and positive changes, both ABBA halves, serial controls and uncertainty; evidence linked from VALIDATION/PERFORMANCE; tracked worktrees clean; publication commands for local commits |
 

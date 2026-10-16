@@ -1,0 +1,44 @@
+Using random seed: 3944565591
+0:00:00 load avg: 3.24 mem: 34.1 MiB Run 11 tests in parallel using 4 worker processes (timeout: 10 min, worker timeout: 15 min)
+0:00:00 load avg: 3.24 mem: 193.0 MiB [ 1/11] test_gc_ws_deque passed
+0:00:00 load avg: 3.24 mem: 120.0 MiB [ 2/11] test_gc_parallel_fork passed
+0:00:00 load avg: 3.24 mem: 133.1 MiB [ 3/11] test_gc_parallel passed
+0:00:00 load avg: 3.24 mem: 201.7 MiB [ 4/11] test_parallel_gc_profile passed
+0:00:01 load avg: 3.24 mem: 271.2 MiB [ 5/11] test_gc_ft_parallel passed
+0:00:01 load avg: 3.24 mem: 275.7 MiB [ 6/11] test_capi.test_config passed
+0:00:01 load avg: 3.24 mem: 228.2 MiB [ 7/11] test_gc_parallel_properties passed
+Random seed: 8817509672203108386
+Random seed: 6156076043898469435
+Random seed: 9648183308824383644
+Random seed: 6888650231093059402
+Random seed: 15162744345189959817
+Random seed: 7215434594254480062
+Random seed: 11309561793380001237
+Random seed: 11722061312060973685
+Random seed: 12208058962324712926
+Random seed: 4148887594604315900
+Random seed: 381780035005326319
+Random seed: 10609011506646590067
+Random seed: 13908517620617696024
+Random seed: 6352379874844396298
+Random seed: 13011977602600843291
+Random seed: 8454182622441882602
+0:00:01 load avg: 3.24 mem: 155.1 MiB [ 8/11] test_free_threading.test_gc passed
+0:00:01 load avg: 3.24 mem: 106.8 MiB [ 9/11] test_gc passed
+0:00:05 load avg: 3.30 mem: 812.2 MiB [10/11] test_embed passed
+0:00:11 load avg: 3.43 mem: 49.2 MiB [11/11] test_capi.test_misc passed
+Traceback (most recent call last):
+  File "<string>", line 10, in <module>
+  File "<frozen importlib._bootstrap>", line 838, in module_from_spec
+  File "<frozen importlib._bootstrap_external>", line 1032, in create_module
+  File "<frozen importlib._bootstrap>", line 543, in _call_with_frames_removed
+ImportError: module _test_module_state_shared does not support loading in subinterpreters
+
+== Tests result: SUCCESS ==
+
+All 11 tests OK.
+
+Total duration: 11.2 sec
+Total tests: run=712 skipped=79
+Total test files: run=11/11
+Result: SUCCESS
