@@ -78,7 +78,7 @@ jobs:
           EXPECTED_AVAILABLE: ${{ matrix.parallel_gc && '1' || '0' }}
           EXPECTED_FREE_THREADED: ${{ matrix.free_threaded && '1' || '0' }}
         run: |
-          build-macos/python - <<'PY'
+          build-macos/python.exe - <<'PY'
           import gc
           import os
           import sys
@@ -117,19 +117,19 @@ jobs:
             tests+=(test_gc_parallel_mark_alive)
           fi
           set -o pipefail
-          build-macos/python -m test -q --timeout=600 "${tests[@]}" \
+          build-macos/python.exe -m test -q --timeout=600 "${tests[@]}" \
               2>&1 | tee focused-test.log
 
       - name: Install benchmark test dependencies
         run: |
-          build-macos/python -m ensurepip
-          build-macos/python -m pip install \
+          build-macos/python.exe -m ensurepip
+          build-macos/python.exe -m pip install \
               --requirement pyperformance/pyperformance/requirements/requirements.txt
 
       - name: Run benchmark harness unit tests
         run: |
           set -o pipefail
-          build-macos/python -m unittest -v \
+          build-macos/python.exe -m unittest -v \
               benchmarks.test_container_traversal_benchmark \
               benchmarks.test_gc_adaptive_benchmark \
               benchmarks.test_gc_perf_benchmark \
@@ -140,7 +140,7 @@ jobs:
         if: matrix.parallel_gc
         run: |
           set -o pipefail
-          build-macos/python -m test -q -j2 \
+          build-macos/python.exe -m test -q -j2 \
               --timeout=600 --fail-env-changed --rerun --verbose3 \
               --randseed=20260929 2>&1 | tee full-test.log
 

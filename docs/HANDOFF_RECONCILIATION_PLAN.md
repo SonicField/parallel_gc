@@ -205,3 +205,20 @@ pass structural checks. The source-record fixture suite covers matching
 revisions, wrong workflow SHA, unpinned CPython HEAD and dirty tracked source.
 PowerShell execution, artifact upload and hosted compilation/tests are not
 verified locally. These checks do not establish a passing platform matrix.
+
+### 16 October 2026: first platform results and macOS path correction
+
+Alex reported success for Linux focused run `38730251690`, Linux full-suite
+run `38730312362` and Windows run `38730315605`; detailed source/artifact and
+skip/rerun examination is still pending. Read the failed macOS log for
+`38730319127`: all four ARM64 configurations built and imported their 116
+modules, then failed before tests when the workflow executed the `Python/`
+directory as `build-macos/python`. The build commands identify the actual
+executable as `python.exe`. All four source records identify parent `724b74b`
+and CPython `c67363fa59`.
+
+Corrected the six macOS workflow invocations to `build-macos/python.exe` and
+recorded the failure without claiming tests passed. The intended falsifiable
+next step is a hosted rerun that gets past configuration verification and
+executes the selected tests. No collector code, test selection or benchmark
+implementation was changed.

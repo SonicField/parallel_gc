@@ -47,15 +47,27 @@ was unavailable during reconciliation; it has not been rechecked here.
 
 ## Required remote runs
 
-For the source pair selected by the parent being published, these outcomes are
-still pending:
+The first published-run outcomes below were reported on 16 October 2026.
+The macOS logs verify parent `724b74b749d942ace6ea05ec3bdab4bd504781d9` and
+CPython `c67363fa59543ef5d572383af927f1cff88514a1` in all four jobs. The other
+workflow conclusions come from Alex's captured listing; their source artifacts,
+job outcomes, skips and rerun details still need examination.
 
 | Platform and workflow | Required coverage | Recorded status |
 |-----------------------|-------------------|-----------------|
-| Linux, `parallel-gc.yml` | GIL and FT, feature-on and feature-off; focused collector and parent harness tests. | Pending new run. |
-| Linux, `full-cpython-tests.yml` | GIL and FT feature-on builds; full default CPython suite. | Pending new run. |
-| Windows, `windows-parallel-gc.yml` | GIL and FT feature-on builds; focused collector and parent harness tests, then full default CPython suite. | Pending new run. |
-| macOS, `macos-parallel-gc.yml` | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | Workflow added; first hosted run pending. |
+| Linux, `parallel-gc.yml` | GIL and FT, feature-on and feature-off; focused collector and parent harness tests. | [38730251690](https://github.com/SonicField/parallel_gc/actions/runs/38730251690): success reported; detailed evidence pending. |
+| Linux, `full-cpython-tests.yml` | GIL and FT feature-on builds; full default CPython suite. | [38730312362](https://github.com/SonicField/parallel_gc/actions/runs/38730312362): success reported; detailed evidence pending. |
+| Windows, `windows-parallel-gc.yml` | GIL and FT feature-on builds; focused collector and parent harness tests, then full default CPython suite. | [38730315605](https://github.com/SonicField/parallel_gc/actions/runs/38730315605): success reported; detailed evidence pending. |
+| macOS, `macos-parallel-gc.yml` | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | [38730319127](https://github.com/SonicField/parallel_gc/actions/runs/38730319127): all four built successfully, then failed at configuration verification before tests. Workflow-path correction prepared; hosted rerun pending. |
+
+The macOS run used ARM64 runners. Each build imported all 116 configured
+modules without a missing or failed import, then the workflow attempted
+`build-macos/python` and failed with `is a directory` (exit 126). On the runner's
+case-insensitive filesystem that path resolves to the build's `Python/`
+directory; the executable generated and used during the build is `python.exe`.
+All six workflow invocations now use `build-macos/python.exe`. This is a
+workflow correction, not a collector change. The next run must pass that
+verification step and execute the tests before macOS correctness can be assessed.
 
 Full default-suite runs begin with parallel policy disabled. Focused tests
 explicitly exercise activation and parallel dispatch. Report skipped tests,
@@ -81,7 +93,8 @@ remaining coverage limits are stated.
 Each workflow now verifies the parent revision and CPython gitlink/checkout
 before building and retains `ci-source.txt` as a per-job artifact. It records
 requested flags; the subsequent runtime configuration check verifies the build.
-This capture has local fixture checks but no hosted result yet.
+Local fixture checks pass, and the captured macOS logs verify hosted source-pair
+capture. Source artifacts for the other platform runs still need examination.
 [TESTING.md](TESTING.md) gives dispatch
 and log commands; the [handoff log](HANDOFF_RECONCILIATION_PLAN.md) tracks
 publication work. Updating this evidence record does not require rewriting
