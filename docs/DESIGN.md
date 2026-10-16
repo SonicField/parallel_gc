@@ -4,8 +4,11 @@
 with `gc.c`, `gc_free_threading.c`, `PyGC_Head`, `ob_gc_bits` and the mimalloc
 page layout.
 
-This document describes CPython fork revision `c67363fa59` (upstream base
-`333071231d`). The parent's `cpython/` gitlink selects the source for a later
+The design baseline is CPython fork revision `c67363fa59` (upstream base
+`333071231d`). Later unreferenced-code removal, opt-in production-test
+instrumentation and build-dependency repairs are recorded in
+[the integration log](CLAUDE_INTEGRATION_PLAN.md); they preserve the active
+collector design. The parent's `cpython/` gitlink selects the source for a later
 checkout; check this narrative against that source after collector changes.
 Evidence lives in [PERFORMANCE.md](PERFORMANCE.md) and
 [VALIDATION.md](VALIDATION.md); known defects in

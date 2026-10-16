@@ -28,3 +28,5 @@ ARM64 Linux, GCC 11.5.0, non-PGO/non-LTO builds. These reuse the complete clean 
 `header_dependencies.py`, `header_repair.sh` and `header_controls.sh` retain exact commands; use fresh isolated source/build directories and replace their explicit scratch root when reproducing. Configuration, compilation, build and test logs are retained for all six configurations. The sanitizer runs remain evidence for `0fc7b3ccb9`, not reruns for this dependency-only commit. No performance or hosted-CI claim is made.
 
 Raw build output retains its original trailing whitespace. Whitespace checks apply separately to new documentation and scripts; the logs are not rewritten to satisfy a formatting check.
+
+The GIL feature-off object also emits the pre-existing unused `move_unreachable` label warning. `Python/gc.c` is unchanged by integration; this remains an A10 follow-up rather than an unreported all-warning pass.

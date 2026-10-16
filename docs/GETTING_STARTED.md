@@ -22,9 +22,10 @@ git -C cpython rev-parse HEAD     # must match
 ```
 
 The parent's gitlink selects the source, not the submodule's branch setting.
-The documents describe CPython `c67363fa59543ef5d572383af927f1cff88514a1`,
+The documented design baseline is CPython `c67363fa59543ef5d572383af927f1cff88514a1`,
 based on `python/cpython` `333071231d3a46cccc32d7f44b99328c3299d0b1`.
-[VALIDATION.md](VALIDATION.md) records which evidence applies to which source.
+[VALIDATION.md](VALIDATION.md) records later cleanup/test/build commits and
+which evidence applies to each source; the gitlink remains authoritative.
 The root `Makefile` and scripts under `tools/` belong to an older workflow; do
 not use them for current builds or evidence.
 

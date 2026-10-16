@@ -73,6 +73,27 @@ Build-specific modules skip in the other configuration. Tests may also skip
 for unavailable platform facilities. Treat an unexplained skip in the active
 mode as a result to investigate.
 
+### FT production-marking equivalence
+
+In an FT feature-on debug build, `TestParallelMarking` in
+`test_gc_ft_parallel` runs the production collector through `gc.collect()`.
+It explicitly enables a debug verifier, requires the parallel-pass counter to
+advance, and compares parallel ALIVE marks with serial recomputation while the
+world remains stopped. The test-only non-pool marking implementation has been
+removed. Module-rooted graphs, repeated collections, nested tuple untracking,
+opt-in behaviour and counter resets are covered. Worker distribution is not a
+unit-test requirement.
+
+The verifier accounts separately for snapshot objects legitimately untracked
+during serial replay, then keeps the serial result. It is off by default and
+absent from release builds; enabling it adds a second marking pass and is not
+a performance configuration. The [integration report](../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md)
+records mutation sensitivity, sanitizer selections and coverage limits.
+
+```bash
+<ft-debug-build>/python -m test -v test_gc_ft_parallel
+```
+
 ### Focused compiler warnings
 
 The `Parallel GC compiler warnings` workflow compiles the four GC objects in

@@ -27,6 +27,7 @@ under Alex Turner's guidance using
 | What has been measured, how, and what must a change achieve? | [Performance](docs/PERFORMANCE.md) |
 | What is broken, unproven or undecided? What blocks upstreaming? | [Open issues](docs/OPEN_ISSUES.md) |
 | Which tests and CI runs apply to which source revision? | [Validation](docs/VALIDATION.md), [Testing](docs/TESTING.md) |
+| What was adopted from the review work, and what remains? | [Integration plan and progress log](docs/CLAUDE_INTEGRATION_PLAN.md) |
 | What is proposed for discussion? | [Discussion draft](docs/pep-parallel-gc-v2.rst) |
 | Why does root propagation scale poorly in some heaps? | [Scaling review, 15 October 2026](docs/reviews/2026-10-15-claude-scaling-review.md) |
 | I am an AI assistant working on this project. | [SKILL.md](SKILL.md): method, evidence rules and why simple designs are kept |
@@ -49,8 +50,10 @@ git ls-tree HEAD cpython          # source selected by this parent revision
 git -C cpython rev-parse HEAD     # must match
 ```
 
-The documents describe CPython `c67363fa59` on branch
-`parallel-gc-upstream-port`, based on upstream `333071231d`. A clone obtains the
+The design baseline is CPython `c67363fa59` on branch
+`parallel-gc-upstream-port`, based on upstream `333071231d`. Subsequent cleanup,
+production-test and dependency commits are recorded in
+[Validation](docs/VALIDATION.md) and the integration log. A clone obtains the
 commit recorded by the gitlink, not the branch tip. The root `Makefile` and
 `tools/` describe an older workflow; use the commands in
 [Getting started](docs/GETTING_STARTED.md).

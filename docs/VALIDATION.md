@@ -45,6 +45,35 @@ above when using a later parent revision.
 These remote outcomes come from previously captured results. Live GitHub status
 was unavailable during reconciliation; it has not been rechecked here.
 
+## Local integration evidence: 16 October 2026
+
+The integration is locally committed; no hosted result below is relabelled as
+evidence for the newer source pair. The [integration plan and progress log](CLAUDE_INTEGRATION_PLAN.md)
+record adopted candidates, separate destination commits and rejected collector
+experiments. The parent's gitlink now selects CPython `388fd5bb46`; check it
+with the commands above rather than treating this dated record as a live pin.
+
+| Change and evidence | Tested source and result | Limits |
+|---------------------|--------------------------|--------|
+| [Unreferenced-code removal](../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md) | `442a97213f`: four fresh feature-on before/after builds and two feature-off debug controls pass; defined global GC symbols unchanged; unused-function/variable gates pass after cleanup. | GCC 11.5 on ARM64; no PGO/LTO; optional-module exclusions. Not an all-warning or performance claim. |
+| [Production marking verifier](../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md) | `0fc7b3ccb9`: four clean feature-on configurations and two clean feature-off debug controls pass; GIL/FT ASan and TSan selections pass without diagnostics; root/edge mutation sensitivity retained. | Opt-in debug serial replay; ctypes unavailable; TSan selections are bounded; ASan leaks disabled. An initial undetailed scratch failure remains unexplained and is not hidden by later passes. |
+| [Benchmark ownership and module rooting](../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md) | Parent harness follow-up `5a900b1`, fresh `0fc7b3ccb9` binaries: 24 tests × 20 suites × four configurations = 1,920 tests, no failures/errors. Host suite and planted persistent-reference faults checked. | Test scaffolding, not performance measurements. Sustained workers allow temporary mutation references; controlled collection has a module-only boundary. Cross-thread frame inspection was removed from test instrumentation. |
+| [Header dependency repair](../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md) | `388fd5bb46`: five missing prerequisites added; before/after dry-run controls, actual object rebuilds, links and focused tests pass in four feature-on configurations and two feature-off debug controls. | Incremental rebuilds from complete clean verifier builds; no sanitizer rerun for this five-line build-only change. Existing signedness/unused-label warnings remain recorded. |
+| Focused compiler workflow | Parent `83e865f`: eight GCC/Clang GIL/FT release/debug object-check jobs added; YAML, shell and source-record fixture checks pass locally. | Clang unavailable locally; hosted workflow has not run for this integration. |
+
+Exact commands, counts/skips, failure records and source/binary provenance are
+in the linked reports. The complete clean builds used a detached scratch
+worktree whose tracked content matched the stated commits but whose version
+stamp still named a dirty baseline. Reused user builds are not represented as
+clean-source evidence. These local tests are not full CPython regression
+suites, Windows/macOS validation or new performance results.
+
+Next: publish CPython before the parent gitlink, then run the required hosted
+workflows for that source pair. Agree measurement criteria before building
+matched PGO+LTO GIL/FT binaries and running full project ABBA and pyperformance
+campaigns with the same repaired harness on baseline and integrated source.
+Older results from a retaining harness cannot isolate a collector change.
+
 ## Required remote runs
 
 The first published-run outcomes below were reported on 16 October 2026.

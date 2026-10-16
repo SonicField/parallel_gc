@@ -3,7 +3,8 @@
 Known defects, hypotheses, review decisions and landing blockers. The project
 does not claim landing readiness. Status reconciled against CPython
 `c67363fa59` on 12 October 2026, with performance defects added on 15 October
-2026. The full historical audit text, with original findings and reproducers,
+and local integration repairs recorded on 16 October 2026. The full historical
+audit text, with original findings and reproducers,
 is `AUTIT-TODO.md` (removed; `git show 724b74b:AUTIT-TODO.md`).
 
 **Terms.** *Source-proven*: the unsafe control flow is visible in source but no
@@ -29,9 +30,10 @@ Audit playbook. Initial audit revision `86c83d41f5`.
 | A7 | BUG if reproduced | Hypothesis | FT scan failure may not restore temporary GC state. |
 | A8 | HARDENING | Source-proven | A GIL path silently removes a freed GC-list entry. |
 | A9 | HARDENING | Partly repaired | Collection-phase failure injection and dynamic coverage incomplete. |
-| A10 | HARDENING | Reproduced | Added sources contain compiler warnings and dead alternatives. |
+| A10 | HARDENING | Partly repaired locally | Unreferenced helpers and the separate FT marking implementation removed; residual warnings and other weak test stubs remain. |
 | A11 | HARDENING | Source-proven | The GC barrier duplicates CPython's condition-variable layer. |
 | A12 | BUG | Source-proven | Worker-join failures are ignored before shared state is freed. |
+| A13 | BUG | Repaired locally | Missing parallel-GC header prerequisites allowed stale objects after incremental rebuilds. |
 
 **A1 (repaired).** Concurrent FT `enable_parallel`/`disable_parallel` aborted
 with thread-state assertions. `6ce79c0c65` serializes lifecycle operations,
@@ -97,22 +99,22 @@ tests prove the parallel path ran; `collect_async` scoped and tested or
 separated; ASan and TSan for lifecycle and collection in both builds, with
 suppressions recorded.
 
-**A10.** A release build (GCC 11.5) emits 12 warnings from project code: 11
-functions defined but unused and one unused variable. Ten functions are
-referenced in no build (`propagate_worker_run`, `mark_heap_worker`,
-`update_refs_worker`, `par_disable_deferred_refcounting`, the three GIL
-`_PyGCWorker_*Coordinator*`/`CoordinateStealing` functions, and
-`worklist_clear`, `worklist_to_array`,
-`disable_deferred_refcounting_on_worklist` added to `gc_free_threading.c`);
-`clear_alive_bits_all_buckets` is used only by a debug hook. A complete
-non-pool FT marking path (`_PyGC_ParallelMarkAlive`, `parallel_worker_run`,
-`try_steal_work`) is reachable only from the `Py_DEBUG` hook
-`_PyGC_TestParallelMark`, and at least ten tests in `test_gc_ft_parallel.py`
-exercise it although production never runs it
-([review](reviews/2026-10-15-claude-scaling-review.md) §6). *Accept:* no
-project-introduced warnings in GIL, FT and feature-off builds; each removal
-proven unreachable; tests exercise production paths; cleanup is a separate
-behaviour-preserving commit.
+**A10 (partly repaired).** The GCC 11.5 FT release baseline emitted twelve
+unused-function/variable warnings. CPython `442a97213f` removes helpers with no
+surviving references; four fresh before/after builds pass focused tests with
+unchanged exported GC symbols, and the unused-code gates pass. CPython
+`0fc7b3ccb9` removes the separate non-pool marking implementation and its test
+stub. Marking tests now exercise production and compare with serial
+recomputation, with mutation checks and sanitizer evidence
+([cleanup report](../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md),
+[verifier report](../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md)).
+Remaining: FT debug's startup assertion has a signedness warning; GIL
+feature-off has an unused `move_unreachable` label. Both predate integration.
+Other weak page-assignment/test stubs still need audit. The new GCC/Clang
+workflow is unrun on the hosted source pair and gates unused functions and
+variables, not all warnings. *Accept:* no project-introduced warnings in GIL,
+FT and feature-off builds; each removal proven unreachable; tests exercise
+production paths; cleanup remains separate from behaviour changes.
 
 **A11.** `pycore_gc_barrier.h` defines its own pthread/SRW mutex and condition
 operations instead of CPython's `PyMUTEX_*`/`PyCOND_*` (`Python/condvar.h`),
@@ -128,6 +130,18 @@ rollback must show no helper-referenced storage is freed unless termination is
 known. *Accept:* every join result checked; if recovery is impossible, the
 boundary (fatal error or deliberate retention) is explicit and tested. Policy
 decision required.
+
+**A13 (repaired locally).** Five added internal headers were absent from
+Makefile prerequisites. A debug structure extension left stale objects:
+an invalid participant count and a lifecycle crash disappeared after a clean
+build. Before the repair, pretending any of those headers changed scheduled no
+GC recompilation in GIL or FT; the existing `pycore_gc.h` dependency did.
+CPython `388fd5bb46` adds five paths to the existing `PYTHON_HEADERS` list.
+Afterwards all five trigger recompilation. Actual dependency-driven rebuilds,
+links and focused tests pass in four feature-on configurations and two
+feature-off debug controls. No collector code changed
+([evidence](../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md)).
+Fresh hosted builds remain pending.
 
 **CPython documentation.** `Doc/library/gc.rst` still describes child recovery
 as creating helpers and a disabled GIL configuration as reporting retained
@@ -221,8 +235,8 @@ Design discussion is not blocked on these; landing is.
 | Gate | State |
 |------|-------|
 | GIL and FT ASan/TSan | Local focused selections pass; phase allocation failures untested. |
-| Linux AArch64 correctness and performance | Partial: focused, sanitizer and optimized evidence; current broad FT repeat pending. |
-| Linux hosted CI and Windows | Success reported for `38730251690`, `38730312362` and `38730315605`; detailed source artifacts, job outcomes and skips still need examination (VALIDATION.md). |
+| Linux AArch64 correctness and performance | Six local focused configurations pass after integration; GIL/FT ASan/TSan selections pass at the verifier commit. Full suites and matched-harness PGO+LTO comparisons remain pending. |
+| Linux hosted CI and Windows | Earlier successes reported for `38730251690`, `38730312362` and `38730315605`; their detailed evidence needs examination. No hosted run validates the integrated source pair (VALIDATION.md). |
 | Native macOS active collector | First run built all four ARM64 configurations, then failed before tests due to the executable path; workflow corrected. Rerun `38880079592` feature-off passes reported; final feature-on outcomes unconfirmed. |
 | Source failure policies | A5, A6, A7, A8, A12 open. |
 | Performance limits and adaptation | Review-work criteria recorded for discussion (PERFORMANCE.md §6); root-placement weaknesses P1–P4 open (experiments dropped); P5–P6 open; no convergence claim. |

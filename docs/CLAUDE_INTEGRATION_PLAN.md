@@ -2,6 +2,8 @@
 
 Status: execution approved by Alex, 16 October 2026. Local imports and atomic commits are authorised; remote pushes remain Alex's responsibility.
 
+Local outcome: documentation, benchmark repairs, unreferenced-code cleanup, production marking tests and incremental-build dependencies are committed separately. The active collector design is preserved. Fresh GCC checks, focused suites, sanitizer selections and ownership/mutation checks pass within the recorded limits. Publishing, dependency-complete hosted suites and matched-harness performance campaigns remain pending; see [VALIDATION.md](VALIDATION.md).
+
 ## Goal and method
 
 Give core developers a clearer, better-tested discussion starting point while preserving the collector's working design and recording what the experiments taught us.
@@ -178,3 +180,9 @@ A new test showed that the collection observation helper retained its own `ids` 
 ### 16 October: incremental dependency repair, independent build commit
 
 CPython `388fd5bb46` adds the five parallel-GC headers to the existing `PYTHON_HEADERS` prerequisites. Before/after dry runs distinguish the missing dependencies from the existing `pycore_gc.h` control; all five now trigger recompilation in GIL and FT. Actual dependency-driven object rebuilds, links and focused tests pass in all four feature-on configurations and both feature-off debug controls. A local script initially requested the wrong config.status target; it now uses the existing Makefile regeneration rule. No collector logic changed. The [dependency report](../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md) retains all six logs and the existing FT debug signedness warning, which the unused-code gate does not reject.
+
+### 16 October: local handoff reconciliation
+
+README and GETTING_STARTED distinguish the design baseline from the selected gitlink. DESIGN records subsequent design-preserving integration work, TESTING explains opt-in production verification and its measurement limits, VALIDATION separates local evidence from older hosted runs, and OPEN_ISSUES records A10 as partly repaired plus the separate A13 dependency repair. Existing failure-policy and performance questions remain open. The compiler gate is not an all-warning claim: the old FT debug signedness assertion and GIL feature-off unused label remain visible in the logs. No hosted workflow or long performance campaign was started, and no old result was relabelled as current-source evidence.
+
+Final document checks: all 75 local Markdown destinations in the eight reconciled documents resolve; `git diff --check` passes on their new text. Rendering and external URLs remain unverified. The CPython checkout is clean and matches the parent gitlink at `388fd5bb46`. Existing untracked user builds/results and the original review clone are preserved; scratch mutations remain confined to the separate owned worktree.
