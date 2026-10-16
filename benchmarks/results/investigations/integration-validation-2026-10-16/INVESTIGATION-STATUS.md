@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Initial builds completed but native decimal was missing. Their campaign launcher is stopped. Corrected fresh builds are queued; hosted CI dispatched by Alex, run IDs pending.
+**Status:** Initial builds completed but native decimal was missing. Their campaign launcher is stopped and its last running leg has finished. Corrected fresh builds have started; hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -49,13 +49,17 @@ The corrected four-build check must pass before restarting full project and pype
 
 The campaign launcher now independently repeats the native-dependency/build-mode check immediately before measurements and fingerprints that check alongside the unchanged benchmark harness. Replacement builds and a new campaign are queued sequentially; neither starts competing CPU work while the old measurement process remains alive. Native-decimal build success and replacement benchmark results are still pending.
 
+At 17:09 UTC, the old current-GIL process finished and saved `results/project/gil-2-candidate.json` under the original scratch root. Its SHA-256 is `0aba72e8a309e27b67161b0d1078ca7c283be30a8efaec27734d906d6a5ce13a`. This completes only two legs of the abandoned attempt, not ABBA, and does not make those builds suitable for the planned pyperformance comparison.
+
+The corrected baseline-GIL build then started automatically, without overlapping the old measurement. Configure's pkg-config lookup for `libmpdec` failed, but its direct header and link checks passed: `mpdecimal.h` and `mpd_version` in `-lmpdec` were found. The generated Makefile records `MODULE__DECIMAL_STATE=yes`; compilation began with `-fprofile-generate` and `-flto`. This proves configuration and build start, not a successful finished build or runtime import. The native-decimal identity check, profile-use build, tests and binary hash remain required before measurement.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
 
 | Requirement | Current state | Evidence needed for completion |
 |-------------|---------------|--------------------------------|
-| Corrected baseline/current GIL/FT PGO+LTO builds | Queued behind the old measurement | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
+| Corrected baseline/current GIL/FT PGO+LTO builds | Baseline GIL compiling; remaining three builds queued | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
 | Linux four-configuration matrix | Parent push reported; outcomes unknown | Run source pair, four job outcomes, focused collector/parent tests and feature-off skips |
 | GCC/Clang object checks | Parent push reported; outcomes unknown | Eight compiler/mode/build job outcomes and diagnostics; this is an unused-code gate, not every-warning acceptance |
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
