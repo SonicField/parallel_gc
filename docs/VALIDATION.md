@@ -35,7 +35,7 @@ above when using a later parent revision.
 
 | Evidence | Source and outcome | Limits |
 |----------|--------------------|--------|
-| [Local lifecycle and failure tests](LAZY_POOL_CREATION_PLAN.md) | Recorded GIL and FT debug, optimized lifecycle, ASan and TSan selections pass. | Exact selections and source revisions are in the linked record. ASan leak detection was disabled; TSan options and suppressions are recorded. Not a full cross-platform validation. |
+| Local lifecycle and failure tests: historical record `git show 724b74b:docs/LAZY_POOL_CREATION_PLAN.md`; current contract in [DESIGN.md](DESIGN.md) §5–6 | Recorded GIL and FT debug, optimized lifecycle, ASan and TSan selections pass. | Exact selections and source revisions remain in the historical record. ASan leak detection was disabled; TSan options and suppressions are recorded. Not a full cross-platform validation. |
 | [GIL performance](../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md) | Collector `669ed6b17e`, including throughput improvements and callback-interval regressions. | One AArch64 host; no full GIL pyperformance sweep after lazy startup. |
 | [FT performance](../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md) | Collector `195830171f`, including full project and pyperformance ABBA results. | One host; negative results and exclusions remain in the report. `c67363fa59` subsequently changes release-build test guards only. |
 | [Earlier Linux full suite](https://github.com/SonicField/parallel_gc/actions/runs/37615265794) | Recorded success at `d396f837b9`. | Before the current lazy-pool work; not current-source evidence. |
@@ -58,7 +58,7 @@ job outcomes, skips and rerun details still need examination.
 | Linux, `parallel-gc.yml` | GIL and FT, feature-on and feature-off; focused collector and parent harness tests. | [38730251690](https://github.com/SonicField/parallel_gc/actions/runs/38730251690): success reported; detailed evidence pending. |
 | Linux, `full-cpython-tests.yml` | GIL and FT feature-on builds; full default CPython suite. | [38730312362](https://github.com/SonicField/parallel_gc/actions/runs/38730312362): success reported; detailed evidence pending. |
 | Windows, `windows-parallel-gc.yml` | GIL and FT feature-on builds; focused collector and parent harness tests, then full default CPython suite. | [38730315605](https://github.com/SonicField/parallel_gc/actions/runs/38730315605): success reported; detailed evidence pending. |
-| macOS, `macos-parallel-gc.yml` | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | [38730319127](https://github.com/SonicField/parallel_gc/actions/runs/38730319127): all four built successfully, then failed at configuration verification before tests. Workflow-path correction prepared; hosted rerun pending. |
+| macOS, `macos-parallel-gc.yml` | GIL and FT builds; focused collector and parent harness tests, feature-off controls, and full default CPython suite in feature-on builds. | [38730319127](https://github.com/SonicField/parallel_gc/actions/runs/38730319127): all four built successfully, then failed at configuration verification before tests. Rerun [38880079592](https://github.com/SonicField/parallel_gc/actions/runs/38880079592): feature-off GIL/FT successes reported; feature-on jobs were running in Alex's last captured listing. Final outcomes and source artifacts unconfirmed. |
 
 The macOS run used ARM64 runners. Each build imported all 116 configured
 modules without a missing or failed import, then the workflow attempted
@@ -68,6 +68,9 @@ directory; the executable generated and used during the build is `python.exe`.
 All six workflow invocations now use `build-macos/python.exe`. This is a
 workflow correction, not a collector change. The next run must pass that
 verification step and execute the tests before macOS correctness can be assessed.
+
+The rerun statuses above are captured reports, not a live query. The feature-off
+passes do not establish that either active collector passed its tests.
 
 Full default-suite runs begin with parallel policy disabled. Focused tests
 explicitly exercise activation and parallel dispatch. Report skipped tests,

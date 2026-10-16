@@ -1,276 +1,168 @@
-# Getting Started with Parallel GC for CPython
+# Getting started: build, test and use
 
-This project adds an optional parallel cyclic collector to GIL and
-free-threaded CPython builds. The two implementations share deque and
-synchronization primitives, but have separate worker pools and integrate with
-different serial collectors.
+## Repositories
 
-Start with [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md) for the informal-review
-checkpoint, reading order and evidence limits.
-
-## Understand the repositories
-
-The project has two project repositories:
-
-- `SonicField/cpython` contains the implementation and the material that could
-  ultimately be proposed to CPython: core source, build integration, focused
-  correctness tests, and CPython-facing documentation. It is checked out here
-  as the `cpython/` submodule.
-- `SonicField/parallel_gc` contains the specialist performance laboratory:
-  benchmark workloads and harnesses, raw results, reproducibility records,
-  design documents, and project-level CI. It records the exact CPython commit
-  to which each body of evidence applies.
-
-The parent repository also pins the official `python/pyperformance` suite as
-the `pyperformance/` submodule. The project does not modify that suite.
-Project-owned code activates parallel GC, verifies the mode inside every
-worker, runs ABBA comparisons, and records provenance outside the submodule.
-
-This split is deliberate. Collector performance depends on heap shape, cyclic
-garbage volume, collection frequency, pause behavior, sustained application
-load, and adaptive worker selection. General-purpose suites such as
-`pyperformance` are valuable broad regression checks, but do not reliably
-exercise or observe those conditions. The larger GC-specific benchmark system
-is essential to evaluating this project, while being too specialised and
-experimental for the CPython source tree.
-
-The proposal must account for pyperformance regressions even when GC-specific
-benchmarks improve. The discussion draft leaves the numerical acceptance limit
-open and records the negative results. See [BENCHMARKING.md](BENCHMARKING.md) for the verified
-runner and the division of responsibility between the two benchmark systems.
+- `cpython/` is the `SonicField/cpython` fork (branch
+  `parallel-gc-upstream-port`): implementation, build integration, focused
+  correctness tests and CPython-facing documentation.
+- This parent repository holds the design and evidence documents, CI, the
+  benchmark laboratory, raw results and reproducibility records, and pins the
+  exact CPython commit.
+- `pyperformance/` pins the unmodified upstream suite. Activation, ABBA
+  orchestration and provenance live in this repository.
 
 ## Obtain the source
-
-Clone the complete parent repository first:
 
 ```bash
 git clone --recurse-submodules https://github.com/SonicField/parallel_gc.git
 cd parallel_gc
 git submodule update --init --recursive
+git ls-tree HEAD cpython          # commit recorded by this parent revision
+git -C cpython rev-parse HEAD     # must match
 ```
 
-This is important because the parent repository contains the documentation,
-benchmarks, and project-level test workflow.
+The parent's gitlink selects the source, not the submodule's branch setting.
+The documents describe CPython `c67363fa59543ef5d572383af927f1cff88514a1`,
+based on `python/cpython` `333071231d3a46cccc32d7f44b99328c3299d0b1`.
+[VALIDATION.md](VALIDATION.md) records which evidence applies to which source.
+The root `Makefile` and scripts under `tools/` belong to an older workflow; do
+not use them for current builds or evidence.
 
-### Current port status
+## Build
 
-The authoritative source is the `cpython/` submodule at
-`SonicField/cpython` commit `c67363fa59543ef5d572383af927f1cff88514a1`, on
-branch `parallel-gc-upstream-port`. It is based on CPython commit
-`333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main.
+Install CPython's normal
+[build dependencies](https://devguide.python.org/getting-started/setup-building/).
+A 64-bit target is required. Use one out-of-tree directory per configuration
+and never share objects between them; run `make -C <dir> distclean` before
+changing an existing directory's configure options.
 
-This local checkpoint still needs publication. Verify what a clone actually
-contains with `git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
-The parent pointer selects the revision; the submodule branch setting does
-not automatically move it to the latest fork commit.
-
-The root `Makefile` and scripts under `tools/` target the older workflow; use
-the explicit commands in this guide for current-port validation.
-
-## Build the current port
-
-Use an out-of-tree build so GIL and free-threaded configurations do not share
-generated files:
+| Directory | Configure flags | Purpose |
+|-----------|-----------------|---------|
+| `build-port-gil/` | `--with-pydebug --with-parallel-gc` | GIL parallel collector |
+| `build-port-ft/` | `--disable-gil --with-pydebug --with-parallel-gc` | Free-threaded parallel collector |
+| `build-baseline-gil/` | `--with-pydebug` | GIL feature-off control |
+| `build-baseline-ft/` | `--disable-gil --with-pydebug` | FT feature-off control |
 
 ```bash
-mkdir -p build-port-ft
-cd build-port-ft
-../cpython/configure \
-    --disable-gil \
-    --with-pydebug \
-    --with-parallel-gc
-make -j"$(nproc)"
+for cfg in "port-gil:--with-pydebug --with-parallel-gc" \
+           "port-ft:--disable-gil --with-pydebug --with-parallel-gc" \
+           "baseline-gil:--with-pydebug" \
+           "baseline-ft:--disable-gil --with-pydebug"; do
+    dir="build-${cfg%%:*}"; mkdir -p "$dir"
+    (cd "$dir" && ../cpython/configure ${cfg#*:})
+    make -C "$dir" -j"$(nproc)"
+done
 ```
 
-For a GIL build:
+GIL and free-threaded builds are both first-class: a change is not ready
+because it works in one. Optimized benchmark builds are described in
+[PERFORMANCE.md](PERFORMANCE.md) §2.
+
+## Verify and use
 
 ```bash
-cd ..
-mkdir -p build-port-gil
-cd build-port-gil
-../cpython/configure \
-    --with-pydebug \
-    --with-parallel-gc
-make -j"$(nproc)"
-```
-
-Install CPython's normal build dependencies first; see the
-[CPython setup guide](https://devguide.python.org/getting-started/setup-building/).
-Missing optional extension dependencies are reported by `configure`.
-
-These are the two feature-on builds. The complete verification matrix also has
-feature-off GIL and free-threaded controls; see
-[BUILD_AND_TEST.md](BUILD_AND_TEST.md) for all four configurations.
-
-## Verify the build
-
-From either configured feature-on build directory:
-
-```bash
-./python -c "
+build-port-ft/python -c "
 import gc
-print(gc.get_parallel_config())
-gc.enable_parallel()
-gc.collect()
+print(gc.get_parallel_config())   # 'available': True
+gc.enable_parallel(); gc.collect()
+print(gc.get_parallel_config(), gc.get_parallel_stats())
 gc.disable_parallel()
 "
 ```
 
-A build configured with `--with-parallel-gc` reports
-`'available': True`. `num_workers` is the fixed ceiling; while enabled,
-`adaptive_workers` is the count currently selected by the controller.
+Parallel collection is off until `gc.enable_parallel()`; there is no
+environment variable, `-X` option or `PyConfig` field. Enabling arms the
+collector without creating threads. GIL creates its 16 helpers at the first
+collection with at least 16,384 candidates; FT creates 15 helpers at its first
+collection, before stopping the world, with the collecting thread as worker
+zero. An adaptive controller chooses 2–16 participants. If the pool cannot
+start, the collection completes serially, one `RuntimeWarning` is issued and
+later collections stay serial until another explicit enable. Without
+`--with-parallel-gc`, enable and disable raise `RuntimeError` and
+`get_parallel_config()` reports `available: False`. Details:
+[DESIGN.md](DESIGN.md) §5–7.
 
-Run the focused tests in the GIL build:
-
-```bash
-./python -m test -j4 \
-    test_gc \
-    test_gc_ft_parallel \
-    test_gc_ws_deque \
-    test_gc_parallel \
-    test_gc_parallel_fork \
-    test_gc_parallel_properties \
-    test_gc_parallel_mark_alive \
-    test_capi.test_config \
-    test_embed
-```
-
-Run the corresponding free-threaded set in its build directory:
+## Focused tests
 
 ```bash
-./python -m test -j4 \
-    test_gc \
-    test_gc_ws_deque \
-    test_gc_parallel \
-    test_gc_parallel_fork \
-    test_gc_parallel_properties \
-    test_capi.test_config \
-    test_embed \
-    test_gc_ft_parallel \
+build-port-gil/python -m test -j4 \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_gc_parallel_mark_alive test_parallel_gc_profile \
+    test_capi.test_config test_embed
+
+build-port-ft/python -m test -j4 \
+    test_gc test_gc_ft_parallel test_gc_ws_deque test_gc_parallel \
+    test_gc_parallel_fork test_gc_parallel_properties \
+    test_parallel_gc_profile test_capi.test_config test_embed \
     test_free_threading.test_gc
 ```
 
-## Runtime controls
+Run the same lists (without `test_gc_parallel_mark_alive` and
+`test_parallel_gc_profile`) in the two baseline builds when a result might come
+from the port rather than the collector; they also check that the API reports
+the feature unavailable. Build-specific modules skip in the other mode;
+investigate any unexplained skip in the active mode. The module-by-module
+coverage table, CI workflows and evidence required per change type are in
+[TESTING.md](TESTING.md).
 
-Parallel collection is off unless enabled through the `gc` module. There is no
-environment-variable, `-X`, or `PyConfig` startup control.
+## Broad regression runs
 
-```python
-import gc
+Run the full suite separately in both feature-on builds and keep the command,
+seed, summary, failures and skips:
 
-gc.enable_parallel()
-config = gc.get_parallel_config()
-stats = gc.get_parallel_stats()
-gc.collect_async()
-gc.disable_parallel()
+```bash
+build-port-gil/python -m test -q -j4 --timeout=300 --fail-env-changed \
+    --randseed=20260929 -x test_cext test_multiprocessing_fork \
+    test_multiprocessing_forkserver test_multiprocessing_spawn
+
+build-port-ft/python -m test -q -j4 --timeout=300 --fail-env-changed \
+    --randseed=20260929 -x test_cext test_free_threading \
+    test_multiprocessing_fork test_multiprocessing_forkserver \
+    test_multiprocessing_spawn
 ```
 
-In a GIL build, `gc.enable_parallel()` arms the collector but creates no
-helper. The fixed 16-helper pool starts when a collection first reaches 16,384
-candidates and has enough work splits; the collecting thread coordinates it.
-In a free-threaded build, enabling also creates no helper. The first collection
-starts 15 helpers before stopping the world; the collecting thread participates
-as worker zero. The shared stochastic
-random-walk controller starts at four participants, tries adjacent counts, and
-walks back after a regression within the 2--16 range. In a build without
-parallel-GC support,
-`gc.enable_parallel()` and `gc.disable_parallel()` raise
-`RuntimeError`, while `gc.get_parallel_config()` reports `available` as false.
+The exclusions are environmental on the development host and must stay
+visible: `test_cext` needs unavailable build dependencies; the three
+multiprocessing modules hit an upstream `NameError` that the feature-off build
+reproduces; the FT `test_free_threading` package imports the unavailable
+optional `_ctypes`. The hosted full-suite workflow runs without exclusions; see
+[TESTING.md](TESTING.md).
 
-In both builds startup failure rolls back partial resources and completes the
-collection serially. The collector warns once after safe cleanup and remains
-serial until explicit enable permits another attempt. Configuration separates
-`enabled`, `pool_active` and `startup_failed`.
+## Sanitizers
 
-FT adaptation deliberately searches the parallel range only. A serial local
-minimum can prevent an adjacent walk from discovering a faster parallel count
-beyond an initially slower one. The controller does not guarantee a global
-optimum. See [DESIGN_POST.md](DESIGN_POST.md) for the reasoning.
+Use separate directories: ASan with `CC=clang CXX=clang++` and
+`--with-address-sanitizer`; TSan (recorded with GCC 11.5.0) with
+`--with-thread-sanitizer`. Run the focused lists. Use `ASAN_OPTIONS=detect_leaks=0` and
+`TSAN_OPTIONS='halt_on_error=1 die_after_fork=0'`; GCC TSan otherwise kills a
+child that starts threads after a multithreaded fork. On the AArch64
+development host, GCC's `libtsan.so` linker script names
+`/usr/lib64/libtsan.so.0.0.0`, which is not installed; install
+`libtsan-11.5.0-15.el9.aarch64` or extract it and pass its directory with
+`LDFLAGS=-Wl,-rpath,...`. Exact recorded commands, results and suppressions are
+in [TESTING.md](TESTING.md). These are bounded selections, not exhaustive race
+or memory coverage.
 
-`gc.get_parallel_stats()` reports implementation diagnostics and private phase
-timings. `gc.collect_async()` schedules the ordinary collector and returns
-without waiting; it does not enable parallel collection. Both are part of the
-current experimental API and remain subject to core-developer review.
+## Recorded results
 
-## What runs in parallel
+Current local and remote evidence, and the runs still required for the
+published source pair, are in [VALIDATION.md](VALIDATION.md). Earlier
+four-configuration and broad-suite results (for example 47,914 FT and 48,103
+GIL tests at predecessor `9da963f754`) are historical and listed in
+`BUILD_AND_TEST.md` (removed; `git show 724b74b:docs/BUILD_AND_TEST.md`); they do not validate
+later code.
 
-| Collector | Parallel phases | Serial phases |
-|-----------|-----------------|---------------|
-| GIL, at least 16,384 candidates | interpreter-root pre-marking, reference subtraction, reachability marking | initial count/split walk, list reconstruction, finalization, deallocation |
-| GIL, fewer than 16,384 candidates | none | complete collection |
-| Free-threaded | root propagation, `update_refs`, `mark_heap`, `scan_heap` | finalization, deallocation |
-
-For the free-threaded collector, page assignment prepares buckets for the
-parallel heap phases. The collector scans thread stacks serially between
-parallel `update_refs` and `mark_heap` to account for deferred references.
-Parallel `scan_heap` restores object state and creates the unreachable
-worklists.
-
-Reachability analysis remains stop-the-world. “Parallel” refers to collector
-work performed by the collecting thread and helpers; it does not mean that
-heap marking runs concurrently with application threads. The free-threaded
-collector resumes application threads around callbacks, finalizers, and final
-deallocation, so its complete callback interval is broader than a single
-stop-the-world pause.
-
-GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
-helpers also own persistent thread states; they install those states in
-thread-local storage while running collector work, without performing a full
-bind. This supports debug-build reference accounting when a `tp_traverse`
-implementation changes a reference count.
-
-## Fork behavior
-
-Supported CPython forks leave the parent pool and its adaptive history intact.
-The GIL child abandons inherited helpers, reinitializes synchronization state,
-becomes armed, and resets its adaptive controller to four without starting a
-thread during recovery. A later eligible collection starts its pool. The
-free-threaded child follows the same armed recovery without starting helpers.
-Both collectors exclude an inherited in-progress collection from adaptive
-learning and force its remainder down the serial path. This includes a
-fork from `__del__`. See
-[FORK_ARCHITECTURE.md](FORK_ARCHITECTURE.md) for the precise contract, hook
-ordering, tests, and unsupported raw-fork case.
-
-## Repository layout
+## Layout
 
 ```text
 parallel_gc/
-  cpython/                    authoritative CPython submodule
-  docs/                       design, build, test, and proposal documents
-  benchmarks/                 benchmark drivers and result storage
-  Makefile                    legacy workflow for the cpython/ submodule
-  tools/                      legacy helpers; not current-port validation
+  cpython/        authoritative CPython submodule
+  pyperformance/  pinned upstream benchmark suite
+  docs/           active documents (superseded ones are in git history)
+  benchmarks/     benchmark drivers and raw results
+  Makefile, tools/  legacy workflow (do not use)
 ```
 
-Important files in the current port:
-
-| File | Purpose |
-|------|---------|
-| `cpython/Python/gc_parallel.c` | GIL parallel collector |
-| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel collector phases |
-| `cpython/Python/gc.c` | GIL integration |
-| `cpython/Python/gc_free_threading.c` | Free-threaded integration |
-| `cpython/Include/internal/pycore_ws_deque.h` | Work-stealing deque and local buffer |
-| `cpython/Include/internal/pycore_gc_barrier.h` | Worker synchronization |
-| `cpython/Modules/gcmodule.c` | Runtime API |
-
-## Reading order
-
-1. [Architecture](ARCHITECTURE.md) for control flow and invariants.
-2. [Fork Architecture](FORK_ARCHITECTURE.md) for process-lifecycle behavior.
-3. [Build and Test](BUILD_AND_TEST.md) for the validation matrix.
-4. [Benchmarking](BENCHMARKING.md) for measurement requirements.
-5. [Design Post](DESIGN_POST.md) for algorithm background.
-6. [Discussion draft](pep-parallel-gc-v2.rst) for the design, experimental interface and open questions.
-
-## Performance status
-
-The latest GIL project campaign at `669ed6b17e` reports a 1.08x collection
-geomean, effectively unchanged mixed throughput, and a 3% higher mixed mean
-callback interval. FT collector `195830171f` reports a 1.24x collection
-geomean and 23.5% higher mixed throughput, but sustained AI throughput is 9.9%
-lower and its mean callback interval is 116% higher. FT pyperformance `float`
-is 10.5% slower. These same-binary results come from one AArch64 host.
-See [BENCHMARKING.md](BENCHMARKING.md) for exact revisions, raw samples,
-exclusions and interpretation.
+Next: [DESIGN.md](DESIGN.md) for the collectors,
+[PERFORMANCE.md](PERFORMANCE.md) for measurement,
+[OPEN_ISSUES.md](OPEN_ISSUES.md) for what is unresolved.

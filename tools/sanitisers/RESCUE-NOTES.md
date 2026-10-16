@@ -19,5 +19,5 @@ still provisional:
 - their suggested test commands cover only the GIL implementation.
 
 Use the explicit, mode-specific procedures in
-[BUILD_AND_TEST.md](../../docs/BUILD_AND_TEST.md) until the wrappers cover both
+[GETTING_STARTED.md](../../docs/GETTING_STARTED.md) until the wrappers cover both
 GIL and free-threaded builds and have been validated from a fresh checkout.

@@ -1,14 +1,15 @@
 # Testing Strategy
 
 This document describes the evidence needed for the authoritative `cpython/`
-submodule. See [BUILD_AND_TEST.md](BUILD_AND_TEST.md)
-for commands and [BENCHMARKING.md](BENCHMARKING.md) for performance work.
+submodule. See [GETTING_STARTED.md](GETTING_STARTED.md)
+for commands and [PERFORMANCE.md](PERFORMANCE.md) for performance work.
 
 The parent revision's `cpython/` gitlink selects the source to test.
 [VALIDATION.md](VALIDATION.md) records local evidence, older CI, required new
 runs and the source pair attached to each result. Do not infer current remote
 success from a predecessor run or a branch name. The
-[review handoff](REVIEW_HANDOFF.md) describes the design and reading path.
+[repository README](../README.md) gives the reading path and
+[DESIGN.md](DESIGN.md) explains the collectors.
 
 ## Four-build policy
 
@@ -214,7 +215,7 @@ build-port-ft/python -m test -q -j4 \
        test_multiprocessing_forkserver test_multiprocessing_spawn
 ```
 
-The exclusion reasons are recorded in [BUILD_AND_TEST.md](BUILD_AND_TEST.md).
+The exclusion reasons are recorded in [GETTING_STARTED.md](GETTING_STARTED.md).
 
 Historical broad status from predecessor commit `9da963f754`:
 
@@ -372,7 +373,7 @@ Any later configure-input change requires the same canonical regeneration.
 
 Concurrency and collector changes require controlled benchmark comparison in
 addition to functional and sanitizer evidence. Follow
-[BENCHMARKING.md](BENCHMARKING.md) and record hardware, commits, configure
+[PERFORMANCE.md](PERFORMANCE.md) and record hardware, commits, configure
 flags, worker counts, seeds, warmups, samples, and raw results.
 
 ## Evidence required by change type

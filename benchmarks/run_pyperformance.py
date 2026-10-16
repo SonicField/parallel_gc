@@ -102,7 +102,7 @@ def require_driver():
     except ImportError as exc:
         raise CampaignError(
             "the driver environment lacks pyperformance; follow the setup "
-            "commands in docs/BENCHMARKING.md"
+            "commands in docs/PERFORMANCE.md"
         ) from exc
 
     hooks = {

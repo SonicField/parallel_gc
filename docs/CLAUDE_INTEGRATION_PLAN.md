@@ -99,7 +99,7 @@ For each completed step record: imported commits, destination commits, exact che
 |------|-------|------------------------|
 | Plan | Approved | Alex authorised proceeding with VP and regular atomic commits |
 | 0: manifest | Complete | Tracked worktrees clean; candidate identities and exclusions recorded below |
-| 1: documents | Pending | Preserve the useful consolidation and apply review adjustments |
+| 1: documents | Consolidation complete; PEP next | Current contracts and evidence preserved; temporary redirects retained until PEP navigation is updated |
 | 2: dead code | Pending | Establish reachability and focused warning baseline |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
 | 4: benchmarks | Pending | Resolve the rooting contract before fixing its test |
@@ -124,3 +124,11 @@ Excluded: every experimental collector change on `investigation/*`; no blanket m
 Imported 42 historical evidence files from documentation candidate `c21af71` into the two dated investigation directories. Git blob comparisons match all 42 original files; all 12 campaign JSON files parse. The initial import appended final newlines to twelve JSON files; the byte comparison detected this and the original endings were restored before commit. No measurements were rerun or relabelled. Recorded patch files are experimental evidence, not changes to collector source.
 
 The repository ignores JSON/log results by default; these specific imported evidence files are explicitly included in the evidence commit. Historical patch/analysis files contain original trailing whitespace, reported by `git diff --check` and retained to preserve their bytes. New documentation is checked separately.
+
+### 16 October: documentation consolidation
+
+Adopted the five-document structure from `c21af71`, with integration-specific corrections: design intent up front; explicit container traversal architecture checked against current source; retained-buffer and termination tradeoffs; qualified historical garbage fractions; candidate-only module benchmarks; no inferred 6% exclusion bound; and preservation of the current design-change discussion requirement. Newer Linux/Windows reports and macOS executable-path repair remain recorded. Alex's captured macOS rerun reports feature-off passes; active-collector final outcomes remain unknown.
+
+Navigation walkthrough: README identifies all repositories and the gitlink; GETTING_STARTED gives four isolated builds; DESIGN §2.7/§3.3/§3.6 distinguish the marking protocols; PERFORMANCE separates program throughput, callback intervals and stopped-world work; OPEN_ISSUES separates discussion from landing gates. Added DESIGN §3.9 so the retained traversal/PGO reasoning is not available only through old plans.
+
+Checks: 17 active/review documents, 99 local file destinations and 14 historical `git show` destinations resolve, including one CPython-history destination. The initial checker incorrectly looked for that CPython object in the parent repository; repository-aware resolution corrected the check. `git diff --check` passes on new/modified active material. Markdown/RST renderers (`markdown_it`, `docutils`) are unavailable, so rendering and external URLs are not verified. CPython, its gitlink, benchmark workloads and CI files remain unchanged; the pyperformance runner changed only its documentation-path error message. Historical raw evidence remains byte-identical. Temporary redirects keep the unchanged PEP's old links valid until its separate commit.

@@ -2,262 +2,123 @@
 
 This project develops and evaluates parallel cyclic garbage collection for GIL
 and free-threaded CPython builds. Parallel collection is optional at build time
-and runtime.
+(`--with-parallel-gc`) and at runtime (`gc.enable_parallel()`). Both collectors
+remain stop-the-world: helpers share collector work while application threads
+are paused.
 
-Read the [PEP-shaped discussion draft](docs/pep-parallel-gc-v2.rst) for the
-design goals, how both collectors work, measured results and open questions.
-It is a starting point for discussion, not a formal proposal. Codex wrote it
+The goal is to reduce cyclic-GC pauses progressively as a heap exposes useful
+parallel work, while preserving collection coverage. Applications turn the
+feature on; the collector tunes its worker count without user configuration.
+Activation should cost little when parallel work does not help. This is the
+design goal, not a claim that every measured workload already meets it.
+
+It is a starting point for discussion with CPython core developers, not a
+claim of readiness to land. The
+[PEP-shaped discussion draft](docs/pep-parallel-gc-v2.rst) was written by Codex
 under Alex Turner's guidance using
 [Verifiable Practice](https://github.com/SonicField/verifiable-practice).
 
-For an informal engineering review, start with the
-[review handoff](docs/REVIEW_HANDOFF.md). It explains the reading path and
-known defects. The [validation record](docs/VALIDATION.md) distinguishes dated
-evidence from the source pair selected by your checkout and pending CI runs.
+## Start here
 
-The project uses two project repositories and one pinned benchmark dependency:
+| Question | Read |
+|----------|------|
+| How do I build, test and use it? | [Getting started](docs/GETTING_STARTED.md) |
+| How do the collectors work, and what are the invariants? | [Design](docs/DESIGN.md) |
+| What has been measured, how, and what must a change achieve? | [Performance](docs/PERFORMANCE.md) |
+| What is broken, unproven or undecided? What blocks upstreaming? | [Open issues](docs/OPEN_ISSUES.md) |
+| Which tests and CI runs apply to which source revision? | [Validation](docs/VALIDATION.md), [Testing](docs/TESTING.md) |
+| What is proposed for discussion? | [Discussion draft](docs/pep-parallel-gc-v2.rst) |
+| Why does root propagation scale poorly in some heaps? | [Scaling review, 15 October 2026](docs/reviews/2026-10-15-claude-scaling-review.md) |
+| I am an AI assistant working on this project. | [SKILL.md](SKILL.md): method, evidence rules and why simple designs are kept |
 
-- The `cpython/` submodule is the `SonicField/cpython` fork. It contains the
-  implementation, CPython integration, focused correctness tests, build-system
-  changes, and CPython-facing documentation that could form an upstream
-  proposal.
-- This outer `parallel_gc` repository contains the design material, project CI,
-  benchmark drivers, raw performance results, and reproducibility records.
-  The outer repository pins the exact CPython fork commit being evaluated.
-- The `pyperformance/` submodule pins the unmodified upstream Python benchmark
-  suite used for whole-interpreter regression testing. Parallel-GC activation,
-  ABBA orchestration, and result provenance remain in this outer repository.
+Superseded plans, ledgers and earlier documents were removed; they remain in
+git history (for example `git show 724b74b:docs/ARCHITECTURE.md`).
 
-The performance work is not optional supporting material. General-purpose
-Python benchmark suites such as `pyperformance` are useful for detecting broad
-interpreter regressions, but they do not reliably create large cyclic heaps,
-trigger substantial collections, or distinguish collector throughput and
-pause behavior. They therefore cannot, by themselves, determine whether
-parallel GC works. The dedicated benchmarks in this repository provide that
-evidence under controlled heap shapes, sustained workloads, and alternating
-serial/parallel measurements. They are necessarily substantial and
-experimental, so they do not belong in the main CPython tree.
+## Repositories and source identity
 
-This distinction does not make pyperformance optional. A broad pyperformance
-regression is a release blocker even when the specialist GC benchmarks improve.
-The two suites answer different questions and both form part of the performance
-evidence.
-
-## Repository status
-
-Clone the complete project first:
+- `cpython/` is the `SonicField/cpython` fork: implementation, build
+  integration, focused tests and CPython-facing documentation.
+- This parent repository holds the design and evidence documents, CI, the
+  benchmark laboratory and raw results, and pins the exact CPython commit.
+- `pyperformance/` pins the unmodified upstream benchmark suite.
 
 ```bash
 git clone --recurse-submodules https://github.com/SonicField/parallel_gc.git
 cd parallel_gc
-git submodule update --init --recursive
+git ls-tree HEAD cpython          # source selected by this parent revision
+git -C cpython rev-parse HEAD     # must match
 ```
 
-The authoritative source is the commit recorded by this parent revision's
-`cpython/` submodule, from `SonicField/cpython` branch
-`parallel-gc-upstream-port`. The port is based on CPython commit
-`333071231d3a46cccc32d7f44b99328c3299d0b1` from `python/cpython` main. A clone
-with submodules obtains that recorded commit, not the branch's latest tip.
-Verify it with `git ls-tree HEAD cpython` and `git -C cpython rev-parse HEAD`.
-Publication and platform-test evidence is recorded in
-[VALIDATION.md](docs/VALIDATION.md), with exact revisions for each result.
+The documents describe CPython `c67363fa59` on branch
+`parallel-gc-upstream-port`, based on upstream `333071231d`. A clone obtains the
+commit recorded by the gitlink, not the branch tip. The root `Makefile` and
+`tools/` describe an older workflow; use the commands in
+[Getting started](docs/GETTING_STARTED.md).
 
-The root `Makefile` and scripts under `tools/` still describe the older project
-workflow. Use the explicit current-port commands below for build, test,
-sanitizer, and benchmark evidence.
+## What runs in parallel
 
-## Implemented scope
+| Collector | Parallel phases | Serial phases |
+|-----------|-----------------|---------------|
+| GIL, ≥ 16,384 candidates | interpreter-root pre-marking, reference subtraction, reachability marking | count/split walk, list reconstruction, finalization, deallocation |
+| GIL, < 16,384 candidates | none | whole collection |
+| Free-threaded | `update_refs`, `mark_heap`, `scan_heap`; known-root propagation runs on the pool but scales only under some conditions (below) | deferred stack scan, finalization, deallocation |
 
-- The GIL collector counts the generation and keeps collections below 16,384
-  candidates entirely serial. Above that threshold it parallelises
-  interpreter-root pre-marking, reference subtraction, and reachability
-  marking. List reconstruction, finalization, and deallocation remain serial.
-- The free-threaded collector parallelises root propagation, `update_refs`,
-  `mark_heap`, and `scan_heap`. Finalization and deallocation remain serial.
+Free-threaded known-root propagation dominated the measured large live
+graphs. In measurements on 15 October 2026 it scaled to 3.39× at 16 workers when
+a live 1M-object graph was reachable from a frame local, but when the same
+graph was reachable only from a module global one worker did about 99% of the
+phase and the collection ran at 0.61–0.83× serial speed. A deep binary tree
+reached 1.22× either way. See [Design](docs/DESIGN.md) §3.3 and the
+[scaling review](docs/reviews/2026-10-15-claude-scaling-review.md) §7.
 
-Both implementations use persistent worker pools. The GIL path uses
-split-vector work assignment. The free-threaded path distributes mimalloc pages
-for `mark_heap` and uses work-stealing while traversing reachable objects.
+Both collectors use persistent helper pools created lazily at first use, a
+shared adaptive worker controller (2–16 participants, starting at four),
+transactional startup with serial fallback, and fork recovery that leaves the
+child armed without helpers.
 
-## Build the current local port
+## Performance summary
 
-Run these commands from the outer repository:
+PGO+LTO, one 72-logical-CPU AArch64 host; GIL collector `669ed6b17e`, FT
+collector `195830171f`. Full tables and negative results:
+[Performance](docs/PERFORMANCE.md) §4.
 
-```bash
-mkdir -p build-port-ft
-cd build-port-ft
-../cpython/configure \
-    --disable-gil \
-    --with-pydebug \
-    --with-parallel-gc
-make -j"$(nproc)"
-```
+- **GIL:** eight 500,000-object collection shapes 1.08× geomean (graph
+  unstable and negative); mixed throughput unchanged, mean callback interval
+  +3%, maximum +21%; sustained throughput +7.6%.
+- **FT:** all eight shapes faster, 1.24× geomean; mixed throughput +23.5%.
+  Sustained `ai_workload` throughput −9.9% with mean callback interval +116%;
+  pyperformance `float` −10.5%. SQLite and startup neutral after lazy startup.
+- **Adaptive controller:** fixed 16 workers beat it in all tested FT phases.
+- **Root-propagation scaling:** depends on root placement and heap shape.
+  Experiments improved some module-rooted cases but failed the wider workload
+  requirements and were dropped ([Open issues](docs/OPEN_ISSUES.md) §2).
+  Proposed measurement criteria are in [Performance](docs/PERFORMANCE.md) §6.
 
-For a GIL build, use a separate build directory:
+These are same-binary serial/parallel comparisons on one machine, not general
+CPython performance claims. FT callback intervals are not stop-the-world pause
+times.
 
-```bash
-cd ..
-mkdir -p build-port-gil
-cd build-port-gil
-../cpython/configure \
-    --with-pydebug \
-    --with-parallel-gc
-make -j"$(nproc)"
-```
+The historical collection-shape measurements used creation workers that could
+retain discarded clusters. Their intended garbage fraction was therefore not
+established; the actual retained fraction is unknown. Mixed, sustained and
+pyperformance results did not use that creation pool. See the investigation
+record in [Performance](docs/PERFORMANCE.md) §5.
 
-Keeping the configurations out of tree prevents incompatible generated files
-and object files from being reused.
-
-The complete verification matrix also includes feature-off GIL and
-free-threaded control builds. See the [build-and-test guide](docs/BUILD_AND_TEST.md)
-for all four configurations.
-
-## Use and test
-
-The runtime API is:
-
-```python
-import gc
-
-gc.enable_parallel()
-print(gc.get_parallel_config())
-print(gc.get_parallel_stats())
-gc.collect()
-gc.collect_async()
-gc.disable_parallel()
-```
-
-In a GIL build, `gc.enable_parallel()` arms the collector without creating a
-thread. The fixed 16-helper pool is created on the first collection with at
-least 16,384 candidates and enough work splits. Smaller collections remain
-serial. The free-threaded build also arms without helpers and creates its 15
-helpers at the first collection, before stopping the world. The collecting
-thread participates as worker zero. The stochastic random-walk controller
-tries adjacent participant counts and walks back after a regression. There is
-no environment-variable, `-X`, or `PyConfig` startup control. In a build
-without parallel-GC support, the runtime enable and disable functions raise
-`RuntimeError`, while
-`gc.get_parallel_config()` reports that the feature is unavailable.
-
-If either pool cannot start, the triggering collection completes serially, one
-`RuntimeWarning` is emitted after collection state is safe, and later
-collections remain serial. An explicit `gc.enable_parallel()` permits one new
-attempt. `pool_active` and `startup_failed` expose this state in both builds.
-
-The FT controller deliberately searches only the parallel range of 2–16
-participants. Serial execution has a discontinuous cost and can trap a local
-optimiser before it explores faster parallel configurations. The adjacent
-random walk does not guarantee a global optimum within its range either.
-
-`gc.get_parallel_stats()` exposes implementation diagnostics and phase
-timings. `gc.collect_async()` schedules the normal collector and returns
-without waiting; it is part of the current experimental surface but does not
-itself select parallel mode.
-
-From a configured build directory, run:
-
-```bash
-./python -m test -j4 \
-    test_gc \
-    test_gc_ft_parallel \
-    test_gc_ws_deque \
-    test_gc_parallel \
-    test_gc_parallel_fork \
-    test_gc_parallel_properties \
-    test_gc_parallel_mark_alive \
-    test_capi.test_config \
-    test_embed
-```
-
-`test_gc_ft_parallel` includes lifecycle tests for both builds; the mark-alive
-suite is GIL-specific. For FT, also run `test_free_threading.test_gc`.
-See the build-and-test guide for the full matrix.
-
-## Fork behavior
-
-Forks made through CPython's supported fork protocol retain the parent's pool
-and adaptive history unchanged. A GIL child abandons inherited helpers,
-becomes armed, resets its controller to four, and creates no replacement
-thread during child recovery. Its first later eligible collection starts the
-new pool. Free-threaded child recovery likewise creates no helper and leaves
-an enabled collector armed. FT fork preparation takes the lifecycle lock
-before stopping the world; the parent releases it before resuming the world.
-If a callback or finalizer forks during collection, the child
-finishes that inherited collection serially without training the reset
-controller. The GIL and free-threaded regression tests cover ordinary and
-finalizer forks with bounded child waits. See the
-[fork architecture](docs/FORK_ARCHITECTURE.md) for the lifecycle contract and
-its explicit exclusion of raw extension-level `fork()` calls.
-
-Subinterpreter cleanup after a fork could not be tested as a parallel-GC
-property. Current upstream-based GIL and free-threaded controls both crash when
-the main interpreter forks while an otherwise idle legacy subinterpreter
-exists, without enabling parallel GC anywhere. The intended parallel-GC test
-is retained but skipped with that reason. If CPython's underlying lifecycle is
-fixed, the test should be enabled: pools belonging to subinterpreters that the
-child is about to delete must be abandoned without joining parent-only helper
-threads.
-
-GIL helpers create and bind persistent `PyThreadState` objects. Free-threaded
-helpers also own persistent thread states; they install those states in
-thread-local storage while running collector work, without performing a full
-bind. This supports debug-build reference accounting when a `tp_traverse`
-implementation changes a reference count.
-
-## Performance evidence
-
-Latest recorded PGO+LTO measurements on the 72-logical-CPU AArch64 host are
-listed by revision in the [review handoff](docs/REVIEW_HANDOFF.md):
-
-- GIL at `669ed6b17e`: eight requested 500,000-object collection shapes gave a
-  1.08x geomean, including an unstable negative graph result. Mixed throughput
-  was effectively unchanged, but mean callback interval increased 3% and
-  maximum interval increased 21%. Sustained throughput improved 7.6% geomean.
-- FT collector `195830171f`: all eight shapes improved, with a 1.24x geomean;
-  mixed throughput improved 23.5%. Sustained AI throughput fell 9.9% and mean
-  callback interval increased 116%. Pyperformance `float` was 10.5% slower;
-  SQLite and startup were neutral in the rigorous ABBA comparison.
-
-These are same-binary serial/parallel comparisons, not general CPython
-performance claims. Callback intervals are not strictly stop-the-world time in
-the free-threaded build. Full metadata, raw samples, and qualifications are in
-[the benchmarking guide](docs/BENCHMARKING.md) and the linked result files.
-
-A rigorous PGO+LTO GIL ABBA run of `sqlite_synth` measured 1.421316 us with
-parallel GC disabled and 1.429422 us while armed, a 0.57% difference reported
-as not significant. The armed workload retained one OS thread throughout. This
-replaces the former 38.1% penalty caused by eager creation triggering glibc's
-first-thread transition.
+General-purpose suites such as pyperformance do not reliably create large
+cyclic heaps or distinguish collector throughput and pauses, so they cannot by
+themselves show whether parallel GC works. The dedicated benchmarks here are
+part of the evidence. A broad pyperformance regression is still a blocker.
 
 ## Key files
 
 | File | Purpose |
 |------|---------|
 | `cpython/Python/gc_parallel.c` | GIL parallel collector |
-| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel collector phases |
-| `cpython/Include/internal/pycore_gc_parallel.h` | GIL collector state |
-| `cpython/Include/internal/pycore_gc_ft_parallel.h` | Free-threaded collector state |
-| `cpython/Include/internal/pycore_ws_deque.h` | Shared work-stealing deque |
-| `cpython/Include/internal/pycore_gc_barrier.h` | Shared barrier |
-| `cpython/Modules/gcmodule.c` | Python-level control and configuration API |
-
-## Documentation
-
-- [Getting Started](docs/GETTING_STARTED.md)
-- [Architecture Guide](docs/ARCHITECTURE.md)
-- [Fork Architecture](docs/FORK_ARCHITECTURE.md)
-- [Build and Test Guide](docs/BUILD_AND_TEST.md)
-- [Benchmarking Guide](docs/BENCHMARKING.md)
-- [Proposed Patch Series](docs/PATCH_SERIES.md)
-- [Current Source Inventory](docs/SOURCE_INVENTORY.md)
-- [Core-Developer Decisions](docs/CORE_DEV_DECISIONS.md)
-- [Core-Developer Sprint Readiness Plan](docs/CORE_DEV_SPRINT_READINESS_PLAN.md)
-- [Parallel GC Source Audit TODO](AUTIT-TODO.md)
-- [Design Post](docs/DESIGN_POST.md)
-- [Discussion draft](docs/pep-parallel-gc-v2.rst)
-- [Review Handoff](docs/REVIEW_HANDOFF.md)
-- [Validation Record](docs/VALIDATION.md)
-- [Handoff Reconciliation Plan and Log](docs/HANDOFF_RECONCILIATION_PLAN.md)
+| `cpython/Python/gc_free_threading_parallel.c` | Free-threaded parallel phases |
+| `cpython/Python/gc.c`, `cpython/Python/gc_free_threading.c` | Integration with the serial collectors |
+| `cpython/Include/internal/pycore_gc_parallel.h`, `pycore_gc_ft_parallel.h` | Collector state |
+| `cpython/Include/internal/pycore_ws_deque.h`, `pycore_gc_barrier.h`, `pycore_gc_random_walk.h` | Deque, barrier, adaptive controller |
+| `cpython/Modules/gcmodule.c` | Python API |
 
 ## Links
 

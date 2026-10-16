@@ -99,7 +99,7 @@ status could not be checked. No remote write was attempted.
 
 ### 12 October 2026: reconciliation executed
 
-Added [REVIEW_HANDOFF.md](REVIEW_HANDOFF.md), selected the newer discussion PEP
+Added `REVIEW_HANDOFF.md` (historical: `git show 724b74b:docs/REVIEW_HANDOFF.md`), selected the newer discussion PEP
 and marked the older draft historical. Reconciled README, Getting Started,
 Architecture, Design Post, fork/lazy plans, decisions, inventory, testing,
 benchmarking, audit and readiness status. The inventory now describes all 56

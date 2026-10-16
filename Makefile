@@ -2,7 +2,9 @@
 #
 # Targets here orchestrate cpython/ build + test operations so a reviewer
 # (or a developer) can verify the project end-to-end with a single command.
-# All actual building happens in-place in cpython/ — see docs/BUILD_AND_TEST.md
+# LEGACY: these in-place targets are not the current build workflow.
+# Use the out-of-tree commands in docs/GETTING_STARTED.md instead.
+# All actual building here happens in-place in cpython/.
 # for the underlying configure/make commands.
 #
 # See docs/TESTING.md for the testing strategy this Makefile implements.
@@ -48,7 +50,7 @@ help:
 	@echo "  Info:"
 	@echo "    make verify           print version + parallel-GC config of current build"
 	@echo ""
-	@echo "See docs/TESTING.md for the strategy and docs/BUILD_AND_TEST.md for details."
+	@echo "These targets are legacy. Use docs/GETTING_STARTED.md for current commands."
 
 # --- Build targets ---
 
