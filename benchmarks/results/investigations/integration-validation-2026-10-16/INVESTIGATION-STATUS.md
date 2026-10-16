@@ -80,6 +80,12 @@ The [build-evidence directory](build-evidence/) preserves the four native-depend
 
 The corrected campaign records parent checkpoint `5440ac284672a631ffcdb5ef6a32544967fd2c45` and the fixed CPython source pair. Its first process is the baseline GIL `--full --include-synthetic` invocation, writing only to the new scratch root's `results/project/gil-1-baseline.json`. No corrected leg was complete when this entry was written. All eight project legs and sixteen pyperformance suites remain required; no performance result or readiness verdict is inferred from passing local tests.
 
+### Analysis machinery prepared during measurement
+
+Added a separate [complete-project-ABBA analysis tool](ANALYSIS.md), without editing either benchmark implementation or its parameters. Twenty-three artificial-data tests pass. They cover source order, GIL/FT configuration, affinity/NUMA consistency, clean CPython content, complete workload coverage, run counts, finite measurements, matched actual object counts, equal leg weighting, run-level rather than collection-weighted callback means, signed changes, undefined zero-denominator ratios and input-file hashes. The command also refuses the actual unfinished campaign with no report. These establish analysis machinery behaviour, not performance neutrality.
+
+Reports retain every run-level sample, descriptive variation, both ABBA halves, serial controls and within-build parallel/serial changes. No percentage-based acceptance rule, significance assertion or noise threshold is adopted. Only the complete corrected campaigns can provide the requested performance evidence. Subsequent parent commits add documentation and analysis machinery; the running benchmark implementation and preflight fingerprints remain unchanged and are checked after each measurement leg.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
