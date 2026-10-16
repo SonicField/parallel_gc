@@ -112,6 +112,12 @@ This measurement records four of eight lower sustained throughputs, six of eight
 
 The launcher rechecked the three measurement/preflight fingerprints and started FT baseline leg 1. No FT project leg or pyperformance campaign is complete at this entry. Hosted CI evidence is still missing. The complete GIL comparison does not finish the handoff objective.
 
+### Runtime-mode attestation before pyperformance
+
+While FT baseline leg 1 remained live, found that the pyperformance hook checked collector activation but not the runtime GIL state after workload imports. Added a teardown-only check and metadata, without forcing a GIL setting or changing timed workloads. Six decision tests failed before implementation; eight added tests now cover decisions and real child-process behaviour. All 75 parent harness tests pass on each of the four binaries (one FT-only skip in GIL). They ran on CPU 32 outside the measurement affinity.
+
+The [hook evidence](hook-evidence/README.md) records commands, passing logs, the initial misspelled-module invocation, exact scope and fingerprint boundary. The hook was frozen before any pyperformance campaign began; it is included in subsequent controller checks. Completed GIL project data and the running FT project invocation do not use this hook. Published parent CI does not cover the new parent tests; another matrix run will be required after publication. No CPython source or collector behaviour changed.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.

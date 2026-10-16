@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 import sys
+import sysconfig
 
 from pyperf._hooks import HookError
 
@@ -54,6 +55,19 @@ class ParallelGCHook:
         if not self.active:
             return
         self.config = self._verify()
+        # Check after workload imports and outside the timed sections. An FT
+        # extension can enable the GIL, invalidating the intended comparison.
+        free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
+        probe = getattr(sys, "_is_gil_enabled", None)
+        if probe is None and free_threaded:
+            raise HookError("Cannot verify the free-threaded runtime GIL state")
+        gil_enabled = bool(probe()) if probe is not None else True
+        if free_threaded and gil_enabled:
+            raise HookError("Free-threaded benchmark ran with the GIL enabled")
+        if not free_threaded and not gil_enabled:
+            raise HookError("GIL-build benchmark ran with the GIL disabled")
+        metadata["parallel_gc_build_gil_disabled"] = free_threaded
+        metadata["parallel_gc_runtime_gil_enabled"] = gil_enabled
         metadata["parallel_gc_mode"] = self.mode
         metadata["parallel_gc_available"] = bool(
             self.config.get("available", False)

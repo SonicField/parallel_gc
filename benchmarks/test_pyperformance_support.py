@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import sysconfig
 import tempfile
 from types import SimpleNamespace
 import unittest
@@ -168,6 +169,53 @@ if __name__ == "__main__":
 
 
 class HookScopeTests(unittest.TestCase):
+    def runtime_metadata(self, *, free_threaded, gil_enabled, has_probe=True):
+        config = {"available": True, "enabled": False, "num_workers": 0}
+        probe = mock.Mock(return_value=gil_enabled) if has_probe else None
+        with (
+            mock.patch.dict(os.environ, {mode.MODE_ENV: "disabled"}, clear=True),
+            mock.patch.object(sys, "argv", ["benchmark.py"]),
+            mock.patch.object(support_hook, "apply_mode", return_value=config),
+            mock.patch.object(support_hook, "verify_mode", return_value=config),
+            mock.patch.object(sysconfig, "get_config_var", return_value=free_threaded),
+            mock.patch.object(sys, "_is_gil_enabled", probe, create=True),
+        ):
+            hook = support_hook.ParallelGCHook()
+            metadata = {}
+            hook.teardown(metadata)
+        return metadata
+
+    def test_gil_runtime_mode_is_recorded(self):
+        metadata = self.runtime_metadata(free_threaded=False, gil_enabled=True)
+        self.assertFalse(metadata["parallel_gc_build_gil_disabled"])
+        self.assertTrue(metadata["parallel_gc_runtime_gil_enabled"])
+
+    def test_free_threaded_runtime_mode_is_recorded(self):
+        metadata = self.runtime_metadata(free_threaded=True, gil_enabled=False)
+        self.assertTrue(metadata["parallel_gc_build_gil_disabled"])
+        self.assertFalse(metadata["parallel_gc_runtime_gil_enabled"])
+
+    def test_free_threaded_runtime_with_gil_is_rejected(self):
+        with self.assertRaisesRegex(support_hook.HookError, "GIL enabled"):
+            self.runtime_metadata(free_threaded=True, gil_enabled=True)
+
+    def test_gil_build_without_gil_is_rejected(self):
+        with self.assertRaisesRegex(support_hook.HookError, "GIL disabled"):
+            self.runtime_metadata(free_threaded=False, gil_enabled=False)
+
+    def test_legacy_gil_build_without_runtime_probe(self):
+        metadata = self.runtime_metadata(
+            free_threaded=False, gil_enabled=True, has_probe=False
+        )
+        self.assertFalse(metadata["parallel_gc_build_gil_disabled"])
+        self.assertTrue(metadata["parallel_gc_runtime_gil_enabled"])
+
+    def test_free_threaded_build_without_runtime_probe_is_rejected(self):
+        with self.assertRaisesRegex(support_hook.HookError, "Cannot verify"):
+            self.runtime_metadata(
+                free_threaded=True, gil_enabled=False, has_probe=False
+            )
+
     def test_command_timer_hook_is_passive(self):
         environ = {mode.MODE_ENV: "enabled"}
         with mock.patch.dict(os.environ, environ, clear=True):
@@ -231,6 +279,68 @@ class HookScopeTests(unittest.TestCase):
             self.assertEqual(
                 os.environ[mode.VERIFIED_PID_ENV], str(os.getpid())
             )
+
+
+class HookRuntimeTests(unittest.TestCase):
+    PROBE = """
+import decimal
+import gc
+import os
+import sys
+import sysconfig
+from parallel_gc_pyperformance.hook import ParallelGCHook, HookError
+from parallel_gc_pyperformance.mode import MODE_ENV
+
+os.environ[MODE_ENV] = (
+    "disabled" if hasattr(gc, "disable_parallel") else "feature-off"
+)
+free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
+probe = getattr(sys, "_is_gil_enabled", None)
+gil_enabled = probe() if probe is not None else True
+hook = ParallelGCHook()
+metadata = {}
+if free_threaded and gil_enabled:
+    try:
+        hook.teardown(metadata)
+    except HookError as exc:
+        if "GIL enabled" not in str(exc):
+            raise
+    else:
+        raise RuntimeError("FT worker with GIL enabled was accepted")
+    if metadata:
+        raise RuntimeError("Rejected worker published successful metadata")
+else:
+    hook.teardown(metadata)
+    if metadata["parallel_gc_build_gil_disabled"] != free_threaded:
+        raise RuntimeError("Hook recorded the wrong build mode")
+    if metadata["parallel_gc_runtime_gil_enabled"] != gil_enabled:
+        raise RuntimeError("Hook recorded the wrong runtime mode")
+print(f"free_threaded={free_threaded}, gil_enabled={gil_enabled}")
+"""
+
+    def run_probe(self, *, force_gil=False):
+        environ = os.environ.copy()
+        environ["PYTHONPATH"] = str(SUPPORT)
+        if force_gil:
+            environ["PYTHON_GIL"] = "1"
+        result = subprocess.run(
+            [sys.executable, "-c", self.PROBE],
+            env=environ,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result.stdout
+
+    def test_real_runtime_after_decimal_import(self):
+        self.run_probe()
+
+    @unittest.skipUnless(
+        sysconfig.get_config_var("Py_GIL_DISABLED"), "requires an FT build"
+    )
+    def test_real_ft_runtime_with_gil_is_rejected(self):
+        self.assertIn("gil_enabled=True", self.run_probe(force_gil=True))
 
 
 class RunnerTests(unittest.TestCase):
