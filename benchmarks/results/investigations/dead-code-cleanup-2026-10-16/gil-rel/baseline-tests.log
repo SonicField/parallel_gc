@@ -1,0 +1,27 @@
+Using random seed: 715940762
+0:00:00 load avg: 7.85 mem: 22.6 MiB Run 10 tests in parallel using 8 worker processes (timeout: 5 min, worker timeout: 7 min 30 sec)
+0:00:00 load avg: 7.85 mem: 226.4 MiB [ 1/10] test_gc_parallel skipped
+test_gc_parallel skipped -- Parallel GC requires free-threaded build (--disable-gil)
+0:00:00 load avg: 7.85 mem: 230.8 MiB [ 2/10] test_gc_parallel_properties skipped
+test_gc_parallel_properties skipped -- Parallel GC requires free-threaded build (--disable-gil)
+0:00:00 load avg: 7.85 mem: 189.1 MiB [ 3/10] test_gc_ws_deque passed
+0:00:00 load avg: 7.85 mem: 183.6 MiB [ 4/10] test_parallel_gc_profile passed
+0:00:00 load avg: 7.85 mem: 188.1 MiB [ 5/10] test_capi.test_config passed
+0:00:00 load avg: 7.85 mem: 129.4 MiB [ 6/10] test_gc_parallel_fork passed
+0:00:01 load avg: 7.85 mem: 116.1 MiB [ 7/10] test_gc_ft_parallel passed
+0:00:01 load avg: 7.85 mem: 97.2 MiB [ 8/10] test_gc passed
+0:00:04 load avg: 8.26 mem: 95.8 MiB [ 9/10] test_embed passed
+0:00:06 load avg: 8.26 mem: 25.4 MiB [10/10] test_gc_parallel_mark_alive passed
+Median speedup: 1.10x (serial=35.1ms, parallel=31.9ms)
+
+== Tests result: SUCCESS ==
+
+2 tests skipped:
+    test_gc_parallel test_gc_parallel_properties
+
+8 tests OK.
+
+Total duration: 6.7 sec
+Total tests: run=346 skipped=85
+Total test files: run=10/10 skipped=2
+Result: SUCCESS

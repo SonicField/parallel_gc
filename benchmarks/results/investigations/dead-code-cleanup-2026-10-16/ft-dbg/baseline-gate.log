@@ -1,0 +1,48 @@
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc.c
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc_free_threading.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading.c
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc_parallel.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_parallel.c
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc_free_threading_parallel.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c
+In file included from /tmp/parallel-gc-integration-fKKFb7/source/Include/internal/pycore_gc_barrier.h:15,
+                 from /tmp/parallel-gc-integration-fKKFb7/source/Include/internal/pycore_gc_ft_parallel.h:19,
+                 from /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:13:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c: In function ‘_PyGC_ThreadPoolInit’:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:2199:34: warning: comparison of integer expressions of different signedness: ‘size_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+ 2199 |     assert(pool->threads_created == pool->num_workers - 1);
+      |                                  ^~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_parallel.c:1885:1: error: ‘_PyGCWorker_CoordinateStealing’ defined but not used [-Werror=unused-function]
+ 1885 | _PyGCWorker_CoordinateStealing(_PyParallelGCWorker *worker)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_parallel.c:1871:1: error: ‘_PyGCWorker_DropCoordinator’ defined but not used [-Werror=unused-function]
+ 1871 | _PyGCWorker_DropCoordinator(_PyParallelGCWorker *worker)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_parallel.c:1854:1: error: ‘_PyGCWorker_TakeCoordinator’ defined but not used [-Werror=unused-function]
+ 1854 | _PyGCWorker_TakeCoordinator(_PyParallelGCWorker *worker)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading.c:377:1: error: ‘disable_deferred_refcounting_on_worklist’ defined but not used [-Werror=unused-function]
+  377 | disable_deferred_refcounting_on_worklist(PyObject *op)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading.c:178:1: error: ‘worklist_to_array’ defined but not used [-Werror=unused-function]
+  178 | worklist_to_array(struct worklist *worklist, Py_ssize_t *out_count)
+      | ^~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading.c:136:1: error: ‘worklist_clear’ defined but not used [-Werror=unused-function]
+  136 | worklist_clear(struct worklist *worklist)
+      | ^~~~~~~~~~~~~~
+At top level:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:3048:1: error: ‘par_disable_deferred_refcounting’ defined but not used [-Werror=unused-function]
+ 3048 | par_disable_deferred_refcounting(PyObject *op)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:2910:1: error: ‘mark_heap_worker’ defined but not used [-Werror=unused-function]
+ 2910 | mark_heap_worker(_PyGCFTParState *state, int worker_id,
+      | ^~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:2716:1: error: ‘update_refs_worker’ defined but not used [-Werror=unused-function]
+ 2716 | update_refs_worker(_PyGCFTParState *state, int worker_id,
+      | ^~~~~~~~~~~~~~~~~~
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:1030:1: error: ‘propagate_worker_run’ defined but not used [-Werror=unused-function]
+ 1030 | propagate_worker_run(_PyGCPropagateState *state, int worker_id)
+      | ^~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make: *** [Makefile:3345: Python/gc_free_threading.o] Error 1
+cc1: some warnings being treated as errors
+make: *** [Makefile:3345: Python/gc_parallel.o] Error 1
+cc1: some warnings being treated as errors
+make: *** [Makefile:3345: Python/gc_free_threading_parallel.o] Error 1

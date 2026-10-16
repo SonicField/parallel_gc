@@ -75,7 +75,7 @@ First integrate the creation-pool fix alone. Test schedules where one worker pro
 
 **Commit:** retention fix and regression tests.
 
-Then define module-rooted precisely with Alex: absence of persistent heap-holder locals, or absence of every transient stack reference at collection. The current probe sometimes sees another worker's `new_clusters`; it also excludes shuffle frames. Make a deterministic test of the agreed contract, with a planted-reference positive control. Do not hide the failure by simply excluding another local.
+Use the contract agreed with Alex: sustained heaps are held in module state between operations; shuffle and churn may temporarily hold stack references. A separate controlled collection checks module-only roots at its collection boundary. The sustained test must detect a persistent whole-heap local, not reject a temporary new batch. Include a planted-reference positive control; do not merely exclude another local from the old, stronger assertion.
 
 **Check:** collection-boundary observations appropriate to that contract, holder cleanup, identical seeded heaps, separate result keys and compatibility of existing keys. Repeat the harness suites in GIL/FT debug/release builds. Require no unexplained failure; repeated passes alone do not settle a race.
 
@@ -100,9 +100,9 @@ For each completed step record: imported commits, destination commits, exact che
 | Plan | Approved | Alex authorised proceeding with VP and regular atomic commits |
 | 0: manifest | Complete | Tracked worktrees clean; candidate identities and exclusions recorded below |
 | 1: documents | Complete locally | Consolidation and separate PEP navigation/qualification commit; historical evidence retained in git |
-| 2: dead code | Source edits held | Required repository-policy access unavailable; source candidates fetched locally but not applied |
+| 2: dead code | Complete locally | CPython `442a97213f`; four before/after feature-on builds and two feature-off controls; warning gates and symbol checks |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
-| 4: benchmarks | Retention repair verified; rooting pending | Deterministic ownership tests; await the sustained rooting-contract decision |
+| 4: benchmarks | Retention repair verified; rooting agreed | Module-held sustained heap with temporary stack references; separate module-only controlled collection |
 | 5: validation | Pending | Fresh candidate-source CI and matched-harness measurements |
 
 ### 16 October: manifest and execution approval
@@ -144,3 +144,13 @@ The repository instructions require reading CPython's linked AI policy before so
 Completed the independent creation-pool fix and strengthened its tests: controlled schedules fail before the repair with 10/40 and 40/40 retained heads; the caller-survivor case fails with 40 retained instead of 32. All ten tests pass after the repair on the host interpreter. Mode-specific repeats and binary provenance are recorded in [the ownership report](../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md). No collector behaviour, heap generator, benchmark duration or output schema changed. This is not a performance claim.
 
 Final repeat outcome: 40 full harness suites per reused GIL/FT release/debug binary (20 disabled, 20 armed), 400 tests each, 1,600 in total, zero failures/errors. The reused binaries report dirty source stamps, so this is harness ownership evidence, not fresh clean-source CPython validation. Active-document whitespace checks pass. Remaining decisions: access to the policy required by repository instructions, the precise sustained rooting contract, and campaign acceptance criteria before performance measurement.
+
+### 16 October: source work and rooting contract unblocked
+
+Alex explicitly instructed proceeding without the repository AI-policy check. The sustained rooting contract is module ownership between operations, allowing temporary stack references while the heap is mutated. Controlled single-collection tests retain the stronger module-only boundary check. Neither decision authorises active collector-design changes. Campaign acceptance criteria still need agreement before performance measurements.
+
+Started four fresh, non-PGO baseline builds from a detached `c67363fa59` worktree in `/tmp/parallel-gc-integration-fKKFb7/source`. The local check script records configure/build logs, focused unused-function/variable diagnostics, defined global GC symbols, and focused test outcomes for GIL/FT release/debug. These are cleanup correctness checks, not benchmark builds.
+
+### 16 October: unreferenced-code cleanup committed independently
+
+CPython `442a97213f` adopts B1, with empty preprocessor guards and orphan headings removed. All removed names have no surviving repository references. Four fresh before/after configurations pass focused tests with identical counts/skips and unchanged defined global GC symbols; the focused warning gate fails on the baseline and passes after cleanup. Both feature-off debug controls also pass. A misspelled local test-module argument initially failed imports and was corrected without changing project tests. Full logs, build limitations and reproduction are in [the cleanup report](../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md). No performance claim, active collector change or remote write. The parent gitlink update is kept separate from benchmark additions.
