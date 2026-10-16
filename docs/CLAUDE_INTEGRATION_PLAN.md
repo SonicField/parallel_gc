@@ -99,7 +99,7 @@ For each completed step record: imported commits, destination commits, exact che
 |------|-------|------------------------|
 | Plan | Approved | Alex authorised proceeding with VP and regular atomic commits |
 | 0: manifest | Complete | Tracked worktrees clean; candidate identities and exclusions recorded below |
-| 1: documents | Consolidation complete; PEP next | Current contracts and evidence preserved; temporary redirects retained until PEP navigation is updated |
+| 1: documents | Complete locally | Consolidation and separate PEP navigation/qualification commit; historical evidence retained in git |
 | 2: dead code | Pending | Establish reachability and focused warning baseline |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
 | 4: benchmarks | Pending | Resolve the rooting contract before fixing its test |
@@ -132,3 +132,7 @@ Adopted the five-document structure from `c21af71`, with integration-specific co
 Navigation walkthrough: README identifies all repositories and the gitlink; GETTING_STARTED gives four isolated builds; DESIGN §2.7/§3.3/§3.6 distinguish the marking protocols; PERFORMANCE separates program throughput, callback intervals and stopped-world work; OPEN_ISSUES separates discussion from landing gates. Added DESIGN §3.9 so the retained traversal/PGO reasoning is not available only through old plans.
 
 Checks: 17 active/review documents, 99 local file destinations and 14 historical `git show` destinations resolve, including one CPython-history destination. The initial checker incorrectly looked for that CPython object in the parent repository; repository-aware resolution corrected the check. `git diff --check` passes on new/modified active material. Markdown/RST renderers (`markdown_it`, `docutils`) are unavailable, so rendering and external URLs are not verified. CPython, its gitlink, benchmark workloads and CI files remain unchanged; the pyperformance runner changed only its documentation-path error message. Historical raw evidence remains byte-identical. Temporary redirects keep the unchanged PEP's old links valid until its separate commit.
+
+### 16 October: discussion draft navigation and qualifications
+
+Updated the draft separately: links use the consolidated documents, FT propagation scaling is qualified, historical creation-pool limitations are stated, and proposed numerical criteria are not represented as newly adopted policy. AI attribution, VP link and discussion-only status remain. Removed the five temporary redirects after replacing their active links; original audit and lifecycle records remain available through the recorded git-history commands. No implementation or benchmark workload changed.

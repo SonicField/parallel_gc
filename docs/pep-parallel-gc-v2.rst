@@ -24,7 +24,9 @@ Post-History:
    source, tests and measurements remain open to independent review.
 
    The source and evidence were reconciled on 12 October 2026 against CPython
-   ``c67363fa59``; this discussion framing was revised on 15 October.
+   ``c67363fa59``; this discussion framing was revised on 15 October, with
+   documentation navigation and experimental qualifications updated on
+   16 October. Collector source was not changed by those documentation edits.
    The `validation record <VALIDATION.md>`_ tracks dated evidence and pending
    publication checks. This document's reconciliation date does not identify
    the source selected by a later checkout; the parent's gitlink does.
@@ -37,8 +39,10 @@ The design goal is to reduce cyclic-GC pauses progressively as the heap
 exposes useful parallel work, while preserving collection coverage and tuning
 to the workload and available hardware without application intervention beyond
 activation. Enabling the feature should impose little cost when parallelism
-does not help. That overhead goal has no agreed numerical limit yet, and the
-current measurements include regressions.
+does not help. The review work suggests numerical criteria in the
+`performance document <PERFORMANCE.md>`_; these remain discussion material,
+not a limit silently adopted by documentation changes. Current measurements
+include regressions.
 
 This document describes an experimental opt-in parallel cyclic collector for
 both GIL-enabled and free-threaded CPython. Its compatibility requirement is
@@ -66,7 +70,7 @@ engineering discussion, not a claim of readiness to land in CPython.
 How to use this starting point
 ==============================
 
-Start with the `review handoff <REVIEW_HANDOFF.md>`_ and
+Start with the `repository README <../README.md>`_ and
 `getting-started guide <GETTING_STARTED.md>`_. Clone the complete
 ``SonicField/parallel_gc`` parent with its submodules, not just the CPython
 fork: the parent contains the benchmark laboratory, design records and pinned
@@ -76,8 +80,8 @@ Useful first-review questions are whether the phase invariants and lifecycle
 contract are sound, what helper-thread traversal means for extension
 compatibility, which diagnostics should be public, and how to evaluate the
 measured benefits and regressions. The
-`source audit <../AUTIT-TODO.md>`_ records unresolved hazards and hypotheses
-alongside the test evidence.
+`open issues <OPEN_ISSUES.md>`_ record unresolved hazards, hypotheses and
+performance defects alongside the test evidence.
 
 MUST, SHOULD and MAY below express the intended engineering contract and
 design goals. They do not denote requirements approved by CPython, nor assert
@@ -168,9 +172,12 @@ The design has five goals.
    pauses than the corresponding serial collections on the same interpreter
    and machine.
 
-The project has not selected a numerical limit for "low overhead". That goal
+The review work proposes numerical criteria for "low overhead" in the
+`performance document <PERFORMANCE.md>`_. They are not approved by CPython,
+and this documentation integration does not itself select a limit. The goal
 cannot be reported as satisfied until a limit is agreed and measurements from
-the source revision being evaluated meet it.
+the source revision being evaluated meet it. Current measurements include
+regressions and do not establish that goal.
 
 
 Non-Goals
@@ -407,10 +414,16 @@ creates up to 15 helper threads. For an enabled collection, only the
 controller-selected participants enter parallel phases. The remaining helpers
 stay parked.
 
-Participants parallelize known-root propagation, reference-count adjustment,
-heap marking, and heap scanning. The implementation partitions work by
-mimalloc page and uses work stealing during heap marking. Weak-reference,
-finalization, resurrection, and deletion work remains serial.
+Participants parallelize reference-count adjustment, heap marking, and heap
+scanning. Known-root propagation is also dispatched to the participants, but
+its effective parallelism is conditional: on 15 October 2026 a live 1M-object
+graph reachable only from module state was traversed almost entirely by one
+worker (0.61–0.83x serial at 16 workers), while the same graph reachable from
+a frame local scaled to 3.39x
+(`scaling review <reviews/2026-10-15-claude-scaling-review.md>`_). The
+implementation partitions work by mimalloc page and uses work stealing during
+known-root propagation and heap marking. Weak-reference, finalization,
+resurrection, and deletion work remains serial.
 
 The free-threaded implementation does not use the GIL implementation's
 16,384-candidate serial crossover. It controls overhead by reducing active
@@ -624,8 +637,9 @@ The following checks do not assume that every workload must benefit.
      - Same-binary small-heap, low-GC and poorly scaling workloads; measure
        first use separately from later collections.
      - Report time ratios and absolute startup cost. The low-overhead goal
-       remains undecided until a numerical limit is agreed, then fails if
-       measured regression exceeds that limit.
+       requires an agreed limit and fails if measurements exceed it. The
+       performance document records suggested criteria, not acceptance by
+       documentation alone.
    * - Does the controller obey its contract?
      - Deterministic tests of count bounds, invalid samples, trial acceptance,
        rollback and persistence across collections.
@@ -731,10 +745,22 @@ phases; the adaptive arms improved on fixed 2 and 4 but had not reached 16
 within three cycles. This does not establish convergence time or an optimum
 on other workloads. The local optimiser has no global-optimum guarantee.
 
+A later release-build experiment found that free-threaded known-root
+propagation scaling depends on where live data is rooted and on heap shape;
+the project benchmarks above hold their heaps in function locals, the
+favourable case (`performance document <PERFORMANCE.md>`_ section 4).
+
+The historical collection-shape benchmarks also used creation workers that
+could retain discarded batches, adding unintended stack roots. Their actual
+garbage fraction is unknown. This limits interpretation of those shape
+measurements; the mixed, sustained and pyperformance workloads did not use
+that creation pool. The repair and module-rooted benchmark additions are
+tracked in the `integration plan <CLAUDE_INTEGRATION_PLAN.md>`_.
+
 These measurements establish that the implementation has profitable regions
 and negative regions on that machine. They do not establish performance after
-future changes, a universal speedup, cross-platform scaling, or the unresolved
-low-overhead limit. The complete raw-data provenance and reproduction commands
+future changes, a universal speedup, cross-platform scaling, or that the
+suggested low-overhead criteria are met. The complete raw-data provenance and reproduction commands
 belong in the project benchmark record.
 
 Functional and sanitizer evidence
@@ -754,9 +780,11 @@ validate ``c67363fa59`` or subsequent source. The
 published source pair; live GitHub status was unavailable during reconciliation.
 Full-suite workflows use the default disabled runtime policy; focused tests
 explicitly activate parallel GC. The
-`testing guide <TESTING.md>`_, `lazy-pool record <LAZY_POOL_CREATION_PLAN.md>`_
-and `review handoff <REVIEW_HANDOFF.md>`_ identify revisions, selections,
-outcomes and coverage gaps. No tests were rerun for this document revision.
+`testing guide <TESTING.md>`_, `lazy-pool contract <DESIGN.md>`_
+and `open issues <OPEN_ISSUES.md>`_ identify contracts and coverage gaps.
+Exact historical lifecycle selections remain available with
+``git show 724b74b:docs/LAZY_POOL_CREATION_PLAN.md``. No tests were rerun for
+this document revision.
 
 Evidence still needed
 ---------------------
@@ -893,7 +921,7 @@ The project repository contains the architecture, fork design, test matrix,
 benchmark protocol, raw performance records, and unresolved source audit. The
 parent revision's ``cpython`` gitlink selects the implementation for a checkout;
 it does not automatically follow the fork branch's latest tip. The
-`review handoff <REVIEW_HANDOFF.md>`_ records the entry path. The
+`repository README <../README.md>`_ records the entry path. The
 `validation record <VALIDATION.md>`_ identifies the dated review baseline,
 benchmark revisions and CI outcomes. Historical measurements remain attached
 to their original source, not silently relabelled as results for newer code.
@@ -904,8 +932,9 @@ Open Decisions and Blockers
 
 The following decisions and defects remain unresolved.
 
-1. Define the maximum accepted regression for enabled workloads that do not
-   benefit from parallelism.
+1. Agree the maximum accepted regression for enabled workloads that do not
+   benefit from parallelism; the performance document records review-work
+   proposals for that discussion.
 2. Decide whether ``gc.get_parallel_stats()`` has a stable public schema or a
    private diagnostic name.
 3. Specify and implement every post-mutation resource-failure path.
