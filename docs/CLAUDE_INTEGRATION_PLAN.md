@@ -100,9 +100,9 @@ For each completed step record: imported commits, destination commits, exact che
 | Plan | Approved | Alex authorised proceeding with VP and regular atomic commits |
 | 0: manifest | Complete | Tracked worktrees clean; candidate identities and exclusions recorded below |
 | 1: documents | Complete locally | Consolidation and separate PEP navigation/qualification commit; historical evidence retained in git |
-| 2: dead code | Pending | Establish reachability and focused warning baseline |
+| 2: dead code | Source edits held | Required repository-policy access unavailable; source candidates fetched locally but not applied |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
-| 4: benchmarks | Pending | Resolve the rooting contract before fixing its test |
+| 4: benchmarks | Retention repair verified; rooting pending | Deterministic ownership tests; await the sustained rooting-contract decision |
 | 5: validation | Pending | Fresh candidate-source CI and matched-harness measurements |
 
 ### 16 October: manifest and execution approval
@@ -136,3 +136,11 @@ Checks: 17 active/review documents, 99 local file destinations and 14 historical
 ### 16 October: discussion draft navigation and qualifications
 
 Updated the draft separately: links use the consolidated documents, FT propagation scaling is qualified, historical creation-pool limitations are stated, and proposed numerical criteria are not represented as newly adopted policy. AI attribution, VP link and discussion-only status remain. Removed the five temporary redirects after replacing their active links; original audit and lifecycle records remain available through the recorded git-history commands. No implementation or benchmark workload changed.
+
+### 16 October: independent benchmark repair while source edits are held
+
+The repository instructions require reading CPython's linked AI policy before source edits. HTTPS retrieval returned 403 and the knowledge reader refused external access; requested a local copy or clarification from Alex. CPython candidates are locally fetched but unapplied. Also requested the intended sustained module-rooting contract before changing its scheduling-sensitive test.
+
+Completed the independent creation-pool fix and strengthened its tests: controlled schedules fail before the repair with 10/40 and 40/40 retained heads; the caller-survivor case fails with 40 retained instead of 32. All ten tests pass after the repair on the host interpreter. Mode-specific repeats and binary provenance are recorded in [the ownership report](../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md). No collector behaviour, heap generator, benchmark duration or output schema changed. This is not a performance claim.
+
+Final repeat outcome: 40 full harness suites per reused GIL/FT release/debug binary (20 disabled, 20 armed), 400 tests each, 1,600 in total, zero failures/errors. The reused binaries report dirty source stamps, so this is harness ownership evidence, not fresh clean-source CPython validation. Active-document whitespace checks pass. Remaining decisions: access to the policy required by repository instructions, the precise sustained rooting contract, and campaign acceptance criteria before performance measurement.

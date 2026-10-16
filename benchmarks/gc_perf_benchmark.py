@@ -1287,6 +1287,9 @@ class CreationThreadPool:
                     self.result_queue.put((task_id, False, exc))
                 else:
                     self.result_queue.put((task_id, True, clusters))
+                    # The result queue now owns the batch. Release this frame's
+                    # reference before task_done() lets the caller collect it.
+                    clusters = None
             finally:
                 self.task_queue.task_done()
 

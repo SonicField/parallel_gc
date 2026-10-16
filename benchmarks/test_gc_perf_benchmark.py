@@ -1,6 +1,8 @@
+import gc
 import random
 import threading
 import unittest
+import weakref
 from unittest import mock
 
 from benchmarks import gc_perf_benchmark as benchmark
@@ -69,6 +71,65 @@ class ThreadFailureTests(unittest.TestCase):
 
 
 class CreationPoolTests(unittest.TestCase):
+    def assert_pool_results_released(self, schedule, keep_count=0):
+        release = threading.Event()
+        barrier = threading.Barrier(4, timeout=5)
+        original_worker = benchmark.CreationThreadPool._worker
+        original_generator = benchmark.HEAP_GENERATORS["graph"]
+
+        def scheduled_worker(pool, thread_id):
+            if schedule == "one_worker" and thread_id != 0:
+                release.wait()
+            original_worker(pool, thread_id)
+
+        def scheduled_generator(size, *, rng=None):
+            if schedule == "all_workers":
+                # Each worker must claim a task before any can finish one.
+                barrier.wait()
+            return original_generator(size, rng=rng)
+
+        with (
+            mock.patch.object(
+                benchmark.CreationThreadPool, "_worker", scheduled_worker),
+            mock.patch.dict(
+                benchmark.HEAP_GENERATORS, {"graph": scheduled_generator}),
+        ):
+            pool = benchmark.CreationThreadPool(4)
+            try:
+                clusters = pool.create_objects("graph", 4000)
+                probes = [weakref.ref(cluster[0]) for cluster in clusters]
+                self.assertEqual(len(probes), 40)
+                kept = clusters[:keep_count]
+                clusters = None
+                gc.collect()
+                alive = sum(probe() is not None for probe in probes)
+                self.assertEqual(
+                    alive, keep_count,
+                    f"{alive}/{len(probes)} clusters remain alive, expected "
+                    f"the {keep_count} caller-retained clusters only "
+                    f"under {schedule}; idle creation workers must release "
+                    "their results before reporting task completion")
+                self.assertEqual(
+                    [probe() is not None for probe in probes],
+                    [True] * keep_count + [False] * (40 - keep_count))
+                self.assertEqual(len(kept), keep_count)
+                self.assertTrue(all(thread.is_alive() for thread in pool.threads))
+            finally:
+                release.set()
+                pool.shutdown()
+
+    def test_pool_threads_do_not_retain_results(self):
+        self.assert_pool_results_released("natural")
+
+    def test_one_worker_does_not_retain_its_last_result(self):
+        self.assert_pool_results_released("one_worker")
+
+    def test_each_worker_releases_its_result(self):
+        self.assert_pool_results_released("all_workers")
+
+    def test_only_caller_retained_clusters_survive(self):
+        self.assert_pool_results_released("all_workers", keep_count=32)
+
     def test_results_use_task_order_and_fixed_seeds(self):
         def probe(size, *, rng=None):
             return [[rng.randrange(1_000_000)]]

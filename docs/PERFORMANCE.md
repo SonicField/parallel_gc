@@ -105,9 +105,10 @@ for `--full --include-synthetic` on the AArch64 host.
   propagation. A worker can process several tasks and retains only its last
   result, so the fraction retained depends on scheduling. **Historical
   collection-shape runs did not establish the intended 20% garbage fraction;
-  their actual retained fraction is unknown.** The repair is scheduled in the
-  [integration plan](CLAUDE_INTEGRATION_PLAN.md). Mixed and sustained workloads
-  do not use this creation pool.
+  their actual retained fraction is unknown.** The repair is integrated with
+  deterministic scheduling and survivor checks; see the
+  [ownership verification record](../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md).
+  Mixed and sustained workloads do not use this creation pool.
 - **Metrics:** throughput; callback-to-callback collection interval (mean and
   maximum); GC callback-active time (not additive in FT); parallel/serial
   speedup; geometric means.
@@ -244,7 +245,7 @@ attributed to current code.
 | 2026-10-07 | `sqlite_synth` (38.1% GIL, 10.4% FT slower) performed no collections. One unrelated thread reproduced it; glibc's `__libc_single_threaded` stays 0 after the first thread. | Cause: first-thread transition triggered by eager pool creation. Lazy startup (`7ec0874a7d`, `195830171f`) removed it (GIL 0.57%, FT 0.013%, both not significant). |
 | 2026-10-08 | FT sustained `ai_workload` −9.9% and `float` −10.5%. | **Open.** On 15 October, per-collection latency was about 1.5–2× serial in both baseline and candidate builds, with only 3–8 adaptive workers. Serial runs were bimodal (about 40 collections at about 1.5 s, or about 25 at about 2.6 s). Candidate explanations: finalizers (the only shape with `__del__`); BRC queue traffic; cache-line ownership moving to helper cores; mimalloc abandonment versus cross-thread free. None tested. |
 | 2026-10-15 | FT known-root propagation scaling depends on root placement and heap shape (§4). | **Open**; [OPEN_ISSUES.md](OPEN_ISSUES.md) §2. |
-| 2026-10-15 | Creation-pool threads retained their last generated batch, adding unintended roots and compromising the intended garbage fraction. | Candidate fix `6c8bf14`, with a regression test; integration pending. The historical retained fraction is unknown, not necessarily 100%. |
+| 2026-10-15/16 | Creation-pool threads retained their last generated batch, adding unintended roots and compromising the intended garbage fraction. | Fix from `6c8bf14` integrated with controlled one-worker/four-worker and 80%-survivor tests. The historical retained fraction is unknown, not necessarily 100%. |
 | 2026-10-15/16 | Four experimental propagation changes: helpers wait until all work is finished; busy workers publish to idle ones; large lists split into index ranges; release stores in the work queue. Project-suite ABBA with module-rooted variants: realistic module-cache workload +6.4% throughput and −13.4% mean latency; module-rooted collection shapes 12–26% faster; frame-rooted workloads mostly neutral. Sustained `ai_workload` mean latency +11.1%, flagged in three campaigns. | **Dropped.** The benefit is confined to module-rooted heaps, the list splitting is container-specific, and there is a regression. [Raw data and analysis](../benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md). |
 
 **Finalizer/BRC hypothesis (FT `ai_workload`).** Serial finalization and
