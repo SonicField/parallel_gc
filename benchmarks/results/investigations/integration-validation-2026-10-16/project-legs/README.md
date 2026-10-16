@@ -15,4 +15,17 @@ These are complete individual invocations of the unchanged full project suite, n
 
 The original JSON has 65,758 bytes and no terminal newline. The Git copy has 65,759 bytes; only the final newline is added. Its original-length prefix was byte-compared against the original. This difference changes the file hash, not the recorded measurements.
 
-Candidate leg 2 is running; legs 3 and 4 are required before the GIL source comparison can be analysed. All four FT legs and the separate pyperformance campaigns also remain required. No acceptance or performance-neutrality verdict follows from this individual leg.
+## GIL leg 2: candidate
+
+[Complete measurement data](gil-2-candidate.json).
+
+- CPython source: `388fd5bb46fdda6b464db566faf818505c3d6eef`, recorded clean.
+- Recorded parent checkpoint: `cc2a489e937458f2271064fc88e81f8adf1ee517`.
+- Launcher timestamps: 16 October 2026, 19:13:04 to 20:34:28 UTC.
+- All eight sustained and sixteen controlled comparisons have five samples per arm. Configuration and placement match leg 1; actual controlled object-count sequences match both serial and parallel baseline sequences.
+- Original scratch-file SHA-256: `8fcfb72ff61db94e451334b26433daf61e60a108cd56ff7693c9fabbd4906d24`.
+- Git-copy SHA-256: `1fae162956f2ab00f8ba43b085ed2af1eef3bc751d829e450bc7e71a586cf877`.
+
+The original has 65,736 bytes; the Git copy adds only its terminal newline, giving 65,737 bytes. Its original-length prefix was byte-compared against the original. The parent checkpoint changed only through documentation/analysis additions; the launcher's three measured-code/preflight fingerprints passed again between legs.
+
+Candidate leg 3 is running; it and baseline leg 4 are required before the GIL source comparison can be analysed. All four FT legs and the separate pyperformance campaigns also remain required. No acceptance or performance-neutrality verdict follows from these first two legs.
