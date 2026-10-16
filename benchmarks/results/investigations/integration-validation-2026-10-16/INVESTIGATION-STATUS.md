@@ -47,6 +47,8 @@ Obtained `mpdecimal` and `mpdecimal-devel` 2.5.1-3.el9 from the host's configure
 
 The corrected four-build check must pass before restarting full project and pyperformance ABBA in a new results directory. Tk is not part of the selected benchmark workloads; its absence remains an explicit build limitation rather than an all-optional-modules claim.
 
+The campaign launcher now independently repeats the native-dependency/build-mode check immediately before measurements and fingerprints that check alongside the unchanged benchmark harness. Replacement builds and a new campaign are queued sequentially; neither starts competing CPU work while the old measurement process remains alive. Native-decimal build success and replacement benchmark results are still pending.
+
 ## Verdict
 
 Pending. No new performance or hosted-CI result is claimed.

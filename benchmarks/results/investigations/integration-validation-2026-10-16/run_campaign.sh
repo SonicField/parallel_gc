@@ -21,6 +21,7 @@ for mode in gil ft; do
         git -C "$source" diff --quiet
         git -C "$source" diff --cached --quiet
         (cd "$build" && sha256sum --check binary.sha256)
+        "$build/python" "$project/benchmarks/results/investigations/integration-validation-2026-10-16/check_benchmark_python.py" "$mode" > "$build/campaign-preflight.json"
     done
 done
 out="$root/results"
@@ -32,7 +33,9 @@ git status --short > "$out/parent-status.txt"
 git -C "$root/baseline-source" rev-parse HEAD > "$out/baseline-revision.txt"
 git -C "$root/candidate-source" rev-parse HEAD > "$out/candidate-revision.txt"
 git -C pyperformance rev-parse HEAD > "$out/pyperformance-revision.txt"
-sha256sum benchmarks/gc_perf_benchmark.py benchmarks/run_pyperformance.py > "$out/harness.sha256"
+sha256sum benchmarks/gc_perf_benchmark.py benchmarks/run_pyperformance.py \
+    benchmarks/results/investigations/integration-validation-2026-10-16/check_benchmark_python.py \
+    > "$out/harness.sha256"
 "$root/driver/bin/python" -m pip freeze > "$out/driver-packages.txt"
 lscpu > "$out/host-cpu.txt"
 numactl --hardware > "$out/host-numa.txt"
