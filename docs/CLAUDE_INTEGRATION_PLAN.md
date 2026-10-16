@@ -101,7 +101,7 @@ For each completed step record: imported commits, destination commits, exact che
 | 0: manifest | Complete | Tracked worktrees clean; candidate identities and exclusions recorded below |
 | 1: documents | Complete locally | Consolidation and separate PEP navigation/qualification commit; historical evidence retained in git |
 | 2: dead code | Complete locally | CPython `442a97213f`; four before/after feature-on builds and two feature-off controls; warning gates and symbol checks |
-| 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
+| 3: production tests | Complete locally | CPython `0fc7b3ccb9`; debug verifier, replay-untracking regression, mutation checks, clean six-configuration tests and four sanitizer selections |
 | 4: benchmarks | Complete locally | Separate retention and rooting changes; 23-test harness and planted-reference controls; fresh four-mode repeats |
 | 5: validation | Compiler workflow added locally; hosted runs pending | Eight GCC/Clang GIL/FT release/debug object checks; publishing and matched-harness measurements remain pending |
 
@@ -164,3 +164,9 @@ The final 23-test harness passes on the host. Fresh GIL/FT release/debug binarie
 ### 16 October: focused compiler workflow, separate from implementation
 
 Added `parallel-gc-warnings.yml` with eight fresh GCC/Clang GIL/FT release/debug configurations. Only four GC object targets receive the unused-function/variable error flags; existing full builds/tests are unchanged. Source-pair and compiler/configure/diagnostic artifacts are retained, including failures. TESTING gives the manual trigger command. The operating-system Python's PyYAML parses the workflow, all shell blocks pass `bash -n`, matrix/target/flag checks pass, and the four shared source-record fixture tests pass. The four local GCC gates already pass; Clang is unavailable locally and no hosted workflow has run for this change. Publication remains Alex's responsibility. Production-verifier integration is still under investigation because one initial unmutated scratch test reported a failure; no verifier source has been applied to the main CPython checkout.
+
+### 16 October: production verifier committed after additional falsification
+
+CPython `0fc7b3ccb9` integrates the final B2 production-test change and retires the redundant marking implementation. Added a deterministic nested-tuple test: the candidate misreported 1,000 legitimate replay-untracked tuples as extra marks. Debug accounting now reports this population change separately; active collectors and adaptation are unchanged. Added opt-in and reset checks. An initial undetailed scratch failure was not reproduced in subsequent runs; the report preserves that uncertainty rather than assigning it a proven cause.
+
+Four clean feature-on configurations, both clean feature-off debug controls and GIL/FT ASan/TSan selections pass. The corrected thirteen-case verifier suite passes thirty repeats. Root omission mutations fail all coverage assertions; the generic-edge mutation is detected by a subset, recorded explicitly. Full details and raw logs are in [the verifier report](../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md). A stale-object layout failure exposed five missing Makefile header dependencies; that repair is a separate build-system unit. Parent benchmark probe hardening remains separate from this source/gitlink commit. No remote write or performance claim.

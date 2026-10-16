@@ -1,0 +1,15 @@
+Using random seed: 3439674260
+0:00:00 load avg: 30.87 mem: 247.4 MiB Run 4 tests in parallel using 4 worker processes (timeout: 5 min, worker timeout: 7 min 30 sec)
+0:00:10 load avg: 31.71 mem: 1.3 GiB [1/4] test_gc_ws_deque passed
+0:00:11 load avg: 31.71 mem: 1.3 GiB [2/4] test_gc_parallel_fork passed
+0:00:31 load avg: 31.33 mem: 1.4 GiB [3/4] test_free_threading.test_gc passed (30.7 sec) -- running (1): test_gc_ft_parallel (30.7 sec)
+0:01:01 load avg: 25.17 mem: 308.2 MiB [4/4] test_gc_ft_parallel passed (1 min)
+
+== Tests result: SUCCESS ==
+
+All 4 tests OK.
+
+Total duration: 1 min 1 sec
+Total tests: run=155 skipped=25
+Total test files: run=4/4
+Result: SUCCESS

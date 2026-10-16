@@ -1,0 +1,38 @@
+Using random seed: 2048911171
+0:00:00 load avg: 32.29 mem: 75.1 MiB Run 11 tests in parallel using 4 worker processes (timeout: 5 min, worker timeout: 7 min 30 sec)
+0:00:00 load avg: 32.29 mem: 386.0 MiB [ 1/11] test_gc_ws_deque passed
+0:00:01 load avg: 32.29 mem: 340.5 MiB [ 2/11] test_gc_parallel passed
+0:00:01 load avg: 32.29 mem: 433.5 MiB [ 3/11] test_gc_parallel_fork passed
+0:00:03 load avg: 31.46 mem: 453.5 MiB [ 4/11] test_gc_parallel_mark_alive passed
+0:00:03 load avg: 31.46 mem: 430.8 MiB [ 5/11] test_gc passed
+0:00:03 load avg: 31.46 mem: 398.3 MiB [ 6/11] test_parallel_gc_profile passed
+0:00:04 load avg: 31.46 mem: 355.4 MiB [ 7/11] test_capi.test_config passed
+0:00:04 load avg: 31.46 mem: 445.7 MiB [ 8/11] test_gc_parallel_properties passed
+Random seed: 14842922120678959279
+Random seed: 5673482214518585032
+Random seed: 7253466072843797417
+Random seed: 12244187442334586679
+Random seed: 9412685366184968410
+Random seed: 14875846503149806385
+Random seed: 6319639003395205325
+Random seed: 4685606543528877094
+Random seed: 1061787339631185254
+Random seed: 4930944463043782665
+Random seed: 3335132439064941553
+Random seed: 3494104103465095901
+Random seed: 13408877404811464337
+Random seed: 5851835294175724533
+Random seed: 17197206483009006292
+Random seed: 6429215713772032653
+0:00:05 load avg: 31.46 mem: 272.9 MiB [ 9/11] test_gc_ft_parallel passed
+0:00:07 load avg: 31.46 mem: 140.4 MiB [10/11] test_free_threading.test_gc passed
+0:00:23 load avg: 29.97 mem: 90.8 MiB [11/11] test_embed passed
+
+== Tests result: SUCCESS ==
+
+All 11 tests OK.
+
+Total duration: 23.8 sec
+Total tests: run=374 skipped=40
+Total test files: run=11/11
+Result: SUCCESS

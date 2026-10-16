@@ -1,0 +1,22 @@
+Using random seed: 3804332223
+0:00:00 load avg: 31.46 mem: 170.5 MiB Run 5 tests in parallel using 4 worker processes (timeout: 5 min, worker timeout: 7 min 30 sec)
+0:00:05 load avg: 30.87 mem: 791.1 MiB [1/5] test_gc_parallel_fork passed
+0:00:06 load avg: 30.87 mem: 618.8 MiB [2/5] test_gc_ws_deque passed
+0:00:18 load avg: 31.71 mem: 998.6 MiB [3/5] test_gc passed
+0:00:21 load avg: 29.97 mem: 574.1 MiB [4/5] test_gc_ft_parallel passed
+0:00:51 load avg: 26.90 mem: 661.7 MiB running (1): test_gc_parallel_mark_alive (45.6 sec)
+0:01:21 load avg: 22.51 mem: 881.1 MiB running (1): test_gc_parallel_mark_alive (1 min 15 sec)
+0:01:51 load avg: 19.88 mem: 884.6 MiB running (1): test_gc_parallel_mark_alive (1 min 46 sec)
+0:02:22 load avg: 15.36 mem: 639.5 MiB running (1): test_gc_parallel_mark_alive (2 min 16 sec)
+0:02:52 load avg: 11.83 mem: 1.3 GiB running (1): test_gc_parallel_mark_alive (2 min 46 sec)
+0:03:08 load avg: 10.23 mem: 186.8 MiB [5/5] test_gc_parallel_mark_alive passed (3 min 2 sec)
+Median speedup: 0.79x (serial=758.7ms, parallel=954.5ms)
+
+== Tests result: SUCCESS ==
+
+All 5 tests OK.
+
+Total duration: 3 min 8 sec
+Total tests: run=239 skipped=75
+Total test files: run=5/5
+Result: SUCCESS
