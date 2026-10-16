@@ -1,0 +1,20 @@
+CONFIG_FILES=Makefile.pre CONFIG_HEADERS= ./config.status
+config.status: creating Makefile.pre
+make -f Makefile.pre Makefile
+make[1]: Entering directory '/tmp/parallel-gc-integration-fKKFb7/gil-dbg'
+/tmp/parallel-gc-integration-fKKFb7/source/Modules/makesetup -c /tmp/parallel-gc-integration-fKKFb7/source/Modules/config.c.in \
+			-s Modules \
+			Modules/Setup.local \
+			Modules/Setup.stdlib \
+			Modules/Setup.bootstrap \
+			/tmp/parallel-gc-integration-fKKFb7/source/Modules/Setup
+The Makefile was updated, you may need to re-run make.
+make[1]: Leaving directory '/tmp/parallel-gc-integration-fKKFb7/gil-dbg'
+/tmp/parallel-gc-integration-fKKFb7/source/Modules/makesetup -c /tmp/parallel-gc-integration-fKKFb7/source/Modules/config.c.in \
+			-s Modules \
+			Modules/Setup.local \
+			Modules/Setup.stdlib \
+			Modules/Setup.bootstrap \
+			/tmp/parallel-gc-integration-fKKFb7/source/Modules/Setup
+The Makefile was updated, you may need to re-run make.
+make: 'Makefile' is up to date.

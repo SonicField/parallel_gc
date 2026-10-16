@@ -1,0 +1,5 @@
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc.c
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc.c: In function ‘deduce_unreachable’:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc.c:1640:1: warning: label ‘move_unreachable’ defined but not used [-Wunused-label]
+ 1640 | move_unreachable:
+      | ^~~~~~~~~~~~~~~~

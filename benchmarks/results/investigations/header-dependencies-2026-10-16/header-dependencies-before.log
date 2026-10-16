@@ -1,0 +1,13 @@
+gil-dbg pycore_gc_barrier.h: recompiles=False, expected=False
+gil-dbg pycore_gc_ft_parallel.h: recompiles=False, expected=False
+gil-dbg pycore_gc_parallel.h: recompiles=False, expected=False
+gil-dbg pycore_gc_random_walk.h: recompiles=False, expected=False
+gil-dbg pycore_ws_deque.h: recompiles=False, expected=False
+gil-dbg pycore_gc.h: recompiles=True, expected=True
+ft-dbg pycore_gc_barrier.h: recompiles=False, expected=False
+ft-dbg pycore_gc_ft_parallel.h: recompiles=False, expected=False
+ft-dbg pycore_gc_parallel.h: recompiles=False, expected=False
+ft-dbg pycore_gc_random_walk.h: recompiles=False, expected=False
+ft-dbg pycore_ws_deque.h: recompiles=False, expected=False
+ft-dbg pycore_gc.h: recompiles=True, expected=True
+before: all 12 checks passed

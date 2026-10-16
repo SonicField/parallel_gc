@@ -1,0 +1,30 @@
+gil-off: dependency-driven object rebuild, link and tests passed
+0:00:02 load avg: 8.66 mem: 41.6 MiB [ 9/10] test_gc passed
+0:00:07 load avg: 8.66 mem: 29.8 MiB [10/10] test_embed passed
+
+== Tests result: SUCCESS ==
+
+2 tests skipped:
+    test_gc_parallel test_gc_parallel_properties
+
+8 tests OK.
+
+Total duration: 7.2 sec
+Total tests: run=314 skipped=125
+Total test files: run=10/10 skipped=2
+Result: SUCCESS
+ft-off: dependency-driven object rebuild, link and tests passed
+Random seed: 14557945332573047432
+Random seed: 13389671865967387145
+0:00:01 load avg: 8.90 mem: 127.6 MiB [ 9/11] test_free_threading.test_gc passed
+0:00:02 load avg: 8.66 mem: 83.5 MiB [10/11] test_gc passed
+0:00:09 load avg: 8.29 mem: 58.2 MiB [11/11] test_embed passed
+
+== Tests result: SUCCESS ==
+
+All 11 tests OK.
+
+Total duration: 9.8 sec
+Total tests: run=377 skipped=160
+Total test files: run=11/11
+Result: SUCCESS

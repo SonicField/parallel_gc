@@ -1,0 +1,8 @@
+gcc -c -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -g -Og -Wall    -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -Werror=unused-function -Werror=unused-variable -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal -I/tmp/parallel-gc-integration-fKKFb7/source/Include/internal/mimalloc -IObjects -IInclude -IPython -I. -I/tmp/parallel-gc-integration-fKKFb7/source/Include    -DPy_BUILD_CORE -o Python/gc_free_threading_parallel.o /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c
+In file included from /tmp/parallel-gc-integration-fKKFb7/source/Include/internal/pycore_gc_barrier.h:15,
+                 from /tmp/parallel-gc-integration-fKKFb7/source/Include/internal/pycore_gc_ft_parallel.h:19,
+                 from /tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:13:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c: In function ‘_PyGC_ThreadPoolInit’:
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading_parallel.c:1528:34: warning: comparison of integer expressions of different signedness: ‘size_t’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+ 1528 |     assert(pool->threads_created == pool->num_workers - 1);
+      |                                  ^~
