@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. Two of eight corrected project legs are complete; candidate GIL leg 3 is running. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. Three of eight corrected project legs are complete; closing baseline GIL leg 4 is running. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -98,6 +98,12 @@ Candidate GIL leg 2 ran from 19:13:04 to 20:34:28 UTC (81 minutes 24 seconds). I
 
 Preserved leg 2's complete data and original/Git-copy hashes alongside leg 1. The launcher again verified the three unchanged measurement/preflight fingerprints and started candidate leg 3. Two legs provide only the first ABBA half; no source-effect, significance or acceptance verdict is made before the closing two legs and planned controls are available. Hosted CI evidence remains unavailable; the non-blocking capture request is outstanding.
 
+### Corrected project leg 3 completed
+
+The second candidate GIL leg ran from 20:34:28 to 21:55:51 UTC (81 minutes 23 seconds). It records clean candidate source and parent checkpoint `bf5e87076deb8c415ddc5425587aa7a5456c64cf`. Its configuration and placement match leg 1; all eight sustained and sixteen controlled comparisons contain five valid samples per arm, and actual controlled object-count sequences match baseline leg 1. Complete data and both file hashes are preserved alongside the first two legs.
+
+The launcher verified the same three measurement/preflight fingerprints and started closing baseline leg 4. Three completed legs do not supply the closing ABBA half. The analysis tool must continue refusing a full comparison until leg 4 is complete; the FT and pyperformance campaigns still follow. Hosted CI results remain unverified.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
@@ -110,7 +116,7 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
-| Project full ABBA | GIL legs 1–2 complete; candidate leg 3 running; old attempt kept separate | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
+| Project full ABBA | GIL legs 1–3 complete; closing baseline leg 4 running; old attempt kept separate | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
 | pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
 | Analysis and handoff commits | Pending complete results | Per-workload negative and positive changes, both ABBA halves, serial controls and uncertainty; evidence linked from VALIDATION/PERFORMANCE; tracked worktrees clean; publication commands for local commits |
 
