@@ -49,6 +49,28 @@ The corrected four-build check must pass before restarting full project and pype
 
 The campaign launcher now independently repeats the native-dependency/build-mode check immediately before measurements and fingerprints that check alongside the unchanged benchmark harness. Replacement builds and a new campaign are queued sequentially; neither starts competing CPU work while the old measurement process remains alive. Native-decimal build success and replacement benchmark results are still pending.
 
+### Goal continuation: completion requirements and current evidence
+
+The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
+
+| Requirement | Current state | Evidence needed for completion |
+|-------------|---------------|--------------------------------|
+| Corrected baseline/current GIL/FT PGO+LTO builds | Queued behind the old measurement | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
+| Linux four-configuration matrix | Parent push reported; outcomes unknown | Run source pair, four job outcomes, focused collector/parent tests and feature-off skips |
+| GCC/Clang object checks | Parent push reported; outcomes unknown | Eight compiler/mode/build job outcomes and diagnostics; this is an unused-code gate, not every-warning acceptance |
+| Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
+| Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
+| macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
+| Project full ABBA | Old incomplete attempt preserved; replacement not started | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
+| pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
+| Analysis and handoff commits | Pending complete results | Per-workload negative and positive changes, both ABBA halves, serial controls and uncertainty; evidence linked from VALIDATION/PERFORMANCE; tracked worktrees clean; publication commands for local commits |
+
+Direct GitHub read access returned a destination-filter denial. Alex was asked to capture the current run listing in `/tmp/alex-ci-current.json`; no remote status is inferred while waiting. `git diff ff6710f HEAD` confirms the published checkpoint's collector tests, benchmark implementation and workflows are unchanged by the subsequent local preflight/evidence commits; its CPython gitlink is the intended `388fd5bb46`. Job-specific source artifacts still need verification.
+
+Result-schema inspection uses the abandoned first leg only as a format specimen, not performance evidence. Sustained results contain five run-level means per serial/parallel arm; controlled collections contain individual times and generated counts. Analysis will preserve those run-level units instead of pooling collections. The latency tracker measures the interval between a collection's `start` and `stop` callbacks, not between successive collections, and not FT stopped-world duration.
+
+Build provenance also distinguishes the version tag from source cleanliness. CPython's generated Makefile invokes `git --git-dir <source>/.git describe ... --dirty` from the build directory. In the baseline build this reports `-dirty`; adding `--work-tree <source>` removes it while `git -C <source> diff` is clean. The runtime JSON independently records the source commit and clean tracked content. Preserve the original version stamp and this explanation; do not relabel a binary or modify collector code to hide metadata.
+
 ## Verdict
 
 Pending. No new performance or hosted-CI result is claimed.
