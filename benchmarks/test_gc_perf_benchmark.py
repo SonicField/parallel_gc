@@ -263,6 +263,9 @@ class ModuleRootedCollectionTests(unittest.TestCase):
             holder = None
             if ids:
                 observations.append(_frame_hits(ids, _nested_codes(probe.__code__)))
+            # The observation is finished; do not turn the real collection
+            # into a frame-rooted workload through the test probe itself.
+            ids = None
             return real_collect(*args, **kwargs)
 
         enable, disable = _no_parallel_control()
@@ -285,6 +288,27 @@ class ModuleRootedCollectionTests(unittest.TestCase):
         result, observations = self._run("frame")
         self.assertTrue(any(observations),
                         "probe failed to detect the frame-rooted keep set")
+
+    def test_collection_probe_releases_its_targets_before_collecting(self):
+        real_collect = gc.collect
+        observations = []
+
+        def checked_collect(*args, **kwargs):
+            holder = benchmark._MODULE_ROOT.get("collection")
+            if holder is not None:
+                targets = _holder_objects(holder)
+                hits = _frame_hits(
+                    targets, _nested_codes(checked_collect.__code__))
+                # Do not exclude _run's probe: it must release its own targets.
+                observations.append(hits)
+                self.assertEqual(hits, [])
+                targets = None
+            holder = None
+            return real_collect(*args, **kwargs)
+
+        with mock.patch.object(benchmark.gc, "collect", checked_collect):
+            self._run("module")
+        self.assertTrue(observations)
 
     def test_rooting_variants_build_identical_heaps(self):
         frame_result, _ = self._run("frame")
