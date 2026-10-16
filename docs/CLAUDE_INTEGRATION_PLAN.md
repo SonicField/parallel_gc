@@ -102,7 +102,7 @@ For each completed step record: imported commits, destination commits, exact che
 | 1: documents | Complete locally | Consolidation and separate PEP navigation/qualification commit; historical evidence retained in git |
 | 2: dead code | Complete locally | CPython `442a97213f`; four before/after feature-on builds and two feature-off controls; warning gates and symbol checks |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
-| 4: benchmarks | Retention repair verified; rooting agreed | Module-held sustained heap with temporary stack references; separate module-only controlled collection |
+| 4: benchmarks | Complete locally | Separate retention and rooting changes; 23-test harness and planted-reference controls; fresh four-mode repeats |
 | 5: validation | Pending | Fresh candidate-source CI and matched-harness measurements |
 
 ### 16 October: manifest and execution approval
@@ -154,3 +154,9 @@ Started four fresh, non-PGO baseline builds from a detached `c67363fa59` worktre
 ### 16 October: unreferenced-code cleanup committed independently
 
 CPython `442a97213f` adopts B1, with empty preprocessor guards and orphan headings removed. All removed names have no surviving repository references. Four fresh before/after configurations pass focused tests with identical counts/skips and unchanged defined global GC symbols; the focused warning gate fails on the baseline and passes after cleanup. Both feature-off debug controls also pass. A misspelled local test-module argument initially failed imports and was corrected without changing project tests. Full logs, build limitations and reproduction are in [the cleanup report](../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md). No performance claim, active collector change or remote write. The parent gitlink update is kept separate from benchmark additions.
+
+### 16 October: module-rooted workloads integrated and tested
+
+Imported the benchmark dimension from `306644b`, preserving the independently committed retention fix and its controlled scheduling tests. Applied Alex's sustained rooting contract and kept the separate controlled collection boundary. Added an activation-failure cache-ownership check; it failed before moving cache construction after successful activation. The initial candidate cross-thread frame probe crashed in both FT builds and reproduced an abort in an FT feature-off control. CPython documents that operation as unsafe. Replaced it with calling-stack probes and a test forbidding cross-thread frame enumeration; planted persistent-reference controls still fail as intended.
+
+The final 23-test harness passes on the host. Fresh GIL/FT release/debug binaries each pass ten policy-off and ten armed suites: 1,840 tests, no failures/errors. Old result key/type compatibility, separate new keys, seeded collection counts, worker failures and holder cleanup are covered. See [the integration report](../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md), including the original FT failure and limitations. No new performance result is claimed. Remaining: production-verifier integration, sanitizer/mutation validation, focused warning CI, then publishing and fresh hosted tests. Campaign acceptance criteria still require agreement.

@@ -75,6 +75,21 @@ COLLECTION_WARMUP_RUNS = 3
 COLLECTION_SURVIVOR_RATIO = 0.8
 COLLECTION_CREATION_THREADS = 4
 
+# Live heaps are rooted either by a frame local ("frame", the original
+# behaviour of every benchmark) or by this module-level holder ("module").
+# Sustained module-rooted workloads allow temporary shuffle/churn references;
+# controlled collections release frame references before collection.
+# In free-threaded builds the two placements reach the collector's
+# known-root marking through different paths: thread stacks are scanned as
+# roots directly, while module state is reached through sys.modules.
+ROOTINGS = ("frame", "module")
+_MODULE_ROOT: Dict[str, Any] = {}
+
+
+def _check_rooting(rooting: str) -> None:
+    if rooting not in ROOTINGS:
+        raise ValueError(f"rooting must be one of {ROOTINGS}, got {rooting!r}")
+
 
 def get_system_metadata() -> Dict[str, Any]:
     """Return reproducibility metadata available from the running process."""
@@ -324,6 +339,13 @@ class SuiteResult:
     realistic: Optional[ComparisonResult] = None
     synthetic_by_heap: Dict[str, ComparisonResult] = field(default_factory=dict)
     collection_results: List[CollectionResult] = field(default_factory=list)
+    # Module-rooted workloads (module-owned long-lived heaps).
+    module_cache_size: int = 0
+    realistic_module_cache: Optional[ComparisonResult] = None
+    synthetic_by_heap_module: Dict[str, ComparisonResult] = field(
+        default_factory=dict)
+    collection_results_module: List[CollectionResult] = field(
+        default_factory=list)
 
     @property
     def geometric_mean_speedup(self) -> float:
@@ -1040,6 +1062,7 @@ def run_realistic_benchmark(
     duration_sec: float,
     num_threads: int,
     parallel_workers: int = 0,
+    module_cache_size: int = 0,
 ) -> BenchmarkRun:
     """
     Run the project-specific mixed-workload benchmark.
@@ -1048,6 +1071,9 @@ def run_realistic_benchmark(
         duration_sec: How long to run
         num_threads: Number of worker threads
         parallel_workers: 0 for serial, >0 for parallel GC
+        module_cache_size: if > 0, keep a static long-lived cache of about this
+            many ai_workload objects reachable only from module state for the
+            whole timed region, modelling an application's large live state.
     """
     gc.collect()
     gc.disable()
@@ -1058,6 +1084,10 @@ def run_realistic_benchmark(
         adaptive_workers_start = config.get("adaptive_workers")
     else:
         disable_parallel_gc()
+
+    if module_cache_size > 0:
+        _MODULE_ROOT["cache"] = create_ai_workload(
+            module_cache_size, rng=random.Random(BENCHMARK_SEED))
 
     tracker = CollectionLatencyTracker()
     gc.callbacks.append(tracker.gc_callback)
@@ -1108,6 +1138,7 @@ def run_realistic_benchmark(
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
+    _MODULE_ROOT.pop("cache", None)
     gc.enable()
 
     if worker_errors:
@@ -1145,10 +1176,18 @@ def run_synthetic_benchmark(
     heap_type: str,
     num_threads: int,
     parallel_workers: int = 0,
+    rooting: str = "frame",
 ) -> BenchmarkRun:
     """
     Run synthetic throughput benchmark with specified heap type.
+
+    With rooting="module", each worker's long-lived heap is held in
+    _MODULE_ROOT["synthetic"][worker_id] and is accessed through the module on
+    every churn step; no worker frame local holds it across allocations.
+    Allocation and churn are otherwise identical to rooting="frame". Shuffle
+    temporarily references the heap; churn temporarily references a new batch.
     """
+    _check_rooting(rooting)
     gc.collect()
     gc.disable()
 
@@ -1195,11 +1234,45 @@ def run_synthetic_benchmark(
             with lock:
                 total_created[0] += local_created
 
+    def module_worker(worker_id: int):
+        local_created = 0
+        rng = random.Random(BENCHMARK_SEED + worker_id)
+        try:
+            _MODULE_ROOT["synthetic"][worker_id] = heap_generator(
+                objects_per_thread, rng=rng)
+            while not stop_flag.is_set():
+                num_discard = min(
+                    len(_MODULE_ROOT["synthetic"][worker_id]),
+                    churn_per_thread // 100 + 1)
+                if num_discard > 0:
+                    rng.shuffle(_MODULE_ROOT["synthetic"][worker_id])
+                    _MODULE_ROOT["synthetic"][worker_id] = (
+                        _MODULE_ROOT["synthetic"][worker_id][num_discard:])
+
+                new_clusters = heap_generator(churn_per_thread, rng=rng)
+                # The new batch is temporary; do not retain it between steps.
+                local_created += sum(len(cluster) for cluster in new_clusters)
+                _MODULE_ROOT["synthetic"][worker_id].extend(new_clusters)
+                new_clusters = None
+        except BaseException as exc:
+            with lock:
+                worker_errors.append(exc)
+            stop_flag.set()
+        finally:
+            with lock:
+                total_created[0] += local_created
+
+    if rooting == "module":
+        _MODULE_ROOT["synthetic"] = [None] * num_threads
+        target = module_worker
+    else:
+        target = worker
+
     gc.enable()
     start_time = time.perf_counter()
 
     threads = [
-        threading.Thread(target=worker, args=(i,), daemon=True)
+        threading.Thread(target=target, args=(i,), daemon=True)
         for i in range(num_threads)
     ]
     for t in threads:
@@ -1218,6 +1291,7 @@ def run_synthetic_benchmark(
     gc.disable()
 
     gc.callbacks.remove(tracker.gc_callback)
+    _MODULE_ROOT.pop("synthetic", None)
     gc.enable()
 
     if worker_errors:
@@ -1354,13 +1428,17 @@ def run_collection_benchmark(
     survivor_ratio: float = COLLECTION_SURVIVOR_RATIO,
     creation_threads: int = COLLECTION_CREATION_THREADS,
     warmup_runs: int = COLLECTION_WARMUP_RUNS,
+    rooting: str = "frame",
 ) -> CollectionResult:
     """
     Measure GC collection time for a given heap type.
 
     Objects are created across a persistent thread pool, so pages remain in
     live thread heaps. The survivor ratio is applied to complete clusters.
+    With rooting="module", the surviving clusters are held only by
+    _MODULE_ROOT["collection"] while gc.collect() is timed.
     """
+    _check_rooting(rooting)
     pool = get_creation_pool(creation_threads)
     seed = BENCHMARK_SEED
 
@@ -1402,11 +1480,15 @@ def run_collection_benchmark(
                     keep_refs = clusters
 
                 clusters = None  # Release original list
+                if rooting == "module":
+                    _MODULE_ROOT["collection"] = keep_refs
+                    keep_refs = None
 
                 if is_warmup:
                     # Warmup: just collect and cleanup
                     gc.collect()
                     keep_refs = None
+                    _MODULE_ROOT.pop("collection", None)
                     gc.collect()
                 else:
                     # Timed run: measure collection time
@@ -1417,9 +1499,11 @@ def run_collection_benchmark(
 
                     # Cleanup
                     keep_refs = None
+                    _MODULE_ROOT.pop("collection", None)
                     gc.collect()
 
         finally:
+            _MODULE_ROOT.pop("collection", None)
             gc.enable()
 
         return times, object_counts
@@ -1625,6 +1709,64 @@ def run_suite(
             print(f"  Throughput change: {_format_change(gm_speedup)}")
             print(f"  Collection latency change: {(gm_latency - 1) * 100:+.0f}%")
             print()
+
+        # Module-rooted variants: the same workloads with module-owned live
+        # heaps. Run after the original workloads, which are
+        # unchanged.
+        print("Running: Collection Time Benchmarks, module-rooted")
+        print("-" * 60)
+        for heap_type in all_heap_types:
+            coll = run_collection_benchmark(
+                heap_size=heap_size,
+                heap_type=heap_type,
+                num_runs=num_runs,
+                parallel_workers=parallel_workers,
+                survivor_ratio=result.collection_survivor_ratio,
+                creation_threads=result.collection_creation_threads,
+                warmup_runs=result.collection_warmup_runs,
+                rooting="module",
+            )
+            result.collection_results_module.append(coll)
+            print(
+                f"  {heap_type:<12}: {coll.serial_time_ms:6.1f}ms -> "
+                f"{coll.parallel_time_ms:6.1f}ms ({coll.speedup:.2f}x)"
+            )
+        print()
+
+        for heap_type in throughput_heap_types:
+            print(f"Running: Synthetic {heap_type} throughput, module-rooted")
+            print("-" * 60)
+            comp = run_comparison(
+                name=f"synthetic_{heap_type}_module",
+                description=f"{heap_type} heap structure, module-rooted",
+                run_fn=run_synthetic_benchmark,
+                num_runs=num_runs,
+                parallel_workers=parallel_workers,
+                duration_sec=duration_per_benchmark,
+                heap_size=heap_size,
+                heap_type=heap_type,
+                num_threads=num_threads,
+                rooting="module",
+            )
+            result.synthetic_by_heap_module[heap_type] = comp
+            _print_comparison(comp)
+            print()
+
+        print("Running: Mixed workload with a module-rooted long-lived cache")
+        print("-" * 60)
+        result.module_cache_size = heap_size
+        result.realistic_module_cache = run_comparison(
+            name="mixed_workload_module_cache",
+            description="Mixed workload plus a static module-rooted cache",
+            run_fn=run_realistic_benchmark,
+            num_runs=num_runs,
+            parallel_workers=parallel_workers,
+            duration_sec=duration_per_benchmark,
+            num_threads=num_threads,
+            module_cache_size=heap_size,
+        )
+        _print_comparison(result.realistic_module_cache)
+        print()
 
     return result
 
@@ -1879,6 +2021,66 @@ def format_markdown(result: SuiteResult) -> str:
 
         lines.append("")
 
+    if (result.collection_results_module or result.synthetic_by_heap_module
+            or result.realistic_module_cache):
+        lines.append("## Module-Rooted Workloads")
+        lines.append("")
+        lines.append(
+            "The same workloads with long-lived heaps owned by module state "
+            "instead of persistent frame locals. Sustained workloads allow "
+            "temporary shuffle and churn references; controlled collections "
+            "release frame references before collection.")
+        lines.append("")
+        cache = result.realistic_module_cache
+        if cache:
+            lines.append(
+                f"### Mixed workload with a {result.module_cache_size:,}-object "
+                "module-rooted cache")
+            lines.append("")
+            lines.append("| Metric | Serial | Parallel | Change |")
+            lines.append("|--------|--------|----------|--------|")
+            lines.append(
+                f"| Throughput | {cache.serial.throughput_mean:,.0f}/s | "
+                f"{cache.parallel.throughput_mean:,.0f}/s | "
+                f"{(cache.speedup - 1) * 100:+.1f}% |")
+            if cache.serial.collection_latency_mean > 0:
+                lines.append(
+                    "| Collection latency (mean) | "
+                    f"{_format_latency_ms(cache.serial.collection_latency_mean)}ms | "
+                    f"{_format_latency_ms(cache.parallel.collection_latency_mean)}ms | "
+                    f"{(cache.parallel.collection_latency_mean / cache.serial.collection_latency_mean - 1) * 100:+.0f}% |")
+                lines.append(
+                    "| Collection latency (max) | "
+                    f"{_format_latency_ms(cache.serial.collection_latency_max)}ms | "
+                    f"{_format_latency_ms(cache.parallel.collection_latency_max)}ms | |")
+            lines.append("")
+        if result.collection_results_module:
+            lines.append("### GC Collection Time, module-rooted")
+            lines.append("")
+            lines.append("| Heap Type | Serial (ms) | Parallel (ms) | Speedup |")
+            lines.append("|-----------|-------------|---------------|---------|")
+            for coll in result.collection_results_module:
+                lines.append(
+                    f"| {coll.heap_type} | {coll.serial_time_ms:.1f} ± "
+                    f"{coll.serial_stdev:.1f} | {coll.parallel_time_ms:.1f} ± "
+                    f"{coll.parallel_stdev:.1f} | {coll.speedup:.2f}x |")
+            lines.append("")
+        if result.synthetic_by_heap_module:
+            lines.append("### Synthetic Throughput, module-rooted")
+            lines.append("")
+            lines.append(
+                "| Heap Type | Serial | Parallel | Throughput | "
+                "Latency mean (serial → parallel ms) |")
+            lines.append("|-----------|--------|----------|------------|----|")
+            for heap_type, comp in result.synthetic_by_heap_module.items():
+                lines.append(
+                    f"| {heap_type} | {comp.serial.throughput_mean:,.0f}/s | "
+                    f"{comp.parallel.throughput_mean:,.0f}/s | "
+                    f"{(comp.speedup - 1) * 100:+.1f}% | "
+                    f"{_format_latency_ms(comp.serial.collection_latency_mean)} → "
+                    f"{_format_latency_ms(comp.parallel.collection_latency_mean)} |")
+            lines.append("")
+
     lines.append("## Raw Samples")
     lines.append("")
     lines.append(
@@ -1900,6 +2102,9 @@ def format_markdown(result: SuiteResult) -> str:
     if result.realistic is not None:
         comparisons.append(result.realistic)
     comparisons.extend(result.synthetic_by_heap.values())
+    if result.realistic_module_cache is not None:
+        comparisons.append(result.realistic_module_cache)
+    comparisons.extend(result.synthetic_by_heap_module.values())
     for comparison in comparisons:
         for benchmark_result in (comparison.serial, comparison.parallel):
             for index, run in enumerate(benchmark_result.runs, 1):
@@ -1916,20 +2121,23 @@ def format_markdown(result: SuiteResult) -> str:
                     f"{run.collection_latency_max_ms:.6f} | "
                     f"{run.collections} | {run.duration_sec:.6f} |"
                 )
-    for collection in result.collection_results:
-        lines.append("")
-        lines.append(
-            f"- `{collection.heap_type}` serial collection samples (ms): "
-            f"`{collection.serial_samples_ms!r}`"
-        )
-        lines.append(
-            f"- `{collection.heap_type}` parallel collection samples (ms): "
-            f"`{collection.parallel_samples_ms!r}`"
-        )
-        lines.append(
-            f"- `{collection.heap_type}` generated object counts: "
-            f"`{collection.serial_object_counts!r}`"
-        )
+    for label, collections in (("", result.collection_results),
+                               (" (module-rooted)",
+                                result.collection_results_module)):
+        for collection in collections:
+            lines.append("")
+            lines.append(
+                f"- `{collection.heap_type}`{label} serial collection samples "
+                f"(ms): `{collection.serial_samples_ms!r}`"
+            )
+            lines.append(
+                f"- `{collection.heap_type}`{label} parallel collection samples "
+                f"(ms): `{collection.parallel_samples_ms!r}`"
+            )
+            lines.append(
+                f"- `{collection.heap_type}`{label} generated object counts: "
+                f"`{collection.serial_object_counts!r}`"
+            )
     lines.append("")
 
     # Summary
@@ -2054,6 +2262,7 @@ def format_json(result: SuiteResult) -> str:
             "collection_survivor_ratio": result.collection_survivor_ratio,
             "collection_creation_threads": result.collection_creation_threads,
             "runtime_parallel_gc_config": result.runtime_config,
+            "module_cache_size": result.module_cache_size,
         },
         "system": result.system_metadata,
         "timestamp": result.timestamp,
@@ -2070,6 +2279,14 @@ def format_json(result: SuiteResult) -> str:
             "synthetic_collection_latency_geomean_pct": (
                 result.geometric_mean_collection_latency_ratio - 1
             ) * 100,
+        },
+        "mixed_workload_module_cache": comparison_to_dict(
+            result.realistic_module_cache),
+        "collection_results_module": [
+            collection_to_dict(c) for c in result.collection_results_module],
+        "synthetic_by_heap_module": {
+            heap_type: comparison_to_dict(comp)
+            for heap_type, comp in result.synthetic_by_heap_module.items()
         },
     }
 

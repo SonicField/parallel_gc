@@ -1,0 +1,3 @@
+policy=off: 10 suites passed
+policy=armed: 10 suites passed
+Total: 460 tests, no failures/errors

@@ -80,8 +80,9 @@ build-benchmark-ft/python benchmarks/gc_perf_benchmark.py --full --include-synth
 
 Options: `--quick` (2 runs, 10 s), `--full` (5 runs, 60 s; synthetic tests
 still need `--include-synthetic`), `--duration`, `--runs` (3), `--threads` (4),
-`--heap-size` (500,000), `--json`, `--output`. Allow 45–70 minutes per build
-for `--full --include-synthetic` on the AArch64 host.
+`--heap-size` (500,000), `--json`, `--output`. With the module-rooted additions,
+`--full --include-synthetic` took about 95 minutes per invocation in the
+recorded AArch64 campaigns; budget separately for each ABBA invocation.
 
 - **Mixed workload:** application threads choose randomly among deltablue,
   deepcopy, pickle_copy, async_tree (high cycles), richards, nbody (minimal)
@@ -90,15 +91,19 @@ for `--full --include-synthetic` on the AArch64 host.
   independent, ai_workload (finalizers), web_server. Each timed collection
   keeps 80% of clusters live (`COLLECTION_SURVIVOR_RATIO`), held in a function
   local.
-- **Module-rooted candidate variants** (not yet integrated into this checkout;
-  the recorded experiments used benchmark candidate `306644b`): the same
-  collection shapes and sustained heaps with live data reachable only from
+- **Module-rooted variants** (integrated from benchmark candidate `306644b`):
+  the same collection shapes and sustained heaps with long-lived data held in
   module state, plus the mixed workload with a static 500,000-object
-  module-rooted cache. In FT, thread stacks are scanned as roots directly,
+  module-rooted cache. Sustained shuffle/churn may temporarily hold stack
+  references. Controlled collections release frame keep-set references before
+  collecting. In FT, thread stacks are scanned as roots directly,
   while module state is reached through `sys.modules`. The two placements
   exercise known-root propagation differently (OPEN_ISSUES.md §2). Results
-  appear under separate JSON keys. With these variants, `--full
-  --include-synthetic` took about 95 minutes per invocation in those campaigns.
+  appear under separate JSON keys. The
+  [rooting integration report](../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md)
+  records the contract, positive controls and correction of the candidate's
+  unsafe cross-thread frame-inspection test. No new performance measurements
+  are claimed by the integration tests.
 - **Creation-pool fix:** before benchmark commit `6c8bf14`, creation-pool
   threads kept their last generated clusters as frame locals. The "dropped"
   fraction could therefore remain reachable, with extra stack roots affecting

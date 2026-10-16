@@ -1,0 +1,23 @@
+/tmp/parallel-gc-integration-fKKFb7/source/Python/gc_free_threading.c:1134: validate_gc_objects: Assertion "gc_get_refs(op) >= 0" failed: refcount is too small
+Enable tracemalloc to get the memory block allocation traceback
+
+object address  : 0x20018348350
+object refcount : 1
+object type     : 0xb73970
+object type name: list
+object repr     : [<benchmarks.gc_perf_benchmark.Node object at 0x200183b7ac0>, <benchmarks.gc_perf_benchmark.Node object at 0x200183b7760>]
+
+Fatal Python error: _PyObject_AssertFailed: _PyObject_AssertFailed
+Python runtime state: initialized
+
+Stack (most recent call first):
+  File "/data/users/alexturner/parallel_gc/benchmarks/gc_perf_benchmark.py", line 1191 in run_synthetic_benchmark
+  File "/data/users/alexturner/parallel_gc/benchmarks/test_gc_perf_benchmark.py", line 326 in _run
+  File "/data/users/alexturner/parallel_gc/benchmarks/test_gc_perf_benchmark.py", line 331 in test_module_rooted_heaps_have_no_persistent_holder_local
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/case.py", line 637 in _callTestMethod
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/case.py", line 691 in run
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/case.py", line 747 in __call__
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/suite.py", line 122 in run
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/suite.py", line 84 in __call__
+  File "/tmp/parallel-gc-integration-fKKFb7/source/Lib/unittest/suite.py", line 122 in run
+  File "/tmp/parallel-gc-integration-fKKFb7/rooting_checks.py", line 15 in <module>

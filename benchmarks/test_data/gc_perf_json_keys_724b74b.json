@@ -1,0 +1,152 @@
+{
+ "collection_results": [
+  {
+   "heap_size": "int",
+   "heap_type": "str",
+   "num_runs": "int",
+   "parallel_object_counts": [
+    "int"
+   ],
+   "parallel_samples_ms": [
+    "float"
+   ],
+   "parallel_stdev": "float",
+   "parallel_time_ms": "float",
+   "serial_object_counts": [
+    "int"
+   ],
+   "serial_samples_ms": [
+    "float"
+   ],
+   "serial_stdev": "float",
+   "serial_time_ms": "float",
+   "speedup": "float"
+  }
+ ],
+ "configuration": {
+  "build_type": "str",
+  "collection_creation_threads": "int",
+  "collection_survivor_ratio": "float",
+  "collection_warmup_runs": "int",
+  "duration_per_benchmark": "float",
+  "heap_size": "int",
+  "num_runs": "int",
+  "num_threads": "int",
+  "parallel_gc_available": "bool",
+  "random_seed": "int",
+  "runtime_parallel_gc_config": "str",
+  "worker_ceiling": "int"
+ },
+ "mixed_workload": {
+  "collection_latency_change_pct": "float",
+  "name": "str",
+  "parallel": {
+   "collection_latency_max_ms": "float",
+   "collection_latency_mean_ms": "float",
+   "collection_latency_stdev_ms": "int",
+   "collection_time_pct": "float",
+   "runs": [
+    {
+     "adaptive_workers_end": "int",
+     "adaptive_workers_start": "int",
+     "collection_latency_max_ms": "float",
+     "collection_latency_mean_ms": "float",
+     "collection_time_ms": "float",
+     "collection_time_pct": "float",
+     "collections": "int",
+     "duration_sec": "float",
+     "throughput": "float"
+    }
+   ],
+   "throughput_mean": "float",
+   "throughput_stdev": "int",
+   "total_collections": "int",
+   "total_duration_sec": "float"
+  },
+  "serial": {
+   "collection_latency_max_ms": "float",
+   "collection_latency_mean_ms": "float",
+   "collection_latency_stdev_ms": "int",
+   "collection_time_pct": "float",
+   "runs": [
+    {
+     "adaptive_workers_end": "int",
+     "adaptive_workers_start": "int",
+     "collection_latency_max_ms": "float",
+     "collection_latency_mean_ms": "float",
+     "collection_time_ms": "float",
+     "collection_time_pct": "float",
+     "collections": "int",
+     "duration_sec": "float",
+     "throughput": "float"
+    }
+   ],
+   "throughput_mean": "float",
+   "throughput_stdev": "int",
+   "total_collections": "int",
+   "total_duration_sec": "float"
+  },
+  "throughput_change_pct": "float"
+ },
+ "summary": {
+  "collection_speedup_geomean": "float",
+  "mixed_workload_throughput_change_pct": "float",
+  "synthetic_collection_latency_geomean_pct": "float",
+  "synthetic_throughput_geomean_pct": "float"
+ },
+ "synthetic_by_heap": {
+  "graph": {
+   "collection_latency_change_pct": "float",
+   "name": "str",
+   "parallel": {
+    "collection_latency_max_ms": "float",
+    "collection_latency_mean_ms": "float",
+    "collection_latency_stdev_ms": "int",
+    "collection_time_pct": "float",
+    "runs": [
+     {
+      "adaptive_workers_end": "int",
+      "adaptive_workers_start": "int",
+      "collection_latency_max_ms": "float",
+      "collection_latency_mean_ms": "float",
+      "collection_time_ms": "float",
+      "collection_time_pct": "float",
+      "collections": "int",
+      "duration_sec": "float",
+      "throughput": "float"
+     }
+    ],
+    "throughput_mean": "float",
+    "throughput_stdev": "int",
+    "total_collections": "int",
+    "total_duration_sec": "float"
+   },
+   "serial": {
+    "collection_latency_max_ms": "float",
+    "collection_latency_mean_ms": "float",
+    "collection_latency_stdev_ms": "int",
+    "collection_time_pct": "float",
+    "runs": [
+     {
+      "adaptive_workers_end": "int",
+      "adaptive_workers_start": "int",
+      "collection_latency_max_ms": "float",
+      "collection_latency_mean_ms": "float",
+      "collection_time_ms": "float",
+      "collection_time_pct": "float",
+      "collections": "int",
+      "duration_sec": "float",
+      "throughput": "float"
+     }
+    ],
+    "throughput_mean": "float",
+    "throughput_stdev": "int",
+    "total_collections": "int",
+    "total_duration_sec": "float"
+   },
+   "throughput_change_pct": "float"
+  }
+ },
+ "system": "str",
+ "timestamp": "str"
+}
