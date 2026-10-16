@@ -53,13 +53,23 @@ At 17:09 UTC, the old current-GIL process finished and saved `results/project/gi
 
 The corrected baseline-GIL build then started automatically, without overlapping the old measurement. Configure's pkg-config lookup for `libmpdec` failed, but its direct header and link checks passed: `mpdecimal.h` and `mpd_version` in `-lmpdec` were found. The generated Makefile records `MODULE__DECIMAL_STATE=yes`; compilation began with `-fprofile-generate` and `-flto`. This proves configuration and build start, not a successful finished build or runtime import. The native-decimal identity check, profile-use build, tests and binary hash remain required before measurement.
 
+### Corrected GIL builds and supplementary tests
+
+Both GIL builds finished their profile-use/LTO compilation and passed the native-decimal/runtime-mode checks, parallel profile workload and six-file build test selection. Baseline ran 948 tests with 85 skips; candidate ran 951 with 88 skips. Native decimal reports libmpdec 2.5.1. These are build checks, not the full CPython suite.
+
+Supplementary local checks use the Linux matrix's collector, configuration, embedding and miscellaneous C-API selection, plus the profile task tests. Both GIL builds passed: baseline ran 682 tests with 91 skips; candidate ran 685 with 94 skips. Each requested eleven files; the FT-only API and property files skipped at file level, leaving nine passed files. These skips do not provide FT evidence. Each build also passed all 67 tests across the four parent benchmark-harness modules. Executable SHA-256 checks still match the post-build records.
+
+The first parent-test attempt on the bare baseline executable failed to import `pyperf`; its failure log remains preserved. Attempting installation using the private Python 3.12 driver's pip 25.0.1 against Python 3.16 then failed inside its vendored `typing_extensions`, which accesses the removed `typing.no_type_check_decorator`. Using each test virtual environment's own bundled pip 26.2.1 succeeded. The environments install pure-Python pyperf 2.10.0 without dependencies for these unit tests; they are separate from the future pyperformance measurement environments. No source, benchmark parameter or runtime collector change.
+
+Stopped the still-waiting original campaign controller before it created results. Its replacement, `finish_tests_and_run.sh`, waits for all four successful build checks, verifies the completed GIL supplementary logs, runs the matching FT collector and parent checks in isolated test environments, and only then invokes the unchanged measurement launcher. A supplementary failure exits before any benchmark starts. Syntax checking passes; supplying a nonexistent build PID while the four-build marker is absent exits nonzero and creates no results directory. The real replacement controller is live and waiting for the FT builds. This prevents supplementary testing from overlapping measurements.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
 
 | Requirement | Current state | Evidence needed for completion |
 |-------------|---------------|--------------------------------|
-| Corrected baseline/current GIL/FT PGO+LTO builds | Baseline GIL compiling; remaining three builds queued | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
+| Corrected baseline/current GIL/FT PGO+LTO builds | Both GIL builds checked; baseline FT building, candidate FT queued | Four clean-source builds; native decimal/runtime-mode checks; actual profile-use/LTO flags and parallel training; focused/decimal tests; executable hashes |
 | Linux four-configuration matrix | Parent push reported; outcomes unknown | Run source pair, four job outcomes, focused collector/parent tests and feature-off skips |
 | GCC/Clang object checks | Parent push reported; outcomes unknown | Eight compiler/mode/build job outcomes and diagnostics; this is an unused-code gate, not every-warning acceptance |
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
