@@ -103,7 +103,7 @@ For each completed step record: imported commits, destination commits, exact che
 | 2: dead code | Complete locally | CPython `442a97213f`; four before/after feature-on builds and two feature-off controls; warning gates and symbol checks |
 | 3: production tests | Pending | Recheck mutation sensitivity and dynamic analysis |
 | 4: benchmarks | Complete locally | Separate retention and rooting changes; 23-test harness and planted-reference controls; fresh four-mode repeats |
-| 5: validation | Pending | Fresh candidate-source CI and matched-harness measurements |
+| 5: validation | Compiler workflow added locally; hosted runs pending | Eight GCC/Clang GIL/FT release/debug object checks; publishing and matched-harness measurements remain pending |
 
 ### 16 October: manifest and execution approval
 
@@ -160,3 +160,7 @@ CPython `442a97213f` adopts B1, with empty preprocessor guards and orphan headin
 Imported the benchmark dimension from `306644b`, preserving the independently committed retention fix and its controlled scheduling tests. Applied Alex's sustained rooting contract and kept the separate controlled collection boundary. Added an activation-failure cache-ownership check; it failed before moving cache construction after successful activation. The initial candidate cross-thread frame probe crashed in both FT builds and reproduced an abort in an FT feature-off control. CPython documents that operation as unsafe. Replaced it with calling-stack probes and a test forbidding cross-thread frame enumeration; planted persistent-reference controls still fail as intended.
 
 The final 23-test harness passes on the host. Fresh GIL/FT release/debug binaries each pass ten policy-off and ten armed suites: 1,840 tests, no failures/errors. Old result key/type compatibility, separate new keys, seeded collection counts, worker failures and holder cleanup are covered. See [the integration report](../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md), including the original FT failure and limitations. No new performance result is claimed. Remaining: production-verifier integration, sanitizer/mutation validation, focused warning CI, then publishing and fresh hosted tests. Campaign acceptance criteria still require agreement.
+
+### 16 October: focused compiler workflow, separate from implementation
+
+Added `parallel-gc-warnings.yml` with eight fresh GCC/Clang GIL/FT release/debug configurations. Only four GC object targets receive the unused-function/variable error flags; existing full builds/tests are unchanged. Source-pair and compiler/configure/diagnostic artifacts are retained, including failures. TESTING gives the manual trigger command. The operating-system Python's PyYAML parses the workflow, all shell blocks pass `bash -n`, matrix/target/flag checks pass, and the four shared source-record fixture tests pass. The four local GCC gates already pass; Clang is unavailable locally and no hosted workflow has run for this change. Publication remains Alex's responsibility. Production-verifier integration is still under investigation because one initial unmutated scratch test reported a failure; no verifier source has been applied to the main CPython checkout.

@@ -73,6 +73,26 @@ Build-specific modules skip in the other configuration. Tests may also skip
 for unavailable platform facilities. Treat an unexplained skip in the active
 mode as a result to investigate.
 
+### Focused compiler warnings
+
+The `Parallel GC compiler warnings` workflow compiles the four GC objects in
+fresh out-of-tree GIL/FT release/debug configurations with both GCC and Clang.
+It applies `-Werror=unused-function -Werror=unused-variable` only to these
+object targets, not the full interpreter build. This catches unreferenced
+out-of-line helpers and variables; it does not detect every unused inline
+helper or typedef and does not replace tests, sanitizers or platform builds.
+Compiler versions, configure output, diagnostics and source-pair records are
+retained even when a job fails. The existing focused/full workflows continue
+to run runtime tests independently.
+
+It runs on pushes and pull requests. To request another run manually:
+
+```bash
+gh workflow run parallel-gc-warnings.yml \
+    --repo SonicField/parallel_gc \
+    --ref main
+```
+
 ### Broad CPython suite
 
 Run the broad suite independently in each feature-on, first-class build. This catches
