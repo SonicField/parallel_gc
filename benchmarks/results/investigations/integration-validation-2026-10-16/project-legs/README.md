@@ -41,4 +41,17 @@ The original has 65,736 bytes; the Git copy adds only its terminal newline, givi
 
 The original has 65,677 bytes; the Git copy adds only its terminal newline, giving 65,678 bytes. Its original-length prefix was byte-compared against the original. The measurement/preflight fingerprints passed again between legs.
 
-Closing baseline leg 4 is running and remains required before the GIL source comparison can be analysed. All four FT legs and the separate pyperformance campaigns also remain required. No acceptance or performance-neutrality verdict follows from the first three legs.
+## GIL leg 4: baseline
+
+[Complete measurement data](gil-4-baseline.json).
+
+- CPython source: `c67363fa59543ef5d572383af927f1cff88514a1`, recorded clean.
+- Recorded parent checkpoint: `da42aa1891d765fe8eef413095bc6f9caa9d805e`.
+- Launcher timestamps: 16 October 2026, 21:55:51 to 23:17:25 UTC.
+- Complete four-leg validation passes: source order, standard configuration, build mode, placement, all workloads, five samples per arm and matching generated-member counts.
+- Original scratch-file SHA-256: `874e92e008a4d369e77c83810b24aee8769db00aa1731f196b34a66fcd70337b`.
+- Git-copy SHA-256: `1534bffedd0009bff2f81ec27eb880e6722e7c78eb7aaab3d69089c85673f4a5`.
+
+The original has 65,727 bytes; the Git copy adds only its terminal newline, giving 65,728 bytes. Its original-length prefix was byte-compared against the original. The measurement/preflight fingerprints passed again before FT began.
+
+The full GIL source ABBA is now complete. See [results and interpretation](../GIL-PROJECT-RESULTS.md) and [all analysis rows](../gil-source-analysis.json). Completing the measurement does not establish performance neutrality or release acceptance. Four FT legs, separate pyperformance campaigns and current hosted CI verification remain required.

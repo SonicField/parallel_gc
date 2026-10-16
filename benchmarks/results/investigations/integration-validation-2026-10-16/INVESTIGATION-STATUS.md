@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. Three of eight corrected project legs are complete; closing baseline GIL leg 4 is running. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. The four GIL project legs and their analysis are complete; FT baseline leg 1 is running. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -104,6 +104,14 @@ The second candidate GIL leg ran from 20:34:28 to 21:55:51 UTC (81 minutes 23 se
 
 The launcher verified the same three measurement/preflight fingerprints and started closing baseline leg 4. Three completed legs do not supply the closing ABBA half. The analysis tool must continue refusing a full comparison until leg 4 is complete; the FT and pyperformance campaigns still follow. Hosted CI results remain unverified.
 
+### Complete corrected GIL project ABBA
+
+Closing baseline leg 4 ran from 21:55:51 to 23:17:25 UTC (81 minutes 34 seconds). It records clean baseline source and parent checkpoint `da42aa1891d765fe8eef413095bc6f9caa9d805e`. The complete four-leg source-order, configuration, placement, coverage, sample and controlled-count checks pass. All four data files, original/Git-copy hashes, a reproducible 72-row machine analysis and the [full GIL results](GIL-PROJECT-RESULTS.md) are preserved.
+
+This measurement records four of eight lower sustained throughputs, six of eight increased mean callback durations and thirteen of sixteen longer controlled collection times in candidate parallel mode. Several serial controls change similarly; some halves disagree. Performance neutrality and a collector-specific cause are not established. The report retains negative and positive figures, absolute means, both halves, serial controls, frequency/time fractions and descriptive variation. No universal percentage threshold or significance claim is substituted for that evidence.
+
+The launcher rechecked the three measurement/preflight fingerprints and started FT baseline leg 1. No FT project leg or pyperformance campaign is complete at this entry. Hosted CI evidence is still missing. The complete GIL comparison does not finish the handoff objective.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
@@ -116,9 +124,9 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
-| Project full ABBA | GIL legs 1–3 complete; closing baseline leg 4 running; old attempt kept separate | Eight corrected-build invocations, each with original and module-rooted variants, all run-level data and consistent configuration/object counts |
+| Project full ABBA | All four GIL legs complete and analysed; FT baseline leg 1 running; old attempt kept separate | Four FT invocations remain; preserve both variants and all run-level data/count checks |
 | pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
-| Analysis and handoff commits | Pending complete results | Per-workload negative and positive changes, both ABBA halves, serial controls and uncertainty; evidence linked from VALIDATION/PERFORMANCE; tracked worktrees clean; publication commands for local commits |
+| Analysis and handoff commits | GIL data/writeup preserved; FT, pyperformance and hosted-CI reconciliation pending | Remaining per-workload changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
 
 Direct GitHub read access returned a destination-filter denial. Alex was asked to capture the current run listing in `/tmp/alex-ci-current.json`; no remote status is inferred while waiting. `git diff ff6710f HEAD` confirms the published checkpoint's collector tests, benchmark implementation and workflows are unchanged by the subsequent local preflight/evidence commits; its CPython gitlink is the intended `388fd5bb46`. Job-specific source artifacts still need verification.
 
@@ -128,4 +136,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-Pending. No new performance or hosted-CI result is claimed.
+GIL project measurement and analysis are complete, with the negative observations and unresolved attribution documented. FT, pyperformance and current hosted CI remain pending. Handoff is not complete.
