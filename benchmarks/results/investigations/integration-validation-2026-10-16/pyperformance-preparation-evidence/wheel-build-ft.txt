@@ -1,0 +1,15 @@
+Collecting pydantic-core==2.50.1
+  Using cached pydantic_core-2.50.1.tar.gz (513 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: pydantic-core
+  Building wheel for pydantic-core (pyproject.toml): started
+  Building wheel for pydantic-core (pyproject.toml): still running...
+  Building wheel for pydantic-core (pyproject.toml): finished with status 'done'
+  Created wheel for pydantic-core: filename=pydantic_core-2.50.1-cp316-cp316t-linux_aarch64.whl size=2118444 sha256=225c878b7bbe4b4ffb6a7cabaf8165f9ad1d90ee532cc9e0efa5304d56196886
+  Stored in directory: /home/alexturner/.cache/pip/wheels/b4/75/3d/5b933631efcd5dff4306dd21b92a1e2b543728839d32da8129
+Successfully built pydantic-core

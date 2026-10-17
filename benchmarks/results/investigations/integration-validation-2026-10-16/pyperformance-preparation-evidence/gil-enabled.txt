@@ -1,0 +1,346 @@
++ /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/driver/bin/python -m pyperformance venv show --python /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python
++ /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/driver/bin/python -m pyperformance venv create --python /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python --benchmarks=default --inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID
+Creating the virtual environment /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python -m venv --without-pip /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m ensurepip -v
+Using pip 26.2.1 from /tmp/tmplzj05e3m/pip-26.2.1-py3-none-any.whl/pip (python 3.16)
+Looking in links: /tmp/tmplzj05e3m
+Processing /tmp/tmplzj05e3m/pip-26.2.1-py3-none-any.whl
+Installing collected packages: pip
+  changing mode of /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/pip3 to 755
+  changing mode of /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/pip3.16 to 755
+Successfully installed pip-26.2.1
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install -U 'setuptools>=18.5' wheel
+Collecting setuptools>=18.5
+  Using cached setuptools-84.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel
+  Using cached wheel-0.48.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging>=24.0 (from wheel)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Using cached setuptools-84.0.0-py3-none-any.whl (818 kB)
+Using cached wheel-0.48.0-py3-none-any.whl (33 kB)
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Installing collected packages: setuptools, packaging, wheel
+
+Successfully installed packaging-26.3 setuptools-84.0.0 wheel-0.48.0
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip --version
+pip 26.2.1 from /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/pip (python 3.16)
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m ensurepip -v -U
+Using pip 26.2.1 from /tmp/tmpmjrhjzz1/pip-26.2.1-py3-none-any.whl/pip (python 3.16)
+Looking in links: /tmp/tmpmjrhjzz1
+Requirement already satisfied: pip in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (26.2.1)
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install -U 'setuptools>=18.5' wheel
+Requirement already satisfied: setuptools>=18.5 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (84.0.0)
+Requirement already satisfied: wheel in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (0.48.0)
+Requirement already satisfied: packaging>=24.0 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from wheel) (26.3)
+installing pyperformance in the venv at /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+Installing requirements into the virtual environment /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install 'packaging>=24.1' psutil==7.0.0 pyperf==2.10.0
+Requirement already satisfied: packaging>=24.1 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (26.3)
+Collecting psutil==7.0.0
+  Using cached psutil-7.0.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (22 kB)
+Collecting pyperf==2.10.0
+  Using cached pyperf-2.10.0-py3-none-any.whl.metadata (6.2 kB)
+Using cached psutil-7.0.0-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (279 kB)
+Using cached pyperf-2.10.0-py3-none-any.whl (144 kB)
+Installing collected packages: psutil, pyperf
+
+Successfully installed psutil-7.0.0 pyperf-2.10.0
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip freeze
+packaging==26.3
+psutil==7.0.0
+pyperf==2.10.0
+setuptools==84.0.0
+wheel==0.48.0
+Installing requirements into the virtual environment /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install psutil
+Requirement already satisfied: psutil in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (7.0.0)
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip freeze
+packaging==26.3
+psutil==7.0.0
+pyperf==2.10.0
+setuptools==84.0.0
+wheel==0.48.0
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install -e /data/users/alexturner/parallel_gc/pyperformance
+Obtaining file:///data/users/alexturner/parallel_gc/pyperformance
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: packaging in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from pyperformance==1.14.0) (26.3)
+Requirement already satisfied: pyperf in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from pyperformance==1.14.0) (2.10.0)
+Requirement already satisfied: psutil>=5.9.0 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from pyperf->pyperformance==1.14.0) (7.0.0)
+Building wheels for collected packages: pyperformance
+  Building editable for pyperformance (pyproject.toml): started
+  Building editable for pyperformance (pyproject.toml): finished with status 'done'
+  Created wheel for pyperformance: filename=pyperformance-1.14.0-0.editable-py3-none-any.whl size=7326 sha256=21b3325495f2ff243ef8d1d684b770df033510540ad15f719b6518e5d08a2ad8
+  Stored in directory: /tmp/pip-ephem-wheel-cache-wngx43dq/wheels/32/81/0e/6a63f4346761c71ebce46ea15d5fce3dde75b05a041d99faa5
+Successfully built pyperformance
+Installing collected packages: pyperformance
+Successfully installed pyperformance-1.14.0
+Installing requirements into the virtual environment /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a
+# /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install asgiref==3.3.4 django==3.2.4 pytz==2021.1 sqlparse==0.4.1 legacy-cgi==2.6 sqlglot==4.6.0 pyaes==1.6.1 tornado==6.5.2 chameleon==4.6.0 xdsl==0.54.3 coverage==7.3.2 'dask[distributed]==2024.10.0' genshi==0.7.7 six==1.16.0 greenlet==3.2.4 sqlalchemy==1.4.19 sqlglot==4.6.0 websockets==11.0.3 fastapi==0.121.0 httpx==0.28.1 uvicorn==0.38.0 sphinx==7.3.7 python-docs-theme==2024.6 sqlglot==4.6.0 networkx==3.4.2 mpmath==1.2.1 sympy==1.8 certifi==2021.5.30 dulwich==0.20.23 urllib3==1.26.5 sqlglot==4.6.0 tomli==2.0.1 docutils==0.18.1 networkx==3.4.2 html5lib==1.1 six==1.16.0 webencodings==0.5.1 mako==1.1.4 markupsafe==2.0.1 greenlet==3.2.4 sqlalchemy==1.4.19 networkx==3.4.2
+Collecting asgiref==3.3.4
+  Using cached asgiref-3.3.4-py3-none-any.whl.metadata (9.1 kB)
+Collecting django==3.2.4
+  Using cached Django-3.2.4-py3-none-any.whl.metadata (3.9 kB)
+Collecting pytz==2021.1
+  Using cached pytz-2021.1-py2.py3-none-any.whl.metadata (21 kB)
+Collecting sqlparse==0.4.1
+  Using cached sqlparse-0.4.1-py3-none-any.whl.metadata (3.4 kB)
+Collecting legacy-cgi==2.6
+  Using cached legacy_cgi-2.6-py3-none-any.whl.metadata (1.4 kB)
+Collecting sqlglot==4.6.0
+  Using cached sqlglot-4.6.0-py3-none-any.whl.metadata (9.5 kB)
+Collecting pyaes==1.6.1
+  Using cached pyaes-1.6.1-py3-none-any.whl
+Collecting tornado==6.5.2
+  Using cached tornado-6.5.2-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (2.8 kB)
+Collecting chameleon==4.6.0
+  Using cached Chameleon-4.6.0-py3-none-any.whl.metadata (51 kB)
+Collecting xdsl==0.54.3
+  Using cached xdsl-0.54.3-py3-none-any.whl.metadata (9.5 kB)
+Collecting coverage==7.3.2
+  Using cached coverage-7.3.2-cp316-cp316-linux_aarch64.whl
+Collecting dask==2024.10.0 (from dask[distributed]==2024.10.0)
+  Using cached dask-2024.10.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting genshi==0.7.7
+  Using cached Genshi-0.7.7-py3-none-any.whl.metadata (1.3 kB)
+Collecting six==1.16.0
+  Using cached six-1.16.0-py2.py3-none-any.whl.metadata (1.8 kB)
+Collecting greenlet==3.2.4
+  Using cached greenlet-3.2.4-cp316-cp316-linux_aarch64.whl
+Collecting sqlalchemy==1.4.19
+  Using cached sqlalchemy-1.4.19-cp316-cp316-linux_aarch64.whl
+Collecting websockets==11.0.3
+  Using cached websockets-11.0.3-py3-none-any.whl.metadata (6.6 kB)
+Collecting fastapi==0.121.0
+  Using cached fastapi-0.121.0-py3-none-any.whl.metadata (28 kB)
+Collecting httpx==0.28.1
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting uvicorn==0.38.0
+  Using cached uvicorn-0.38.0-py3-none-any.whl.metadata (6.8 kB)
+Collecting sphinx==7.3.7
+  Using cached sphinx-7.3.7-py3-none-any.whl.metadata (6.0 kB)
+Collecting python-docs-theme==2024.6
+  Using cached python_docs_theme-2024.6-py3-none-any.whl.metadata (2.3 kB)
+Collecting networkx==3.4.2
+  Using cached networkx-3.4.2-py3-none-any.whl.metadata (6.3 kB)
+Collecting mpmath==1.2.1
+  Using cached mpmath-1.2.1-py3-none-any.whl.metadata (8.3 kB)
+Collecting sympy==1.8
+  Using cached sympy-1.8-py3-none-any.whl.metadata (11 kB)
+Collecting certifi==2021.5.30
+  Using cached certifi-2021.5.30-py2.py3-none-any.whl.metadata (3.0 kB)
+Collecting dulwich==0.20.23
+  Using cached dulwich-0.20.23-cp316-cp316-linux_aarch64.whl
+Collecting urllib3==1.26.5
+  Using cached urllib3-1.26.5-py2.py3-none-any.whl.metadata (43 kB)
+Collecting tomli==2.0.1
+  Using cached tomli-2.0.1-py3-none-any.whl.metadata (8.9 kB)
+Collecting docutils==0.18.1
+  Using cached docutils-0.18.1-py2.py3-none-any.whl.metadata (2.9 kB)
+Collecting html5lib==1.1
+  Using cached html5lib-1.1-py2.py3-none-any.whl.metadata (16 kB)
+Collecting webencodings==0.5.1
+  Using cached webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+Collecting mako==1.1.4
+  Using cached Mako-1.1.4-py2.py3-none-any.whl.metadata (2.8 kB)
+Collecting markupsafe==2.0.1
+  Using cached markupsafe-2.0.1-cp316-cp316-linux_aarch64.whl
+Collecting immutabledict<4.2.3 (from xdsl==0.54.3)
+  Using cached immutabledict-4.2.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting typing-extensions<5,>=4.7 (from xdsl==0.54.3)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting ordered-set==4.1.0 (from xdsl==0.54.3)
+  Using cached ordered_set-4.1.0-py3-none-any.whl.metadata (5.3 kB)
+Collecting click>=8.1 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting cloudpickle>=3.0.0 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting fsspec>=2021.09.0 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached fsspec-2026.9.0-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: packaging>=20.0 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from dask==2024.10.0->dask[distributed]==2024.10.0) (26.3)
+Collecting partd>=1.4.0 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached partd-1.4.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting pyyaml>=5.3.1 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached pyyaml-6.0.3-cp316-cp316-linux_aarch64.whl
+Collecting toolz>=0.10.0 (from dask==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached toolz-1.2.0-py3-none-any.whl.metadata (5.2 kB)
+Collecting starlette<0.50.0,>=0.40.0 (from fastapi==0.121.0)
+  Using cached starlette-0.49.3-py3-none-any.whl.metadata (6.4 kB)
+Collecting pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 (from fastapi==0.121.0)
+  Downloading pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+Collecting annotated-doc>=0.0.2 (from fastapi==0.121.0)
+  Using cached annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting anyio (from httpx==0.28.1)
+  Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting httpcore==1.* (from httpx==0.28.1)
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx==0.28.1)
+  Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting h11>=0.8 (from uvicorn==0.38.0)
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting sphinxcontrib-applehelp (from sphinx==7.3.7)
+  Using cached sphinxcontrib_applehelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-devhelp (from sphinx==7.3.7)
+  Using cached sphinxcontrib_devhelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-jsmath (from sphinx==7.3.7)
+  Using cached sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting sphinxcontrib-htmlhelp>=2.0.0 (from sphinx==7.3.7)
+  Using cached sphinxcontrib_htmlhelp-2.1.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting sphinxcontrib-serializinghtml>=1.1.9 (from sphinx==7.3.7)
+  Using cached sphinxcontrib_serializinghtml-2.0.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting sphinxcontrib-qthelp (from sphinx==7.3.7)
+  Using cached sphinxcontrib_qthelp-2.0.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting Jinja2>=3.0 (from sphinx==7.3.7)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting Pygments>=2.14 (from sphinx==7.3.7)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting snowballstemmer>=2.0 (from sphinx==7.3.7)
+  Using cached snowballstemmer-3.1.1-py3-none-any.whl.metadata (7.9 kB)
+Collecting babel>=2.9 (from sphinx==7.3.7)
+  Using cached babel-2.18.0-py3-none-any.whl.metadata (2.2 kB)
+Collecting alabaster~=0.7.14 (from sphinx==7.3.7)
+  Using cached alabaster-0.7.16-py3-none-any.whl.metadata (2.9 kB)
+Collecting imagesize>=1.3 (from sphinx==7.3.7)
+  Using cached imagesize-2.0.1-py3-none-any.whl.metadata (7.0 kB)
+Collecting requests>=2.25.0 (from sphinx==7.3.7)
+  Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting distributed==2024.10.0 (from dask[distributed]==2024.10.0)
+  Using cached distributed-2024.10.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting locket>=1.0.0 (from distributed==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached locket-1.0.0-py2.py3-none-any.whl.metadata (2.8 kB)
+Collecting msgpack>=1.0.2 (from distributed==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached msgpack-1.2.3-cp316-cp316-linux_aarch64.whl
+Requirement already satisfied: psutil>=5.8.0 in ./venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages (from distributed==2024.10.0->dask[distributed]==2024.10.0) (7.0.0)
+Collecting sortedcontainers>=2.0.5 (from distributed==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached sortedcontainers-2.4.0-py2.py3-none-any.whl.metadata (10 kB)
+Collecting tblib>=1.6.0 (from distributed==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached tblib-3.2.2-py3-none-any.whl.metadata (27 kB)
+Collecting zict>=3.0.0 (from distributed==2024.10.0->dask[distributed]==2024.10.0)
+  Using cached zict-3.0.0-py2.py3-none-any.whl.metadata (899 bytes)
+Collecting annotated-types>=0.6.0 (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi==0.121.0)
+  Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.50.1 (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi==0.121.0)
+  Downloading pydantic_core-2.50.1.tar.gz (513 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): still running...
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × Preparing metadata (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [90 lines of output]
+      Python reports SOABI: cpython-316-aarch64-linux-gnu
+      Computed rustc target triple: aarch64-unknown-linux-gnu
+      Installation directory: /home/alexturner/.cache/puccinialin
+      Downloading rustup-init from https://static.rust-lang.org/rustup/dist/aarch64-unknown-linux-gnu/rustup-init
+      Checking for Rust toolchain....
+      Rust not found, installing into a temporary directory
+      Traceback (most recent call last):
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+          yield
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_transports/default.py", line 250, in handle_request
+          resp = self._pool.handle_request(req)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+          raise exc from None
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+          response = connection.handle_request(
+              pool_request.request
+          )
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+          raise exc
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+          stream = self._connect(request)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+          stream = self._network_backend.connect_tcp(**kwargs)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+          with map_exceptions(exc_map):
+               ~~~~~~~~~~~~~~^^^^^^^^^
+        File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/contextlib.py", line 222, in __exit__
+          self.gen.throw(value)
+          ~~~~~~~~~~~~~~^^^^^^^
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+          raise to_exc(exc) from exc
+      httpcore.ConnectError: [Errno 101] Network is unreachable
+      
+      The above exception was the direct cause of the following exception:
+      
+      Traceback (most recent call last):
+        File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 389, in <module>
+          main()
+          ~~~~^^
+        File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 373, in main
+          json_out["return_val"] = hook(**hook_input["kwargs"])
+                                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/pyperformance-gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 175, in prepare_metadata_for_build_wheel
+          return hook(metadata_directory, config_settings)
+        File "/tmp/pip-build-env-j4xmt3u9/overlay/lib/python3.16/site-packages/maturin/__init__.py", line 200, in prepare_metadata_for_build_wheel
+          env = _get_env()
+        File "/tmp/pip-build-env-j4xmt3u9/overlay/lib/python3.16/site-packages/maturin/__init__.py", line 83, in _get_env
+          extra_env = setup_rust()
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/puccinialin/_setup_rust.py", line 143, in setup_rust
+          rustup_init = download_rustup(url, rustup_init, target, file)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/puccinialin/_setup_rust.py", line 34, in download_rustup
+          response = client.head(url)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 1111, in head
+          return self.request(
+                 ~~~~~~~~~~~~^
+              "HEAD",
+              ^^^^^^^
+          ...<7 lines>...
+              extensions=extensions,
+              ^^^^^^^^^^^^^^^^^^^^^^
+          )
+          ^
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 825, in request
+          return self.send(request, auth=auth, follow_redirects=follow_redirects)
+                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 914, in send
+          response = self._send_handling_auth(
+              request,
+          ...<2 lines>...
+              history=[],
+          )
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+          response = self._send_handling_redirects(
+              request,
+              follow_redirects=follow_redirects,
+              history=history,
+          )
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+          response = self._send_single_request(request)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_client.py", line 1014, in _send_single_request
+          response = transport.handle_request(request)
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_transports/default.py", line 249, in handle_request
+          with map_httpcore_exceptions():
+               ~~~~~~~~~~~~~~~~~~~~~~~^^
+        File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/contextlib.py", line 222, in __exit__
+          self.gen.throw(value)
+          ~~~~~~~~~~~~~~^^^^^^^
+        File "/tmp/pip-build-env-j4xmt3u9/normal/lib/python3.16/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+          raise mapped_exc(message) from exc
+      httpx.ConnectError: [Errno 101] Network is unreachable
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> pydantic-core
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+Command failed with exit code 1
+ERROR: Command '['/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/driver/bin/python', '-m', 'pyperformance', 'venv', 'create', '--python', '/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python', '--benchmarks=default', '--inherit-environ=PARALLEL_GC_PYPERFORMANCE_MODE,PYPERFORMANCE_RUNID']' returned non-zero exit status 1.

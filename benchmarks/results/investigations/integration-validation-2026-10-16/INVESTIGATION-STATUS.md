@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. First pyperformance preparation failed for a missing Rust toolchain; the controller continues its remaining attempts. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. Interrupted the known-incomplete pyperformance attempt; its native Rust dependency now builds and runs on all four binaries. Fresh full preparation and campaigns remain required. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -156,6 +156,12 @@ As designed, the controller records the failed status and continues the remainin
 
 The configured package repositories provide Rust and Cargo 1.97.1. Downloaded their matching compiler, Cargo and static standard-library packages into an owned temporary prefix; all RPM digest/signature checks pass. A relocated compiler wrapper fixes its own driver-library lookup without changing Python's loader environment. A simple Rust program compiled on CPU 32 and ran successfully. No system toolchain installation or collector/benchmark change. [Toolchain preparation](TOOLCHAIN-PREPARATION.md) preserves exact versions, package hashes, failed cache-only attempt, successful download and the remaining native-package verification requirement. The original controller still runs; its later partially prepared environment is not a readiness proof. Full dependency preparation and fresh pyperformance campaigns remain required.
 
+### Known-incomplete pyperformance attempt stopped; native failure repaired
+
+The GIL disabled invocation reused the partial environment, marked FastAPI skipped after failed requirements, then began timing other programs. The pinned pyperformance implementation records that missing program as an error and ultimately exits failing. At 05:43:54 UTC stopped the verified dedicated campaign process group and confirmed every member gone. This avoids spending full-run time on coverage already known incomplete. No files were removed. The full initial failure and interrupted logs, their hashes and newline-copy distinction are preserved in [preparation evidence](pyperformance-preparation-evidence/README.md); partial timings are excluded, not reported as a source ABBA. FT pyperformance had not started.
+
+With the isolated Rust toolchain, exact `pydantic-core==2.50.1` wheels now build for GIL and FT, without compatibility forcing or version changes. Native imports and actual FastAPI requests succeed on all four real target binaries in separate environments; both FT runtimes retain GIL-disabled state. Native build logs, the untimed probe and four results are preserved. This repairs the observed preparation failure, not all default dependency or benchmark compatibility. Fresh full preparation and all sixteen rigorous suites still remain; no benchmark implementation or collector behaviour was changed.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
@@ -169,7 +175,7 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
 | Project full ABBA | Complete: all four GIL and four FT legs preserved and analysed; old attempt kept separate | Eight-leg data, hashes and complete analyses are preserved; negative observations still require follow-up rather than a neutrality claim |
-| pyperformance full comparisons | First GIL enabled preparation failed before a suite; controller continues remaining attempts | Repair preparation, then complete four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
+| pyperformance full comparisons | First preparation failed; known-incomplete attempt stopped and preserved; observed native failure repaired on all four targets | Fresh full preparation, then four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
 | Analysis and handoff commits | GIL and FT data/writeups preserved; pyperformance and hosted-CI reconciliation pending | Remaining pyperformance changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
 
 Direct GitHub read access returned a destination-filter denial. Alex was asked to capture the current run listing in `/tmp/alex-ci-current.json`; no remote status is inferred while waiting. `git diff ff6710f HEAD` confirms the published checkpoint's collector tests, benchmark implementation and workflows are unchanged by the subsequent local preflight/evidence commits; its CPython gitlink is the intended `388fd5bb46`. Job-specific source artifacts still need verification.
@@ -180,4 +186,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Pyperformance preparation has failed; its completed campaigns and current hosted CI remain unverified. Handoff is not complete.
+GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. The observed pyperformance native failure is repaired, but full preparation, completed campaigns and current hosted CI remain unverified. Handoff is not complete.
