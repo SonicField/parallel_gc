@@ -5,6 +5,8 @@ Candidate source: `388fd5bb46fdda6b464db566faf818505c3d6eef`.
 
 Four fresh out-of-tree GCC 11.5.0 AArch64 builds use `--with-parallel-gc --enable-optimizations --with-lto`; FT also uses `--disable-gil`. The native dependency prefix belongs to this campaign. No source tree, collector logic or benchmark parameters changed during the builds.
 
+The corrected root's source paths are symlink aliases to the original clean worktrees under `/tmp/parallel-gc-benchmarks-20261016-6gpt8U`; they are not separately copied source trees or different revisions. Later [full local tests](../local-full-suite/README.md) expose alias/physical path sensitivity in pydoc and unittest discovery. The original source identities, executable hashes and performance records are retained; the failed tests are not masked or recast as collector failures.
+
 Each build directory contains:
 
 - `preflight.json`: native decimal identity, libmpdec version, compiled configuration and runtime GIL/FT mode after importing dependencies. The preflight also requires the collector to be available and initially disabled.

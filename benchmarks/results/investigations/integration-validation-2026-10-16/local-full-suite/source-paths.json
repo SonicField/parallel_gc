@@ -1,0 +1,108 @@
+{
+  "baseline-gil": {
+    "abs_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source",
+    "compiled_gil_disabled": false,
+    "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python",
+    "gc": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "physical_source": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/baseline-source",
+    "pydoc_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/pydoc.py",
+    "python_git": [
+      "CPython",
+      "remotes/upstream/HEAD-26-gc67363fa59-dirty",
+      "c67363fa59"
+    ],
+    "raw_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source",
+    "runtime_gil_enabled": true,
+    "runtime_srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/baseline-source",
+    "stdlib_dir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib",
+    "stdlib_path": "/usr/local/lib/python3.16",
+    "support_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/test/support/__init__.py",
+    "unittest_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/unittest/__init__.py"
+  },
+  "candidate-gil": {
+    "abs_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source",
+    "compiled_gil_disabled": false,
+    "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-gil/python",
+    "gc": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "physical_source": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+    "pydoc_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/pydoc.py",
+    "python_git": [
+      "CPython",
+      "heads/parallel-gc-upstream-port-dirty",
+      "388fd5bb46"
+    ],
+    "raw_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source",
+    "runtime_gil_enabled": true,
+    "runtime_srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+    "stdlib_dir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib",
+    "stdlib_path": "/usr/local/lib/python3.16",
+    "support_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/test/support/__init__.py",
+    "unittest_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/unittest/__init__.py"
+  },
+  "baseline-ft": {
+    "abs_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source",
+    "compiled_gil_disabled": true,
+    "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-ft/python",
+    "gc": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "parallel_cleanup": true,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "physical_source": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/baseline-source",
+    "pydoc_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/pydoc.py",
+    "python_git": [
+      "CPython",
+      "remotes/upstream/HEAD-26-gc67363fa59-dirty",
+      "c67363fa59"
+    ],
+    "raw_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source",
+    "runtime_gil_enabled": false,
+    "runtime_srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/baseline-source",
+    "stdlib_dir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib",
+    "stdlib_path": "/usr/local/lib/python3.16t",
+    "support_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/test/support/__init__.py",
+    "unittest_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/unittest/__init__.py"
+  },
+  "candidate-ft": {
+    "abs_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source",
+    "compiled_gil_disabled": true,
+    "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-ft/python",
+    "gc": {
+      "available": true,
+      "enabled": false,
+      "num_workers": 0,
+      "parallel_cleanup": true,
+      "pool_active": false,
+      "startup_failed": false
+    },
+    "physical_source": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+    "pydoc_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/pydoc.py",
+    "python_git": [
+      "CPython",
+      "heads/parallel-gc-upstream-port-dirty",
+      "388fd5bb46"
+    ],
+    "raw_srcdir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source",
+    "runtime_gil_enabled": false,
+    "runtime_srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+    "stdlib_dir": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib",
+    "stdlib_path": "/usr/local/lib/python3.16t",
+    "support_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/test/support/__init__.py",
+    "unittest_path": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Lib/unittest/__init__.py"
+  }
+}
