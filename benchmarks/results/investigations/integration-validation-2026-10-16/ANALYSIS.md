@@ -11,6 +11,8 @@ python3 \
 
 Repeat with `--mode ft`. Output is JSON on standard output; preserve it with the raw legs when the complete comparison is available. The tool requires the fixed baseline/candidate source pair, standard full-suite parameters, clean CPython source content, recorded matching NUMA policy, CPU affinity 0–31, all workloads and five samples per arm. Missing files or mismatched data exit nonzero without a partial report.
 
+The launch/file label `ft` corresponds to the harness's recorded `build_type` value `free-threaded`; GIL records `gil`. The analyser validates the actual harness spelling rather than changing measurement metadata. Its 24 machinery tests cover that mapping and reject the invalid literal `ft` as a recorded build type.
+
 The report covers the original and module-rooted controlled collections, mixed workload and three sustained synthetic workloads. Every metric includes all five samples per arm per leg, mean, sample standard deviation, minimum and maximum. It reports the two whole-leg baseline/candidate means, the signed overall change, the two ABBA-half changes, matching serial-arm controls and within-build parallel/serial changes.
 
 Changes mean `100 × (candidate / baseline − 1)`. The null ratio is 1, hence zero percent change. Negative throughput change is worse; positive collection-time or callback-duration change is worse. A zero denominator yields JSON `null`, not a fabricated zero-percent result. Collection frequency and achieved run duration have no preferred direction by themselves.

@@ -142,11 +142,20 @@ class AnalysisTests(unittest.TestCase):
             analysis.analyse_documents(documents, mode="ft",
                                        baseline="baseline", candidate="candidate")
         for document in documents:
-            document["configuration"]["build_type"] = "ft"
+            document["configuration"]["build_type"] = "free-threaded"
             document["system"]["py_gil_disabled"] = 1
         report = analysis.analyse_documents(documents, mode="ft",
                                             baseline="baseline", candidate="candidate")
         self.assertEqual(report["mode"], "ft")
+
+    def test_ft_launcher_label_is_not_harness_build_metadata(self):
+        documents = self.campaign()
+        for document in documents:
+            document["configuration"]["build_type"] = "ft"
+            document["system"]["py_gil_disabled"] = 1
+        with self.assertRaisesRegex(ValueError, "wrong build mode"):
+            analysis.analyse_documents(documents, mode="ft",
+                                       baseline="baseline", candidate="candidate")
 
     def test_dirty_source_is_rejected(self):
         documents = self.campaign()

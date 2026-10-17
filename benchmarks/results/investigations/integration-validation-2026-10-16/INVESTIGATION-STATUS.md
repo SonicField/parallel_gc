@@ -124,6 +124,10 @@ FT baseline leg 1 ran from 23:17:25 UTC on 16 October to 00:51:50 UTC on 17 Octo
 
 The controller passed its four current fingerprint checks and started candidate FT leg 2. The analysis command still refuses a source comparison because that leg's JSON is absent. Inspection found that the separate analysis tool's FT fixture uses `ft`, whereas the actual harness emits `free-threaded`. This is an analysis-schema defect to fix test-first, not a benchmark or collector defect; no measurement metadata will be rewritten. Three FT legs and all pyperformance campaigns still remain.
 
+### FT analysis-schema correction
+
+Corrected the analysis tool's expected build metadata to `free-threaded` for launcher mode `ft`, matching the actual first FT document and the unchanged project harness. Before implementation, the corrected FT fixture failed with `wrong build mode`, while a new test showed that the invalid literal `ft` was accepted as harness metadata. After the analysis-only correction all 24 machinery tests pass. Replaying the complete GIL analysis produces a byte-identical report, including all measurements and input hashes. The actual unfinished FT command continues refusing a full comparison because its closing documents are absent. No benchmark, result metadata or collector was modified to accommodate the analyser.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.

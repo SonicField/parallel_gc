@@ -113,7 +113,9 @@ def validate_documents(documents, mode, baseline, candidate):
             "recorded NUMA policy is required")
     for index, (document, label) in enumerate(zip(documents, LABELS), 1):
         config = document["configuration"]
-        require(config["build_type"] == mode, f"leg {index}: wrong build mode")
+        expected_build = "free-threaded" if mode == "ft" else "gil"
+        require(config["build_type"] == expected_build,
+                f"leg {index}: wrong build mode")
         for key, value in STANDARD_CONFIGURATION.items():
             require(config[key] == value, f"leg {index}: changed {key}")
         system = document["system"]
