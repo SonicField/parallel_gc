@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. Fresh 100-program default pyperformance preparation passed on all four binaries; corrected GIL enabled baseline leg is live. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. The first corrected default pyperformance suite failed Dask and Genshi; both errors reproduce on all four binaries with parallel GC disabled. The campaign is stopped and its partial output preserved. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -174,9 +174,17 @@ At 05:55:44 UTC on 17 October, the restart launcher passed all four source/binar
 
 The launcher retains the complete four-campaign order: GIL enabled, GIL disabled, FT enabled, FT disabled; each is baseline/candidate/candidate/baseline with unchanged rigorous/default flags, affinity 0–31 and NUMA node 0. No corrected suite is complete at this entry. No competing build, benchmark or collector change is scheduled during measurement. Current hosted-CI capture remains absent.
 
+### Default-suite runtime failures isolated from collector activation
+
+The corrected GIL-enabled baseline attempted the unchanged 100-program default selection and exited nonzero: Dask fails during Cloudpickle import on the missing `DELETE_GLOBAL` opcode; Genshi fails constructing an AST node without its required `body` field. Its JSON retains 124 successful named results, including FastAPI, but is not a completed suite or ABBA comparison. [Dependency compatibility evidence](dependency-compatibility/README.md) preserves the complete failed log, partial JSON, exact hashes, original workloads and four untimed probes.
+
+Both exceptions reproduce on all four real measurement environments with parallel GC explicitly disabled and no helper pool before or after. Both FT runtimes retain a disabled GIL. This falsifies the claim that these exceptions require collector activation; it is not a general correctness verdict. Dependency installation and native readiness checks had passed but did not cover every program's runtime compatibility.
+
+At 07:54 UTC on 17 October, stopped the revalidated dedicated campaign process group and verified every member gone. GIL-disabled baseline was interrupted; no FT pyperformance suite had started. No files were deleted or workloads excluded. Dependency compatibility changes require discussion before restarting the unchanged full campaign. Current hosted CI capture remains absent.
+
 ### Goal continuation: completion requirements and current evidence
 
-The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
+The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.
 
 | Requirement | Current state | Evidence needed for completion |
 |-------------|---------------|--------------------------------|
@@ -187,7 +195,7 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
 | Project full ABBA | Complete: all four GIL and four FT legs preserved and analysed; old attempt kept separate | Eight-leg data, hashes and complete analyses are preserved; negative observations still require follow-up rather than a neutrality claim |
-| pyperformance full comparisons | Fresh preparation complete on all four targets; corrected GIL enabled baseline leg live; interrupted attempt separately preserved | All sixteen rigorous suites across four enabled/disabled × GIL/FT binary-ABBA campaigns; raw legs, attestation, program set, failures and source/binary provenance |
+| pyperformance full comparisons | First corrected suite failed two dependencies; four disabled-collector probes reproduce both failures; campaign stopped, partial output preserved | Agreed dependency compatibility repair, all-program readiness checks, then all sixteen rigorous suites across four enabled/disabled × GIL/FT binary-ABBA campaigns; raw legs, attestation, program set, failures and source/binary provenance |
 | Analysis and handoff commits | GIL and FT data/writeups preserved; pyperformance and hosted-CI reconciliation pending | Remaining pyperformance changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
 
 Direct GitHub read access returned a destination-filter denial. Alex was asked to capture the current run listing in `/tmp/alex-ci-current.json`; no remote status is inferred while waiting. `git diff ff6710f HEAD` confirms the published checkpoint's collector tests, benchmark implementation and workflows are unchanged by the subsequent local preflight/evidence commits; its CPython gitlink is the intended `388fd5bb46`. Job-specific source artifacts still need verification.
@@ -198,4 +206,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Full-default pyperformance preparation is complete, but completed campaigns and current hosted CI remain unverified. Handoff is not complete.
+GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Full-default pyperformance installation passed, but runtime dependency failures prevent a complete comparison; both failures occur without collector activation. The campaign is stopped, evidence is preserved, and dependency changes remain unapproved. Current hosted CI remains unverified. Handoff is not complete.
