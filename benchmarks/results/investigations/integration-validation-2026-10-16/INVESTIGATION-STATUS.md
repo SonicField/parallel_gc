@@ -238,6 +238,12 @@ numactl --cpunodebind=0 --membind=0 taskset -c 0-31 \
 
 The actual controller redirects each complete stdout/stderr stream to its matching `.log`. `repeat_build_root` is `/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW`; `repeat_out` is the separate root above; the source loop is baseline, candidate, candidate, baseline. The existing analyser runs with `--mode ft` against that root after four complete legs. Remaining pyperformance and hosted-platform requirements are unchanged; this repeat does not replace them.
 
+### Full FT repetition baseline leg completed
+
+Baseline leg 1 finished at 11:32:48 UTC on 17 October after 94 minutes 26 seconds. All original source, binary and benchmark/analysis fingerprints pass; candidate leg 2 then started in the same controller. [Repeat evidence](full-ft-repeat/README.md) preserves the complete first JSON/log and provenance. Standard configuration, clean baseline source, compiled FT mode, affinity/NUMA, all eight sustained and sixteen controlled cases, five valid samples per arm and generated-member sequences matching the original full experiment pass their checks.
+
+The first document records parent `ebdba89d428d1b0ff53a396edff22390c40b9ae2` dirty with unrelated untracked files; measured source/benchmark content remains unchanged. This observation is retained. Validation and archive work use spare CPU 32 rather than competing with benchmark affinity 0–31. The complete-project analyser refuses the actual unfinished campaign with no JSON because leg 2 is absent. No baseline-only source effect is reported. Three closing legs, pyperformance compatibility agreement and current hosted CI evidence remain required.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.

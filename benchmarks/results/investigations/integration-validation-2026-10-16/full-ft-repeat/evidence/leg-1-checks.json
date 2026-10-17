@@ -1,0 +1,12 @@
+{
+  "scope": "single-completed-leg-not-source-ABBA",
+  "input_sha256": "a49d55b640b7a3d3670422de00f404b718cbab02d2e9cf051864aac07fe2c7ca",
+  "sustained_cases": 8,
+  "controlled_cases": 16,
+  "samples_per_arm": 5,
+  "standard_configuration": "pass",
+  "source_and_mode": "pass",
+  "affinity_and_numa": "pass",
+  "generated_counts_match_original_full_comparison": true,
+  "source_effect_analysis": "not_permitted_until_four_complete_legs"
+}

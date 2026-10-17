@@ -1,0 +1,1874 @@
+{
+  "configuration": {
+    "build_type": "free-threaded",
+    "parallel_gc_available": true,
+    "worker_ceiling": 16,
+    "num_threads": 4,
+    "duration_per_benchmark": 60.0,
+    "num_runs": 5,
+    "heap_size": 500000,
+    "random_seed": 42,
+    "collection_warmup_runs": 3,
+    "collection_survivor_ratio": 0.8,
+    "collection_creation_threads": 4,
+    "runtime_parallel_gc_config": {
+      "available": true,
+      "enabled": true,
+      "num_workers": 16,
+      "adaptive_workers": 4,
+      "pool_active": false,
+      "startup_failed": false,
+      "parallel_cleanup": true
+    },
+    "module_cache_size": 500000
+  },
+  "system": {
+    "python_version": "3.16.0a0 free-threading build (remotes/upstream/HEAD-26-gc67363fa59-dirty:c67363fa59, Oct 16 2026, 10:37:23) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]",
+    "python_executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-ft/python",
+    "python_implementation": "CPython",
+    "python_cache_tag": "cpython-316",
+    "python_build": [
+      "remotes/upstream/HEAD-26-gc67363fa59-dirty:c67363fa59",
+      "Oct 16 2026 10:37:23"
+    ],
+    "python_git": [
+      "CPython",
+      "remotes/upstream/HEAD-26-gc67363fa59-dirty",
+      "c67363fa59"
+    ],
+    "compiler": "GCC 11.5.0 20240719 (Red Hat 11.5.0-15)",
+    "configure_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+    "cflags": "-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall",
+    "ldflags": "-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64",
+    "py_cflags_nodist": "-fno-semantic-interposition -flto -fuse-linker-plugin -ffat-lto-objects -g -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -fprofile-use -fprofile-correction -I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Include/internal -I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Include/internal/mimalloc",
+    "py_ldflags_nodist": "-fno-semantic-interposition -flto -fuse-linker-plugin -ffat-lto-objects -g",
+    "py_parallel_gc": 1,
+    "py_gil_disabled": 1,
+    "platform": "Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34",
+    "machine": "aarch64",
+    "processor": "aarch64",
+    "logical_cpu_count": 72,
+    "available_cpu_count": 32,
+    "pythonhashseed": null,
+    "benchmark_seed": 42,
+    "command_line": [
+      "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-ft/python",
+      "benchmarks/gc_perf_benchmark.py",
+      "--full",
+      "--include-synthetic",
+      "--json",
+      "--output",
+      "/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT/ft-1-baseline.json"
+    ],
+    "project_git": {
+      "revision": "ebdba89d428d1b0ff53a396edff22390c40b9ae2",
+      "dirty": true,
+      "worktree_sha256": "f95c45f7ba43fb99f15f5924896381521bb085df90dd670ba265b306565721bc",
+      "untracked_files": [
+        "benchmarks/results/pyperformance/ft-full-2026-10-03/",
+        "benchmarks/results/pyperformance/ft-lazy-smoke-2026-10-08/",
+        "benchmarks/results/pyperformance/ft-smoke/",
+        "benchmarks/results/pyperformance/gil-full-2026-10-02/",
+        "benchmarks/results/pyperformance/gil-smoke-2/",
+        "benchmarks/results/pyperformance/gil-smoke/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-v2-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v3-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v2-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v2-2026-10-05/",
+        "build-ci-check-gil-off/",
+        "build-ci-check-gil-on/",
+        "build-control-ft/",
+        "build-fidelity-ft/",
+        "build-fidelity-gil/",
+        "build-lazy-ft-asan/",
+        "build-lazy-ft-tsan/",
+        "build-lazy-gil-asan/",
+        "build-lazy-gil-tsan/",
+        "build-overnight-20261007-ft/",
+        "build-overnight-20261007-gil/",
+        "cpython-original/",
+        "cpython-upstream-port/"
+      ]
+    },
+    "cpython_git": {
+      "revision": "c67363fa59543ef5d572383af927f1cff88514a1",
+      "dirty": false,
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "untracked_files": []
+    },
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "numa_policy": "policy: bind\npreferred node: 0\nphyscpubind: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 \ncpubind: 0 \nnodebind: 0 \nmembind: 0 \npreferred: 0"
+  },
+  "timestamp": "2026-10-17T02:58:22.120298-07:00",
+  "mixed_workload": {
+    "name": "mixed_workload",
+    "serial": {
+      "throughput_mean": 2745.1497943189265,
+      "throughput_stdev": 13.458906672753391,
+      "collection_latency_mean_ms": 3.625476925559968,
+      "collection_latency_stdev_ms": 0.019853916356766324,
+      "collection_latency_max_ms": 22.769298404455185,
+      "collection_time_pct": 67.50989402185603,
+      "total_duration_sec": 300.0273304991424,
+      "total_collections": 55869,
+      "runs": [
+        {
+          "throughput": 2728.754731958834,
+          "collection_time_ms": 40402.98644732684,
+          "collection_time_pct": 67.33349240148027,
+          "collection_latency_mean_ms": 3.629119415011842,
+          "collection_latency_max_ms": 20.82751877605915,
+          "collections": 11133,
+          "duration_sec": 60.00429356377572,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 2759.0034945877424,
+          "collection_time_ms": 40593.5240611434,
+          "collection_time_pct": 67.65105510191736,
+          "collection_latency_mean_ms": 3.6228044677504148,
+          "collection_latency_max_ms": 22.769298404455185,
+          "collections": 11205,
+          "duration_sec": 60.004273399710655,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 2748.312361848246,
+          "collection_time_ms": 40421.410417184234,
+          "collection_time_pct": 67.36196726387305,
+          "collection_latency_mean_ms": 3.607766013672281,
+          "collection_latency_max_ms": 6.440228782594204,
+          "collections": 11204,
+          "duration_sec": 60.00627959519625,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 2733.577512930666,
+          "collection_time_ms": 40618.26311703771,
+          "collection_time_pct": 67.69159574647948,
+          "collection_latency_mean_ms": 3.657326050516632,
+          "collection_latency_max_ms": 16.132851131260395,
+          "collections": 11106,
+          "duration_sec": 60.00488342624158,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 2756.1008702691447,
+          "collection_time_ms": 40511.94696780294,
+          "collection_time_pct": 67.51135959552997,
+          "collection_latency_mean_ms": 3.6103686808486715,
+          "collection_latency_max_ms": 5.942561663687229,
+          "collections": 11221,
+          "duration_sec": 60.00760051421821,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        }
+      ]
+    },
+    "parallel": {
+      "throughput_mean": 3429.581511086411,
+      "throughput_stdev": 8.281724986968312,
+      "collection_latency_mean_ms": 2.668394811044729,
+      "collection_latency_stdev_ms": 0.008851848859658918,
+      "collection_latency_max_ms": 106.65396880358458,
+      "collection_time_pct": 60.1298624178463,
+      "total_duration_sec": 300.02056944090873,
+      "total_collections": 67607,
+      "runs": [
+        {
+          "throughput": 3436.230862895638,
+          "collection_time_ms": 36238.1272604689,
+          "collection_time_pct": 60.39039132959078,
+          "collection_latency_mean_ms": 2.679343974896037,
+          "collection_latency_max_ms": 106.65396880358458,
+          "collections": 13525,
+          "duration_sec": 60.00644550006837,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 14
+        },
+        {
+          "throughput": 3435.329302445846,
+          "collection_time_ms": 36223.09723962098,
+          "collection_time_pct": 60.3691219443238,
+          "collection_latency_mean_ms": 2.671122869966889,
+          "collection_latency_max_ms": 19.265358336269855,
+          "collections": 13561,
+          "duration_sec": 60.00269023794681,
+          "adaptive_workers_start": 14,
+          "adaptive_workers_end": 16
+        },
+        {
+          "throughput": 3435.28156903366,
+          "collection_time_ms": 36007.72694032639,
+          "collection_time_pct": 60.00964483277384,
+          "collection_latency_mean_ms": 2.6560247060799878,
+          "collection_latency_max_ms": 8.484155870974064,
+          "collections": 13557,
+          "duration_sec": 60.00323288142681,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 14
+        },
+        {
+          "throughput": 3419.880267698209,
+          "collection_time_ms": 35901.71905141324,
+          "collection_time_pct": 59.83177096427673,
+          "collection_latency_mean_ms": 2.663727485636833,
+          "collection_latency_max_ms": 4.761108197271824,
+          "collections": 13478,
+          "duration_sec": 60.00443990342319,
+          "adaptive_workers_start": 14,
+          "adaptive_workers_end": 7
+        },
+        {
+          "throughput": 3421.1855533587004,
+          "collection_time_ms": 36031.28818143159,
+          "collection_time_pct": 60.04838301826633,
+          "collection_latency_mean_ms": 2.6717550186438968,
+          "collection_latency_max_ms": 14.162075705826283,
+          "collections": 13486,
+          "duration_sec": 60.003760918043554,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 16
+        }
+      ]
+    },
+    "throughput_change_pct": 24.93239961563891,
+    "collection_latency_change_pct": -26.39879205319765
+  },
+  "collection_results": [
+    {
+      "heap_type": "chain",
+      "heap_size": 500000,
+      "serial_time_ms": 44.870445504784584,
+      "serial_stdev": 1.5687790164562934,
+      "parallel_time_ms": 32.95685704797506,
+      "parallel_stdev": 2.153220642977872,
+      "speedup": 1.3614904309433085,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        46.31643835455179,
+        45.25697138160467,
+        43.39269455522299,
+        46.32971901446581,
+        43.05640421807766
+      ],
+      "parallel_samples_ms": [
+        33.62084552645683,
+        30.34016862511635,
+        35.65945941954851,
+        31.226866878569126,
+        33.9369447901845
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "tree",
+      "heap_size": 500000,
+      "serial_time_ms": 46.08788564801216,
+      "serial_stdev": 0.49995927191863165,
+      "parallel_time_ms": 33.245377987623215,
+      "parallel_stdev": 0.82085269426002,
+      "speedup": 1.3862945298793123,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        46.39224801212549,
+        46.747355721890926,
+        45.47268524765968,
+        45.78500799834728,
+        46.04213126003742
+      ],
+      "parallel_samples_ms": [
+        33.47063437104225,
+        32.86896459758282,
+        32.94406831264496,
+        32.396990805864334,
+        34.54623185098171
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "wide_tree",
+      "heap_size": 500000,
+      "serial_time_ms": 43.95931251347065,
+      "serial_stdev": 0.9615733291354249,
+      "parallel_time_ms": 31.20233491063118,
+      "parallel_stdev": 1.2289076903373444,
+      "speedup": 1.4088468904451426,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        44.109150767326355,
+        43.83183550089598,
+        43.91948506236076,
+        45.32046057283878,
+        42.61563066393137
+      ],
+      "parallel_samples_ms": [
+        31.8351611495018,
+        30.42753040790558,
+        31.4830606803298,
+        29.559488408267498,
+        32.70643390715122
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "graph",
+      "heap_size": 500000,
+      "serial_time_ms": 69.44719813764095,
+      "serial_stdev": 4.831944220953982,
+      "parallel_time_ms": 38.31120617687702,
+      "parallel_stdev": 0.8655270385997196,
+      "speedup": 1.8127123906518052,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        76.65673457086086,
+        69.38094459474087,
+        69.20830346643925,
+        68.95444449037313,
+        63.03556356579065
+      ],
+      "parallel_samples_ms": [
+        39.10109680145979,
+        37.8655306994915,
+        38.7165155261755,
+        37.00670599937439,
+        38.86618185788393
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "layered",
+      "heap_size": 500000,
+      "serial_time_ms": 72.09019660949707,
+      "serial_stdev": 7.941727465118911,
+      "parallel_time_ms": 40.948860719799995,
+      "parallel_stdev": 3.167747097413125,
+      "speedup": 1.7604933407741747,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        85.89891623705626,
+        65.43245445936918,
+        69.4465134292841,
+        70.09244058281183,
+        69.58065833896399
+      ],
+      "parallel_samples_ms": [
+        43.71330700814724,
+        37.43963874876499,
+        41.19020700454712,
+        38.03855739533901,
+        44.362593442201614
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "independent",
+      "heap_size": 500000,
+      "serial_time_ms": 45.9162674844265,
+      "serial_stdev": 3.4984046257994814,
+      "parallel_time_ms": 31.582653149962425,
+      "parallel_stdev": 1.3642247618224366,
+      "speedup": 1.4538445287165853,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        51.507823169231415,
+        45.0844569131732,
+        42.61905327439308,
+        46.77509889006615,
+        43.59490517526865
+      ],
+      "parallel_samples_ms": [
+        32.77920465916395,
+        30.437258072197437,
+        31.40942845493555,
+        30.11671081185341,
+        33.17066375166178
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "ai_workload",
+      "heap_size": 500000,
+      "serial_time_ms": 57.81448986381292,
+      "serial_stdev": 2.4994442593191377,
+      "parallel_time_ms": 41.38137083500624,
+      "parallel_stdev": 2.789300136142579,
+      "speedup": 1.3971139355032005,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        58.00927057862282,
+        60.291181318461895,
+        55.046197026968,
+        60.22391840815544,
+        55.50188198685646
+      ],
+      "parallel_samples_ms": [
+        44.18294411152601,
+        39.437868632376194,
+        40.413111448287964,
+        38.390880450606346,
+        44.48204953223467
+      ],
+      "serial_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "parallel_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ]
+    },
+    {
+      "heap_type": "web_server",
+      "heap_size": 500000,
+      "serial_time_ms": 45.459309220314026,
+      "serial_stdev": 0.9952285679181389,
+      "parallel_time_ms": 31.384807638823986,
+      "parallel_stdev": 1.4799760541783331,
+      "speedup": 1.448449509184802,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        45.610927045345306,
+        46.03205155581236,
+        46.69145029038191,
+        44.78003829717636,
+        44.182078912854195
+      ],
+      "parallel_samples_ms": [
+        32.83338062465191,
+        29.34402972459793,
+        32.18844439834356,
+        30.322536826133728,
+        32.2356466203928
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    }
+  ],
+  "synthetic_by_heap": {
+    "chain": {
+      "name": "synthetic_chain",
+      "serial": {
+        "throughput_mean": 6241559.618179017,
+        "throughput_stdev": 1245957.4889093183,
+        "collection_latency_mean_ms": 2590.5376273823563,
+        "collection_latency_stdev_ms": 366.3743802604088,
+        "collection_latency_max_ms": 34920.03122065216,
+        "collection_time_pct": 98.3828580269848,
+        "total_duration_sec": 399.28262558672577,
+        "total_collections": 151,
+        "runs": [
+          {
+            "throughput": 5543749.074341422,
+            "collection_time_ms": 70082.12675247341,
+            "collection_time_pct": 98.87064220789897,
+            "collection_latency_mean_ms": 2336.070891749114,
+            "collection_latency_max_ms": 17708.47567077726,
+            "collections": 30,
+            "duration_sec": 70.88264543190598,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 5672125.657504042,
+            "collection_time_ms": 87061.95433903486,
+            "collection_time_pct": 98.13399265184619,
+            "collection_latency_mean_ms": 2902.065144634495,
+            "collection_latency_max_ms": 33909.225831739604,
+            "collections": 30,
+            "duration_sec": 88.71742806583643,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 8449876.108551478,
+            "collection_time_ms": 62462.63475809246,
+            "collection_time_pct": 99.18739581775104,
+            "collection_latency_mean_ms": 2153.883957175602,
+            "collection_latency_max_ms": 24486.207771115005,
+            "collections": 29,
+            "duration_sec": 62.974367098882794,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 5969739.1292741215,
+            "collection_time_ms": 76297.86348249763,
+            "collection_time_pct": 98.20703612195956,
+            "collection_latency_mean_ms": 2543.2621160832546,
+            "collection_latency_max_ms": 28569.513994269073,
+            "collections": 30,
+            "duration_sec": 77.69083203747869,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 5572308.121224019,
+            "collection_time_ms": 96556.99287261814,
+            "collection_time_pct": 97.5152233354683,
+            "collection_latency_mean_ms": 3017.406027269317,
+            "collection_latency_max_ms": 34920.03122065216,
+            "collections": 32,
+            "duration_sec": 99.01735295262188,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 6140061.844138264,
+        "throughput_stdev": 941003.763042526,
+        "collection_latency_mean_ms": 2723.923088489846,
+        "collection_latency_stdev_ms": 527.6791835084365,
+        "collection_latency_max_ms": 42411.890101619065,
+        "collection_time_pct": 97.79312085404955,
+        "total_duration_sec": 405.9892793232575,
+        "total_collections": 146,
+        "runs": [
+          {
+            "throughput": 5398877.501795098,
+            "collection_time_ms": 71917.01616253704,
+            "collection_time_pct": 98.10713715000607,
+            "collection_latency_mean_ms": 2397.233872084568,
+            "collection_latency_max_ms": 22081.610780209303,
+            "collections": 30,
+            "duration_sec": 73.30457115732133,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 6
+          },
+          {
+            "throughput": 6578052.767413559,
+            "collection_time_ms": 70080.84692712873,
+            "collection_time_pct": 98.12841304411461,
+            "collection_latency_mean_ms": 2416.5809285216806,
+            "collection_latency_max_ms": 30149.44399241358,
+            "collections": 29,
+            "duration_sec": 71.41748730372638,
+            "adaptive_workers_start": 6,
+            "adaptive_workers_end": 5
+          },
+          {
+            "throughput": 5361582.5059890915,
+            "collection_time_ms": 104063.56173753738,
+            "collection_time_pct": 96.78204148277946,
+            "collection_latency_mean_ms": 3356.8890883076574,
+            "collection_latency_max_ms": 42411.890101619065,
+            "collections": 31,
+            "duration_sec": 107.52362746559083,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 7578039.235424454,
+            "collection_time_ms": 66555.48599548638,
+            "collection_time_pct": 98.4226318558893,
+            "collection_latency_mean_ms": 2218.516199849546,
+            "collection_latency_max_ms": 29051.690701395273,
+            "collections": 30,
+            "duration_sec": 67.62213602755219,
+            "adaptive_workers_start": 5,
+            "adaptive_workers_end": 3
+          },
+          {
+            "throughput": 5783757.210069116,
+            "collection_time_ms": 83990.27919583023,
+            "collection_time_pct": 97.52538073745832,
+            "collection_latency_mean_ms": 3230.395353685778,
+            "collection_latency_max_ms": 36298.79240039736,
+            "collections": 26,
+            "duration_sec": 86.12145736906677,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 3
+          }
+        ]
+      },
+      "throughput_change_pct": -1.626160451069525,
+      "collection_latency_change_pct": 5.148948994123326
+    },
+    "graph": {
+      "name": "synthetic_graph",
+      "serial": {
+        "throughput_mean": 2114417.688947825,
+        "throughput_stdev": 6269.022452935934,
+        "collection_latency_mean_ms": 6.965633061067933,
+        "collection_latency_stdev_ms": 0.024223093955231333,
+        "collection_latency_max_ms": 196.3412705808878,
+        "collection_time_pct": 85.20239124823924,
+        "total_duration_sec": 300.08373583387583,
+        "total_collections": 36706,
+        "runs": [
+          {
+            "throughput": 2116493.0234872503,
+            "collection_time_ms": 51187.53323890269,
+            "collection_time_pct": 85.26715289622256,
+            "collection_latency_mean_ms": 7.002398527893664,
+            "collection_latency_max_ms": 142.8715828806162,
+            "collections": 7310,
+            "duration_sec": 60.03194841183722,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2114842.101986256,
+            "collection_time_ms": 51164.55595754087,
+            "collection_time_pct": 85.24129355097948,
+            "collection_latency_mean_ms": 6.969698400427853,
+            "collection_latency_max_ms": 164.46765791624784,
+            "collections": 7341,
+            "duration_sec": 60.023204512894154,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2114014.0929712225,
+            "collection_time_ms": 51099.485139362514,
+            "collection_time_pct": 85.13335392467279,
+            "collection_latency_mean_ms": 6.943808280929816,
+            "collection_latency_max_ms": 147.19329215586185,
+            "collections": 7359,
+            "duration_sec": 60.02287327311933,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2104699.0994742983,
+            "collection_time_ms": 51116.265980526805,
+            "collection_time_pct": 85.18807366015426,
+            "collection_latency_mean_ms": 6.968816084598065,
+            "collection_latency_max_ms": 144.0135696902871,
+            "collections": 7335,
+            "duration_sec": 60.00401674117893,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2122040.126820098,
+            "collection_time_ms": 51110.691368579865,
+            "collection_time_pct": 85.18208220916709,
+            "collection_latency_mean_ms": 6.943444011490268,
+            "collection_latency_max_ms": 196.3412705808878,
+            "collections": 7361,
+            "duration_sec": 60.0016928948462,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 1937480.995888666,
+        "throughput_stdev": 9732.358950009819,
+        "collection_latency_mean_ms": 8.80882115138143,
+        "collection_latency_stdev_ms": 0.030892092978203584,
+        "collection_latency_max_ms": 174.2203701287508,
+        "collection_time_pct": 87.85416460842549,
+        "total_duration_sec": 300.0345588615164,
+        "total_collections": 29924,
+        "runs": [
+          {
+            "throughput": 1922300.403418927,
+            "collection_time_ms": 52725.95327999443,
+            "collection_time_pct": 87.86289509065917,
+            "collection_latency_mean_ms": 8.825904466018486,
+            "collection_latency_max_ms": 161.9117259979248,
+            "collections": 5974,
+            "duration_sec": 60.009351189248264,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 12
+          },
+          {
+            "throughput": 1941353.1960059362,
+            "collection_time_ms": 52696.14409189671,
+            "collection_time_pct": 87.81936124788227,
+            "collection_latency_mean_ms": 8.820914645446386,
+            "collection_latency_max_ms": 102.62122005224228,
+            "collections": 5974,
+            "duration_sec": 60.00515529047698,
+            "adaptive_workers_start": 11,
+            "adaptive_workers_end": 13
+          },
+          {
+            "throughput": 1936089.0497750316,
+            "collection_time_ms": 52785.024092532694,
+            "collection_time_pct": 87.96182148963855,
+            "collection_latency_mean_ms": 8.835792449369382,
+            "collection_latency_max_ms": 174.2203701287508,
+            "collections": 5974,
+            "duration_sec": 60.009016637690365,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 5
+          },
+          {
+            "throughput": 1948873.1939240356,
+            "collection_time_ms": 52702.98605505377,
+            "collection_time_pct": 87.82899005551897,
+            "collection_latency_mean_ms": 8.757558334173108,
+            "collection_latency_max_ms": 165.58164451271296,
+            "collections": 6018,
+            "duration_sec": 60.0063669430092,
+            "adaptive_workers_start": 5,
+            "adaptive_workers_end": 13
+          },
+          {
+            "throughput": 1938789.136319399,
+            "collection_time_ms": 52682.75219760835,
+            "collection_time_pct": 87.7977551584285,
+            "collection_latency_mean_ms": 8.803935861899792,
+            "collection_latency_max_ms": 132.1387868374586,
+            "collections": 5984,
+            "duration_sec": 60.00466880109161,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 16
+          }
+        ]
+      },
+      "throughput_change_pct": -8.368105033552109,
+      "collection_latency_change_pct": 26.46117121235365
+    },
+    "ai_workload": {
+      "name": "synthetic_ai_workload",
+      "serial": {
+        "throughput_mean": 3332614.00642396,
+        "throughput_stdev": 42930.66965265575,
+        "collection_latency_mean_ms": 1137.6348297396107,
+        "collection_latency_stdev_ms": 219.31051024398818,
+        "collection_latency_max_ms": 9293.929079547524,
+        "collection_time_pct": 99.22397112399851,
+        "total_duration_sec": 315.91336153820157,
+        "total_collections": 283,
+        "runs": [
+          {
+            "throughput": 3395574.982306606,
+            "collection_time_ms": 60522.70036935806,
+            "collection_time_pct": 99.63676381870006,
+            "collection_latency_mean_ms": 976.1725866025494,
+            "collection_latency_max_ms": 3700.8990915492177,
+            "collections": 62,
+            "duration_sec": 60.7433421658352,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3344639.7017663363,
+            "collection_time_ms": 63497.41041474044,
+            "collection_time_pct": 98.76750699107653,
+            "collection_latency_mean_ms": 1411.0535647720098,
+            "collection_latency_max_ms": 9293.929079547524,
+            "collections": 45,
+            "duration_sec": 64.28977742698044,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3335597.889021484,
+            "collection_time_ms": 63042.645015753806,
+            "collection_time_pct": 99.10476136252176,
+            "collection_latency_mean_ms": 1341.3328726756129,
+            "collection_latency_max_ms": 8049.593546427786,
+            "collections": 47,
+            "duration_sec": 63.61212533991784,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3283263.8713929188,
+            "collection_time_ms": 62962.58327644318,
+            "collection_time_pct": 99.32668249144564,
+            "collection_latency_mean_ms": 968.6551273298951,
+            "collection_latency_max_ms": 3914.8199846968055,
+            "collections": 65,
+            "duration_sec": 63.38939517270774,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3303993.5876324535,
+            "collection_time_ms": 63421.43982835114,
+            "collection_time_pct": 99.28414095624854,
+            "collection_latency_mean_ms": 990.9599973179866,
+            "collection_latency_max_ms": 4011.909367516637,
+            "collections": 64,
+            "duration_sec": 63.87872143276036,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 2935917.5145375114,
+        "throughput_stdev": 219627.8424693245,
+        "collection_latency_mean_ms": 1683.0549394148456,
+        "collection_latency_stdev_ms": 128.03737160962967,
+        "collection_latency_max_ms": 14840.824354439974,
+        "collection_time_pct": 98.38063498854719,
+        "total_duration_sec": 336.62851110473275,
+        "total_collections": 197,
+        "runs": [
+          {
+            "throughput": 3061180.512828063,
+            "collection_time_ms": 63938.57939168811,
+            "collection_time_pct": 98.44422577541808,
+            "collection_latency_mean_ms": 1598.4644847922027,
+            "collection_latency_max_ms": 13524.633534252644,
+            "collections": 40,
+            "duration_sec": 64.94903981219977,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 5
+          },
+          {
+            "throughput": 2861616.0730020055,
+            "collection_time_ms": 65278.48276589066,
+            "collection_time_pct": 98.42095686479443,
+            "collection_latency_mean_ms": 1592.1581162412356,
+            "collection_latency_max_ms": 12681.57254718244,
+            "collections": 41,
+            "duration_sec": 66.32579568959773,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 2724266.9215683816,
+            "collection_time_ms": 72556.59221857786,
+            "collection_time_pct": 98.08545630742874,
+            "collection_latency_mean_ms": 1813.9148054644465,
+            "collection_latency_max_ms": 14840.824354439974,
+            "collections": 40,
+            "duration_sec": 73.97283445484936,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 3255037.6355775567,
+            "collection_time_ms": 61573.41991830617,
+            "collection_time_pct": 98.83123027070879,
+            "collection_latency_mean_ms": 1578.8056389309274,
+            "collection_latency_max_ms": 12963.795045390725,
+            "collections": 39,
+            "duration_sec": 62.30158194899559,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 5
+          },
+          {
+            "throughput": 2777486.429711549,
+            "collection_time_ms": 67781.47111088037,
+            "collection_time_pct": 98.1213057243859,
+            "collection_latency_mean_ms": 1831.9316516454155,
+            "collection_latency_max_ms": 13484.626801684499,
+            "collections": 37,
+            "duration_sec": 69.0792591990903,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 5
+          }
+        ]
+      },
+      "throughput_change_pct": -11.903463501076782,
+      "collection_latency_change_pct": 47.943337828367504
+    }
+  },
+  "summary": {
+    "mixed_workload_throughput_change_pct": 24.93239961563891,
+    "collection_speedup_geomean": 1.4950950128184008,
+    "synthetic_throughput_geomean_pct": -7.396292413577532,
+    "synthetic_collection_latency_geomean_pct": 25.30041696359493
+  },
+  "mixed_workload_module_cache": {
+    "name": "mixed_workload_module_cache",
+    "serial": {
+      "throughput_mean": 3253.4310523899135,
+      "throughput_stdev": 14.227694797799343,
+      "collection_latency_mean_ms": 79.48050770438184,
+      "collection_latency_stdev_ms": 0.8625647333887506,
+      "collection_latency_max_ms": 170.75518146157265,
+      "collection_time_pct": 61.30242466312922,
+      "total_duration_sec": 300.2550778631121,
+      "total_collections": 2316,
+      "runs": [
+        {
+          "throughput": 3265.514319832697,
+          "collection_time_ms": 36781.0485009104,
+          "collection_time_pct": 61.19706957811534,
+          "collection_latency_mean_ms": 78.9292886285631,
+          "collection_latency_max_ms": 170.75518146157265,
+          "collections": 466,
+          "duration_sec": 60.102630329318345,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 3259.776419301451,
+          "collection_time_ms": 36740.27068912983,
+          "collection_time_pct": 61.17860271408677,
+          "collection_latency_mean_ms": 78.84178259469921,
+          "collection_latency_max_ms": 98.076400347054,
+          "collections": 466,
+          "duration_sec": 60.05411869380623,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 3265.713770971536,
+          "collection_time_ms": 36721.85437846929,
+          "collection_time_pct": 61.140006392912674,
+          "collection_latency_mean_ms": 78.80226261474097,
+          "collection_latency_max_ms": 98.48258085548878,
+          "collections": 466,
+          "duration_sec": 60.061907979659736,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 3238.77587159218,
+          "collection_time_ms": 36911.59075498581,
+          "collection_time_pct": 61.485005024472464,
+          "collection_latency_mean_ms": 80.24258859779523,
+          "collection_latency_max_ms": 107.11956862360239,
+          "collections": 460,
+          "duration_sec": 60.033484164625406,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        },
+        {
+          "throughput": 3237.374880251703,
+          "collection_time_ms": 36908.670167438686,
+          "collection_time_pct": 61.51143960605885,
+          "collection_latency_mean_ms": 80.58661608611067,
+          "collection_latency_max_ms": 124.56648051738739,
+          "collections": 458,
+          "duration_sec": 60.002936695702374,
+          "adaptive_workers_start": null,
+          "adaptive_workers_end": null
+        }
+      ]
+    },
+    "parallel": {
+      "throughput_mean": 3890.0380018322726,
+      "throughput_stdev": 123.706039137053,
+      "collection_latency_mean_ms": 58.79493313484956,
+      "collection_latency_stdev_ms": 3.405740114530421,
+      "collection_latency_max_ms": 143.88678688555956,
+      "collection_time_pct": 53.8887447446538,
+      "total_duration_sec": 300.15627350844443,
+      "total_collections": 2755,
+      "runs": [
+        {
+          "throughput": 3955.206452058732,
+          "collection_time_ms": 31710.600442253053,
+          "collection_time_pct": 52.82304073815302,
+          "collection_latency_mean_ms": 56.12495653496116,
+          "collection_latency_max_ms": 74.7469300404191,
+          "collections": 565,
+          "duration_sec": 60.03175886720419,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 14
+        },
+        {
+          "throughput": 4015.3079865114682,
+          "collection_time_ms": 31505.34772220999,
+          "collection_time_pct": 52.4863598869857,
+          "collection_latency_mean_ms": 55.36967965239014,
+          "collection_latency_max_ms": 74.19601175934076,
+          "collections": 569,
+          "duration_sec": 60.025781536474824,
+          "adaptive_workers_start": 15,
+          "adaptive_workers_end": 13
+        },
+        {
+          "throughput": 3799.629521184064,
+          "collection_time_ms": 33138.759043067694,
+          "collection_time_pct": 55.227091451762256,
+          "collection_latency_mean_ms": 62.057601204246616,
+          "collection_latency_max_ms": 98.50302804261446,
+          "collections": 534,
+          "duration_sec": 60.00453431811184,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 12
+        },
+        {
+          "throughput": 3958.548446579991,
+          "collection_time_ms": 31951.204490847886,
+          "collection_time_pct": 53.234504212535626,
+          "collection_latency_mean_ms": 57.6736543156099,
+          "collection_latency_max_ms": 143.88678688555956,
+          "collections": 554,
+          "duration_sec": 60.019727737642825,
+          "adaptive_workers_start": 12,
+          "adaptive_workers_end": 15
+        },
+        {
+          "throughput": 3721.4976028271076,
+          "collection_time_ms": 33445.0965244323,
+          "collection_time_pct": 55.67272743383238,
+          "collection_latency_mean_ms": 62.748773967039966,
+          "collection_latency_max_ms": 103.6197878420353,
+          "collections": 533,
+          "duration_sec": 60.074471049010754,
+          "adaptive_workers_start": 4,
+          "adaptive_workers_end": 11
+        }
+      ]
+    },
+    "throughput_change_pct": 19.567248827194874,
+    "collection_latency_change_pct": -26.02597186025758
+  },
+  "collection_results_module": [
+    {
+      "heap_type": "chain",
+      "heap_size": 500000,
+      "serial_time_ms": 44.53250505030155,
+      "serial_stdev": 0.7030847854810063,
+      "parallel_time_ms": 39.34432100504637,
+      "parallel_stdev": 1.2733021389402521,
+      "speedup": 1.1318661477113747,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        44.27533131092787,
+        45.577810145914555,
+        43.90870314091444,
+        44.90634519606829,
+        43.99433545768261
+      ],
+      "parallel_samples_ms": [
+        40.37624970078468,
+        38.179936818778515,
+        40.20859859883785,
+        37.743547931313515,
+        40.21327197551727
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "tree",
+      "heap_size": 500000,
+      "serial_time_ms": 47.61446565389633,
+      "serial_stdev": 1.7337394428022193,
+      "parallel_time_ms": 42.320762760937214,
+      "parallel_stdev": 1.8156255330689137,
+      "speedup": 1.1250852429778344,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        48.836372792720795,
+        48.71163610368967,
+        45.348143205046654,
+        49.035320058465004,
+        46.140856109559536
+      ],
+      "parallel_samples_ms": [
+        42.88901202380657,
+        44.79575250297785,
+        42.85736382007599,
+        40.67564383149147,
+        40.38604162633419
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "wide_tree",
+      "heap_size": 500000,
+      "serial_time_ms": 44.484658911824226,
+      "serial_stdev": 0.8556833506971521,
+      "parallel_time_ms": 40.51573853939772,
+      "parallel_stdev": 1.0531402826863525,
+      "speedup": 1.0979599660652146,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        45.28785403817892,
+        44.8457058519125,
+        43.34690608084202,
+        45.12657318264246,
+        43.816255405545235
+      ],
+      "parallel_samples_ms": [
+        41.99210647493601,
+        39.539759978652,
+        40.75007699429989,
+        39.44859094917774,
+        40.84815829992294
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "graph",
+      "heap_size": 500000,
+      "serial_time_ms": 76.49751417338848,
+      "serial_stdev": 13.358394238173698,
+      "parallel_time_ms": 55.66019807010889,
+      "parallel_stdev": 6.478179797980902,
+      "speedup": 1.3743665460376762,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        71.52007706463337,
+        72.07157090306282,
+        66.35682191699743,
+        99.97363574802876,
+        72.56546523422003
+      ],
+      "parallel_samples_ms": [
+        47.590311616659164,
+        51.93099845200777,
+        61.47052813321352,
+        62.96414230018854,
+        54.345009848475456
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "layered",
+      "heap_size": 500000,
+      "serial_time_ms": 90.78218825161457,
+      "serial_stdev": 9.005335098164842,
+      "parallel_time_ms": 61.46009545773268,
+      "parallel_stdev": 3.52085244597409,
+      "speedup": 1.4770915595802692,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        104.90792989730835,
+        94.43491883575916,
+        83.17623659968376,
+        86.6743540391326,
+        84.71750188618898
+      ],
+      "parallel_samples_ms": [
+        56.991023011505604,
+        62.39239312708378,
+        65.87230321019888,
+        58.9137002825737,
+        63.131057657301426
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "independent",
+      "heap_size": 500000,
+      "serial_time_ms": 46.386087499558926,
+      "serial_stdev": 2.000478666169621,
+      "parallel_time_ms": 39.711774699389935,
+      "parallel_stdev": 2.5080961294318307,
+      "speedup": 1.1680688624643996,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        49.78364706039429,
+        45.95963843166828,
+        44.7882330045104,
+        46.32649011909962,
+        45.07242888212204
+      ],
+      "parallel_samples_ms": [
+        40.24539981037378,
+        35.42278707027435,
+        41.76621604710817,
+        39.92398828268051,
+        41.20048228651285
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    },
+    {
+      "heap_type": "ai_workload",
+      "heap_size": 500000,
+      "serial_time_ms": 61.83113884180784,
+      "serial_stdev": 4.57315257463835,
+      "parallel_time_ms": 55.45003283768892,
+      "parallel_stdev": 4.485616143478127,
+      "speedup": 1.1150784891831793,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        63.3376520127058,
+        64.87754080444574,
+        54.13495842367411,
+        61.41110137104988,
+        65.39444159716368
+      ],
+      "parallel_samples_ms": [
+        55.014168843626976,
+        53.595914505422115,
+        61.30220554769039,
+        49.41084235906601,
+        57.92703293263912
+      ],
+      "serial_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "parallel_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ]
+    },
+    {
+      "heap_type": "web_server",
+      "heap_size": 500000,
+      "serial_time_ms": 45.75123880058527,
+      "serial_stdev": 0.9042525164698881,
+      "parallel_time_ms": 40.81525523215532,
+      "parallel_stdev": 0.8507574286285717,
+      "speedup": 1.1209347715787712,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        45.96107825636864,
+        44.850634410977364,
+        46.6845091432333,
+        46.5003801509738,
+        44.75959204137325
+      ],
+      "parallel_samples_ms": [
+        41.22278559952974,
+        41.615686379373074,
+        41.22409876435995,
+        39.4526869058609,
+        40.56101851165295
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ]
+    }
+  ],
+  "synthetic_by_heap_module": {
+    "chain": {
+      "name": "synthetic_chain_module",
+      "serial": {
+        "throughput_mean": 6631976.8955101045,
+        "throughput_stdev": 1119400.7124259078,
+        "collection_latency_mean_ms": 2527.172543847259,
+        "collection_latency_stdev_ms": 451.74271282547403,
+        "collection_latency_max_ms": 36383.37759114802,
+        "collection_time_pct": 98.3387159442837,
+        "total_duration_sec": 391.1584097901359,
+        "total_collections": 152,
+        "runs": [
+          {
+            "throughput": 5519770.448198181,
+            "collection_time_ms": 97406.49639442563,
+            "collection_time_pct": 97.45011151477593,
+            "collection_latency_mean_ms": 3246.883213147521,
+            "collection_latency_max_ms": 36383.37759114802,
+            "collections": 30,
+            "duration_sec": 99.95524364244193,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 7335311.119892841,
+            "collection_time_ms": 66804.53451350331,
+            "collection_time_pct": 98.42918199774992,
+            "collection_latency_mean_ms": 2303.604638396666,
+            "collection_latency_max_ms": 25654.607761651278,
+            "collections": 29,
+            "duration_sec": 67.87065904401243,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 6721384.502755627,
+            "collection_time_ms": 69902.78788283467,
+            "collection_time_pct": 98.6334331699879,
+            "collection_latency_mean_ms": 2184.4621213385835,
+            "collection_latency_max_ms": 26157.471395097673,
+            "collections": 32,
+            "duration_sec": 70.87129144370556,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 8060867.796026217,
+            "collection_time_ms": 63986.44202761352,
+            "collection_time_pct": 99.03045294923704,
+            "collection_latency_mean_ms": 2206.429035434949,
+            "collection_latency_max_ms": 25359.3603214249,
+            "collections": 29,
+            "duration_sec": 64.6128944400698,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 5522550.610677657,
+            "collection_time_ms": 86223.47874939442,
+            "collection_time_pct": 98.15040008966773,
+            "collection_latency_mean_ms": 2694.4837109185755,
+            "collection_latency_max_ms": 31994.64446119964,
+            "collections": 32,
+            "duration_sec": 87.84832121990621,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 5440704.15423185,
+        "throughput_stdev": 275388.3893943938,
+        "collection_latency_mean_ms": 3430.5009941226917,
+        "collection_latency_stdev_ms": 589.039405996647,
+        "collection_latency_max_ms": 43033.897313289344,
+        "collection_time_pct": 97.51258028630757,
+        "total_duration_sec": 487.62737931497395,
+        "total_collections": 140,
+        "runs": [
+          {
+            "throughput": 5537375.335845473,
+            "collection_time_ms": 102713.4073888883,
+            "collection_time_pct": 97.89267187691534,
+            "collection_latency_mean_ms": 3950.5156688033962,
+            "collection_latency_max_ms": 43033.897313289344,
+            "collections": 26,
+            "duration_sec": 104.92451111972332,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 5
+          },
+          {
+            "throughput": 5284245.50024804,
+            "collection_time_ms": 101832.7774675563,
+            "collection_time_pct": 96.96964712218977,
+            "collection_latency_mean_ms": 3394.42591558521,
+            "collection_latency_max_ms": 39390.78525826335,
+            "collections": 30,
+            "duration_sec": 105.01510574668646,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 5138207.232483375,
+            "collection_time_ms": 90386.4512629807,
+            "collection_time_pct": 98.00934070389845,
+            "collection_latency_mean_ms": 3116.774181482093,
+            "collection_latency_max_ms": 39441.01305119693,
+            "collections": 29,
+            "duration_sec": 92.22228270675987,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 3
+          },
+          {
+            "throughput": 5858912.854105989,
+            "collection_time_ms": 79114.27262518555,
+            "collection_time_pct": 97.7155807460463,
+            "collection_latency_mean_ms": 2637.1424208395183,
+            "collection_latency_max_ms": 33506.75572454929,
+            "collections": 30,
+            "duration_sec": 80.96382585167885,
+            "adaptive_workers_start": 3,
+            "adaptive_workers_end": 3
+          },
+          {
+            "throughput": 5384779.848476372,
+            "collection_time_ms": 101341.16959758103,
+            "collection_time_pct": 96.975660982488,
+            "collection_latency_mean_ms": 4053.646783903241,
+            "collection_latency_max_ms": 37696.35632727295,
+            "collections": 25,
+            "duration_sec": 104.50165389012545,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 4
+          }
+        ]
+      },
+      "throughput_change_pct": -17.96255867665574,
+      "collection_latency_change_pct": 35.74462901137112
+    },
+    "graph": {
+      "name": "synthetic_graph_module",
+      "serial": {
+        "throughput_mean": 2106248.4864597064,
+        "throughput_stdev": 23523.06303750555,
+        "collection_latency_mean_ms": 5.924346277571394,
+        "collection_latency_stdev_ms": 0.10123158639357069,
+        "collection_latency_max_ms": 223.2301225885749,
+        "collection_time_pct": 86.20900240847133,
+        "total_duration_sec": 300.0342348413542,
+        "total_collections": 43669,
+        "runs": [
+          {
+            "throughput": 2139127.097713513,
+            "collection_time_ms": 51637.74307444692,
+            "collection_time_pct": 86.05594935673481,
+            "collection_latency_mean_ms": 5.798084782668641,
+            "collection_latency_max_ms": 182.38839507102966,
+            "collections": 8906,
+            "duration_sec": 60.00484970584512,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2086901.2835048481,
+            "collection_time_ms": 51801.221751607955,
+            "collection_time_pct": 86.31226160066133,
+            "collection_latency_mean_ms": 6.001068321548651,
+            "collection_latency_max_ms": 156.5104154869914,
+            "collections": 8632,
+            "duration_sec": 60.01606352441013,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2081933.085856453,
+            "collection_time_ms": 51878.14129516482,
+            "collection_time_pct": 86.45414601114516,
+            "collection_latency_mean_ms": 6.04288192139369,
+            "collection_latency_max_ms": 223.2301225885749,
+            "collections": 8585,
+            "duration_sec": 60.00653952267021,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2104270.452523587,
+            "collection_time_ms": 51687.698856927454,
+            "collection_time_pct": 86.14331767012429,
+            "collection_latency_mean_ms": 5.926808721124579,
+            "collection_latency_max_ms": 147.79188856482506,
+            "collections": 8721,
+            "duration_sec": 60.001983038149774,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 2119010.5127001316,
+            "collection_time_ms": 51651.733432896435,
+            "collection_time_pct": 86.07933740369106,
+            "collection_latency_mean_ms": 5.852887641121409,
+            "collection_latency_max_ms": 169.1368892788887,
+            "collections": 8825,
+            "duration_sec": 60.00479905027896,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 1811643.8975878295,
+        "throughput_stdev": 16792.60672178319,
+        "collection_latency_mean_ms": 7.850073987510987,
+        "collection_latency_stdev_ms": 0.10195927862161006,
+        "collection_latency_max_ms": 227.16536559164524,
+        "collection_time_pct": 89.05888356922523,
+        "total_duration_sec": 300.03520832024515,
+        "total_collections": 34043,
+        "runs": [
+          {
+            "throughput": 1825703.0580703758,
+            "collection_time_ms": 53424.89729449153,
+            "collection_time_pct": 89.02994107842986,
+            "collection_latency_mean_ms": 7.822093308124675,
+            "collection_latency_max_ms": 154.99331150203943,
+            "collections": 6830,
+            "duration_sec": 60.00778687186539,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 9
+          },
+          {
+            "throughput": 1830223.863606279,
+            "collection_time_ms": 53397.416559048,
+            "collection_time_pct": 88.99004742406214,
+            "collection_latency_mean_ms": 7.787285483308735,
+            "collection_latency_max_ms": 129.82071563601494,
+            "collections": 6857,
+            "duration_sec": 60.003807284869254,
+            "adaptive_workers_start": 9,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 1789209.1575302125,
+            "collection_time_ms": 53518.63911468536,
+            "collection_time_pct": 89.18124136421433,
+            "collection_latency_mean_ms": 7.989048979651494,
+            "collection_latency_max_ms": 177.0814247429371,
+            "collections": 6699,
+            "duration_sec": 60.01109459344298,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 2
+          },
+          {
+            "throughput": 1802687.5430738851,
+            "collection_time_ms": 53523.27994816005,
+            "collection_time_pct": 89.19198616627139,
+            "collection_latency_mean_ms": 7.916473886726823,
+            "collection_latency_max_ms": 227.16536559164524,
+            "collections": 6761,
+            "duration_sec": 60.009068357758224,
+            "adaptive_workers_start": 2,
+            "adaptive_workers_end": 4
+          },
+          {
+            "throughput": 1810395.8656583955,
+            "collection_time_ms": 53343.789257109165,
+            "collection_time_pct": 88.90120181314846,
+            "collection_latency_mean_ms": 7.735468279743208,
+            "collection_latency_max_ms": 152.5888368487358,
+            "collections": 6896,
+            "duration_sec": 60.0034512123093,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 8
+          }
+        ]
+      },
+      "throughput_change_pct": -13.987171540574671,
+      "collection_latency_change_pct": 32.505319907279606
+    },
+    "ai_workload": {
+      "name": "synthetic_ai_workload_module",
+      "serial": {
+        "throughput_mean": 3372589.309168811,
+        "throughput_stdev": 88582.66647141293,
+        "collection_latency_mean_ms": 1109.4832470637728,
+        "collection_latency_stdev_ms": 203.87217946825706,
+        "collection_latency_max_ms": 9460.373839363456,
+        "collection_time_pct": 99.20845983870583,
+        "total_duration_sec": 314.2926072012633,
+        "total_collections": 288,
+        "runs": [
+          {
+            "throughput": 3403278.681805281,
+            "collection_time_ms": 60366.43471568823,
+            "collection_time_pct": 99.49617739817602,
+            "collection_latency_mean_ms": 928.7143802413574,
+            "collection_latency_max_ms": 3351.7321115359664,
+            "collections": 65,
+            "duration_sec": 60.67211454175413,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3484586.3063010406,
+            "collection_time_ms": 62212.17727661133,
+            "collection_time_pct": 99.16235407137472,
+            "collection_latency_mean_ms": 1219.8466132668889,
+            "collection_latency_max_ms": 9460.373839363456,
+            "collections": 51,
+            "duration_sec": 62.73769704159349,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3410885.032098885,
+            "collection_time_ms": 62277.729644440114,
+            "collection_time_pct": 99.01707835400127,
+            "collection_latency_mean_ms": 1415.402946464548,
+            "collection_latency_max_ms": 6805.6014738976955,
+            "collections": 44,
+            "duration_sec": 62.89594752714038,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3276686.751767288,
+            "collection_time_ms": 63869.319883175194,
+            "collection_time_pct": 99.10694315445674,
+            "collection_latency_mean_ms": 997.9581231746124,
+            "collection_latency_max_ms": 3915.1705941185355,
+            "collections": 64,
+            "duration_sec": 64.44484901893884,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          },
+          {
+            "throughput": 3287509.77387156,
+            "collection_time_ms": 63071.62701897323,
+            "collection_time_pct": 99.25974621552044,
+            "collection_latency_mean_ms": 985.4941721714567,
+            "collection_latency_max_ms": 3695.70279866457,
+            "collections": 64,
+            "duration_sec": 63.54199907183647,
+            "adaptive_workers_start": null,
+            "adaptive_workers_end": null
+          }
+        ]
+      },
+      "parallel": {
+        "throughput_mean": 2785673.2778603737,
+        "throughput_stdev": 234739.90107196837,
+        "collection_latency_mean_ms": 1688.9255102718398,
+        "collection_latency_stdev_ms": 84.58824062475482,
+        "collection_latency_max_ms": 13772.724946029484,
+        "collection_time_pct": 98.42572217300842,
+        "total_duration_sec": 342.99129958078265,
+        "total_collections": 200,
+        "runs": [
+          {
+            "throughput": 2635863.1315994617,
+            "collection_time_ms": 72133.61576665193,
+            "collection_time_pct": 98.31632512039194,
+            "collection_latency_mean_ms": 1759.3564821134617,
+            "collection_latency_max_ms": 13772.724946029484,
+            "collections": 41,
+            "duration_sec": 73.36890966817737,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 2
+          },
+          {
+            "throughput": 2647853.863486422,
+            "collection_time_ms": 67304.721663706,
+            "collection_time_pct": 98.40430906832047,
+            "collection_latency_mean_ms": 1641.578577163561,
+            "collection_latency_max_ms": 11725.242321379483,
+            "collections": 41,
+            "duration_sec": 68.39611222408712,
+            "adaptive_workers_start": 3,
+            "adaptive_workers_end": 3
+          },
+          {
+            "throughput": 2965128.508061622,
+            "collection_time_ms": 65430.73755595833,
+            "collection_time_pct": 98.4854748321461,
+            "collection_latency_mean_ms": 1635.7684388989583,
+            "collection_latency_max_ms": 13006.846747361124,
+            "collections": 40,
+            "duration_sec": 66.43694175966084,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 7
+          },
+          {
+            "throughput": 3105202.5188593115,
+            "collection_time_ms": 64348.96035306156,
+            "collection_time_pct": 98.37823027701418,
+            "collection_latency_mean_ms": 1608.724008826539,
+            "collection_latency_max_ms": 13262.57740240544,
+            "collections": 40,
+            "duration_sec": 65.40975597128272,
+            "adaptive_workers_start": 7,
+            "adaptive_workers_end": 9
+          },
+          {
+            "throughput": 2574318.3672950524,
+            "collection_time_ms": 68369.60168555379,
+            "collection_time_pct": 98.54427156716945,
+            "collection_latency_mean_ms": 1799.2000443566787,
+            "collection_latency_max_ms": 12525.178289040923,
+            "collections": 38,
+            "duration_sec": 69.3795799575746,
+            "adaptive_workers_start": 4,
+            "adaptive_workers_end": 3
+          }
+        ]
+      },
+      "throughput_change_pct": -17.40253489248844,
+      "collection_latency_change_pct": 52.22631930149018
+    }
+  }
+}
