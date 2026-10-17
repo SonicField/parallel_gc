@@ -1,0 +1,143 @@
+{
+  "diagnostic_only": true,
+  "observations": [
+    {
+      "checked_run_metadata": 124,
+      "exit_status": 1,
+      "failed_programs": [
+        "dask",
+        "genshi"
+      ],
+      "native_gil_fallback_modules": [],
+      "programs_attempted": 100,
+      "successful_result_entries": 124,
+      "target": "baseline-gil-disabled"
+    },
+    {
+      "checked_run_metadata": 124,
+      "exit_status": 1,
+      "failed_programs": [
+        "dask",
+        "genshi"
+      ],
+      "native_gil_fallback_modules": [],
+      "programs_attempted": 100,
+      "successful_result_entries": 124,
+      "target": "baseline-gil-enabled"
+    },
+    {
+      "checked_run_metadata": 124,
+      "exit_status": 1,
+      "failed_programs": [
+        "dask",
+        "genshi"
+      ],
+      "native_gil_fallback_modules": [],
+      "programs_attempted": 100,
+      "successful_result_entries": 124,
+      "target": "candidate-gil-disabled"
+    },
+    {
+      "checked_run_metadata": 124,
+      "exit_status": 1,
+      "failed_programs": [
+        "dask",
+        "genshi"
+      ],
+      "native_gil_fallback_modules": [],
+      "programs_attempted": 100,
+      "successful_result_entries": 124,
+      "target": "candidate-gil-enabled"
+    },
+    {
+      "checked_run_metadata": 119,
+      "exit_status": 1,
+      "failed_programs": [
+        "coverage",
+        "dask",
+        "dulwich_log",
+        "genshi",
+        "sphinx",
+        "sqlalchemy_declarative",
+        "sqlalchemy_imperative"
+      ],
+      "native_gil_fallback_modules": [
+        "coverage.tracer",
+        "dulwich._objects",
+        "greenlet._greenlet",
+        "markupsafe._speedups"
+      ],
+      "programs_attempted": 100,
+      "successful_result_entries": 119,
+      "target": "baseline-ft-disabled"
+    },
+    {
+      "checked_run_metadata": 119,
+      "exit_status": 1,
+      "failed_programs": [
+        "coverage",
+        "dask",
+        "dulwich_log",
+        "genshi",
+        "sphinx",
+        "sqlalchemy_declarative",
+        "sqlalchemy_imperative"
+      ],
+      "native_gil_fallback_modules": [
+        "coverage.tracer",
+        "dulwich._objects",
+        "greenlet._greenlet",
+        "markupsafe._speedups"
+      ],
+      "programs_attempted": 100,
+      "successful_result_entries": 119,
+      "target": "baseline-ft-enabled"
+    },
+    {
+      "checked_run_metadata": 119,
+      "exit_status": 1,
+      "failed_programs": [
+        "coverage",
+        "dask",
+        "dulwich_log",
+        "genshi",
+        "sphinx",
+        "sqlalchemy_declarative",
+        "sqlalchemy_imperative"
+      ],
+      "native_gil_fallback_modules": [
+        "coverage.tracer",
+        "dulwich._objects",
+        "greenlet._greenlet",
+        "markupsafe._speedups"
+      ],
+      "programs_attempted": 100,
+      "successful_result_entries": 119,
+      "target": "candidate-ft-disabled"
+    },
+    {
+      "checked_run_metadata": 119,
+      "exit_status": 1,
+      "failed_programs": [
+        "coverage",
+        "dask",
+        "dulwich_log",
+        "genshi",
+        "sphinx",
+        "sqlalchemy_declarative",
+        "sqlalchemy_imperative"
+      ],
+      "native_gil_fallback_modules": [
+        "coverage.tracer",
+        "dulwich._objects",
+        "greenlet._greenlet",
+        "markupsafe._speedups"
+      ],
+      "programs_attempted": 100,
+      "successful_result_entries": 119,
+      "target": "candidate-ft-enabled"
+    }
+  ],
+  "performance_claim": null,
+  "root": "/tmp/parallel-gc-default-compatibility-20261017-GFJ1lk"
+}
