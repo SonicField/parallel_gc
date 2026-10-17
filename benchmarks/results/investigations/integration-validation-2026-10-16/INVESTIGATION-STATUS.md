@@ -244,9 +244,13 @@ Baseline leg 1 finished at 11:32:48 UTC on 17 October after 94 minutes 26 second
 
 The first document records parent `ebdba89d428d1b0ff53a396edff22390c40b9ae2` dirty with unrelated untracked files; measured source/benchmark content remains unchanged. This observation is retained. Numerical validation runs use spare CPU 32; lightweight artifact copying and hash checks were not affinity-pinned. No builds or competing benchmark campaigns ran. The complete-project analyser refuses the actual unfinished campaign with no JSON because leg 2 is absent. No baseline-only source effect is reported. Three closing legs, pyperformance compatibility agreement and current hosted CI evidence remain required.
 
+### Full FT repetition current leg 2 completed
+
+Current leg 2 ran 11:32:48–13:07:08 UTC on 17 October, 94 minutes 20 seconds. Its complete JSON and log are preserved in [repeat evidence](full-ft-repeat/README.md), byte-identical to the scratch originals. Standard configuration, source/compiled mode, affinity/NUMA, eight sustained comparisons, sixteen controlled cases and five valid samples per arm pass. Every controlled generated-member sequence matches both the original full experiment and repeat leg 1. Post-leg source, binary and benchmark/analysis fingerprints pass; leg 3 started on the existing controller at 13:07:08 UTC. The four-leg source comparison remains incomplete. No collector or benchmark changed.
+
 ### Goal continuation: completion requirements and current evidence
 
-The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.
+The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The pyperformance campaign is stopped pending dependency agreement; the separate unchanged full FT repetition is live, with legs 1 and 2 complete and leg 3 running. Earlier process entries are dated observations, not evidence of current state. No completed requirement is inferred from a plan or a successful older run.
 
 | Requirement | Current state | Evidence needed for completion |
 |-------------|---------------|--------------------------------|
@@ -268,4 +272,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Both current modes have passing full local debug runs; an earlier GIL environment leak remains unexplained. Full-default pyperformance installation passed, but runtime dependency failures prevent a complete comparison; both API failures occur without collector activation, and five further FT programs enable the GIL through native dependencies. The campaign is stopped, evidence is preserved, and dependency changes remain unapproved. Current hosted CI remains unverified. Handoff is not complete.
+Original GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. The unchanged full FT repetition is live: two legs complete, leg 3 running, no complete source comparison yet. Both current modes have passing full local debug runs; an earlier GIL environment leak remains unexplained. Full-default pyperformance installation passed, but runtime dependency failures prevent a complete comparison; both API failures occur without collector activation, and five further FT programs enable the GIL through native dependencies. That pyperformance campaign is stopped, evidence is preserved, and dependency changes remain unapproved. Current hosted CI remains unverified. Handoff is not complete.
