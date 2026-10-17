@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. The first corrected default pyperformance suite failed Dask and Genshi. Eight all-program diagnostic checks now show two failing programs in GIL and seven in FT, matching baseline/current and enabled/disabled. The full campaign is stopped and evidence preserved. Dependency changes await agreement; hosted CI run IDs remain pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. Both current modes also have passing full physical-source debug runs; an earlier GIL environment leak remains unexplained. All eight project legs and both source analyses are complete. The first corrected default pyperformance suite failed Dask and Genshi. Eight all-program diagnostic checks now show two failing programs in GIL and seven in FT, matching baseline/current and enabled/disabled. The full benchmark campaign is stopped and evidence preserved. Dependency changes await agreement; hosted CI run IDs remain pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -204,6 +204,12 @@ Fresh GIL/FT debug builds configured directly from the physical current source m
 
 The same isolated module passes on fresh baseline and current GIL debug builds, with 183 tests and 15 skips in each. Repeating without the original CPU-32 affinity restriction also passes on both. These observations do not reproduce a source-specific isolated leak and do not explain the full-run failure. The completed GIL/FT controller ended at 09:18:24 UTC on 17 October. A new sequential full baseline/current GIL comparison was launched after completion; it remains separate from the preserved completed outcomes above. No benchmark, collector, test or skip changed. Binary hashes and clean source checks pass. Current hosted CI and dependency approval remain unavailable.
 
+### Matched full GIL comparison completed
+
+Ran full default GIL suites sequentially on the fresh physical baseline/current debug builds, without an affinity restriction or any source/test change. Both pass, exit 0. Baseline ran 09:18:34–09:29:43 UTC: 52,202 tests, 2,715 skips; `run=500/509 skipped=23 resource_denied=9`; 11 min 8 sec. Current ran 09:29:43–09:40:36 UTC: 52,205 tests, 2,723 skips; the same file totals; 10 min 52 sec. Neither reports an environment change or rerun. [Complete matched evidence](local-full-suite/gil-full-comparison/README.md) includes logs, exits, identical 509-file selections, native/runtime/path probes, clean source revisions and unchanged binary hashes.
+
+The earlier GIL temporary-file leak did not reproduce in this full comparison. It remains unexplained and is not declared repaired. Combined with the preceding FT full pass, both current modes have passing full local debug runs; these do not substitute for hosted-platform results. The comparison controller completed and its processes are gone. No benchmark is running. Dependency compatibility changes and current CI capture still await Alex; no workload was excluded or runtime check bypassed.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.
@@ -228,4 +234,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Full-default pyperformance installation passed, but runtime dependency failures prevent a complete comparison; both failures occur without collector activation. The campaign is stopped, evidence is preserved, and dependency changes remain unapproved. Current hosted CI remains unverified. Handoff is not complete.
+GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Both current modes have passing full local debug runs; an earlier GIL environment leak remains unexplained. Full-default pyperformance installation passed, but runtime dependency failures prevent a complete comparison; both API failures occur without collector activation, and five further FT programs enable the GIL through native dependencies. The campaign is stopped, evidence is preserved, and dependency changes remain unapproved. Current hosted CI remains unverified. Handoff is not complete.

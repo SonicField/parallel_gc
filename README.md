@@ -18,7 +18,7 @@ claim of readiness to land. The
 under Alex Turner's guidance using
 [Verifiable Practice](https://github.com/SonicField/verifiable-practice).
 
-**Validation checkpoint, 17 October 2026:** Four fresh optimized baseline/current GIL/FT builds and selected local tests passed. Full project ABBA comparisons are recorded, including negative results; performance neutrality is not established. Full-default pyperformance comparisons are incomplete because of dependency API errors and FT extensions enabling the GIL. Current hosted CI outcomes remain unverified. Start with [Validation](docs/VALIDATION.md) and [the integration comparison, §4.1](docs/PERFORMANCE.md), not an older green run or aggregate speedup.
+**Validation checkpoint, 17 October 2026:** Four fresh optimized baseline/current GIL/FT builds and selected local tests passed. Fresh physical-source debug full suites also passed in both current modes; an earlier GIL temporary-file leak remains unexplained. Full project ABBA comparisons are recorded, including negative results; performance neutrality is not established. Full-default pyperformance comparisons are incomplete because of dependency API errors and FT extensions enabling the GIL. Current hosted CI outcomes remain unverified. Start with [Validation](docs/VALIDATION.md) and [the integration comparison, §4.1](docs/PERFORMANCE.md), not an older green run or aggregate speedup.
 
 ## Start here
 

@@ -1,0 +1,11 @@
+0bb88682d7f72d40aeaff2a1f669494affcc678f4d0599c7130f924eca2e6188  ./ORIGINAL-SHA256SUMS
+2c3fedc54813b94b1fa5364e57bcdf9178807b6250b44398dd489673967ba842  ./README.md
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  ./baseline-exit.txt
+5e08dd7e3904d8f0255f0ec9abb4f82c031563b2742ded4624f185c0c74a4d36  ./baseline-full-test.log.gz
+c234cd7286055b4a3aa3e8f3fbee8e66ad02107b6595f9447f265e4ba61b7818  ./baseline-preflight.json
+9973a35ca74d57fa67549c4f9e9decc4d130be53b6d67fabe1897d2a018bff9c  ./binary-hashes.txt
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  ./current-exit.txt
+9b622e51164eadcd6c900050b092e2eaa91105c8ef81a4643aa97ebdd375206d  ./current-full-test.log.gz
+9e6ddb66acf3a8e7e4b10ac6faeeb56acfd95ab476ce7feeddca517cbc33fd12  ./current-preflight.json
+c9b8f7b9de34be9ab8f07c2cc0f157b97bb76df08668661c33cf7bd3d75cb184  ./shared-default-selection.txt
+0e8d248c0f87b2760dacca9f2e9b9cd4c278e7c1cc6581397ce1a8648ed7bb84  ./source-revisions.tsv

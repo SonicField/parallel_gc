@@ -1,0 +1,32 @@
+{
+  "compiled_gil_disabled": false,
+  "config_args": "'--with-pydebug' '--with-parallel-gc' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+  "debug": true,
+  "native_modules": {
+    "_ctypes": "/tmp/parallel-gc-physical-debug-full-retry-20261017-b8yL54/builds/gil/build/lib.linux-aarch64-3.16/_ctypes.cpython-316d-aarch64-linux-gnu.so",
+    "_decimal": "/tmp/parallel-gc-physical-debug-full-retry-20261017-b8yL54/builds/gil/build/lib.linux-aarch64-3.16/_decimal.cpython-316d-aarch64-linux-gnu.so",
+    "_sqlite3": "/tmp/parallel-gc-physical-debug-full-retry-20261017-b8yL54/builds/gil/build/lib.linux-aarch64-3.16/_sqlite3.cpython-316d-aarch64-linux-gnu.so",
+    "_ssl": "/tmp/parallel-gc-physical-debug-full-retry-20261017-b8yL54/builds/gil/build/lib.linux-aarch64-3.16/_ssl.cpython-316d-aarch64-linux-gnu.so"
+  },
+  "parallel_gc": {
+    "available": true,
+    "enabled": false,
+    "num_workers": 0,
+    "pool_active": false,
+    "startup_failed": false
+  },
+  "paths": {
+    "json": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/json/__init__.py",
+    "pydoc": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/pydoc.py",
+    "test_support": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/test/support/__init__.py",
+    "unittest": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/unittest/__init__.py"
+  },
+  "python_git": [
+    "CPython",
+    "heads/parallel-gc-upstream-port-dirty",
+    "388fd5bb46"
+  ],
+  "runtime_gil_enabled": true,
+  "srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+  "version": "3.16.0a0 (heads/parallel-gc-upstream-port-dirty:388fd5bb46, Oct 17 2026, 01:52:13) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+}
