@@ -83,3 +83,16 @@ This is one FT leg, not a source comparison. The analysis command refuses the in
 - Git-copy SHA-256: `8de3ad44de718ef803f365744c7366b4211fb28eb10ba241ac99ad60efdc9d33`.
 
 The original has 65,695 bytes; the Git copy adds only its terminal newline, giving 65,696 bytes. Its original-length prefix was byte-compared against the original. The controller checked all four fingerprints and started the second candidate FT invocation, leg 3. The analysis command still refuses the incomplete campaign because that result is absent. The initial FT source pair supplies only the first ABBA half; two closing legs remain required before a source-effect report.
+
+## FT leg 3: candidate
+
+[Complete measurement data](ft-3-candidate.json).
+
+- CPython source: `388fd5bb46fdda6b464db566faf818505c3d6eef`, recorded clean.
+- Recorded parent checkpoint: `67658cbe7993ad168e98bc6532bf17cb8625a13f`, recorded dirty during preceding evidence work. The dirty metadata is retained; the project implementation and four controller fingerprints remained unchanged.
+- Launcher timestamps: 17 October 2026, 02:27:00 to 04:03:07 UTC (96 minutes 7 seconds).
+- All eight sustained and sixteen controlled comparisons contain five valid samples per arm. Configuration, placement and generated-member count sequences match FT baseline leg 1.
+- Original scratch-file SHA-256: `ef4a0e6d31b9204f6cd438dff441257538756cd54442157467289e0778827e4e`.
+- Git-copy SHA-256: `eefa804e31d4bd9964b05d4faf39818658dcb606ea8f26778f19fcb58d3b562e`.
+
+The original has 65,667 bytes; the Git copy adds only its terminal newline, giving 65,668 bytes. Its original-length prefix was byte-compared against the original. The controller checked all four fingerprints and started closing baseline FT leg 4. Three legs are not a complete source ABBA; the analysis command still refuses the missing closing result.

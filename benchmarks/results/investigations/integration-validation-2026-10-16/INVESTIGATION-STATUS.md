@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. The four GIL project legs and their analysis are complete; FT legs 1–2 are preserved and candidate leg 3 is running. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. The four GIL project legs and their analysis are complete; FT legs 1–3 are preserved and closing baseline leg 4 is running. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -134,6 +134,12 @@ Candidate FT leg 2 ran from 00:51:50 to 02:27:00 UTC on 17 October (95 minutes 1
 
 The controller verified those fingerprints and started candidate leg 3. The analysis command still refuses a source-effect report because that JSON is absent. Two closing FT legs remain; the first source pair is not a full ABBA. No pyperformance campaign has started, and current hosted CI remains unverified.
 
+### Corrected FT project leg 3 completed
+
+Second candidate FT leg 3 ran from 02:27:00 to 04:03:07 UTC on 17 October (96 minutes 7 seconds). Its complete data and original/Git-copy hashes are preserved. All eight sustained and sixteen controlled comparisons contain five valid samples per arm; standard configuration, placement and controlled generated-member count sequences match baseline leg 1. Clean candidate CPython source is recorded. Parent checkpoint `67658cbe7993ad168e98bc6532bf17cb8625a13f` is dirty during preceding evidence work; this observation is retained while the unchanged project implementation and four controller fingerprints provide the measurement-code boundary.
+
+All four fingerprint checks passed and closing baseline FT leg 4 started. The analysis command still refuses a complete comparison because its result is absent. The closing leg, pyperformance campaigns, hosted-CI evidence and final handoff reconciliation remain required. No throughput or latency source-effect conclusion is inferred from three legs.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
@@ -146,7 +152,7 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
-| Project full ABBA | All four GIL legs complete and analysed; FT legs 1–2 preserved and candidate leg 3 running; old attempt kept separate | Two FT invocations remain; preserve both variants and all run-level data/count checks |
+| Project full ABBA | All four GIL legs complete and analysed; FT legs 1–3 preserved and closing baseline leg 4 running; old attempt kept separate | Closing FT invocation remains; preserve both variants and all run-level data/count checks |
 | pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
 | Analysis and handoff commits | GIL data/writeup preserved; FT, pyperformance and hosted-CI reconciliation pending | Remaining per-workload changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
 
