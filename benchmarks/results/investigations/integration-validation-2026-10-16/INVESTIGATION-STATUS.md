@@ -152,6 +152,10 @@ The controller verified all four fingerprints and started GIL enabled rigorous b
 
 As designed, the controller records the failed status and continues the remaining enabled/disabled GIL/FT attempts rather than silently excluding that workload. Inspect available toolchains before choosing a repair; do not narrow the promised default suite or claim completion from a partially prepared environment. Current hosted CI capture remains absent.
 
+### Isolated Rust toolchain preparation
+
+The configured package repositories provide Rust and Cargo 1.97.1. Downloaded their matching compiler, Cargo and static standard-library packages into an owned temporary prefix; all RPM digest/signature checks pass. A relocated compiler wrapper fixes its own driver-library lookup without changing Python's loader environment. A simple Rust program compiled on CPU 32 and ran successfully. No system toolchain installation or collector/benchmark change. [Toolchain preparation](TOOLCHAIN-PREPARATION.md) preserves exact versions, package hashes, failed cache-only attempt, successful download and the remaining native-package verification requirement. The original controller still runs; its later partially prepared environment is not a readiness proof. Full dependency preparation and fresh pyperformance campaigns remain required.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
