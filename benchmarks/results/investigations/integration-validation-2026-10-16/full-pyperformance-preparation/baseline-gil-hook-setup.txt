@@ -1,0 +1,20 @@
++ /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/driver/bin/python -m pyperformance venv show --python /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-gil/python
++ /tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python -m pip install --no-deps --editable /data/users/alexturner/parallel_gc/benchmarks/pyperformance_support
+Obtaining file:///data/users/alexturner/parallel_gc/benchmarks/pyperformance_support
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: parallel-gc-pyperformance-support
+  Building editable for parallel-gc-pyperformance-support (pyproject.toml): started
+  Building editable for parallel-gc-pyperformance-support (pyproject.toml): finished with status 'done'
+  Created wheel for parallel-gc-pyperformance-support: filename=parallel_gc_pyperformance_support-0.1.0-0.editable-py3-none-any.whl size=3410 sha256=a1b56169933011c0a5490b200c3ec7f1aa1763a82d5b111140924cb4df2b7f6e
+  Stored in directory: /tmp/pip-ephem-wheel-cache-q6l6r0s3/wheels/4c/45/45/3722140916ad86045d279c95e9f0df585ff9a7d5b020701412
+Successfully built parallel-gc-pyperformance-support
+Installing collected packages: parallel-gc-pyperformance-support
+Successfully installed parallel-gc-pyperformance-support-0.1.0
+VERIFIED_PYTHON=/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/bin/python

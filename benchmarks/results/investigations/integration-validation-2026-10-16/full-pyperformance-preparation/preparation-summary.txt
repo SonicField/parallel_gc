@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/data/users/alexturner/parallel_gc/pyperformance/pyperformance/__main__.py", line 1, in <module>
+    import pyperformance.cli
+  File "/data/users/alexturner/parallel_gc/pyperformance/pyperformance/cli.py", line 8, in <module>
+    from pyperformance import __version__, _utils, is_dev, is_installed
+ImportError: cannot import name '__version__' from 'pyperformance' (unknown location)

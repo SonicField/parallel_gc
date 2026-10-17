@@ -1,0 +1,29 @@
+2026-10-17T05:51:03Z
+Preparing full default dependencies: baseline-gil
+python: OK
+benchmarks/gc_perf_benchmark.py: OK
+benchmarks/run_pyperformance.py: OK
+benchmarks/pyperformance_support/parallel_gc_pyperformance/hook.py: OK
+Full default dependencies checked: baseline-gil
+2026-10-17T05:51:26Z
+Preparing full default dependencies: candidate-gil
+python: OK
+benchmarks/gc_perf_benchmark.py: OK
+benchmarks/run_pyperformance.py: OK
+benchmarks/pyperformance_support/parallel_gc_pyperformance/hook.py: OK
+Full default dependencies checked: candidate-gil
+2026-10-17T05:51:49Z
+Preparing full default dependencies: baseline-ft
+python: OK
+benchmarks/gc_perf_benchmark.py: OK
+benchmarks/run_pyperformance.py: OK
+benchmarks/pyperformance_support/parallel_gc_pyperformance/hook.py: OK
+Full default dependencies checked: baseline-ft
+2026-10-17T05:52:15Z
+Preparing full default dependencies: candidate-ft
+python: OK
+benchmarks/gc_perf_benchmark.py: OK
+benchmarks/run_pyperformance.py: OK
+benchmarks/pyperformance_support/parallel_gc_pyperformance/hook.py: OK
+Full default dependencies checked: candidate-ft
+All four full-default environments prepared; no timings started.
