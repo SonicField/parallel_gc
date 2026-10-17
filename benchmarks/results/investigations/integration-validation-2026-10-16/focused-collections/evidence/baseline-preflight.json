@@ -1,0 +1,16 @@
+{
+  "version": "3.16.0a0 free-threading build (remotes/upstream/HEAD-26-gc67363fa59-dirty:c67363fa59, Oct 16 2026, 10:37:23) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]",
+  "machine": "aarch64",
+  "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+  "gil_enabled": false,
+  "parallel_gc": {
+    "available": true,
+    "enabled": false,
+    "num_workers": 0,
+    "pool_active": false,
+    "startup_failed": false,
+    "parallel_cleanup": true
+  },
+  "native_decimal": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-ft/build/lib.linux-aarch64-3.16/_decimal.cpython-316t-aarch64-linux-gnu.so",
+  "libmpdec_version": "2.5.1"
+}

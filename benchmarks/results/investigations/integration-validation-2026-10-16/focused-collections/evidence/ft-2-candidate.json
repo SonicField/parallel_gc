@@ -1,0 +1,750 @@
+{
+  "scope": "focused-controlled-collections-not-full-suite",
+  "build_type": "free-threaded",
+  "system_metadata": {
+    "python_version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:388fd5bb46, Oct 16 2026, 10:48:14) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]",
+    "python_executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-ft/python",
+    "python_implementation": "CPython",
+    "python_cache_tag": "cpython-316",
+    "python_build": [
+      "heads/parallel-gc-upstream-port-dirty:388fd5bb46",
+      "Oct 16 2026 10:48:14"
+    ],
+    "python_git": [
+      "CPython",
+      "heads/parallel-gc-upstream-port-dirty",
+      "388fd5bb46"
+    ],
+    "compiler": "GCC 11.5.0 20240719 (Red Hat 11.5.0-15)",
+    "configure_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+    "cflags": "-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer  -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall",
+    "ldflags": "-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64",
+    "py_cflags_nodist": "-fno-semantic-interposition -flto -fuse-linker-plugin -ffat-lto-objects -g -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden -fprofile-use -fprofile-correction -I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Include/internal -I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-source/Include/internal/mimalloc",
+    "py_ldflags_nodist": "-fno-semantic-interposition -flto -fuse-linker-plugin -ffat-lto-objects -g",
+    "py_parallel_gc": 1,
+    "py_gil_disabled": 1,
+    "platform": "Linux-6.16.1-0_fbk3_0_gd6c130b80483-aarch64-with-glibc2.34",
+    "machine": "aarch64",
+    "processor": "aarch64",
+    "logical_cpu_count": 72,
+    "available_cpu_count": 32,
+    "pythonhashseed": null,
+    "benchmark_seed": 42,
+    "command_line": [
+      "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-ft/python",
+      "/data/users/alexturner/parallel_gc/benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/run_focused_collections.py"
+    ],
+    "project_git": {
+      "revision": "f9924bc08db05738eda376effa560d30c1011856",
+      "dirty": true,
+      "worktree_sha256": "f95c45f7ba43fb99f15f5924896381521bb085df90dd670ba265b306565721bc",
+      "untracked_files": [
+        "benchmarks/results/pyperformance/ft-full-2026-10-03/",
+        "benchmarks/results/pyperformance/ft-lazy-smoke-2026-10-08/",
+        "benchmarks/results/pyperformance/ft-smoke/",
+        "benchmarks/results/pyperformance/gil-full-2026-10-02/",
+        "benchmarks/results/pyperformance/gil-smoke-2/",
+        "benchmarks/results/pyperformance/gil-smoke/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-disabled-abba-v2-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v3-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v2-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-2026-10-05/",
+        "benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v2-2026-10-05/",
+        "build-ci-check-gil-off/",
+        "build-ci-check-gil-on/",
+        "build-control-ft/",
+        "build-fidelity-ft/",
+        "build-fidelity-gil/",
+        "build-lazy-ft-asan/",
+        "build-lazy-ft-tsan/",
+        "build-lazy-gil-asan/",
+        "build-lazy-gil-tsan/",
+        "build-overnight-20261007-ft/",
+        "build-overnight-20261007-gil/",
+        "cpython-original/",
+        "cpython-upstream-port/"
+      ]
+    },
+    "cpython_git": {
+      "revision": "388fd5bb46fdda6b464db566faf818505c3d6eef",
+      "dirty": false,
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "untracked_files": []
+    },
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "numa_policy": "policy: bind\npreferred node: 0\nphyscpubind: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 \ncpubind: 0 \nnodebind: 0 \nmembind: 0 \npreferred: 0"
+  },
+  "parameters": {
+    "heap_size": 500000,
+    "num_runs": 5,
+    "seed": 42,
+    "warmup_runs": 3,
+    "creation_threads": 4,
+    "survivor_ratio": 0.8
+  },
+  "runtime_config": {
+    "available": true,
+    "enabled": true,
+    "num_workers": 16,
+    "adaptive_workers": 4,
+    "pool_active": false,
+    "startup_failed": false,
+    "parallel_cleanup": true
+  },
+  "config_after": {
+    "available": true,
+    "enabled": true,
+    "num_workers": 16,
+    "adaptive_workers": 4,
+    "pool_active": true,
+    "startup_failed": false,
+    "parallel_cleanup": true
+  },
+  "runtime_gil_enabled_after": false,
+  "collections": [
+    {
+      "heap_type": "chain",
+      "heap_size": 500000,
+      "serial_time_ms": 43.011666275560856,
+      "parallel_time_ms": 29.938771203160286,
+      "serial_stdev": 1.6780002976658255,
+      "parallel_stdev": 1.3542672391199035,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        41.82761535048485,
+        41.82806331664324,
+        42.04870481044054,
+        45.673481188714504,
+        43.68046671152115
+      ],
+      "parallel_samples_ms": [
+        30.284451320767403,
+        27.995306998491287,
+        31.309359706938267,
+        29.176215641200542,
+        30.92852234840393
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "tree",
+      "heap_size": 500000,
+      "serial_time_ms": 46.65929563343525,
+      "parallel_time_ms": 32.50484690070152,
+      "serial_stdev": 1.86217209314265,
+      "parallel_stdev": 2.0685570445804142,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        49.12682995200157,
+        45.55235896259546,
+        48.190467059612274,
+        45.08880153298378,
+        45.33802065998316
+      ],
+      "parallel_samples_ms": [
+        34.475152380764484,
+        29.732702299952507,
+        33.61911233514547,
+        30.889450572431087,
+        33.80781691521406
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "wide_tree",
+      "heap_size": 500000,
+      "serial_time_ms": 43.13548244535923,
+      "parallel_time_ms": 31.835130788385868,
+      "serial_stdev": 0.5776281744653285,
+      "parallel_stdev": 1.6604089457886524,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        44.07055210322142,
+        42.932555079460144,
+        42.86381881684065,
+        43.251119554042816,
+        42.559366673231125
+      ],
+      "parallel_samples_ms": [
+        31.798739917576313,
+        33.2444841042161,
+        33.367397263646126,
+        29.270713217556477,
+        31.494319438934326
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "graph",
+      "heap_size": 500000,
+      "serial_time_ms": 61.461931467056274,
+      "parallel_time_ms": 36.69073507189751,
+      "serial_stdev": 2.5701794246687886,
+      "parallel_stdev": 2.2083429542260986,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        60.21661218255758,
+        64.90597408264875,
+        58.382769115269184,
+        63.1555886939168,
+        60.64871326088905
+      ],
+      "parallel_samples_ms": [
+        37.19796612858772,
+        32.77727868407965,
+        37.66709100455046,
+        37.78466023504734,
+        38.026679307222366
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "layered",
+      "heap_size": 500000,
+      "serial_time_ms": 68.17678660154343,
+      "parallel_time_ms": 39.82168026268482,
+      "serial_stdev": 2.3755826143876693,
+      "parallel_stdev": 2.488931904050618,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        68.27010586857796,
+        64.36894368380308,
+        69.2245801910758,
+        68.20408906787634,
+        70.81621419638395
+      ],
+      "parallel_samples_ms": [
+        39.60935212671757,
+        36.663816310465336,
+        42.94068273156881,
+        38.36578596383333,
+        41.52876418083906
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "independent",
+      "heap_size": 500000,
+      "serial_time_ms": 44.24716718494892,
+      "parallel_time_ms": 31.572498381137848,
+      "serial_stdev": 1.600091560100631,
+      "parallel_stdev": 0.8105459963214636,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        46.563729643821716,
+        45.058817602694035,
+        42.99821890890598,
+        43.97470969706774,
+        42.640360072255135
+      ],
+      "parallel_samples_ms": [
+        32.07151126116514,
+        30.764841474592686,
+        32.460092566907406,
+        30.66205605864525,
+        31.903990544378757
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "ai_workload",
+      "heap_size": 500000,
+      "serial_time_ms": 57.66485929489136,
+      "parallel_time_ms": 42.84349828958511,
+      "serial_stdev": 4.03344383107876,
+      "parallel_stdev": 1.4332152697715463,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        59.613500721752644,
+        62.55702115595341,
+        51.75901670008898,
+        58.204397559165955,
+        56.190360337495804
+      ],
+      "parallel_samples_ms": [
+        42.86864958703518,
+        41.76079947501421,
+        42.567783035337925,
+        45.25350872427225,
+        41.766750626266
+      ],
+      "serial_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "parallel_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "web_server",
+      "heap_size": 500000,
+      "serial_time_ms": 45.91961391270161,
+      "parallel_time_ms": 32.84082468599081,
+      "serial_stdev": 1.2434195955196643,
+      "parallel_stdev": 1.6901424362929491,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        46.160269528627396,
+        47.851198352873325,
+        44.57590077072382,
+        45.85652146488428,
+        45.15417944639921
+      ],
+      "parallel_samples_ms": [
+        32.84406289458275,
+        34.583570435643196,
+        33.819529227912426,
+        30.11478576809168,
+        32.842175103724
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "frame"
+    },
+    {
+      "heap_type": "chain",
+      "heap_size": 500000,
+      "serial_time_ms": 42.392292991280556,
+      "parallel_time_ms": 34.853991866111755,
+      "serial_stdev": 0.596515387439253,
+      "parallel_stdev": 1.1834021230358331,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        42.489541694521904,
+        42.84423403441906,
+        41.67276527732611,
+        43.05943567305803,
+        41.895488277077675
+      ],
+      "parallel_samples_ms": [
+        35.30661761760712,
+        33.051553182303905,
+        35.791358910501,
+        34.29067134857178,
+        35.829758271574974
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "tree",
+      "heap_size": 500000,
+      "serial_time_ms": 46.84247802942991,
+      "parallel_time_ms": 37.40781731903553,
+      "serial_stdev": 1.7398576113549675,
+      "parallel_stdev": 1.6849249876168255,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        49.64523483067751,
+        46.93874064832926,
+        45.019553042948246,
+        46.71774711459875,
+        45.8911145105958
+      ],
+      "parallel_samples_ms": [
+        39.58743065595627,
+        38.454074412584305,
+        36.769417114555836,
+        37.050955928862095,
+        35.17720848321915
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "wide_tree",
+      "heap_size": 500000,
+      "serial_time_ms": 43.02687216550112,
+      "parallel_time_ms": 35.68659573793411,
+      "serial_stdev": 1.3100742717852243,
+      "parallel_stdev": 0.6239733184459911,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        45.05760036408901,
+        43.55521686375141,
+        42.15251374989748,
+        42.55770333111286,
+        41.81132651865482
+      ],
+      "parallel_samples_ms": [
+        35.666877403855324,
+        34.87013280391693,
+        35.911486484110355,
+        35.420858301222324,
+        36.56362369656563
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "graph",
+      "heap_size": 500000,
+      "serial_time_ms": 61.892577819526196,
+      "parallel_time_ms": 44.20704506337643,
+      "serial_stdev": 2.674283625830756,
+      "parallel_stdev": 2.366910019587117,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        65.02539850771427,
+        62.70489376038313,
+        60.52391044795513,
+        63.14800214022398,
+        58.060684241354465
+      ],
+      "parallel_samples_ms": [
+        45.76090443879366,
+        47.02750965952873,
+        44.500796124339104,
+        41.145752184093,
+        42.60026291012764
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "layered",
+      "heap_size": 500000,
+      "serial_time_ms": 69.66179423034191,
+      "parallel_time_ms": 49.29303880780935,
+      "serial_stdev": 3.731766748925033,
+      "parallel_stdev": 3.296194769945186,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        71.06204051524401,
+        68.12076084315777,
+        66.3953647017479,
+        75.54240711033344,
+        67.18839798122644
+      ],
+      "parallel_samples_ms": [
+        51.5608387067914,
+        46.0909241810441,
+        51.887210458517075,
+        45.304324477910995,
+        51.62189621478319
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "independent",
+      "heap_size": 500000,
+      "serial_time_ms": 45.5075902864337,
+      "parallel_time_ms": 36.05792801827192,
+      "serial_stdev": 2.008561472389197,
+      "parallel_stdev": 0.8607004663813947,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        48.94717875868082,
+        45.63479032367468,
+        44.195192866027355,
+        44.49615627527237,
+        44.26463320851326
+      ],
+      "parallel_samples_ms": [
+        37.03498840332031,
+        35.71209404617548,
+        36.688744090497494,
+        34.837556071579456,
+        36.01625747978687
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "ai_workload",
+      "heap_size": 500000,
+      "serial_time_ms": 56.254348158836365,
+      "parallel_time_ms": 46.122054755687714,
+      "serial_stdev": 2.504649419668503,
+      "parallel_stdev": 2.323864699062643,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        56.41141813248396,
+        59.82415936887264,
+        56.15176726132631,
+        56.137272156775,
+        52.74712387472391
+      ],
+      "parallel_samples_ms": [
+        42.853834107518196,
+        47.495292499661446,
+        48.281348310410976,
+        44.51734013855457,
+        47.46245872229338
+      ],
+      "serial_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "parallel_object_counts": [
+        399728,
+        399728,
+        399728,
+        399728,
+        399728
+      ],
+      "rooting": "module"
+    },
+    {
+      "heap_type": "web_server",
+      "heap_size": 500000,
+      "serial_time_ms": 45.90539298951626,
+      "parallel_time_ms": 36.885917373001575,
+      "serial_stdev": 1.118300497583968,
+      "parallel_stdev": 1.1306847659669725,
+      "num_runs": 5,
+      "serial_samples_ms": [
+        47.31103405356407,
+        46.2298383936286,
+        44.77801453322172,
+        46.460975892841816,
+        44.747102074325085
+      ],
+      "parallel_samples_ms": [
+        37.05789986997843,
+        35.64118035137653,
+        38.45468256622553,
+        35.94841714948416,
+        37.32740692794323
+      ],
+      "serial_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "parallel_object_counts": [
+        500000,
+        500000,
+        500000,
+        500000,
+        500000
+      ],
+      "rooting": "module"
+    }
+  ]
+}

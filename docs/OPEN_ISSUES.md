@@ -165,6 +165,8 @@ appear as D1–D3).
 
 The [completed 16–17 October source comparison, §4.1](PERFORMANCE.md) does not establish performance neutrality. In FT, all eight module-rooted controlled collections are slower in both halves (+18.72% to +34.81%); module-cache mixed throughput decreases −7.41%. GIL also records negative results, often accompanied by serial-control movement. These need focused repetition before causal claims; they do not authorize collector changes.
 
+The [focused FT collection repeat](../benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md) did not reproduce the broad module-rooted pattern with the same binaries and generated-member counts. Its fresh invocation omits preceding sustained workloads and uses a normal imported module, so context differs. The original negative results remain unresolved; an unchanged full FT repeat is the next test, not a code repair or an acceptance claim.
+
 Full-default pyperformance is blocked by dependency compatibility, not reported complete from a passing subset. All-program checks find Dask/Cloudpickle and Genshi API errors in both modes; Coverage, dulwich_log, Sphinx and both SQLAlchemy variants additionally load native extensions that enable the GIL in FT. The attestation rejects those runs. Failures match baseline/current and enabled/disabled. [Evidence and pending dependency decision](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md). No dependency repair, workload exclusion or unsafe runtime override has been made.
 
 ### Previously recorded performance findings

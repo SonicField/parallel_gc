@@ -210,6 +210,14 @@ Ran full default GIL suites sequentially on the fresh physical baseline/current 
 
 The earlier GIL temporary-file leak did not reproduce in this full comparison. It remains unexplained and is not declared repaired. Combined with the preceding FT full pass, both current modes have passing full local debug runs; these do not substitute for hosted-platform results. The comparison controller completed and its processes are gone. No benchmark is running. Dependency compatibility changes and current CI capture still await Alex; no workload was excluded or runtime check bypassed.
 
+### Focused FT controlled-collection reproduction completed
+
+Prepared an external diagnostic wrapper and validator test-first, committed separately as `f9924bc`. All nineteen machinery tests pass, including planted disabled/inactive pool, invalid source/order/placement/parameters, incomplete cases and bad samples/counts. Twenty-four existing full-analysis tests also pass. Real GIL, debug FT and wrong-affinity invocations refuse before a case or JSON result. The benchmark implementation and CPython source/tests remain unchanged.
+
+[Four complete focused FT legs](focused-collections/RESULTS.md) ran 09:49:04–09:52:47 UTC on 17 October, baseline–current–current–baseline, with the same optimized binaries, all sixteen controlled cases and unchanged per-case parameters. All checks and final source/binary/driver fingerprints pass; generated-member sequences match both arms, all focused legs and the original full comparison. A separate arithmetic calculation verifies both source means, overall change and both halves in both arms for every case.
+
+The broad module-rooted slowdown did not reproduce: five module means decrease, three increase +0.34% to +1.32%, and only web-server increases in both halves. Frame layered changes −4.82%, with opposing halves, rather than repeating its original both-halves increase. Five frame cases still have higher overall means and are reported. This diagnostic omits preceding sustained workloads and imports the benchmark as a normal module rather than `__main__`. It is inconclusive about cause and does not erase the full suite's negative observations or establish neutrality. The controller completed, with no benchmark left running. Next is an unchanged full FT repeat, not a collector change. Dependency approval and current hosted CI capture remain missing.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.

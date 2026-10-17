@@ -42,3 +42,5 @@ bash benchmarks/results/investigations/integration-validation-2026-10-16/focused
 ```
 
 The launcher writes every raw leg, provenance, original fingerprints and the complete checked sixteen-row analysis to that owned directory. A failed/incomplete campaign does not produce an accepted analysis. Preserve it separately from the full-suite campaigns.
+
+The four legs now completed with exit 0. [Results and limitations](RESULTS.md) preserve all sixteen cases. The broad full-invocation slowdown was not reproduced in this isolated context; the original negative data remain valid observations, not dismissed as noise. No collector or benchmark implementation changed. Repeat the original full invocation before assigning a cause.
