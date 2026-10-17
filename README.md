@@ -83,7 +83,7 @@ child armed without helpers.
 
 ## Performance summary
 
-The completed 16–17 October comparison asks whether integration changed the baseline implementation, using the repaired benchmark on both source revisions. It is not a new estimate of parallel-versus-serial benefit. GIL has lower throughput in four of eight sustained cases and longer controlled collection time in thirteen of sixteen; several serial controls also move. FT has consistently slower module-rooted controlled collections (+18.72% to +34.81%) and module-cache mixed throughput −7.41%. Attribution remains unresolved. [Full results and limitations, §4.1](docs/PERFORMANCE.md).
+The completed 16–17 October comparison asks whether integration changed the baseline implementation, using the repaired benchmark on both source revisions. It is not a new estimate of parallel-versus-serial benefit. GIL has lower throughput in four of eight sustained cases and longer controlled collection time in thirteen of sixteen; several serial controls also move. The original FT comparison has slower module-rooted controlled collections (+18.72% to +34.81%) and module-cache mixed throughput −7.41%. An unchanged full FT repeat does not reproduce that broad module pattern; it retains seven frame collection increases in both halves and three lower throughput means. No code repair occurred, and attribution remains unresolved. [Full results, repeats and limitations, §4.1](docs/PERFORMANCE.md).
 
 The following serial/parallel results are historical, measured before the integration:
 

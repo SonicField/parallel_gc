@@ -1,5 +1,7 @@
 # FT integrated-build comparison: complete project ABBA
 
+Follow-up on 17 October: the [focused diagnostic](focused-collections/RESULTS.md) and [unchanged full repeat](full-ft-repeat/RESULTS.md) do not reproduce this report's broad module-rooted controlled pattern. The full repeat retains other negative results. This original dataset and its outcome below remain unchanged; no code repair or performance-neutrality claim follows.
+
 ## Outcome
 
 This comparison records lower parallel-mode throughput in five of eight sustained cases and longer controlled `gc.collect()` times in ten of sixteen cases. Seven of eight mean callback durations have a positive recorded change; frame mixed is only +0.0023%, while the other six increases range from +1.57% to +14.36%. No significance or acceptance threshold is assigned. Performance neutrality is not established.

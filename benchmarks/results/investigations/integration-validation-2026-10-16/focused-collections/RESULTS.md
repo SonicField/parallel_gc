@@ -62,4 +62,4 @@ python3 "$focus/analyse_focused_collections.py" \
 
 Input path names in a replay differ from the scratch-path names in the original analysis. Input content hashes and all result rows must match; do not require byte identity of the path metadata.
 
-Next: repeat the original full FT ABBA unchanged to test whether the original invocation reproduces its negative pattern. No atomic, barrier, traversal, queue, threshold, adaptation or failure-policy change follows from this diagnostic. Hosted CI and dependency-blocked full pyperformance remain outstanding.
+Follow-up: the [unchanged original full FT ABBA](../full-ft-repeat/RESULTS.md) completed later on 17 October. It also does not reproduce the broad module pattern, while seven frame cases increase in both halves. Keep these different invocation contexts and time windows separate. No atomic, barrier, traversal, queue, threshold, adaptation or failure-policy change follows from this diagnostic. Hosted CI and dependency-blocked full pyperformance remain outstanding.

@@ -1,5 +1,7 @@
 # Unchanged full FT repetition
 
+[Complete results and interpretation](RESULTS.md): the original broad module-rooted slowdown did not reproduce, but seven frame collection increases remain in both halves. This is not a neutrality claim.
+
 ## Scope
 
 Repeat the original full FT invocation after the [focused diagnostic](../focused-collections/RESULTS.md) did not reproduce its broad module-rooted slowdown. The focused run changed process context by omitting preceding sustained phases and importing the benchmark as a normal module. This repeat uses the original `__main__` entry point, workload sequence and parameters. No collector or benchmark source changed.
@@ -17,7 +19,7 @@ The question is whether the original negative pattern repeats in the original in
 | 3 | Current | Complete, 13:07:08–14:41:54 UTC on 17 October 2026; 94 min 46 sec. Source/binary/benchmark fingerprints and document checks pass. |
 | 4 | Baseline | Complete, 14:41:54–16:18:26 UTC on 17 October 2026; 96 min 32 sec to final controller completion. All four documents and final analysis checks pass. |
 
-Scratch root: `/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT`. Controller execution session 74721 and wait cell 569 completed with exit 0 at 16:18:26 UTC on 17 October 2026, after six hours twenty minutes four seconds. The closing timestamp includes final fingerprint checks and analysis, not just the last timed workload. `FT_FULL_REPEAT_COMPLETE=1` was observed on that handle; controller and last Python process were then confirmed gone. The earlier live-process observations are historical, not current state. No restart or competing measurement occurred.
+Scratch root: `/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT`. Controller execution session 74721 and wait cell 569 completed with exit 0 at 16:18:26 UTC on 17 October 2026, after six hours twenty minutes four seconds. The closing timestamp includes final fingerprint checks and analysis, not just the last timed workload. `FT_FULL_REPEAT_COMPLETE=1` was observed on that handle; controller and last Python process were then confirmed gone. The earlier live-process observations are historical, not current state. No restart or competing project measurement was started by this campaign.
 
 Baseline records parent `ebdba89d428d1b0ff53a396edff22390c40b9ae2`, dirty with unrelated untracked directories. The measured benchmark and CPython content remain unchanged, independently checked. Preserve that parent observation; do not call it a clean parent checkpoint. Source is clean, its patch digest empty, and native/runtime preflights pass.
 
