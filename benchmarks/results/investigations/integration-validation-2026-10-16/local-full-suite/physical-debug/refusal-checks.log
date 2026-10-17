@@ -1,0 +1,4 @@
+fixture=/tmp/parallel-gc-physical-refusal-recheck-20261017-qzQWo1
+aliased_source_exit=1
+missing_deps_exit=1
+both_refusals_before_writes=PASS

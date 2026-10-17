@@ -1,0 +1,16 @@
+{
+  "source": [
+    "CPython",
+    "remotes/upstream/HEAD-26-gc67363fa59-dirty",
+    "c67363fa59"
+  ],
+  "srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/baseline-source",
+  "config_args": "'--with-pydebug' '--with-parallel-gc' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+  "gc": {
+    "available": true,
+    "enabled": false,
+    "num_workers": 0,
+    "pool_active": false,
+    "startup_failed": false
+  }
+}

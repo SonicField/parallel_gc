@@ -1,0 +1,27 @@
+{
+  "config_args": "'--with-pydebug' '--with-parallel-gc' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+  "mode": "ft",
+  "native_decimal": "/tmp/parallel-gc-physical-debug-full-retry-20261017-b8yL54/builds/ft/build/lib.linux-aarch64-3.16/_decimal.cpython-316td-aarch64-linux-gnu.so",
+  "parallel_gc": {
+    "available": true,
+    "enabled": false,
+    "num_workers": 0,
+    "parallel_cleanup": true,
+    "pool_active": false,
+    "startup_failed": false
+  },
+  "paths": {
+    "json": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/json/__init__.py",
+    "pydoc": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/pydoc.py",
+    "test_support": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/test/support/__init__.py",
+    "unittest": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source/Lib/unittest/__init__.py"
+  },
+  "python_git": [
+    "CPython",
+    "heads/parallel-gc-upstream-port-dirty",
+    "388fd5bb46"
+  ],
+  "runtime_gil_enabled": false,
+  "srcdir": "/tmp/parallel-gc-benchmarks-20261016-6gpt8U/candidate-source",
+  "version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:388fd5bb46, Oct 17 2026, 02:05:46) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+}

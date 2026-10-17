@@ -196,6 +196,14 @@ After entry-document reconciliation commit `4545edc`, ran full default local CPy
 
 [Full local evidence](local-full-suite/README.md) records the source aliases, both failed full logs and eight four-case probes. Default-path failures reproduce on baseline/current GIL/FT. Using physical `Lib` paths fixes pydoc but not the unittest child, which deliberately ignores `PYTHONPATH` with `-E`. The four-case complete-repair hypothesis is falsified; no tests or source were changed. Both alias paths refer to the same original clean source worktrees at their recorded revisions. Preserve existing binaries and performance data; do not assume source-path preparation defects are collector regressions. A consistently addressed build/test environment and hosted evidence remain pending.
 
+### Physical-source debug follow-up
+
+Fresh GIL/FT debug builds configured directly from the physical current source make all four previously failing path-sensitive cases pass, without CPython changes. The first build attempt failed finding `uuid.h`: the investigation helper omitted the relocated prefix's `PKG_CONFIG_SYSROOT_DIR`. Restoring that build-environment variable and building in a fresh directory succeeds in both modes. The failure and flags comparison are preserved, not discarded.
+
+[Complete debug evidence](local-full-suite/physical-debug/README.md) records the full default outcomes. FT passes, exit 0: 52,306 tests, 2,714 skips; `run=500/509 skipped=21 resource_denied=9`; 12 min 34 sec. GIL returns exit 3, `ENV CHANGED`: 52,388 tests, 2,759 skips; `run=501/509 env_changed=1 skipped=23 resource_denied=9 rerun=1`; 13 min 2 sec. The multiprocessing spawn process module left three temporary files initially and again on rerun. No assertion failure is reported in the GIL summary, but this is not a clean full pass.
+
+The same isolated module passes on fresh baseline and current GIL debug builds, with 183 tests and 15 skips in each. Repeating without the original CPU-32 affinity restriction also passes on both. These observations do not reproduce a source-specific isolated leak and do not explain the full-run failure. The completed GIL/FT controller ended at 09:18:24 UTC on 17 October. A new sequential full baseline/current GIL comparison was launched after completion; it remains separate from the preserved completed outcomes above. No benchmark, collector, test or skip changed. Binary hashes and clean source checks pass. Current hosted CI and dependency approval remain unavailable.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The current campaign has been verified stopped; earlier live-process entries are historical observations, not current state. No completed requirement is inferred from a plan or a successful older run.
