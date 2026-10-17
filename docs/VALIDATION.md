@@ -26,6 +26,22 @@ Documentation-only commits do not change those measurements or the CPython
 gitlink. Collector changes need new evidence; a claim that older results still
 apply requires an explicit account of the intervening changes.
 
+## Latest integration checkpoint: 17 October 2026
+
+The fixed comparison is baseline CPython `c67363fa59543ef5d572383af927f1cff88514a1` against integrated `388fd5bb46fdda6b464db566faf818505c3d6eef`. Both use the repaired parent benchmark, including ownership correction and module-rooted variants. The [integration validation log](../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md) records the protocol, failures, evidence and outstanding requirements. The gitlink above remains the checkout selector; these hashes identify the experiment, not an alternative live pin.
+
+| Evidence | Observed outcome | Scope and limits |
+|----------|------------------|------------------|
+| [Four corrected optimized builds](../benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md) | Fresh baseline/current GIL/FT GCC 11.5 AArch64 PGO+LTO builds pass native-decimal/runtime checks, verified parallel PGO training and selected collector/C-API/embedding/profile tests. | The overlapping selected-test counts are recorded per build; not full CPython suites or hosted platform evidence. `_tkinter` remains unavailable. |
+| [Worker runtime attestation](../benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md) | All 75 parent harness tests pass on each binary; GIL skips one FT-only test, FT skips none. The hook rejects GIL fallback after FT workload imports. | Outside timed values; does not attest arbitrary workload-spawned children. Added parent tests need publication and a subsequent matrix run. |
+| [Complete GIL project ABBA](../benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md) | Four complete legs and analysis preserved; lower throughput in four of eight sustained cases, longer controlled collections in thirteen of sixteen. | Serial controls also move; some halves disagree. One PGO binary per source; neutrality and collector-specific causation are not established. |
+| [Complete FT project ABBA](../benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md) | Four complete legs preserved; all eight module-rooted controlled collections are slower in both halves, +18.72% to +34.81%; module mixed throughput −7.41%. | Requires focused reproduction and diagnosis. Callback duration is not FT stopped-world duration. |
+| [Failed first default pyperformance suite](../benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md) | Dask/Cloudpickle opcode error and Genshi AST error; full log and partial JSON preserved. Both reproduce on all four binaries with collector disabled and no helpers. | Failed suite, not ABBA. Campaign stopped; no workload omitted or dependency repair made. |
+| [Eight all-program compatibility checks](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md) | All 100 programs attempted for each baseline/current GIL/FT enabled/disabled combination. GIL fails two programs; FT fails those plus five whose native dependencies enable the GIL. Failure sets match within each mode. | Short diagnostic executions, not performance measurements. Runtime attestation rejects fallback; it was not bypassed. Full sixteen-suite comparison remains outstanding. |
+| Current hosted CI | Publication and dispatch reported by Alex; current run IDs, source artifacts and job outcomes have not been captured. | Linux four-build/compilers/full suites, Windows and macOS remain unverified for this source pair. Older outcomes below are not substituted. |
+
+Dependency compatibility changes require agreement before another full campaign. Preserve every workload, apply agreed changes equally to baseline/current environments, and retain FT runtime-mode checks. Current captures were requested at `/tmp/alex-ci-current.json`; that file remains absent at this checkpoint. No GitHub status is inferred from elapsed time.
+
 ## Recorded evidence: 15 October 2026
 
 The source reviewed in the October handoff is CPython
@@ -68,13 +84,11 @@ stamp still named a dirty baseline. Reused user builds are not represented as
 clean-source evidence. These local tests are not full CPython regression
 suites, Windows/macOS validation or new performance results.
 
-Next: publish CPython before the parent gitlink, then run the required hosted
-workflows for that source pair. Agree measurement criteria before building
-matched PGO+LTO GIL/FT binaries and running full project ABBA and pyperformance
-campaigns with the same repaired harness on baseline and integrated source.
-Older results from a retaining harness cannot isolate a collector change.
+The subsequent optimized builds and project comparisons are recorded in the 17 October checkpoint above. Publication and hosted dispatch were reported, but current source artifacts and outcomes remain unavailable. The rigorous pyperformance comparisons await agreed dependency work. Older results from a retaining harness cannot isolate a collector change.
 
-## Required remote runs
+## Required remote coverage and older captured runs
+
+The dated run IDs below precede the integrated CPython source. Newer dispatches have been reported, but their outcomes and artifacts are missing. Required coverage also includes the eight GCC/Clang GIL/FT release/debug object checks added to the Linux matrix. Do not read an older success as current validation.
 
 The first published-run outcomes below were reported on 16 October 2026.
 The macOS logs verify parent `724b74b749d942ace6ea05ec3bdab4bd504781d9` and

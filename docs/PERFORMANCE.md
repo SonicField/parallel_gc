@@ -114,9 +114,7 @@ recorded AArch64 campaigns; budget separately for each ABBA invocation.
   deterministic scheduling and survivor checks; see the
   [ownership verification record](../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md).
   Mixed and sustained workloads do not use this creation pool.
-- **Metrics:** throughput; callback-to-callback collection interval (mean and
-  maximum); GC callback-active time (not additive in FT); parallel/serial
-  speedup; geometric means.
+- **Metrics:** throughput; one collection's callback start-to-stop duration (mean and maximum); GC callback-active time (not additive in FT); controlled `gc.collect()` duration; parallel/serial speedup; geometric means. Callback duration is not the interval between successive collections or FT stopped-world duration.
 
 Heaps come from deterministic per-worker streams seeded from 42; a pair is
 rejected if object counts differ. Modes alternate within one binary with
@@ -184,12 +182,25 @@ volume).
   mean alone.
 - Record the exact command, parent and CPython revisions, dirty state,
   compiler, flags, executable hash, affinity, and observed worker counts.
-- A `gc.callbacks` interval covers the whole collection call. In FT it includes
-  work outside the stopped-world sections and is not a pause measurement.
-  Collection time, callback interval and throughput are not interchangeable.
+- A `gc.callbacks` start-to-stop duration covers one collection call. Historical reports call it a callback interval; it is not time between collections. In FT it includes work outside the stopped-world sections and is not a stopped-world pause measurement. Controlled collection time, callback duration and throughput are distinct metrics.
 - Do not compare across machines without recording the hardware.
 
 ## 4. Current evidence
+
+### 4.1 Integration comparison, 16–17 October 2026
+
+Baseline `c67363fa59543ef5d572383af927f1cff88514a1` and integrated `388fd5bb46fdda6b464db566faf818505c3d6eef` each have a fresh GIL and FT GCC 11.5 AArch64 PGO+LTO build with native decimal and verified parallel PGO training. Both sources use the same repaired ownership/module-rooted harness. Four complete ABBA legs per mode use unchanged `--full --include-synthetic`: five runs per arm, 60-second sustained phases, four application threads, nominal 500,000-member heaps, affinity 0–31 and NUMA node 0. This is a comparison between source builds, not the historical same-binary serial/parallel comparison below.
+
+| Mode | Negative measurements | Interpretation limit |
+|------|-----------------------|----------------------|
+| [GIL](../benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md) | Throughput decreases in four of eight sustained cases; mean callback duration increases in six; thirteen of sixteen controlled collections take longer. Frame mixed callback mean +30.04%, with serial control +31.42%; module mixed callback mean +15.49%, with serial control +9.04%. | Several controls move too; some halves disagree. Performance neutrality and collector-specific causation are not established. |
+| [FT](../benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md) | All eight module-rooted controlled collections take longer in both halves (+18.72% to +34.81%). Module-cache mixed throughput −7.41% and mean callback duration +14.36%; serial controls +0.54% and −0.85%, respectively. | Consistent negative pattern in this binary pair; requires focused reproduction and diagnosis. Do not infer worker-count or heap-size causes that were not recorded. |
+
+Both reports preserve positive measurements too, all samples, variation, both halves, serial controls, counts and raw hashes. There is one PGO binary per source and two paired time windows. No statistical-significance, universal noise-floor or acceptance cutoff is assigned. The null baseline/current ratio is one; performance neutrality is not established. [Protocol and full status](../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md).
+
+**Full-default pyperformance remains incomplete.** The first corrected suite failed Dask/Cloudpickle and Genshi on Python 3.16 API errors. Eight subsequent [all-program diagnostic checks](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md) find the same two failures in GIL and seven in FT, matching both source revisions and collector policies. The five additional FT programs load extensions that enable the GIL; worker attestation correctly rejects them. No workload was omitted or unsafe GIL override introduced. These short checks are not ABBA measurements. Dependency compatibility work awaits agreement, followed by all sixteen rigorous suites and current hosted CI verification.
+
+### 4.2 Historical serial/parallel measurements, 7–15 October 2026
 
 PGO+LTO Python 3.16 on one 72-logical-CPU AArch64 host; parallel phases were
 included in PGO training. GIL collector `669ed6b17e` (7 October); FT collector
@@ -223,9 +234,7 @@ optimality.
 live 1M-object random graph, parallel was 0.61–0.83× serial with the heap held
 by a module global and 3.39× held by a frame local; `mark_alive` was 94–99% of
 collection time. A binary tree was 1.22× for both holders; fine-grained lists
-were 1.11× (global) and 0.62× (local); a linked chain 0.88–0.91×. The project
-suite above holds its heaps in function locals and therefore measures the
-favourable case.
+were 1.11× (global) and 0.62× (local); a linked chain 0.88–0.91×. The older project suite held its collection-shape heaps in function locals and therefore measured that placement. The current suite also includes module-rooted variants; do not apply the older placement limitation to the new comparison.
 
 Reports:
 [GIL and pre-lazy FT](../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md),
@@ -313,9 +322,9 @@ those changes with Alex first. The current integration keeps those unchanged.
 
 ## 7. Pending measurements
 
-- Clean published-revision repeats of both optimized campaigns, plus
-  optimized feature-off controls for compile-time overhead.
-- A full GIL pyperformance sweep after lazy startup.
+- Focused reproduction of negative integration measurements, then fresh-profile/generated-code investigation if the differences recur. Completed GIL/FT project ABBA is linked in §4.1; no cause or repair is assumed.
+- All sixteen rigorous default pyperformance suites across baseline/current GIL/FT and enabled/disabled policies, after agreed dependency compatibility work and repeated all-program readiness checks. Diagnostic runs and partial failed suites do not satisfy this requirement.
+- Optimized feature-off controls for compile-time overhead.
 - First-use pool startup latency, reported separately; pool memory use.
 - Per-worker phase counters in FT `get_parallel_stats()` (today FT reports no
   per-worker list) to attribute the open regressions.

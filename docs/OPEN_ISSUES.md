@@ -3,7 +3,7 @@
 Known defects, hypotheses, review decisions and landing blockers. The project
 does not claim landing readiness. Status reconciled against CPython
 `c67363fa59` on 12 October 2026, with performance defects added on 15 October
-and local integration repairs recorded on 16 October 2026. The full historical
+and local integration repairs recorded on 16 October 2026, with current measurement/compatibility evidence added on 17 October. The full historical
 audit text, with original findings and reproducers,
 is `AUTIT-TODO.md` (removed; `git show 724b74b:AUTIT-TODO.md`).
 
@@ -111,7 +111,7 @@ recomputation, with mutation checks and sanitizer evidence
 Remaining: FT debug's startup assertion has a signedness warning; GIL
 feature-off has an unused `move_unreachable` label. Both predate integration.
 Other weak page-assignment/test stubs still need audit. The new GCC/Clang
-workflow is unrun on the hosted source pair and gates unused functions and
+workflow's current hosted outcomes are unavailable; it gates unused functions and
 variables, not all warnings. *Accept:* no project-introduced warnings in GIL,
 FT and feature-off builds; each removal proven unreachable; tests exercise
 production paths; cleanup remains separate from behaviour changes.
@@ -160,6 +160,14 @@ is not execution evidence.
 Evidence: [PERFORMANCE.md](PERFORMANCE.md) §4 and
 [scaling review](reviews/2026-10-15-claude-scaling-review.md) §7–8 (where P1–P3
 appear as D1–D3).
+
+### Latest integration measurements and benchmark readiness
+
+The [completed 16–17 October source comparison, §4.1](PERFORMANCE.md) does not establish performance neutrality. In FT, all eight module-rooted controlled collections are slower in both halves (+18.72% to +34.81%); module-cache mixed throughput decreases −7.41%. GIL also records negative results, often accompanied by serial-control movement. These need focused repetition before causal claims; they do not authorize collector changes.
+
+Full-default pyperformance is blocked by dependency compatibility, not reported complete from a passing subset. All-program checks find Dask/Cloudpickle and Genshi API errors in both modes; Coverage, dulwich_log, Sphinx and both SQLAlchemy variants additionally load native extensions that enable the GIL in FT. The attestation rejects those runs. Failures match baseline/current and enabled/disabled. [Evidence and pending dependency decision](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md). No dependency repair, workload exclusion or unsafe runtime override has been made.
+
+### Previously recorded performance findings
 
 | ID | State | Issue |
 |----|-------|-------|
@@ -235,12 +243,12 @@ Design discussion is not blocked on these; landing is.
 | Gate | State |
 |------|-------|
 | GIL and FT ASan/TSan | Local focused selections pass; phase allocation failures untested. |
-| Linux AArch64 correctness and performance | Six local focused configurations pass after integration; GIL/FT ASan/TSan selections pass at the verifier commit. Full suites and matched-harness PGO+LTO comparisons remain pending. |
-| Linux hosted CI and Windows | Earlier successes reported for `38730251690`, `38730312362` and `38730315605`; their detailed evidence needs examination. No hosted run validates the integrated source pair (VALIDATION.md). |
+| Linux AArch64 correctness and performance | Four fresh baseline/current optimized GIL/FT builds and selected tests pass; complete project ABBA records negative results needing follow-up. GIL/FT ASan/TSan selections pass at the verifier commit. Full-suite/hosted evidence remains separate. |
+| Linux hosted CI and Windows | Earlier successes reported for `38730251690`, `38730312362` and `38730315605`; their detailed evidence needs examination. Integrated-source dispatches reported, but current source artifacts and outcomes are unavailable (VALIDATION.md). |
 | Native macOS active collector | First run built all four ARM64 configurations, then failed before tests due to the executable path; workflow corrected. Rerun `38880079592` feature-off passes reported; final feature-on outcomes unconfirmed. |
 | Source failure policies | A5, A6, A7, A8, A12 open. |
 | Performance limits and adaptation | Review-work criteria recorded for discussion (PERFORMANCE.md §6); root-placement weaknesses P1–P4 open (experiments dropped); P5–P6 open; no convergence claim. |
-| Current GIL full pyperformance | Pending; focused SQLite neutral. |
+| Current full default pyperformance | Incomplete for both modes: two API failures in GIL, those plus five GIL-fallback failures in FT. Dependency work needs agreement; no programs silently excluded. Older focused SQLite results do not validate this comparison. |
 | Optimized feature-off controls | Pending. |
 | First-use latency and memory | Not measured. |
 | Extension compatibility and provenance | Pending. |

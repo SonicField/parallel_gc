@@ -6,11 +6,11 @@ Prepare a reproducible starting place for Matt and Pablo to understand, build,
 test and discuss parallel GC. This is an informal engineering review, not a
 formal PR or a claim of landing readiness.
 
-Alex authorized execution on 12 October 2026. Leave this documentation work
-uncommitted for evening review. Alex performs remote pushes. Collector source,
-benchmark programs and raw measurements are outside this documentation pass.
+Alex authorized the original documentation pass on 12 October 2026, initially leaving it uncommitted for evening review. He subsequently approved discrete local commits. Alex performs remote pushes. Collector source, benchmark programs and raw measurements are outside a documentation-only pass; later validation work has its own evidence records.
 
-## Baseline and authority
+## Original documentation baseline and authority
+
+The hashes below identify the 12 October baseline, not the current checkout. Use the parent gitlink and [VALIDATION.md](VALIDATION.md) for source selection and current evidence.
 
 - Parent: `ce6dcecbdf1ed6fa8270ea1928cd1e339262a784`, branch `main`.
 - CPython: `c67363fa59543ef5d572383af927f1cff88514a1`, branch
@@ -31,7 +31,7 @@ remain proposals. Earlier results must retain their original provenance.
 | 1 | Establish source, evidence and publication state. | Exact revisions, local commits, CI limits and remaining defects are recorded. | Complete locally |
 | 2 | Add one reviewer entry page. | A reader can identify the repositories, design intent, reading order, evidence and open issues without conversation history. | Complete |
 | 3 | Reconcile lifecycle and adaptation descriptions. | Parent review documents describe lazy GIL/FT startup, warning/fallback/retry, child recovery and the deliberate FT parallel-only search consistently. | Complete |
-| 4 | Select and reconcile the discussion draft. | One draft remains; its lifecycle, evidence and limitations agree with the implementation. Superseded drafts are removed and the README links the starting point near the top. | Complete; uncommitted |
+| 4 | Select and reconcile the discussion draft. | One draft remains; its lifecycle, evidence and limitations agree with the implementation. Superseded drafts are removed and the README links the starting point near the top. | Complete; committed `9449cea` |
 | 5 | Reconcile audit, source inventory and readiness records. | Repaired items cite evidence; unresolved defects and landing gates remain visible; informal review does not require completion of all landing work. | Complete |
 | 6 | Reconcile benchmark and testing entry points. | Current summaries link exact raw evidence, retain regressions and exclusions, and label earlier CI correctly. | Complete |
 | 7 | Verify and record the handoff. | Active local links resolve, documentation diffs pass whitespace checks, source/benchmarks/results are unchanged, and publication steps are explicit. | Complete locally |
@@ -61,7 +61,7 @@ git -C cpython push origin \
 git push origin refs/heads/main:refs/heads/main
 ```
 
-From the development host, trigger the three parent workflows with HTTPS:
+From the development host, trigger the matrix and three platform workflows with HTTPS:
 
 ```bash
 HTTPS_PROXY=http://fwdproxy:8080 \
@@ -77,6 +77,11 @@ gh workflow run full-cpython-tests.yml \
 HTTPS_PROXY=http://fwdproxy:8080 \
 HTTP_PROXY=http://fwdproxy:8080 \
 gh workflow run windows-parallel-gc.yml \
+    --repo SonicField/parallel_gc --ref main
+
+HTTPS_PROXY=http://fwdproxy:8080 \
+HTTP_PROXY=http://fwdproxy:8080 \
+gh workflow run macos-parallel-gc.yml \
     --repo SonicField/parallel_gc --ref main
 ```
 
@@ -222,3 +227,13 @@ recorded the failure without claiming tests passed. The intended falsifiable
 next step is a hosted rerun that gets past configuration verification and
 executes the selected tests. No collector code, test selection or benchmark
 implementation was changed.
+
+### 17 October 2026: integration evidence and unresolved completion
+
+Four fresh baseline/current GIL/FT PGO+LTO builds and selected tests passed. The repaired full project benchmark completed all eight ABBA legs. GIL and FT source comparisons record negative findings rather than a neutrality claim; the FT module-rooted controlled collections are consistently slower in both halves. [PERFORMANCE.md §4.1](PERFORMANCE.md) links both complete reports and their raw evidence.
+
+The first corrected full-default pyperformance suite failed Dask and Genshi. All eight subsequent all-program compatibility checks reproduce these failures; FT additionally rejects five programs whose native dependencies enable the GIL. Evidence commits `cf7ac42` and `10015cf` preserve complete logs, partial results and the diagnostic scope. No dependencies or collector logic were repaired, no programs omitted, and no GIL-mode check bypassed. Dependency compatibility work awaits agreement; the sixteen rigorous comparisons remain incomplete.
+
+Alex reported publication and new hosted dispatches for the integrated source, but current run IDs, source artifacts and job outcomes remain unavailable. Earlier platform passes do not satisfy this checkpoint. The main README, validation, performance and open-issue records now distinguish historical benefit measurements, completed integration measurements, diagnostic failures and missing CI evidence. This reconciliation is a documentation step, not completion of the tests/benchmarks/handoff goal.
+
+Local documentation verification: all 74 local links across the five changed Markdown files resolve to tracked files/directories; code fences balance and all nine Bash examples pass `bash -n` without executing them. Quoted counts, ranges and paired percentages match the preserved GIL/FT machine analyses. The first numerical checker used the wrong row-kind spelling (`controlled` instead of the recorded `controlled_collection`) and failed; the corrected check passes without changing data or quoted results. `git diff --check` passes. Collector source, submodule pointers, benchmark code and raw results are unchanged by this documentation diff.

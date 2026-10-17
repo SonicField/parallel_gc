@@ -18,6 +18,8 @@ claim of readiness to land. The
 under Alex Turner's guidance using
 [Verifiable Practice](https://github.com/SonicField/verifiable-practice).
 
+**Validation checkpoint, 17 October 2026:** Four fresh optimized baseline/current GIL/FT builds and selected local tests passed. Full project ABBA comparisons are recorded, including negative results; performance neutrality is not established. Full-default pyperformance comparisons are incomplete because of dependency API errors and FT extensions enabling the GIL. Current hosted CI outcomes remain unverified. Start with [Validation](docs/VALIDATION.md) and [the integration comparison, §4.1](docs/PERFORMANCE.md), not an older green run or aggregate speedup.
+
 ## Start here
 
 | Question | Read |
@@ -80,6 +82,10 @@ transactional startup with serial fallback, and fork recovery that leaves the
 child armed without helpers.
 
 ## Performance summary
+
+The completed 16–17 October comparison asks whether integration changed the baseline implementation, using the repaired benchmark on both source revisions. It is not a new estimate of parallel-versus-serial benefit. GIL has lower throughput in four of eight sustained cases and longer controlled collection time in thirteen of sixteen; several serial controls also move. FT has consistently slower module-rooted controlled collections (+18.72% to +34.81%) and module-cache mixed throughput −7.41%. Attribution remains unresolved. [Full results and limitations, §4.1](docs/PERFORMANCE.md).
+
+The following serial/parallel results are historical, measured before the integration:
 
 PGO+LTO, one 72-logical-CPU AArch64 host; GIL collector `669ed6b17e`, FT
 collector `195830171f`. Full tables and negative results:
