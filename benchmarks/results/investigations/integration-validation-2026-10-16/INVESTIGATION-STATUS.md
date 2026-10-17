@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. The four GIL project legs and their analysis are complete; FT legs 1–3 are preserved and closing baseline leg 4 is running. Hosted CI dispatched by Alex, run IDs pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. All eight project legs and both source analyses are complete. First pyperformance preparation failed for a missing Rust toolchain; the controller continues its remaining attempts. Hosted CI dispatched by Alex, run IDs pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -140,6 +140,18 @@ Second candidate FT leg 3 ran from 02:27:00 to 04:03:07 UTC on 17 October (96 mi
 
 All four fingerprint checks passed and closing baseline FT leg 4 started. The analysis command still refuses a complete comparison because its result is absent. The closing leg, pyperformance campaigns, hosted-CI evidence and final handoff reconciliation remain required. No throughput or latency source-effect conclusion is inferred from three legs.
 
+### Complete corrected FT project ABBA
+
+Closing FT baseline leg 4 ran from 04:03:07 to 05:37:40 UTC on 17 October (94 minutes 33 seconds). All four FT legs, original/Git-copy hashes and the reproducible 72-row machine analysis are preserved. Source-order, build-mode, configuration, placement, complete-workload, five-sample and generated-member count checks pass. The [full FT results](FT-PROJECT-RESULTS.md) record five of eight lower sustained throughputs and ten of sixteen longer controlled collections. Seven mean callback changes are positive; frame mixed is +0.0023%, while the other six increases range from +1.57% to +14.36%. No significance or acceptance threshold is assigned.
+
+The strongest negative pattern is module-rooted controlled collection: all eight shapes are slower in both halves, with overall increases of +18.72% to +34.81%, not generally mirrored by serial controls. Module-cache mixed throughput decreases −7.41% in both halves while its serial control increases +0.54%. These observations require focused follow-up; no collector-specific cause or automatic repair is asserted. All samples, variation, both halves, serial controls, collection counts and callback-time fractions are preserved. Neither source comparison establishes performance neutrality.
+
+### Pyperformance preparation failure
+
+The controller verified all four fingerprints and started GIL enabled rigorous binary ABBA at 05:37:40 UTC. Its baseline environment preparation failed before the first suite. The default selection includes `fastapi==0.121.0`; its allowed dependency resolution selected `pydantic==2.14.1` and `pydantic-core==2.50.1`. No Python 3.16 AArch64 wheel was selected, so pip attempted a source build. Maturin's bootstrap reported Rust absent and tried downloading `rustup-init` from `static.rust-lang.org`; its HTTP client failed with network unreachable. The complete failure remains in scratch `results/pyperformance/gil-enabled.log`. This is a dependency/toolchain preparation failure, not a measured collector regression or completed pyperformance suite.
+
+As designed, the controller records the failed status and continues the remaining enabled/disabled GIL/FT attempts rather than silently excluding that workload. Inspect available toolchains before choosing a repair; do not narrow the promised default suite or claim completion from a partially prepared environment. Current hosted CI capture remains absent.
+
 ### Goal continuation: completion requirements and current evidence
 
 The handoff objective remains all planned tests and benchmark campaigns, followed by evidence commits and a core-developer discussion starting point. The preceding status turn was a verified wait: the specific old measurement and queued build/campaign processes are still live. No completed requirement is inferred from a plan or a successful older run.
@@ -152,9 +164,9 @@ The handoff objective remains all planned tests and benchmark campaigns, followe
 | Linux full CPython suite | Manual dispatch reported; outcomes unknown | Both GIL/FT feature-on full default suites, exact source pair, failures/reruns/skips |
 | Windows regression workflow | Manual dispatch reported; outcomes unknown | Both x64 GIL/FT feature-on jobs, focused collector/parent tests and full CPython suites |
 | macOS regression workflow | Manual dispatch reported; outcomes unknown | Four build modes/controls; focused collector/parent tests; full GIL/FT feature-on suites; runner architecture |
-| Project full ABBA | All four GIL legs complete and analysed; FT legs 1–3 preserved and closing baseline leg 4 running; old attempt kept separate | Closing FT invocation remains; preserve both variants and all run-level data/count checks |
-| pyperformance full comparisons | Not started | Four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
-| Analysis and handoff commits | GIL data/writeup preserved; FT, pyperformance and hosted-CI reconciliation pending | Remaining per-workload changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
+| Project full ABBA | Complete: all four GIL and four FT legs preserved and analysed; old attempt kept separate | Eight-leg data, hashes and complete analyses are preserved; negative observations still require follow-up rather than a neutrality claim |
+| pyperformance full comparisons | First GIL enabled preparation failed before a suite; controller continues remaining attempts | Repair preparation, then complete four rigorous enabled/disabled × GIL/FT binary-ABBA campaigns; all raw legs, attestation, program set, failures and source/binary provenance |
+| Analysis and handoff commits | GIL and FT data/writeups preserved; pyperformance and hosted-CI reconciliation pending | Remaining pyperformance changes/controls and uncertainty; final VALIDATION/PERFORMANCE links; tracked worktrees clean; publication commands for local commits |
 
 Direct GitHub read access returned a destination-filter denial. Alex was asked to capture the current run listing in `/tmp/alex-ci-current.json`; no remote status is inferred while waiting. `git diff ff6710f HEAD` confirms the published checkpoint's collector tests, benchmark implementation and workflows are unchanged by the subsequent local preflight/evidence commits; its CPython gitlink is the intended `388fd5bb46`. Job-specific source artifacts still need verification.
 
@@ -164,4 +176,4 @@ Build provenance also distinguishes the version tag from source cleanliness. CPy
 
 ## Verdict
 
-GIL project measurement and analysis are complete, with the negative observations and unresolved attribution documented. FT, pyperformance and current hosted CI remain pending. Handoff is not complete.
+GIL and FT project measurements and analyses are complete, with negative observations and unresolved attribution documented. Pyperformance preparation has failed; its completed campaigns and current hosted CI remain unverified. Handoff is not complete.

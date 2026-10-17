@@ -1,6 +1,6 @@
 # Corrected full-project campaign legs
 
-These are complete individual invocations of the unchanged full project suite. The four GIL legs form a complete source ABBA; FT currently has only its first leg. Only combine legs from the corrected four-build campaign. Do not substitute data from the earlier builds without native decimal.
+These are complete individual invocations of the unchanged full project suite. Both GIL and FT now have complete four-leg source ABBAs. Only combine legs from the corrected four-build campaign. Do not substitute data from the earlier builds without native decimal.
 
 ## GIL leg 1: baseline
 
@@ -96,3 +96,18 @@ The original has 65,695 bytes; the Git copy adds only its terminal newline, givi
 - Git-copy SHA-256: `eefa804e31d4bd9964b05d4faf39818658dcb606ea8f26778f19fcb58d3b562e`.
 
 The original has 65,667 bytes; the Git copy adds only its terminal newline, giving 65,668 bytes. Its original-length prefix was byte-compared against the original. The controller checked all four fingerprints and started closing baseline FT leg 4. Three legs are not a complete source ABBA; the analysis command still refuses the missing closing result.
+
+## FT leg 4: baseline
+
+[Complete measurement data](ft-4-baseline.json).
+
+- CPython source: `c67363fa59543ef5d572383af927f1cff88514a1`, recorded clean.
+- Recorded parent checkpoint: `70b7842375d3389df68735db72b053e4a71dc057`, recorded dirty during preceding evidence work. The dirty metadata remains preserved; the project implementation and four controller fingerprints remained unchanged.
+- Launcher timestamps: 17 October 2026, 04:03:07 to 05:37:40 UTC (94 minutes 33 seconds).
+- Complete four-leg validation passes: source order, harness build-mode spelling, standard configuration, affinity/NUMA placement, workload coverage, five finite samples per arm and matching generated-member count sequences.
+- Original scratch-file SHA-256: `709789f050da97d41314c4aef07976745d6d1ee917948d89dd21050437c5f0d8`.
+- Git-copy SHA-256: `3d05090376f15ddd89358a03e4049ac91d40484cd53f1496f0c779ecebf2c911`.
+
+The original has 65,670 bytes; the Git copy adds only its terminal newline, giving 65,671 bytes. Its original-length prefix was byte-compared against the original. The controller checked all four fingerprints and started the GIL enabled pyperformance preparation. That preparation failed before a suite because the Rust-dependent `pydantic-core` package could not obtain its toolchain; the failure is not a performance result.
+
+The full FT source ABBA and analysis are complete. See [results and interpretation](../FT-PROJECT-RESULTS.md) and [all analysis rows](../ft-source-analysis.json). The consistently slower controlled module-rooted collections and reduced module mixed throughput remain unresolved. Completed project measurements do not establish performance neutrality or finish the separate pyperformance and hosted-CI requirements.

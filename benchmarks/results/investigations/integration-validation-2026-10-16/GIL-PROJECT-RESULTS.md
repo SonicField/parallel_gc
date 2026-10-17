@@ -1,5 +1,7 @@
 # GIL integrated-build comparison: complete project ABBA
 
+The subsequently completed [FT comparison](FT-PROJECT-RESULTS.md) is separate; the pending-FT references below describe the checkpoint when this GIL report was first recorded.
+
 ## Outcome
 
 This comparison records lower parallel-mode throughput in four of eight sustained cases, larger mean callback durations in six of eight cases, and longer controlled `gc.collect()` times in thirteen of sixteen cases. It does not establish performance neutrality. Several changes also appear in the serial controls, and some ABBA halves disagree. These observations do not establish that the collector integration caused the changes.
