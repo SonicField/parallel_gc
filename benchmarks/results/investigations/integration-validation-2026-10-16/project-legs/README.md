@@ -1,6 +1,6 @@
 # Corrected full-project campaign legs
 
-These are complete individual invocations of the unchanged full project suite, not yet a complete source ABBA. Only combine legs from the corrected four-build campaign. Do not substitute data from the earlier builds without native decimal.
+These are complete individual invocations of the unchanged full project suite. The four GIL legs form a complete source ABBA; FT currently has only its first leg. Only combine legs from the corrected four-build campaign. Do not substitute data from the earlier builds without native decimal.
 
 ## GIL leg 1: baseline
 
@@ -55,3 +55,18 @@ The original has 65,677 bytes; the Git copy adds only its terminal newline, givi
 The original has 65,727 bytes; the Git copy adds only its terminal newline, giving 65,728 bytes. Its original-length prefix was byte-compared against the original. The measurement/preflight fingerprints passed again before FT began.
 
 The full GIL source ABBA is now complete. See [results and interpretation](../GIL-PROJECT-RESULTS.md) and [all analysis rows](../gil-source-analysis.json). Completing the measurement does not establish performance neutrality or release acceptance. Four FT legs, separate pyperformance campaigns and current hosted CI verification remain required.
+
+## FT leg 1: baseline
+
+[Complete measurement data](ft-1-baseline.json).
+
+- CPython source: `c67363fa59543ef5d572383af927f1cff88514a1`, recorded clean.
+- Recorded parent checkpoint: `3f7de2f28ba541dbe55aae39e4fa4da2604c4c1e`, recorded dirty while the closing GIL data/writeup was being prepared. This metadata is preserved; it is not relabeled as a clean parent checkpoint. The project benchmark, launch driver and preflight fingerprints remained unchanged.
+- Launcher timestamps: 16 October 2026, 23:17:25 to 17 October, 00:51:50 UTC (94 minutes 25 seconds).
+- All eight sustained and sixteen controlled comparisons contain five finite, nonnegative samples per arm. Standard configuration, clean baseline CPython content, compiled FT flags, affinity 0–31 and the established NUMA policy pass inspection. Each controlled serial/parallel pair has identical positive generated-member counts.
+- Original scratch-file SHA-256: `9f5d9415fc1c7326db5c9c2d630e1caa659790d8153247b873cb2ec4f5aeca67`.
+- Git-copy SHA-256: `66f1d4a98ffe2fdad4854a92073c9f8ccb00327ccfcf2a93e3819309b9480681`.
+
+The original has 65,646 bytes; the Git copy adds only its terminal newline, giving 65,647 bytes. Its original-length prefix was byte-compared against the original. The controller checked all three initial measurement/preflight fingerprints and the subsequently frozen pyperformance hook, then started candidate FT leg 2. The project suite does not use that hook.
+
+This is one FT leg, not a source comparison. The analysis command refuses the incomplete campaign because candidate leg 2's result is absent. Three more FT legs remain required. Inspection also exposed a spelling mismatch in the separate analysis tool's artificial FT fixture: the real harness records `free-threaded`, not the launcher's `ft` label. That analysis-only correction must be tested separately; do not change measured metadata or benchmark code to satisfy the analyser.
