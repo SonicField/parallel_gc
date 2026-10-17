@@ -70,3 +70,16 @@ The full GIL source ABBA is now complete. See [results and interpretation](../GI
 The original has 65,646 bytes; the Git copy adds only its terminal newline, giving 65,647 bytes. Its original-length prefix was byte-compared against the original. The controller checked all three initial measurement/preflight fingerprints and the subsequently frozen pyperformance hook, then started candidate FT leg 2. The project suite does not use that hook.
 
 This is one FT leg, not a source comparison. The analysis command refuses the incomplete campaign because candidate leg 2's result is absent. Three more FT legs remain required. Inspection also exposed a spelling mismatch in the separate analysis tool's artificial FT fixture: the real harness records `free-threaded`, not the launcher's `ft` label. That analysis-only correction must be tested separately; do not change measured metadata or benchmark code to satisfy the analyser.
+
+## FT leg 2: candidate
+
+[Complete measurement data](ft-2-candidate.json).
+
+- CPython source: `388fd5bb46fdda6b464db566faf818505c3d6eef`, recorded clean.
+- Recorded parent checkpoint: `68e32f522427bf34ab19990c8482e3038d3a5018`, recorded dirty during the preceding leg's evidence work. Preserve the dirty metadata; the project benchmark and all four controller fingerprints remained unchanged.
+- Launcher timestamps: 17 October 2026, 00:51:50 to 02:27:00 UTC (95 minutes 10 seconds).
+- All eight sustained and sixteen controlled comparisons contain five valid samples per arm. Standard configuration and affinity/NUMA placement match FT baseline leg 1; all controlled generated-member count sequences match baseline in both serial and parallel arms.
+- Original scratch-file SHA-256: `fcb25415eff9be92519b6117b6c69b9467ee1ab7ebd3bf6fc16f6081c9496757`.
+- Git-copy SHA-256: `8de3ad44de718ef803f365744c7366b4211fb28eb10ba241ac99ad60efdc9d33`.
+
+The original has 65,695 bytes; the Git copy adds only its terminal newline, giving 65,696 bytes. Its original-length prefix was byte-compared against the original. The controller checked all four fingerprints and started the second candidate FT invocation, leg 3. The analysis command still refuses the incomplete campaign because that result is absent. The initial FT source pair supplies only the first ABBA half; two closing legs remain required before a source-effect report.
