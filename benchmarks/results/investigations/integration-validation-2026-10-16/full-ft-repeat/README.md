@@ -29,7 +29,7 @@ The first completed document contains all eight sustained comparisons and sixtee
 
 The existing complete-project analyser refuses this actual unfinished root, returning exit 1 with no JSON because leg 2 is absent. Its refusal is preserved. No missing leg was manufactured or comparison reported from the baseline-only data.
 
-A host process-name/CPU snapshot is an observation at launch, not evidence of continuous complete machine isolation. No other project measurement was observed at launch. Evidence validation and archiving use spare CPU 32; no builds or competing benchmark campaigns run during measurement.
+A host process-name/CPU snapshot is an observation at launch, not evidence of continuous complete machine isolation. No other project measurement was observed at launch. Numerical validation runs use spare CPU 32; lightweight artifact copying and hash checks were not affinity-pinned. No builds or competing benchmark campaigns run during measurement.
 
 ## Completion and replay
 
