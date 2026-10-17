@@ -1,6 +1,6 @@
 # Investigation: integrated-source CI and performance
 
-**Status:** Four corrected optimized builds and supplementary local tests passed. Both current modes also have passing full physical-source debug runs; an earlier GIL environment leak remains unexplained. All eight project legs and both source analyses are complete. The first corrected default pyperformance suite failed Dask and Genshi. Eight all-program diagnostic checks now show two failing programs in GIL and seven in FT, matching baseline/current and enabled/disabled. The full benchmark campaign is stopped and evidence preserved. Dependency changes await agreement; hosted CI run IDs remain pending.
+**Status:** Four corrected optimized builds and supplementary local tests passed. Both current modes also have passing full physical-source debug runs; an earlier GIL environment leak remains unexplained. All eight original project legs and both source analyses are complete. A focused FT collection ABBA does not reproduce the broad slowdown; an unchanged full FT repeat is now running. The first corrected default pyperformance suite failed Dask and Genshi. Eight all-program diagnostic checks show two failing programs in GIL and seven in FT, matching baseline/current and enabled/disabled. Pyperformance is stopped and evidence preserved. Dependency changes await agreement; hosted CI run IDs remain pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
 **Decision informed:** What must be investigated before handing this checkpoint to core developers. This is not a release acceptance verdict.
@@ -217,6 +217,26 @@ Prepared an external diagnostic wrapper and validator test-first, committed sepa
 [Four complete focused FT legs](focused-collections/RESULTS.md) ran 09:49:04–09:52:47 UTC on 17 October, baseline–current–current–baseline, with the same optimized binaries, all sixteen controlled cases and unchanged per-case parameters. All checks and final source/binary/driver fingerprints pass; generated-member sequences match both arms, all focused legs and the original full comparison. A separate arithmetic calculation verifies both source means, overall change and both halves in both arms for every case.
 
 The broad module-rooted slowdown did not reproduce: five module means decrease, three increase +0.34% to +1.32%, and only web-server increases in both halves. Frame layered changes −4.82%, with opposing halves, rather than repeating its original both-halves increase. Five frame cases still have higher overall means and are reported. This diagnostic omits preceding sustained workloads and imports the benchmark as a normal module rather than `__main__`. It is inconclusive about cause and does not erase the full suite's negative observations or establish neutrality. The controller completed, with no benchmark left running. Next is an unchanged full FT repeat, not a collector change. Dependency approval and current hosted CI capture remain missing.
+
+### Unchanged full FT repeat launched
+
+After committing the focused outcome as `ebdba89`, launched a new full FT baseline–current–current–baseline sequence at 09:58:22 UTC on 17 October. It uses the same original `gc_perf_benchmark.py` entry point and unchanged `--full --include-synthetic --json` parameters, including the preceding mixed and sustained phases omitted by the focused diagnostic. This tests whether the original negative pattern recurs in the original invocation context. No collector or benchmark source changed; no threshold, worker-count pin or workload exclusion was introduced.
+
+Both existing FT binaries pass their original hashes and complete native/runtime preflights; both source worktrees are clean at the fixed source pair. Baseline leg 1 is independently observed live. Execution session is 74721; separate scratch root is `/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT`. No repeat leg is complete at this entry. Preserve this campaign separately from the original full results and focused results; do not infer completion or performance from its launch.
+
+Each leg runs from the parent root with affinity 0–31 and NUMA CPU/memory node 0, followed by source/binary/benchmark/analysis fingerprint checks. The controller calls the existing complete-project analyser only after all four JSONs exist. Parent/native/host provenance is retained; a process-name/CPU snapshot is an observation at launch, not proof of continuous host isolation. No other project measurement was observed at launch. Previous full FT legs took six hours twenty minutes; this is a timing estimate for the repeat, not a result.
+
+Core measurement command within the four-source loop:
+
+```bash
+numactl --cpunodebind=0 --membind=0 taskset -c 0-31 \
+    "$repeat_build_root/$repeat_revision-ft/python" \
+    benchmarks/gc_perf_benchmark.py \
+    --full --include-synthetic --json \
+    --output "$repeat_out/ft-$repeat_leg-$repeat_revision.json"
+```
+
+The actual controller redirects each complete stdout/stderr stream to its matching `.log`. `repeat_build_root` is `/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW`; `repeat_out` is the separate root above; the source loop is baseline, candidate, candidate, baseline. The existing analyser runs with `--mode ft` against that root after four complete legs. Remaining pyperformance and hosted-platform requirements are unchanged; this repeat does not replace them.
 
 ### Goal continuation: completion requirements and current evidence
 
