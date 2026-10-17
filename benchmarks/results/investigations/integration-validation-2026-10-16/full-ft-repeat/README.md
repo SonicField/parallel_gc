@@ -8,22 +8,22 @@ Baseline/current/current/baseline use the same existing GCC 11.5 AArch64 PGO+LTO
 
 The question is whether the original negative pattern repeats in the original invocation context. A failed repeat weakens source attribution without erasing old data. A repeat still does not distinguish source from this PGO binary pair; independent rebuilt profiles and generated-code inspection remain possible follow-ups. No acceptance cutoff, significance claim, noise floor or automatic code repair is adopted.
 
-## Completed and live work
+## Completed work
 
 | Leg | Source | Observed state |
 |-----|--------|----------------|
 | 1 | Baseline | Complete, 09:58:22–11:32:48 UTC on 17 October 2026; 94 min 26 sec. Native/source/binary/benchmark checks pass. |
 | 2 | Current | Complete, 11:32:48–13:07:08 UTC on 17 October 2026; 94 min 20 sec. Source/binary/benchmark fingerprints and document checks pass. |
 | 3 | Current | Complete, 13:07:08–14:41:54 UTC on 17 October 2026; 94 min 46 sec. Source/binary/benchmark fingerprints and document checks pass. |
-| 4 | Baseline | Started at 14:41:54 UTC; still running at this record. |
+| 4 | Baseline | Complete, 14:41:54–16:18:26 UTC on 17 October 2026; 96 min 32 sec to final controller completion. All four documents and final analysis checks pass. |
 
-Scratch root: `/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT`. Controller execution session: 74721. Its output is consumed by the live wait cell 569; do not start a second session consumer or restart the benchmark because an observation wait expires. On a process check at 11:32:19 UTC, baseline was active at about 249% CPU and its log had reached the final module-cache mixed workload. It subsequently completed normally. No source-effect conclusion is inferred from one leg.
+Scratch root: `/tmp/parallel-gc-ft-full-repeat-20261017-NZLRWT`. Controller execution session 74721 and wait cell 569 completed with exit 0 at 16:18:26 UTC on 17 October 2026, after six hours twenty minutes four seconds. The closing timestamp includes final fingerprint checks and analysis, not just the last timed workload. `FT_FULL_REPEAT_COMPLETE=1` was observed on that handle; controller and last Python process were then confirmed gone. The earlier live-process observations are historical, not current state. No restart or competing measurement occurred.
 
 Baseline records parent `ebdba89d428d1b0ff53a396edff22390c40b9ae2`, dirty with unrelated untracked directories. The measured benchmark and CPython content remain unchanged, independently checked. Preserve that parent observation; do not call it a clean parent checkpoint. Source is clean, its patch digest empty, and native/runtime preflights pass.
 
 ## Completed-leg checks and evidence
 
-[Evidence](evidence/) preserves the complete baseline leg 1 and current legs 2 and 3 JSONs and logs, both preflights, source revisions, original fingerprints and parent/host provenance. Copies are byte-identical; compressed logs decompress byte-identically to scratch originals. `SHA256SUMS` covers the archives and `ORIGINAL-SHA256SUMS` the decompressed logs. No scratch originals were removed.
+[Evidence](evidence/) preserves all four complete raw JSONs and logs, the complete analysis, both preflights, source revisions, original fingerprints and parent/host provenance. Copies are byte-identical; compressed logs decompress byte-identically to scratch originals. `SHA256SUMS` covers the archives and `ORIGINAL-SHA256SUMS` the decompressed logs. No scratch originals were removed.
 
 The first completed document contains all eight sustained comparisons and sixteen controlled cases, with five valid samples per arm. Standard parameters, source/compiled mode, affinity and NUMA policy match the original full experiment. All controlled generated-member sequences also match the original data in both arms. `leg-1-checks.json` binds those checks to the raw input hash. Counts are generated cluster members, not all supporting GC containers or reclaimed objects.
 
@@ -31,7 +31,9 @@ Leg 2 passes the same single-document checks. Its sixteen controlled generated-m
 
 Leg 3 passes the same checks. All controlled generated-member sequences match the original full data and repeat legs 1 and 2, in both arms. `leg-3-checks.json` binds the checks to its raw input hash. The successful post-leg fingerprints and start of leg 4 were observed on the same controller handle. Three completed legs still do not provide the required complete ABBA comparison.
 
-The preserved complete-project analyser refusal was taken after leg 1, when leg 2 was absent. The repeat still lacks complete leg 4. No missing leg was manufactured or source-effect comparison reported from incomplete data.
+The preserved complete-project analyser refusal was taken after leg 1, when leg 2 was absent. No missing leg was manufactured or source-effect comparison reported from incomplete data. The closing controller now validates all four actual documents: source order, clean source/build mode, original parameters, placement, complete workloads and valid samples pass. All generated-member sequences also match the original full experiment in both arms and all four repeat legs.
+
+The complete report contains 72 rows. A separate calculation from raw samples, using `math.fsum` rather than the analyser's `statistics.mean`, checks 1,584 fields: every per-leg/source mean, source change, both halves and per-leg parallel/serial ratio. Relative tolerance `1e-12` and absolute tolerance `1e-9` check floating-point arithmetic consistency, not performance acceptance. Raw samples and input hashes match. [Complete checks](evidence/complete-checks.json) record the maximum differences and report/input hashes. All twenty-four existing analyser tests pass; the full test log is preserved.
 
 A host process-name/CPU snapshot is an observation at launch, not evidence of continuous complete machine isolation. No other project measurement was observed at launch. Numerical validation runs use spare CPU 32; lightweight artifact copying and hash checks were not affinity-pinned. No builds or competing benchmark campaigns run during measurement.
 
@@ -46,6 +48,6 @@ python3 \
     --mode ft
 ```
 
-After all four documents are archived here, the same command can target `full-ft-repeat/evidence`. Preserve every sample, both halves, serial controls and original/archived hashes. Keep this repetition separate from the original full ABBA and focused diagnostic rather than merging different time windows silently.
+All four documents are archived here, so the same command can target `full-ft-repeat/evidence`. Input path metadata will differ from scratch paths; input content hashes and all result rows must match. Preserve every sample, both halves, serial controls and original/archived hashes. Keep this repetition separate from the original full ABBA and focused diagnostic rather than merging different time windows silently.
 
-Hosted Linux/Windows/macOS evidence and the dependency-blocked sixteen pyperformance suites remain separate incomplete requirements. Three completed repeat legs do not finish this repetition or the handoff goal.
+Hosted Linux/Windows/macOS evidence and the dependency-blocked sixteen pyperformance suites remain separate incomplete requirements. This repetition is complete; that does not finish the handoff goal or establish performance neutrality.

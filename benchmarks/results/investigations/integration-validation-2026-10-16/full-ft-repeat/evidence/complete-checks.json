@@ -1,0 +1,20 @@
+{
+  "scope": "complete-four-leg-FT-source-ABBA-arithmetic-consistency-not-performance-acceptance",
+  "rows": 72,
+  "arithmetic_fields_checked": 1584,
+  "raw_samples_match_report": true,
+  "archive_replay_rows_input_hashes_and_leg_metadata_match": true,
+  "existing_analysis_machinery_tests_passed": 24,
+  "generated_counts_match_original_full_comparison_all_four_legs": true,
+  "relative_rounding_tolerance": 1e-12,
+  "absolute_rounding_tolerance": 1e-9,
+  "maximum_absolute_difference": 9.313225746154785e-10,
+  "maximum_relative_difference": 9.749568399011108e-13,
+  "analysis_sha256": "77242d5fd81b5907d923c76c7d8ea66d63c746597d2ce34d790a6ddfc79768ba",
+  "input_sha256": [
+    "a49d55b640b7a3d3670422de00f404b718cbab02d2e9cf051864aac07fe2c7ca",
+    "322bd4d93dd0b2a4706051b0aa22085c424e3163d0b6acfdd85f01b2b03fb5b9",
+    "8b2f1159c42e59b0fddb5f7263c4a1a45b84ca54a2e20a72ef2ff08422ab2572",
+    "002d5e639508b54f7e1942c0d8078ed1122055ffd44c820f27a86d61fb3c0ef9"
+  ]
+}
