@@ -111,7 +111,7 @@ recomputation, with mutation checks and sanitizer evidence
 Remaining: FT debug's startup assertion has a signedness warning; GIL
 feature-off has an unused `move_unreachable` label. Both predate integration.
 Other weak page-assignment/test stubs still need audit. The new GCC/Clang
-workflow's current hosted outcomes are unavailable; it gates unused functions and
+workflow's 19 October run `39248590252` fails all four Clang configurations on the uncalled GIL `steal_batch_from_worker` wrapper. CPython `b91445e0b9` removes only that definition; all 32 local GCC/Clang GIL/FT debug/release GC-object checks and fresh debug collector tests pass. [Evidence](../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md). Hosted confirmation is still required; the gate covers unused functions and
 variables, not all warnings. *Accept:* no project-introduced warnings in GIL,
 FT and feature-off builds; each removal proven unreachable; tests exercise
 production paths; cleanup remains separate from behaviour changes.

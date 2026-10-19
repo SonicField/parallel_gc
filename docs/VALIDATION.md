@@ -26,6 +26,10 @@ Documentation-only commits do not change those measurements or the CPython
 gitlink. Collector changes need new evidence; a claim that older results still
 apply requires an explicit account of the intervening changes.
 
+## CI repair follow-up: 19 October 2026
+
+Automatic runs `39248590193` and `39248590252` failed for two independently reproduced causes: the parent hook test chose runtime-disabled mode on feature-off builds, and Clang rejected an uncalled GIL wrapper. Parent `d448e16` repairs the probe and passes all 76 harness tests in all four feature-on/off GIL/FT configurations. CPython `b91445e0b9` removes only that wrapper; all 32 GCC/Clang GIL/FT debug/release GC-object compilations pass with the strict unused-code errors intact. Fresh GIL/FT debug builds pass the focused collector and parent harness selections. [Compiler/runtime evidence and limits](../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md). These are local repairs, not hosted confirmation; new CI runs are required. The benchmark results below retain their original tested source identities.
+
 ## Dependency follow-up: 19 October 2026
 
 The [dependency repair plan](../benchmarks/dependency-repair/PLAN.md) records six separately committed repairs in new isolated environments: Cloudpickle, Genshi, Coverage, Dulwich, MarkupSafe and Greenlet. All original benchmark programs and CPython sources remain unchanged. Native extensions are verified; FT runtime attestation is not bypassed. Coverage retains CTracer rather than accepting the newest release's different default engine.
