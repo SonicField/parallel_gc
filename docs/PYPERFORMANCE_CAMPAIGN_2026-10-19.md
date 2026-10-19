@@ -1,0 +1,35 @@
+# Full repaired-dependency pyperformance comparisons
+
+## Question and protocol
+
+Do the integrated changes alter execution time for the original default pyperformance workloads, in GIL or FT, with parallel GC enabled or disabled? The terminal outcome is a complete, reproducible comparison that names regressions and uncertainty, not a passing smoke or a favourable geometric mean.
+
+Four sequential source-ABBA campaigns run GIL disabled, GIL enabled, FT disabled, FT enabled. Each executes baseline, integrated, integrated, baseline: sixteen rigorous suites, each retaining all 100 original programs and the expected 127 named results. Upstream calibration, processes, warmups, values, data and workload options remain unchanged. Workers use CPUs 0–31 and NUMA node 0; unrelated host services are not stopped. Initial host activity is recorded, but continuous exclusive ownership of those cores is not claimed.
+
+The verified GCC 11.5 ARM64 PGO+LTO binaries include parallel-GC PGO training. Their actual sources are baseline `c67363fa59543ef5d572383af927f1cff88514a1` and integrated `388fd5bb46fdda6b464db566faf818505c3d6eef`. They are not rebuilt or relabelled as the latest CI-tested source `b91445e0b95454e32b982770f6e3c864beb5a528`; that later commit removes an uncalled wrapper. Frozen builds avoid introducing another PGO rebuild difference into this comparison.
+
+All four prepared environments use the same dependency versions and repairs. Baseline/integrated package inventories must match within each ABI. SQLAlchemy 1.4.19 uses the approved supported pure-Python implementation on both sides; Coverage uses native CTracer and the other required native extensions remain native. Do not pool these results with historical native-SQLAlchemy measurements. [Complete dependency readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) and [runner verification](../benchmarks/dependency-repair/prepared-execution-evidence/README.md) precede measurements.
+
+## Falsifiers and reporting
+
+A changed binary, source, original benchmark file, hook or prepared dependency invalidates the affected comparison. The controller verifies input fingerprints before and after each campaign; the runner validates executable identity and dependencies before and after each suite. Wrong worker GIL/collector state, missing hook entries, a failed program, mismatched named results or changed recorded work stops the campaign. Earlier raw program results remain available; no incomplete campaign is declared successful.
+
+For each named result, report baseline and integrated leg means and both ABBA half-comparisons, alongside the pooled upstream comparison. Execution-time ratio integrated/baseline has a null value of 1; above 1 is slower, below 1 is faster. Report serial controls beside parallel results. A geometric mean is a summary, not evidence that individual regressions disappeared. Retain variance and upstream stability warnings. Do not infer benefit from a small difference without support from repeated legs; name inconclusive results and rerun disputed ones rather than inventing a universal noise floor.
+
+These are comparisons between sources with runtime policy fixed. They do not directly establish the effect of enabling parallel GC within one unchanged binary, or feature compilation cost against a feature-off build. Those are separate experiments.
+
+## Execution and progress
+
+The CI evidence was committed separately as `2528c5c`. Prepared execution, tests, documentation and smoke evidence were committed as `589ba0c`. The ten new runner tests pass; existing 76-test parent selections pass in GIL and FT. All four original `telco` smoke ABBA campaigns pass. Their short-run timings are not performance evidence. These local checks do not imply that the new runner option has already passed hosted CI.
+
+The full launch command, from `parallel_gc`, is:
+
+```bash
+bash benchmarks/dependency-repair/run_rigorous_campaigns.sh \
+    /data/users/alexturner/parallel_gc \
+    /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW \
+    /tmp/parallel-gc-pyperformance-repaired-20261019-ZKtZmg \
+    /tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full
+```
+
+The output root must not exist. `controller.log` records campaign starts and completions; each mode log names the active program and its index. Per-program JSON survives a failure. `campaign.json` is written only after all four source legs complete. The parent revision, fingerprints, dependencies, raw suites and comparisons are retained for the final report. No performance outcome is asserted by this prospective protocol. The sixteen full suites require substantial time; completion is determined by those records, not an assumed overnight deadline.
