@@ -28,3 +28,7 @@ Do not set `PURE` or accept a wheel without its extensions. Use the same mode-sp
 - Fresh native build logs are `dulwich-strict-ft-fresh-cache.log.gz` and `dulwich-strict-gil-build.log.gz`. Earlier strict failures are retained separately.
 
 The dependency implementation changed from the historical release. New comparisons must use the same Dulwich version and build on both sides; do not combine them with historical 0.20.23 benchmark timings.
+
+## Complete environment consistency
+
+Fresh full environments initially failed `pip check`: Dulwich 1.2.17 requires `urllib3>=2.2.2`, while the historical environment contained 1.26.5. All four fresh environments now use urllib3 2.2.2, the smallest release satisfying that requirement, and pass `pip check`. The commit-walking program and its repository input are unchanged. This transitive dependency change must also be identical across each new comparison.
