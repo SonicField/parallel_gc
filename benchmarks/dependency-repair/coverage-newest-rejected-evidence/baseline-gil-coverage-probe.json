@@ -1,0 +1,1 @@
+{"compiled_gil_disabled": false, "dependency": "coverage", "native_module": "/tmp/parallel-gc-dependency-repair-20261019-uMnz4R/gil/lib/python3.16/site-packages/coverage/tracer.cpython-316-aarch64-linux-gnu.so", "runtime_gil_after": true, "runtime_gil_before": true}
