@@ -20,6 +20,28 @@ SPEC.loader.exec_module(runner)
 
 
 class PreparedExecutionTests(unittest.TestCase):
+    def test_hook_entries_are_checked_per_run_not_only_common_metadata(self):
+        import pyperf
+        first = self.suite().get_benchmark("probe").get_runs()[0]
+        second = self.suite(hook_entries=2).get_benchmark("probe").get_runs()[0]
+        suite = pyperf.BenchmarkSuite([pyperf.Benchmark([first, second])])
+        self.assertNotIn("parallel_gc_hook_entries", suite.get_benchmark("probe").get_metadata())
+        with tempfile.TemporaryDirectory() as directory:
+            filename = Path(directory) / "suite.json"
+            suite.dump(str(filename))
+            self.assertEqual(runner.validate_prepared_result(filename, "disabled", False), ("probe",))
+
+    def test_a_single_run_without_a_hook_invalidates_the_suite(self):
+        import pyperf
+        first = self.suite().get_benchmark("probe").get_runs()[0]
+        second = self.suite(hook_entries=0).get_benchmark("probe").get_runs()[0]
+        suite = pyperf.BenchmarkSuite([pyperf.Benchmark([first, second])])
+        with tempfile.TemporaryDirectory() as directory:
+            filename = Path(directory) / "suite.json"
+            suite.dump(str(filename))
+            with self.assertRaisesRegex(runner.CampaignError, "hook"):
+                runner.validate_prepared_result(filename, "disabled", False)
+
     def suite(self, *, free_threaded=False, gil_enabled=True, hook_entries=1):
         import pyperf
         metadata = {

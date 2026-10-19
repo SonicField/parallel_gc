@@ -338,17 +338,21 @@ def validate_prepared_result(filename, mode, free_threaded):
     names = validate_result(filename, mode)
     suite = pyperf.BenchmarkSuite.load(str(filename))
     for benchmark in suite:
-        metadata = benchmark.get_metadata()
         name = benchmark.get_name()
-        if metadata.get("parallel_gc_build_gil_disabled") is not free_threaded:
-            raise CampaignError(f"{name} recorded the wrong compiled GIL mode")
-        if metadata.get("parallel_gc_runtime_gil_enabled") is not (not free_threaded):
-            raise CampaignError(f"{name} recorded the wrong runtime GIL mode")
-        if metadata.get("parallel_gc_available") is not (mode != "feature-off"):
-            raise CampaignError(f"{name} recorded the wrong collector availability")
-        entries = metadata.get("parallel_gc_hook_entries")
-        if not isinstance(entries, int) or entries <= 0:
-            raise CampaignError(f"{name} has no active measurement hook")
+        # Benchmark metadata contains only fields shared by every run. Hook
+        # entry counts legitimately differ between calibration and measurement.
+        for index, run in enumerate(benchmark.get_runs(), 1):
+            metadata = run.get_metadata()
+            context = f"{name} run {index}"
+            if metadata.get("parallel_gc_build_gil_disabled") is not free_threaded:
+                raise CampaignError(f"{context} recorded the wrong compiled GIL mode")
+            if metadata.get("parallel_gc_runtime_gil_enabled") is not (not free_threaded):
+                raise CampaignError(f"{context} recorded the wrong runtime GIL mode")
+            if metadata.get("parallel_gc_available") is not (mode != "feature-off"):
+                raise CampaignError(f"{context} recorded the wrong collector availability")
+            entries = metadata.get("parallel_gc_hook_entries")
+            if type(entries) is not int or entries <= 0:
+                raise CampaignError(f"{context} has no active measurement hook")
     return names
 
 

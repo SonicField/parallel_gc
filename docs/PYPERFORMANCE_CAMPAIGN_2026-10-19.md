@@ -29,7 +29,7 @@ bash benchmarks/dependency-repair/run_rigorous_campaigns.sh \
     /data/users/alexturner/parallel_gc \
     /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW \
     /tmp/parallel-gc-pyperformance-repaired-20261019-ZKtZmg \
-    /tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full-v3
+    /tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full-v4
 ```
 
 The output root must not exist. `controller.log` records campaign starts and completions; each mode log names the active program and its index. Per-program JSON survives a failure. `campaign.json` is written only after all four source legs complete. The parent revision, fingerprints, dependencies, raw suites and comparisons are retained for the final report. No performance outcome is asserted by this prospective protocol. The sixteen full suites require substantial time; completion is determined by those records, not an assumed overnight deadline.
@@ -37,3 +37,5 @@ The output root must not exist. `controller.log` records campaign starts and com
 The first launch stopped before any benchmark: the tracked `pyperformance/benchmarks` entry is a symlink to a directory, which the file-only fingerprint command rejected. The controller now fingerprints symlink targets explicitly and hashes ordinary tracked files. The failed launch evidence remains in the original `full/` output; measurements use fresh `full-v2/` output. This correction changes provenance collection only.
 
 The second launch revalidated all eight complete readiness contexts and dependency inventories, then stopped before measurements: fingerprint loop variables were global shell variables and changed the outer campaign mode. The function now declares those variables local. The failed evidence remains in `full-v2/`; actual measurements use fresh `full-v3/`. Neither failed launch produced performance results.
+
+The third launch completed the first rigorous `2to3` invocation but its validator rejected varying hook-entry metadata. The 41 original runs have four hook entries in calibration and three in each measured run. pyperf's common metadata deliberately omits fields that differ between runs; absence there does not mean the hook was absent. The corrected validator checks every saved run individually, including calibration, and still rejects any missing/nonpositive entry count or incorrect GIL/collector state. Twelve tests pass, including a varying-entry positive control and a single bad-run negative control; the retained original `2to3` result passes revalidation. No collector, hook, workload or rigorous parameter changed. Failed attempts, logs and the raw result are preserved in [per-run validation evidence](../benchmarks/dependency-repair/per-run-validation-evidence/README.md). The complete source-ABBA campaigns restart in fresh `full-v4/`; the isolated result is not pooled into them.
