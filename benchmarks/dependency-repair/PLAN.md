@@ -26,3 +26,4 @@ Method: [Verifiable Practice](https://github.com/SonicField/verifiable-practice)
 - Greenlet 3.5.6 source declares FT support through `PyUnstable_Module_SetGIL(..., Py_MOD_GIL_NOT_USED)`. Native build and runtime checks remain required.
 - Genshi repair verified while retaining 0.7.7: eight tests pass on all four target binaries and Python 3.12; XML/text benchmarks pass eight short checks (sixteen workload results), with FT GIL-disabled. See [GENSHI.md](GENSHI.md).
 - Coverage 7.6.12 retains CTracer and passes four native probes plus eight original benchmark checks. Newest 7.16.2 was rejected because it defaults to SysMonitor. See [COVERAGE.md](COVERAGE.md).
+- MarkupSafe 3.0.4 passes four native probes and eight original Sphinx checks; Sphinx remains 7.3.7. See [MARKUPSAFE.md](MARKUPSAFE.md).

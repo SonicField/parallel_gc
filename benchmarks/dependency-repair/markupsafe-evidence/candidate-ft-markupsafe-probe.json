@@ -1,0 +1,1 @@
+{"compiled_gil_disabled": true, "dependency": "markupsafe", "native_module": "/tmp/parallel-gc-dependency-repair-20261019-uMnz4R/ft/lib/python3.16t/site-packages/markupsafe/_speedups.cpython-316t-aarch64-linux-gnu.so", "runtime_gil_after": false, "runtime_gil_before": false}
