@@ -244,4 +244,10 @@ The repeat ran all four original full invocations using the same optimized FT so
 
 The original broad module-rooted controlled slowdown does not reproduce: every module case has opposing ABBA halves. Seven frame controlled cases still increase in both halves (+2.43% to +5.91%), and three sustained throughput means decrease. The comparative write-up links the original full, focused and repeated full experiments without pooling them or claiming a repair. The main README, performance, validation and open-issue entry points record the follow-up. Collector and benchmark implementation remain unchanged. Pyperformance dependency agreement, all sixteen rigorous suites and current hosted CI evidence remain outstanding; this is not a completed handoff.
 
+### Dependency repair follow-up, 19 October 2026
+
+Dependency-only work was approved. Six separately committed repairs pass targeted baseline/current GIL/FT checks: Cloudpickle and Genshi compatibility patches; Coverage with CTracer; native Dulwich, MarkupSafe and Greenlet upgrades. The original benchmark programs and CPython are unchanged. [Plan, commands and evidence](../benchmarks/dependency-repair/PLAN.md).
+
+SQLAlchemy's own 1.4 native extensions still enable the GIL in FT. [Its implementation decision](../benchmarks/dependency-repair/SQLALCHEMY.md) remains with Alex; no pure-Python substitution, workload rewrite or unsafe GIL override was made. All-program readiness must be repeated after that decision, then the sixteen rigorous suites. Hosted CI outcomes remain unavailable. This is not a completed handoff.
+
 Write-up verification: all 48 numerical table rows and the three-experiment count/direction summary match the preserved analyses. Across the nine changed documents, 101 local links resolve, code fences balance and thirteen Bash examples pass `bash -n` without execution. `git diff --check` passes. No benchmark parameters or measured data changed in this documentation commit.

@@ -26,7 +26,15 @@ Documentation-only commits do not change those measurements or the CPython
 gitlink. Collector changes need new evidence; a claim that older results still
 apply requires an explicit account of the intervening changes.
 
-## Latest integration checkpoint: 17 October 2026
+## Dependency follow-up: 19 October 2026
+
+The [dependency repair plan](../benchmarks/dependency-repair/PLAN.md) records six separately committed repairs in new isolated environments: Cloudpickle, Genshi, Coverage, Dulwich, MarkupSafe and Greenlet. All original benchmark programs and CPython sources remain unchanged. Native extensions are verified; FT runtime attestation is not bypassed. Coverage retains CTracer rather than accepting the newest release's different default engine.
+
+The original Dask, Genshi XML/text, Coverage, Sphinx and Dulwich programs pass targeted short checks in all eight baseline/current GIL/FT enabled/disabled contexts. Cloudpickle and Genshi correctness tests also pass on all four target binaries and Python 3.12; native dependency probes pass on all four target binaries. These checks are not rigorous performance measurements or a complete repeated default suite.
+
+SQLAlchemy's own 1.4 native extensions still enable the GIL after Greenlet is repaired. The [remaining decision and failed checks](../benchmarks/dependency-repair/SQLALCHEMY.md) are recorded. Full-default readiness and the sixteen rigorous comparisons remain outstanding. The historical failure captures below are preserved, not relabelled as repaired suites. Hosted CI evidence remains unavailable.
+
+## Integration checkpoint: 17 October 2026
 
 The fixed comparison is baseline CPython `c67363fa59543ef5d572383af927f1cff88514a1` against integrated `388fd5bb46fdda6b464db566faf818505c3d6eef`. Both use the repaired parent benchmark, including ownership correction and module-rooted variants. The [integration validation log](../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md) records the protocol, failures, evidence and outstanding requirements. The gitlink above remains the checkout selector; these hashes identify the experiment, not an alternative live pin.
 
