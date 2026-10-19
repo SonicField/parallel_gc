@@ -53,3 +53,7 @@ For each of `gil-disabled`, `gil-enabled`, `ft-disabled`, `ft-enabled`, using a 
 ```
 
 Eight analysis tests pass using real pyperf fixture files. Positive controls check the arithmetic and preserve opposing half-directions; negative controls reject missing legs, changed digests/names, missing original-program output, debug campaigns and a partial inventory. A direct CLI check against the currently incomplete live campaign exits 2 and creates no analysis output. [Verification evidence](../benchmarks/dependency-repair/analysis-verification-evidence/README.md). This analysis preparation does not modify collector code, the measurement runner, hooks, workloads or prepared environments.
+
+## Completed-suite checkpoint — 19 October, 23:33 UTC
+
+The first GIL disabled baseline suite completed all 100 programs and 127 named results. Its saved per-run runtime/hook checks pass. It contains 5,004 measured run records and 15,852 values; these are within-leg measurements, not independent source replications. The combined suite, all per-program files and provenance have been [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md). The first integrated-source leg is running. No four-leg comparison or complete sixteen-suite outcome is claimed by this checkpoint.
