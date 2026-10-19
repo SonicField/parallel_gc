@@ -169,7 +169,7 @@ The [focused FT collection repeat](../benchmarks/results/investigations/integrat
 
 Full-default pyperformance is blocked by dependency compatibility, not reported complete from a passing subset. The 17 October all-program checks find Dask/Cloudpickle and Genshi API errors in both modes; Coverage, dulwich_log, Sphinx and both SQLAlchemy variants additionally load native extensions that enable the GIL in FT. The attestation rejects those runs. Failures match baseline/current and enabled/disabled. [Original failure evidence](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md).
 
-On 19 October, six [dependency-only repairs](../benchmarks/dependency-repair/PLAN.md) pass targeted checks on baseline/current GIL/FT binaries. Benchmark programs and FT checks are unchanged; Coverage retains CTracer, and native builds are verified rather than accepting silent fallback. SQLAlchemy's own 1.4 extensions still enable the GIL; [a pure-Python implementation or separate native compatibility work](../benchmarks/dependency-repair/SQLALCHEMY.md) requires agreement. No workload exclusion or unsafe runtime override has been made. Full all-program readiness and rigorous comparisons remain incomplete.
+On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, producing 127 named results each with zero failures. Benchmark programs and FT checks are unchanged; Coverage retains CTracer, and required native builds are verified rather than accepting silent fallback. Alex approved SQLAlchemy 1.4.19's supported pure-Python implementation consistently across both sources and build modes. All four fresh complete environments pass `pip check`; FT stays GIL-disabled. No workload exclusion or unsafe runtime override has been made. Rigorous comparisons remain incomplete; diagnostic readiness is not performance evidence.
 
 ### Previously recorded performance findings
 
@@ -252,7 +252,7 @@ Design discussion is not blocked on these; landing is.
 | Native macOS active collector | First run built all four ARM64 configurations, then failed before tests due to the executable path; workflow corrected. Rerun `38880079592` feature-off passes reported; final feature-on outcomes unconfirmed. |
 | Source failure policies | A5, A6, A7, A8, A12 open. |
 | Performance limits and adaptation | Review-work criteria recorded for discussion (PERFORMANCE.md §6); root-placement weaknesses P1–P4 open (experiments dropped); P5–P6 open; no convergence claim. |
-| Current full default pyperformance | Incomplete: six dependency-only repairs pass targeted GIL/FT checks; SQLAlchemy's two FT programs still need an implementation decision. Repeated all-program readiness and rigorous comparisons remain outstanding; no programs silently excluded. Older focused SQLite results do not validate this comparison. |
+| Current full default pyperformance | Dependency readiness passes all 100 original programs in all eight contexts, with 127 named results each and no failures. Rigorous performance comparisons remain outstanding. No programs excluded. Older focused SQLite results and the new diagnostic execution checks do not validate performance neutrality. |
 | Optimized feature-off controls | Pending. |
 | First-use latency and memory | Not measured. |
 | Extension compatibility and provenance | Pending. |

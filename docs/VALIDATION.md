@@ -32,7 +32,7 @@ The [dependency repair plan](../benchmarks/dependency-repair/PLAN.md) records si
 
 The original Dask, Genshi XML/text, Coverage, Sphinx and Dulwich programs pass targeted short checks in all eight baseline/current GIL/FT enabled/disabled contexts. Cloudpickle and Genshi correctness tests also pass on all four target binaries and Python 3.12; native dependency probes pass on all four target binaries. These checks are not rigorous performance measurements or a complete repeated default suite.
 
-SQLAlchemy's own 1.4 native extensions still enable the GIL after Greenlet is repaired. The [remaining decision and failed checks](../benchmarks/dependency-repair/SQLALCHEMY.md) are recorded. Full-default readiness and the sixteen rigorous comparisons remain outstanding. The historical failure captures below are preserved, not relabelled as repaired suites. Hosted CI evidence remains unavailable.
+Alex subsequently approved SQLAlchemy 1.4.19's [supported pure-Python build](../benchmarks/dependency-repair/SQLALCHEMY.md). [Repeated complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) passes all 100 original programs in all eight contexts, with 127 named results each and no failures. FT remains GIL-disabled and all four fresh complete environments pass `pip check`. The sixteen rigorous comparisons remain outstanding; diagnostic execution checks are not performance measurements. The historical failure captures below are preserved, not relabelled as repaired suites. Hosted CI evidence remains unavailable.
 
 ## Integration checkpoint: 17 October 2026
 

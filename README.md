@@ -20,7 +20,7 @@ under Alex Turner's guidance using
 
 **Validation checkpoint, 17 October 2026:** Four fresh optimized baseline/current GIL/FT builds and selected local tests passed. Fresh physical-source debug full suites also passed in both current modes; an earlier GIL temporary-file leak remains unexplained. Full project ABBA comparisons are recorded, including negative results; performance neutrality is not established. Full-default pyperformance comparisons are incomplete because of dependency API errors and FT extensions enabling the GIL. Current hosted CI outcomes remain unverified. Start with [Validation](docs/VALIDATION.md) and [the integration comparison, §4.1](docs/PERFORMANCE.md), not an older green run or aggregate speedup.
 
-**Dependency follow-up, 19 October:** Six dependency-only repairs pass targeted baseline/current GIL/FT checks with the original benchmark programs unchanged. SQLAlchemy's own native extensions still enable the GIL in FT; its two programs require an implementation decision before full-default readiness and rigorous comparisons can complete. [Repair plan and evidence](benchmarks/dependency-repair/PLAN.md).
+**Dependency follow-up, 19 October:** Seven dependency-only repairs and complete readiness pass: all 100 original programs execute in all eight baseline/current GIL/FT enabled/disabled contexts, producing 127 named results each with no failures. FT stays GIL-disabled. SQLAlchemy 1.4.19 uses Alex's approved pure-Python build consistently across both sources and build modes. These are execution checks, not performance results; rigorous comparisons remain outstanding. [Full readiness evidence](benchmarks/dependency-repair/full-readiness-evidence/README.md).
 
 ## Start here
 
