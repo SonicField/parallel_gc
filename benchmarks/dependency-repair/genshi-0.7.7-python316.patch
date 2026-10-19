@@ -1,0 +1,48 @@
+--- a/genshi/template/astutil.py
++++ b/genshi/template/astutil.py
+@@ -799,7 +799,10 @@
+         return visitor(node)
+ 
+     def _clone(self, node):
+-        clone = node.__class__()
++        clone = node.__class__(**{
++            name: getattr(node, name) for name in node._fields
++            if hasattr(node, name)
++        })
+         for name in getattr(clone, '_attributes', ()):
+             try:
+                 setattr(clone, name, getattr(node, name))
+--- a/genshi/template/eval.py
++++ b/genshi/template/eval.py
+@@ -61,11 +61,9 @@
+                 'Expected string or AST node, but got %r' % source
+             self.source = '?'
+             if self.mode == 'eval':
+-                node = _ast.Expression()
+-                node.body = source
++                node = _ast.Expression(body=source)
+             else:
+-                node = _ast.Module()
+-                node.body = [source]
++                node = _ast.Module(body=[source])
+ 
+         self.ast = node
+         self.code = _compile(node, self.source, mode=self.mode,
+@@ -456,7 +454,7 @@
+ 
+ 
+ def _new(class_, *args, **kwargs):
+-    ret = class_()
++    ret = class_(**dict(zip(class_._fields, args), **kwargs))
+     for attr, value in zip(ret._fields, args):
+         if attr in kwargs:
+             raise ValueError('Field set both in args and kwargs')
+@@ -461,7 +459,7 @@
+         if attr in kwargs:
+             raise ValueError('Field set both in args and kwargs')
+         setattr(ret, attr, value)
+-    for attr, value in kwargs:
++    for attr, value in kwargs.items():
+         setattr(ret, attr, value)
+     return ret
+ 
