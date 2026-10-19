@@ -1,0 +1,4 @@
+GIL before import: False
+<frozen importlib._bootstrap>:543: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'sqlalchemy.cimmutabledict', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+SQLAlchemy version: 1.4.54
+GIL after import: True

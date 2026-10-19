@@ -29,3 +29,4 @@ Method: [Verifiable Practice](https://github.com/SonicField/verifiable-practice)
 - MarkupSafe 3.0.4 passes four native probes and eight original Sphinx checks; Sphinx remains 7.3.7. See [MARKUPSAFE.md](MARKUPSAFE.md).
 - Greenlet 3.5.6 passes four native probes including a context switch. SQLAlchemy's own 1.4 native extensions still enable the GIL; its two FT benchmark programs remain blocked. See [GREENLET.md](GREENLET.md).
 - Dulwich 1.2.17 strict native builds pass four probes and eight original commit-walking benchmark checks. Optional pure-Python fallback was rejected. See [DULWICH.md](DULWICH.md).
+- Decision required for SQLAlchemy: latest 1.4 native extensions also enable the GIL; 2.x removes APIs used by the original imperative workload. A supported pure-Python 1.4 build would preserve benchmark code but change its implementation. Not executed without agreement. See [SQLALCHEMY.md](SQLALCHEMY.md).
