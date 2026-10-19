@@ -17,7 +17,16 @@ fingerprint() {
     sha256sum benchmarks/run_pyperformance.py \
         benchmarks/pyperformance_support/parallel_gc_pyperformance/*.py
     git -C pyperformance rev-parse HEAD
-    (cd pyperformance && git ls-files -z | xargs -0 sha256sum)
+    (
+        cd pyperformance
+        git ls-files -z | while IFS= read -r -d '' path; do
+            if [[ -L "$path" ]]; then
+                printf 'symlink %s -> %s\n' "$path" "$(readlink "$path")"
+            else
+                sha256sum "$path"
+            fi
+        done
+    )
     for source in baseline candidate; do
         git -C "$build_root/$source-source" rev-parse HEAD
         git -C "$build_root/$source-source" diff --exit-code HEAD
