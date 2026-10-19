@@ -28,3 +28,4 @@ Method: [Verifiable Practice](https://github.com/SonicField/verifiable-practice)
 - Coverage 7.6.12 retains CTracer and passes four native probes plus eight original benchmark checks. Newest 7.16.2 was rejected because it defaults to SysMonitor. See [COVERAGE.md](COVERAGE.md).
 - MarkupSafe 3.0.4 passes four native probes and eight original Sphinx checks; Sphinx remains 7.3.7. See [MARKUPSAFE.md](MARKUPSAFE.md).
 - Greenlet 3.5.6 passes four native probes including a context switch. SQLAlchemy's own 1.4 native extensions still enable the GIL; its two FT benchmark programs remain blocked. See [GREENLET.md](GREENLET.md).
+- Dulwich 1.2.17 strict native builds pass four probes and eight original commit-walking benchmark checks. Optional pure-Python fallback was rejected. See [DULWICH.md](DULWICH.md).
