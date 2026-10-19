@@ -28,6 +28,8 @@ apply requires an explicit account of the intervening changes.
 
 ## CI repair follow-up: 19 October 2026
 
+The new Linux matrix, compiler checks, full Linux CPython suite, Windows and macOS workflows are all reported successful in Alex's supplied listing. [Run IDs, original failures and evidence limits](ci-results-2026-10-19.md). Job-level source artifacts, skips and counts remain to be inspected; workflow conclusions must not be expanded into unsupported test-by-test claims.
+
 Automatic runs `39248590193` and `39248590252` failed for two independently reproduced causes: the parent hook test chose runtime-disabled mode on feature-off builds, and Clang rejected an uncalled GIL wrapper. Parent `d448e16` repairs the probe and passes all 76 harness tests in all four feature-on/off GIL/FT configurations. CPython `b91445e0b9` removes only that wrapper; all 32 GCC/Clang GIL/FT debug/release GC-object compilations pass with the strict unused-code errors intact. Fresh GIL/FT debug builds pass the focused collector and parent harness selections. [Compiler/runtime evidence and limits](../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md). These are local repairs, not hosted confirmation; new CI runs are required. The benchmark results below retain their original tested source identities.
 
 ## Dependency follow-up: 19 October 2026

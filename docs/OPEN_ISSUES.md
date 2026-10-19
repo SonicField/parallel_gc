@@ -13,6 +13,8 @@ falsifiable, not to be presented as fact until reproduced. *Repaired*: fixed
 locally with evidence; local verification is not current-checkpoint CI
 confirmation ([VALIDATION.md](VALIDATION.md)).
 
+**19 October hosted follow-up:** all five latest workflows are reported successful: Linux focused matrix, GCC/Clang checks, full Linux CPython suite, Windows and macOS. [Conclusions and run IDs](ci-results-2026-10-19.md). This supersedes earlier "outcomes unknown" entries at workflow level only; source artifacts, job counts and skips still need inspection. No performance or unresolved source-failure policy is closed by those successes.
+
 ## 1. Source audit
 
 Audit standard: [Verifiable Practice](https://github.com/SonicField/verifiable-practice)
