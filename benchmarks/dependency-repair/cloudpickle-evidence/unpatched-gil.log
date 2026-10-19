@@ -1,0 +1,28 @@
+E
+======================================================================
+ERROR: setUpClass (__main__.CloudpickleCompatibilityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_cloudpickle_316.py", line 13, in setUpClass
+    cls.cloudpickle = importlib.import_module("cloudpickle")
+                      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-source/Lib/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1384, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1344, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1303, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 909, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 754, in exec_module
+  File "<frozen importlib._bootstrap>", line 543, in _call_with_frames_removed
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/cloudpickle/__init__.py", line 1, in <module>
+    from . import cloudpickle
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/cloudpickle/cloudpickle.py", line 389, in <module>
+    DELETE_GLOBAL = opcode.opmap["DELETE_GLOBAL"]
+                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'DELETE_GLOBAL'
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.009s
+
+FAILED (errors=1)

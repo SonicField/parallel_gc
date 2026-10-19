@@ -1,0 +1,231 @@
+EEE.EEEEEE
+======================================================================
+ERROR: test_clone_preserves_fields_and_locations (__main__.GenshiCompatibilityTests.test_clone_preserves_fields_and_locations) (mode='eval')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 20, in test_clone_preserves_fields_and_locations
+    cloned = ASTTransformer().visit(original)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Expression.__init__ missing 1 required positional argument: 'body'
+
+======================================================================
+ERROR: test_clone_preserves_fields_and_locations (__main__.GenshiCompatibilityTests.test_clone_preserves_fields_and_locations) (mode='exec')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 20, in test_clone_preserves_fields_and_locations
+    cloned = ASTTransformer().visit(original)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 817, in _clone
+    value = [self.visit(x) for x in value]
+             ~~~~~~~~~~^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Assign.__init__ missing 1 required positional argument: 'value'
+
+======================================================================
+ERROR: test_expression_from_string_and_ast (__main__.GenshiCompatibilityTests.test_expression_from_string_and_ast)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 30, in test_expression_from_string_and_ast
+    self.assertEqual(Expression(source).evaluate({"value": 41}), 42)
+                     ~~~~~~~~~~^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 71, in __init__
+    self.code = _compile(node, self.source, mode=self.mode,
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         filename=filename, lineno=lineno, xform=xform)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 434, in _compile
+    tree = xform().visit(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Expression.__init__ missing 1 required positional argument: 'body'
+
+======================================================================
+ERROR: test_new_accepts_required_keyword_fields (__main__.GenshiCompatibilityTests.test_new_accepts_required_keyword_fields)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 39, in test_new_accepts_required_keyword_fields
+    node = _new(ast.Name, id="value", ctx=ast.Load())
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 459, in _new
+    ret = class_()
+TypeError: ast.Name.__init__ missing 1 required positional argument: 'id'
+
+======================================================================
+ERROR: test_new_retains_duplicate_field_error (__main__.GenshiCompatibilityTests.test_new_retains_duplicate_field_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 45, in test_new_retains_duplicate_field_error
+    _new(ast.Name, "first", ast.Load(), id="second")
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 459, in _new
+    ret = class_()
+TypeError: ast.Name.__init__ missing 1 required positional argument: 'id'
+
+======================================================================
+ERROR: test_original_benchmark_functions (__main__.GenshiCompatibilityTests.test_original_benchmark_functions) (kind='xml')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 64, in test_original_benchmark_functions
+    self.assertGreater(benchmark.bench_genshi(1, template_class, template_source), 0)
+                       ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/users/alexturner/parallel_gc/pyperformance/pyperformance/data-files/benchmarks/bm_genshi/run_benchmark.py", line 35, in bench_genshi
+    stream = tmpl.generate(table=table)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 568, in generate
+    stream = self.stream
+             ^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 456, in stream
+    self._prepare_self()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 475, in _prepare_self
+    self._stream = list(self._prepare(self._stream, inlined))
+                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 493, in _prepare
+    directive, substream = cls.attach(self, substream, value,
+                           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+                                      namespaces, pos)
+                                      ^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/directives.py", line 365, in attach
+    return super(ForDirective, cls).attach(template, stream, value,
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+                                           namespaces, pos)
+                                           ^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/directives.py", line 84, in attach
+    return cls(value, template, namespaces, *pos[1:]), stream
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/directives.py", line 359, in __init__
+    Directive.__init__(self, value, template, namespaces, lineno, offset)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/directives.py", line 62, in __init__
+    self.expr = self._parse_expr(value, template, lineno, offset)
+                ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/directives.py", line 110, in _parse_expr
+    return expr and Expression(expr, template.filepath, lineno,
+                    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               lookup=template.lookup) or None
+                               ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 71, in __init__
+    self.code = _compile(node, self.source, mode=self.mode,
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         filename=filename, lineno=lineno, xform=xform)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 434, in _compile
+    tree = xform().visit(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Expression.__init__ missing 1 required positional argument: 'body'
+
+======================================================================
+ERROR: test_original_benchmark_functions (__main__.GenshiCompatibilityTests.test_original_benchmark_functions) (kind='text')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 64, in test_original_benchmark_functions
+    self.assertGreater(benchmark.bench_genshi(1, template_class, template_source), 0)
+                       ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/users/alexturner/parallel_gc/pyperformance/pyperformance/data-files/benchmarks/bm_genshi/run_benchmark.py", line 28, in bench_genshi
+    tmpl = tmpl_cls(tmpl_str)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/text.py", line 138, in __init__
+    Template.__init__(self, source, filepath=filepath, filename=filename,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      loader=loader, encoding=encoding, lookup=lookup)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 420, in __init__
+    self._stream = self._parse(source, encoding)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/text.py", line 182, in _parse
+    for kind, data, pos in interpolate(text, self.filepath, lineno,
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                       lookup=self.lookup):
+                                       ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/interpolation.py", line 76, in interpolate
+    expr = Expression(chunk.strip(), pos[0], pos[1],
+                      lookup=lookup)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 71, in __init__
+    self.code = _compile(node, self.source, mode=self.mode,
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         filename=filename, lineno=lineno, xform=xform)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 434, in _compile
+    tree = xform().visit(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Expression.__init__ missing 1 required positional argument: 'body'
+
+======================================================================
+ERROR: test_suite_from_string_and_ast (__main__.GenshiCompatibilityTests.test_suite_from_string_and_ast)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 35, in test_suite_from_string_and_ast
+    Suite(source).execute(namespace)
+    ~~~~~^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 71, in __init__
+    self.code = _compile(node, self.source, mode=self.mode,
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         filename=filename, lineno=lineno, xform=xform)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 434, in _compile
+    tree = xform().visit(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 817, in _clone
+    value = [self.visit(x) for x in value]
+             ~~~~~~~~~~^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Assign.__init__ missing 1 required positional argument: 'value'
+
+======================================================================
+ERROR: test_xml_and_text_output (__main__.GenshiCompatibilityTests.test_xml_and_text_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/data/users/alexturner/parallel_gc/benchmarks/dependency-repair/test_genshi_316.py", line 49, in test_xml_and_text_output
+    MarkupTemplate("<p>${value}</p>").generate(value=42).render(),
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/markup.py", line 65, in __init__
+    Template.__init__(self, source, filepath=filepath, filename=filename,
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      loader=loader, encoding=encoding, lookup=lookup,
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      allow_exec=allow_exec)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/base.py", line 420, in __init__
+    self._stream = self._parse(source, encoding)
+                   ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/markup.py", line 85, in _parse
+    for kind, data, pos in interpolate(data, self.filepath, pos[1],
+                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                       pos[2], lookup=self.lookup):
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/interpolation.py", line 76, in interpolate
+    expr = Expression(chunk.strip(), pos[0], pos[1],
+                      lookup=lookup)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 71, in __init__
+    self.code = _compile(node, self.source, mode=self.mode,
+                ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         filename=filename, lineno=lineno, xform=xform)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/eval.py", line 434, in _compile
+    tree = xform().visit(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 799, in visit
+    return visitor(node)
+  File "/tmp/parallel-gc-pyperformance-prepared-20261017-dBFKZD/gil/venv/cpython3.16-a8f880c919ab-compat-31b33d68c68a/lib/python3.16/site-packages/genshi/template/astutil.py", line 802, in _clone
+    clone = node.__class__()
+TypeError: ast.Expression.__init__ missing 1 required positional argument: 'body'
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.027s
+
+FAILED (errors=9)
