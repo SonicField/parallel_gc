@@ -29,9 +29,11 @@ bash benchmarks/dependency-repair/run_rigorous_campaigns.sh \
     /data/users/alexturner/parallel_gc \
     /tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW \
     /tmp/parallel-gc-pyperformance-repaired-20261019-ZKtZmg \
-    /tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full-v2
+    /tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full-v3
 ```
 
 The output root must not exist. `controller.log` records campaign starts and completions; each mode log names the active program and its index. Per-program JSON survives a failure. `campaign.json` is written only after all four source legs complete. The parent revision, fingerprints, dependencies, raw suites and comparisons are retained for the final report. No performance outcome is asserted by this prospective protocol. The sixteen full suites require substantial time; completion is determined by those records, not an assumed overnight deadline.
 
 The first launch stopped before any benchmark: the tracked `pyperformance/benchmarks` entry is a symlink to a directory, which the file-only fingerprint command rejected. The controller now fingerprints symlink targets explicitly and hashes ordinary tracked files. The failed launch evidence remains in the original `full/` output; measurements use fresh `full-v2/` output. This correction changes provenance collection only.
+
+The second launch revalidated all eight complete readiness contexts and dependency inventories, then stopped before measurements: fingerprint loop variables were global shell variables and changed the outer campaign mode. The function now declares those variables local. The failed evidence remains in `full-v2/`; actual measurements use fresh `full-v3/`. Neither failed launch produced performance results.

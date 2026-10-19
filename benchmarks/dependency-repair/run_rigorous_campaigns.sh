@@ -14,6 +14,7 @@ mkdir "$output_root"
 exec > >(tee "$output_root/controller.log") 2>&1
 
 fingerprint() {
+    local source mode path
     sha256sum benchmarks/run_pyperformance.py \
         benchmarks/pyperformance_support/parallel_gc_pyperformance/*.py
     git -C pyperformance rev-parse HEAD
