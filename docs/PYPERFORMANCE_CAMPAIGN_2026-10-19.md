@@ -39,3 +39,17 @@ The first launch stopped before any benchmark: the tracked `pyperformance/benchm
 The second launch revalidated all eight complete readiness contexts and dependency inventories, then stopped before measurements: fingerprint loop variables were global shell variables and changed the outer campaign mode. The function now declares those variables local. The failed evidence remains in `full-v2/`; actual measurements use fresh `full-v3/`. Neither failed launch produced performance results.
 
 The third launch completed the first rigorous `2to3` invocation but its validator rejected varying hook-entry metadata. The 41 original runs have four hook entries in calibration and three in each measured run. pyperf's common metadata deliberately omits fields that differ between runs; absence there does not mean the hook was absent. The corrected validator checks every saved run individually, including calibration, and still rejects any missing/nonpositive entry count or incorrect GIL/collector state. Twelve tests pass, including a varying-entry positive control and a single bad-run negative control; the retained original `2to3` result passes revalidation. No collector, hook, workload or rigorous parameter changed. Failed attempts, logs and the raw result are preserved in [per-run validation evidence](../benchmarks/dependency-repair/per-run-validation-evidence/README.md). The complete source-ABBA campaigns restart in fresh `full-v4/`; the isolated result is not pooled into them.
+
+## Reproduce the descriptive analysis after completion
+
+The [analysis tool](../benchmarks/analyse_pyperformance_abba.py) implements the leg-weighted calculation declared above. It requires a completed rigorous default campaign, four matching source legs, 100 preserved original-program outputs per leg, 127 matching named results, recorded digests, matching recorded work and per-run runtime attestation. It rejects short smokes and incomplete campaigns. Its JSON retains each leg's mean, within-leg standard deviation, measured-process count, value count and both half-comparisons; Markdown lists every result. These statistics describe the measurements, not independent source replications or automatic acceptance.
+
+For each of `gil-disabled`, `gil-enabled`, `ft-disabled`, `ft-enabled`, using a new output prefix:
+
+```bash
+"$driver_python" benchmarks/analyse_pyperformance_abba.py \
+    "$campaign_root/gil-disabled" \
+    --output-prefix "$new_analysis_directory/gil-disabled"
+```
+
+Eight analysis tests pass using real pyperf fixture files. Positive controls check the arithmetic and preserve opposing half-directions; negative controls reject missing legs, changed digests/names, missing original-program output, debug campaigns and a partial inventory. A direct CLI check against the currently incomplete live campaign exits 2 and creates no analysis output. [Verification evidence](../benchmarks/dependency-repair/analysis-verification-evidence/README.md). This analysis preparation does not modify collector code, the measurement runner, hooks, workloads or prepared environments.
