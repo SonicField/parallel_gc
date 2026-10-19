@@ -81,6 +81,14 @@ class ApplyModeTests(unittest.TestCase):
             {"available": False, "enabled": False, "num_workers": 0},
         )
 
+    def test_feature_off_accepts_unavailable_api_without_calling_it(self):
+        fake = FakeGC(available=False)
+        config = mode.apply_mode("feature-off", fake)
+        self.assertFalse(config["available"])
+        self.assertFalse(config["enabled"])
+        self.assertEqual(fake.enable_calls, 0)
+        self.assertEqual(fake.disable_calls, 0)
+
     def test_enabled_mode_rejects_false_postcondition(self):
         fake = FakeGC(available=True)
         fake.enable_parallel = mock.Mock()
@@ -291,9 +299,10 @@ import sysconfig
 from parallel_gc_pyperformance.hook import ParallelGCHook, HookError
 from parallel_gc_pyperformance.mode import MODE_ENV
 
-os.environ[MODE_ENV] = (
-    "disabled" if hasattr(gc, "disable_parallel") else "feature-off"
-)
+# Feature-off builds expose the methods but reject enable/disable calls.
+get_config = getattr(gc, "get_parallel_config", None)
+available = get_config is not None and get_config()["available"]
+os.environ[MODE_ENV] = "disabled" if available else "feature-off"
 free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
 probe = getattr(sys, "_is_gil_enabled", None)
 gil_enabled = probe() if probe is not None else True
@@ -315,6 +324,12 @@ else:
         raise RuntimeError("Hook recorded the wrong build mode")
     if metadata["parallel_gc_runtime_gil_enabled"] != gil_enabled:
         raise RuntimeError("Hook recorded the wrong runtime mode")
+    if metadata["parallel_gc_mode"] != os.environ[MODE_ENV]:
+        raise RuntimeError("Hook recorded the wrong collector mode")
+    get_config = getattr(gc, "get_parallel_config", None)
+    available = get_config is not None and get_config()["available"]
+    if metadata["parallel_gc_available"] != available:
+        raise RuntimeError("Hook recorded the wrong collector availability")
 print(f"free_threaded={free_threaded}, gil_enabled={gil_enabled}")
 """
 
