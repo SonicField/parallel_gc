@@ -1,0 +1,19 @@
+--- a/cloudpickle/cloudpickle.py
++++ b/cloudpickle/cloudpickle.py
+@@ -385,10 +385,12 @@
+ 
+ 
+ # relevant opcodes
+-STORE_GLOBAL = opcode.opmap["STORE_GLOBAL"]
+-DELETE_GLOBAL = opcode.opmap["DELETE_GLOBAL"]
+-LOAD_GLOBAL = opcode.opmap["LOAD_GLOBAL"]
+-GLOBAL_OPS = (STORE_GLOBAL, DELETE_GLOBAL, LOAD_GLOBAL)
++# Python 3.16 removes DELETE_GLOBAL; deletion now uses STORE_GLOBAL.
++GLOBAL_OPS = tuple(
++    opcode.opmap[name]
++    for name in ("STORE_GLOBAL", "DELETE_GLOBAL", "LOAD_GLOBAL")
++    if name in opcode.opmap
++)
+ HAVE_ARGUMENT = dis.HAVE_ARGUMENT
+ EXTENDED_ARG = dis.EXTENDED_ARG
+ 
