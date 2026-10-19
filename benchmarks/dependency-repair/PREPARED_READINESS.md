@@ -6,7 +6,7 @@ The usual upstream suite launcher reinstalls each program's original dependency 
 
 Before execution it requires `pip check`, the three dependency correctness suites, four native-extension probes and the existing GC-mode preflight. Each saved result must pass the existing worker runtime attestation, including GIL-disabled execution in FT. Failures are named in `summary.json`; other programs continue so a passing subset cannot conceal them.
 
-The launcher uses `--debug-single-value`. Its output proves execution, not speed or statistical equivalence. Do not use its timings as ABBA results. Full rigorous comparisons still require an execution path that preserves these prepared dependencies without reinstalling the old pins.
+The launcher uses `--debug-single-value`. Its output proves execution, not speed or statistical equivalence. Do not use its timings as ABBA results. For rigorous comparisons, the official [ABBA runner](../run_pyperformance.py) now accepts prepared environments without reinstalling the old pins; see [PERFORMANCE.md §2.1](../../docs/PERFORMANCE.md#21-pyperformance-abba).
 
 Example, from the parent `parallel_gc` repository, with paths to the driver environment and prepared target environment:
 

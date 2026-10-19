@@ -70,6 +70,23 @@ its normal optional modules (at least `zlib`). Runtime ABBA does not measure
 the cost of compiling the feature in; that needs matched optimized builds with
 and without `--with-parallel-gc`.
 
+For the Python 3.16 dependency repairs, supply the already verified virtual environments. The runner checks that each environment uses the requested executable, requires `pip check`, records dependencies before and after execution, and refuses a changed environment. It calls the original upstream `Benchmark.run` with upstream rigorous options, retaining the original scripts, data and workload parameters. Every saved result must attest to the requested collector mode and compiled/runtime GIL state. No dependency installer runs in this mode.
+
+```bash
+"$driver_python" benchmarks/run_pyperformance.py binary-abba \
+    --baseline-python "$baseline_python" \
+    --candidate-python "$candidate_python" \
+    --baseline-source "$baseline_source" \
+    --candidate-source "$candidate_source" \
+    --baseline-prepared-python "$baseline_venv_python" \
+    --candidate-prepared-python "$candidate_venv_python" \
+    --mode enabled --benchmarks default --run-style rigorous \
+    --affinity 0-31 --timeout 300 \
+    --work-root "$work_directory" --output-dir "$new_output_directory"
+```
+
+This is source ABBA: baseline, integrated, integrated, baseline with the runtime mode held fixed. Repeat with `--mode disabled` as the serial control, and separately for GIL and FT. It does not replace enabled/disabled ABBA within one binary. Single-suite and runtime ABBA commands accept `--prepared-python`. A failed program stops the campaign but retains earlier per-program results; it does not produce a passing partial suite. [Prepared-execution tests](../benchmarks/test_prepared_pyperformance.py) run in the pyperformance driver environment.
+
 ### 2.2 Project suite: `gc_perf_benchmark.py`
 
 ```bash

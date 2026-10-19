@@ -231,7 +231,17 @@ def run_suite(
     affinity,
     timeout,
     append=False,
+    prepared_python=None,
 ):
+    if prepared_python is not None:
+        if append:
+            raise CampaignError("prepared execution does not support appending a partial suite")
+        return run_prepared_suite(
+            target_python=target_python, prepared_python=prepared_python,
+            mode=mode, output=output, work_root=work_root,
+            benchmarks=benchmarks, manifest=manifest, run_style=run_style,
+            affinity=affinity, timeout=timeout,
+        )
     venv_python = ensure_target_venv(
         target_python, work_root, benchmarks, manifest
     )
@@ -266,6 +276,142 @@ def run_suite(
     run_command(command, cwd=work_root, env=env)
     validate_result(output, mode)
     return {"command": command_record(command), "preflight": config}
+
+
+def prepared_selection(benchmarks, manifest):
+    from pyperformance import _benchmark_selections, _utils
+    from pyperformance._manifest import load_manifest
+
+    def parse_entry(operation, selection):
+        return _benchmark_selections.parse_selection(selection, op=operation)
+
+    selections = _utils.parse_selections(benchmarks.lower(), parse_entry)
+    selected = list(_benchmark_selections.iter_selections(
+        load_manifest(manifest), list(selections)
+    ))
+    if not selected or any(isinstance(item, str) for item in selected):
+        raise CampaignError(f"benchmark selection cannot be resolved: {benchmarks!r}")
+    return sorted(selected)
+
+
+def prepared_options(run_style, affinity, timeout):
+    from types import SimpleNamespace
+    from pyperformance.run import get_pyperf_opts
+
+    return get_pyperf_opts(SimpleNamespace(
+        debug_single_value=run_style == "debug",
+        rigorous=run_style == "rigorous", fast=run_style == "fast",
+        verbose=False, affinity=affinity, track_memory=False,
+        inherit_environ=INHERITED_ENV.split(","), min_time=None,
+        timeout=timeout, hook=[HOOK_NAME], warmups=None,
+    ))
+
+
+def prepared_environment_record(python):
+    code = """
+import importlib.metadata, json, sys, sysconfig
+print(json.dumps({
+    "prefix": sys.prefix, "base_prefix": sys.base_prefix,
+    "free_threaded": bool(sysconfig.get_config_var("Py_GIL_DISABLED")),
+    "packages": sorted([
+        (dist.metadata["Name"], dist.version, dist.read_text("direct_url.json"))
+        for dist in importlib.metadata.distributions()
+    ]),
+}, sort_keys=True))
+"""
+    return json.loads(run_command([python, "-c", code], capture=True).stdout)
+
+
+def require_prepared_target(prepared_python, target_python):
+    if sha256_file(Path(prepared_python)) != sha256_file(Path(target_python)):
+        raise CampaignError("prepared environment uses a different executable")
+    record = prepared_environment_record(prepared_python)
+    if record["prefix"] == record["base_prefix"]:
+        raise CampaignError("prepared Python is not running in a virtual environment")
+    run_command([prepared_python, "-m", "pip", "check"])
+    return record
+
+
+def validate_prepared_result(filename, mode, free_threaded):
+    import pyperf
+
+    names = validate_result(filename, mode)
+    suite = pyperf.BenchmarkSuite.load(str(filename))
+    for benchmark in suite:
+        metadata = benchmark.get_metadata()
+        name = benchmark.get_name()
+        if metadata.get("parallel_gc_build_gil_disabled") is not free_threaded:
+            raise CampaignError(f"{name} recorded the wrong compiled GIL mode")
+        if metadata.get("parallel_gc_runtime_gil_enabled") is not (not free_threaded):
+            raise CampaignError(f"{name} recorded the wrong runtime GIL mode")
+        if metadata.get("parallel_gc_available") is not (mode != "feature-off"):
+            raise CampaignError(f"{name} recorded the wrong collector availability")
+        entries = metadata.get("parallel_gc_hook_entries")
+        if not isinstance(entries, int) or entries <= 0:
+            raise CampaignError(f"{name} has no active measurement hook")
+    return names
+
+
+def run_prepared_suite(
+    *, target_python, prepared_python, mode, output, work_root,
+    benchmarks, manifest, run_style, affinity, timeout,
+):
+    """Execute upstream workloads without entering its dependency installer."""
+    import pyperf
+    import pyperformance
+
+    prepared_python = str(Path(prepared_python).absolute())
+    before = require_prepared_target(prepared_python, target_python)
+    config = preflight(prepared_python, mode, work_root)
+    selected = prepared_selection(benchmarks, manifest)
+    options = prepared_options(run_style, affinity, timeout)
+    output = Path(output).resolve()
+    if output.exists():
+        raise CampaignError(f"result already exists: {output}")
+    programs_dir = output.with_suffix(".programs")
+    programs_dir.mkdir(parents=True, exist_ok=False)
+    details = []
+    combined = None
+    previous_mode = os.environ.get(MODE_ENV)
+    os.environ[MODE_ENV] = mode
+    try:
+        for index, bench in enumerate(selected, 1):
+            print(f"[{index}/{len(selected)}] {bench.name}", flush=True)
+            result = bench.run(prepared_python, pyperf_opts=options, verbose=True)
+            suite = result if isinstance(result, pyperf.BenchmarkSuite) else pyperf.BenchmarkSuite([result])
+            for measurement in suite:
+                measurement.update_metadata({
+                    "performance_version": pyperformance.__version__, "tags": bench.tags,
+                })
+            filename = programs_dir / f"{index:03d}-{bench.name}.json"
+            suite.dump(str(filename))
+            validate_prepared_result(filename, mode, before["free_threaded"])
+            if combined is None:
+                combined = suite
+            else:
+                for measurement in suite:
+                    combined.add_benchmark(measurement)
+            details.append({
+                "program": bench.name, "runscript": bench.runscript,
+                "extra_opts": bench.extra_opts, "pyperf_opts": options,
+                "result": filename.name, "sha256": sha256_file(filename),
+            })
+    finally:
+        if previous_mode is None:
+            os.environ.pop(MODE_ENV, None)
+        else:
+            os.environ[MODE_ENV] = previous_mode
+    after = require_prepared_target(prepared_python, target_python)
+    if after != before:
+        raise CampaignError("prepared dependencies changed during execution")
+    combined.dump(str(output))
+    validate_prepared_result(output, mode, before["free_threaded"])
+    detail = {
+        "prepared_python": prepared_python, "dependency_installation": False,
+        "preflight": config, "environment": before, "programs": details,
+    }
+    output.with_suffix(".execution.json").write_text(json.dumps(detail, indent=2) + "\n")
+    return detail
 
 
 def validate_result(filename, mode):
@@ -507,6 +653,7 @@ def run_abba(args):
                 run_style=args.run_style,
                 affinity=args.affinity,
                 timeout=args.timeout,
+                prepared_python=args.prepared_python,
             )
             detail["resumed"] = False
         observed_benchmarks = validate_result(filename, mode)
@@ -552,6 +699,10 @@ def run_binary_abba(args):
         "baseline": args.baseline_python,
         "candidate": args.candidate_python,
     }
+    prepared_targets = {
+        "baseline": args.baseline_prepared_python,
+        "candidate": args.candidate_prepared_python,
+    }
     run_files = []
     runs = []
     reference_benchmarks = None
@@ -571,6 +722,7 @@ def run_binary_abba(args):
                 run_style=args.run_style,
                 affinity=args.affinity,
                 timeout=args.timeout,
+                prepared_python=prepared_targets[label],
             )
             detail["resumed"] = False
         observed_benchmarks = validate_result(filename, args.mode)
@@ -626,6 +778,7 @@ def run_single(args):
         run_style=args.run_style,
         affinity=args.affinity,
         timeout=args.timeout,
+        prepared_python=args.prepared_python,
     )
 
 
@@ -645,6 +798,7 @@ def add_benchmark_args(parser):
 def add_common_args(parser):
     parser.add_argument("--python", required=True, help="optimized target Python")
     parser.add_argument("--source", help="source tree used to build --python")
+    parser.add_argument("--prepared-python", help="existing dependency-prepared venv Python; do not reinstall dependencies")
     add_benchmark_args(parser)
 
 
@@ -681,6 +835,8 @@ def parse_args(argv=None):
     binary_abba.add_argument("--baseline-source")
     binary_abba.add_argument("--candidate-python", required=True)
     binary_abba.add_argument("--candidate-source")
+    binary_abba.add_argument("--baseline-prepared-python")
+    binary_abba.add_argument("--candidate-prepared-python")
     binary_abba.add_argument(
         "--mode", required=True, choices=("enabled", "disabled")
     )
@@ -691,7 +847,11 @@ def parse_args(argv=None):
         help="reuse validated raw legs already present in the output directory",
     )
     binary_abba.set_defaults(func=run_binary_abba)
-    return parser.parse_args(argv)
+    args = parser.parse_args(argv)
+    if args.command == "binary-abba":
+        if bool(args.baseline_prepared_python) != bool(args.candidate_prepared_python):
+            parser.error("provide both baseline and candidate prepared environments")
+    return args
 
 
 def main(argv=None):
@@ -719,6 +879,13 @@ def main(argv=None):
         if not source.is_dir():
             raise CampaignError(f"target source tree does not exist: {source}")
         setattr(args, attribute, str(source))
+    for attribute in ("prepared_python", "baseline_prepared_python", "candidate_prepared_python"):
+        value = getattr(args, attribute, None)
+        if value is not None:
+            path = Path(value).absolute()  # Resolving the symlink would leave the venv.
+            if not path.is_file():
+                raise CampaignError(f"prepared Python does not exist: {path}")
+            setattr(args, attribute, str(path))
     args.func(args)
 
 
