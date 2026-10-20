@@ -79,3 +79,7 @@ Four of sixteen suites are complete. GIL enabled started automatically at 05:15:
 ## Completed-suite checkpoint — 20 October, 07:13 UTC
 
 The first GIL-enabled baseline suite completed all 100 original programs and 127 named results. Per-run runtime/hook and explicit Boolean enabled-state checks pass. Names and recorded work match the earlier GIL-disabled baseline. Its 5,004 measured run records, 15,852 values, original-program files and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md). Five of sixteen suites are complete; the first integrated-source enabled leg is running. This checkpoint adds no complete enabled comparison or new performance-effect claim.
+
+## Completed-suite checkpoint — 20 October, 09:08 UTC
+
+The first integrated-source GIL-enabled suite completed all 100 programs and 127 named results. Per-run state/hook and original-program digest checks pass; names, work and package inventories match the enabled baseline. Its 5,004 measured run records, 15,852 values and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md). Six of sixteen suites are complete. The second integrated-source enabled leg is running; no complete enabled comparison is claimed yet.
