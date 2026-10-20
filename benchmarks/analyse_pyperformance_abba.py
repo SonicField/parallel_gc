@@ -46,6 +46,17 @@ def leg_summary(benchmark):
     }
 
 
+def require_enabled_state(suite, mode):
+    expected = mode == "enabled"
+    for benchmark in suite:
+        for index, run in enumerate(benchmark.get_runs(), 1):
+            actual = run.get_metadata().get("parallel_gc_enabled")
+            require(actual is expected,
+                    f"{benchmark.get_name()} run {index}: enabled-state must be "
+                    f"explicit boolean {expected}, got {actual!r}; "
+                    "the comparison mode cannot be verified")
+
+
 def analyse_campaign(directory, *, expected_programs=100, expected_results=127):
     directory = Path(directory)
     record_path = directory / "campaign.json"
@@ -85,6 +96,7 @@ def analyse_campaign(directory, *, expected_programs=100, expected_results=127):
         )
         require(type(compiled) is bool, f"leg {index}: compiled GIL mode is missing")
         names = runner.validate_prepared_result(filename, mode, compiled)
+        require_enabled_state(suite, mode)
         require(len(names) == expected_results, f"leg {index}: expected {expected_results} named results")
         work = runner.result_work_signature(filename)
         if reference_names is None:

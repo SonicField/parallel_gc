@@ -120,6 +120,30 @@ class AnalysisTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing"):
             self.analyse()
 
+    def reject_enabled_state(self, enabled_state):
+        record = self.campaign()
+        filename = self.root / "03-candidate.json"
+        data = json.loads(filename.read_text())
+        if enabled_state is None:
+            del data["metadata"]["parallel_gc_enabled"]
+        else:
+            data["metadata"]["parallel_gc_enabled"] = enabled_state
+        filename.write_text(json.dumps(data))
+        digest = self.analysis.runner.sha256_file(filename)
+        record["results"][filename.name] = digest
+        program = filename.with_suffix(".programs") / "001-probe.json"
+        program.write_bytes(filename.read_bytes())
+        record["runs"][2]["programs"][0]["sha256"] = digest
+        self.save(record)
+        with self.assertRaisesRegex(ValueError, "enabled-state"):
+            self.analyse()
+
+    def test_disabled_state_requires_an_explicit_field(self):
+        self.reject_enabled_state(None)
+
+    def test_disabled_state_requires_a_boolean_not_integer_zero(self):
+        self.reject_enabled_state(0)
+
 
 if __name__ == "__main__":
     unittest.main()
