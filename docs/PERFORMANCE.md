@@ -221,7 +221,18 @@ The subsequent [unchanged full FT repeat](../benchmarks/results/investigations/i
 
 **Full-default pyperformance remains incomplete.** The first corrected suite failed Dask/Cloudpickle and Genshi on Python 3.16 API errors. Eight subsequent [all-program diagnostic checks](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md) find the same two failures in GIL and seven in FT, matching both source revisions and collector policies. The five additional FT programs load extensions that enable the GIL; worker attestation correctly rejects them. No workload was omitted or unsafe GIL override introduced. These short checks are not ABBA measurements.
 
-Dependency repairs were approved and executed on 19 October in isolated environments. [All seven repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, with 127 named results each and no failures. Benchmark programs remain unchanged. Coverage retains CTracer; its extension and those of Dulwich, MarkupSafe and Greenlet remain native. FT runtime checks stay active and FT execution remains GIL-disabled. Alex approved SQLAlchemy 1.4.19's supported pure-Python build consistently across both sources and build modes. All four fresh complete environments pass `pip check`, including Dulwich's required urllib3 2.2.2 upgrade. These diagnostic execution checks are not performance evidence; all sixteen rigorous suites remain outstanding. Different dependency implementations must not be mixed with historical measurements. Current hosted CI evidence also remains unavailable.
+Dependency repairs were approved and executed on 19 October in isolated environments. [All seven repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, with 127 named results each and no failures. Benchmark programs remain unchanged. Coverage retains CTracer; its extension and those of Dulwich, MarkupSafe and Greenlet remain native. FT runtime checks stay active and FT execution remains GIL-disabled. Alex approved SQLAlchemy 1.4.19's supported pure-Python build consistently across both sources and build modes. All four fresh complete environments pass `pip check`, including Dulwich's required urllib3 2.2.2 upgrade. These diagnostic execution checks are not performance evidence; at that readiness checkpoint all sixteen rigorous suites were outstanding. Different dependency implementations must not be mixed with historical measurements. [Hosted workflow successes](ci-results-2026-10-19.md) are user-reported; source/job-level artifacts remain unverified.
+
+#### Rigorous repaired-dependency source comparisons, 19–20 October
+
+Both full GIL source-ABBA campaigns now retain 100 original programs and 127 named results per leg, with unchanged rigorous settings and frozen sources/binaries from §4.1. The two FT campaigns remain pending. Positive time change below means slower execution; null is 0%. These compare sources with runtime policy held fixed, not enabling/disabling one binary. They do not measure GC pauses.
+
+| Runtime policy | Geometric-mean time change | Largest observed increases and uncertainty |
+|---|---:|---|
+| [GIL disabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md) | −0.21% | `bench_mp_pool` +6.98% (halves +12.80%, +1.03%); `shortest_path` +3.15%. |
+| [GIL enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md) | +0.33% | `subparsers` +15.29% and `dask` +13.86% have sharply unequal halves; `btree_gc_only` +12.70% increases in both halves (+17.25%, +8.16%); `connected_components` +6.48% also increases in both. |
+
+All rows, leg variation, raw results, input fingerprints, pooled comparisons and arithmetic checks are retained. The summaries do not establish neutrality, causation or acceptance. Sequential disabled/enabled campaigns are not a controlled activation-cost estimate. [Protocol and remaining work](PYPERFORMANCE_CAMPAIGN_2026-10-19.md).
 
 ### 4.2 Historical serial/parallel measurements, 7–15 October 2026
 
@@ -346,7 +357,7 @@ those changes with Alex first. The current integration keeps those unchanged.
 ## 7. Pending measurements
 
 - Focused reproduction of negative integration measurements, then fresh-profile/generated-code investigation if the differences recur. Completed GIL/FT project ABBA is linked in §4.1; no cause or repair is assumed.
-- All sixteen rigorous default pyperformance suites across baseline/current GIL/FT and enabled/disabled policies, after agreed dependency compatibility work and repeated all-program readiness checks. Diagnostic runs and partial failed suites do not satisfy this requirement.
+- The remaining eight rigorous FT default pyperformance suites across baseline/current sources and enabled/disabled policies. All eight GIL suites are complete and recorded in §4.1; that does not establish neutrality or close the observed increases. Diagnostic runs and partial failed suites do not satisfy this requirement.
 - Optimized feature-off controls for compile-time overhead.
 - First-use pool startup latency, reported separately; pool memory use.
 - Per-worker phase counters in FT `get_parallel_stats()` (today FT reports no

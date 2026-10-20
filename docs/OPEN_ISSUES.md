@@ -175,6 +175,8 @@ On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/P
 
 ### Previously recorded performance findings
 
+**20 October rigorous pyperformance follow-up:** both complete GIL source-ABBA campaigns are recorded in [PERFORMANCE §4.1](PERFORMANCE.md). Disabled geometric-mean time change is −0.21%, with `bench_mp_pool` +6.98% and `shortest_path` +3.15%. Enabled geometric mean is +0.33%, with `subparsers` +15.29%, `dask` +13.86%, `btree_gc_only` +12.70% and `connected_components` +6.48%. The first two enabled increases have sharply unequal halves; the latter two increase in both. These are unresolved source-comparison observations, not evidence that activation itself causes those percentages or permission to change the collectors. FT campaigns remain pending; no neutrality or acceptance claim follows.
+
 | ID | State | Issue |
 |----|-------|-------|
 | P1 | Measured; mechanism inferred | FT propagation workers leave permanently after `2 × num_workers` failed steal sweeps. With module-rooted live data, helpers exit before work becomes stealable: graph 0.61–0.83× serial at 16 workers (3.39× when frame-rooted). In the project suite, module-rooted collections spend 27–51% of their time in propagation at 16 workers, against 9–20% when frame-rooted. A fix (helpers wait until all work is finished) was tried and dropped; see below. |
