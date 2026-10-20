@@ -97,3 +97,7 @@ Eight of sixteen suites are complete. FT disabled started at 12:55:47 UTC; FT en
 ## Completed-suite checkpoint — 20 October, 15:08 UTC
 
 The first FT-disabled baseline suite completed all 100 programs and 127 named results. Compiled FT, runtime GIL-disabled, collector-disabled/hook and original-program digest checks pass. Its 5,004 measured run records, 15,852 values and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md). Nine of sixteen suites are complete. The first integrated FT-disabled leg is running; no complete FT comparison is claimed yet.
+
+## Completed-suite checkpoint — 20 October, 17:15 UTC
+
+The first integrated FT-disabled suite completed all 100 programs and 127 named results. State/hook and original-program digest checks pass; names, recorded work and package inventories match the FT baseline. Its 5,004 measured run records, 15,852 values and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md). Ten of sixteen suites are complete. The second integrated FT-disabled leg is running; no complete FT comparison is claimed yet.
