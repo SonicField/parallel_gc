@@ -105,3 +105,9 @@ The first integrated FT-disabled suite completed all 100 programs and 127 named 
 ## Completed-suite checkpoint — 20 October, 19:21 UTC
 
 The second integrated FT-disabled suite completed all 100 programs and 127 named results. State/hook and original-program digest checks pass; names, recorded work and package inventories match the FT baseline. Its 5,004 measured run records, 15,852 values and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md). Eleven of sixteen suites are complete. The final FT-disabled baseline leg is running; the complete FT-disabled comparison remains pending.
+
+## Third complete source ABBA — 20 October, 21:29 UTC
+
+All four FT-disabled legs completed with matching before/after input fingerprints and 100 original programs/127 named results per leg. [Complete results, raw evidence and arithmetic cross-check](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md). Geometric-mean time change is +0.23%; largest increases are `dask` (+4.55%), `k_core` (+2.51%) and `html5lib` (+2.21%). `k_core` has opposing halves; `dask` and `html5lib` increase in both. These remain unresolved source-comparison observations, not activation-cost estimates, causal attribution or acceptance.
+
+Twelve of sixteen suites are complete. FT enabled started at 21:29:09 UTC. Measurement inputs remain unchanged; VP adoption/remediation remains pending.
