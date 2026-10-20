@@ -93,3 +93,7 @@ The second integrated-source GIL-enabled suite completed all 100 programs and 12
 All four GIL-enabled legs completed with matching before/after input fingerprints and 100 original programs/127 named results per leg. [Complete results, raw evidence and arithmetic cross-check](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md). Geometric-mean time change is +0.33%; largest increases are `subparsers` (+15.29%), `dask` (+13.86%) and `btree_gc_only` (+12.70%). The first two have sharply unequal halves; `btree_gc_only` increases in both (+17.25%, +8.16%). These remain unresolved source-comparison observations, not an activation-cost estimate, causal attribution or acceptance verdict.
 
 Eight of sixteen suites are complete. FT disabled started at 12:55:47 UTC; FT enabled follows. Measurement inputs remain unchanged. VP adoption/remediation remains pending.
+
+## Completed-suite checkpoint — 20 October, 15:08 UTC
+
+The first FT-disabled baseline suite completed all 100 programs and 127 named results. Compiled FT, runtime GIL-disabled, collector-disabled/hook and original-program digest checks pass. Its 5,004 measured run records, 15,852 values and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md). Nine of sixteen suites are complete. The first integrated FT-disabled leg is running; no complete FT comparison is claimed yet.
