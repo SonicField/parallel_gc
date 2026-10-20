@@ -57,3 +57,7 @@ Eight analysis tests pass using real pyperf fixture files. Positive controls che
 ## Completed-suite checkpoint — 19 October, 23:33 UTC
 
 The first GIL disabled baseline suite completed all 100 programs and 127 named results. Its saved per-run runtime/hook checks pass. It contains 5,004 measured run records and 15,852 values; these are within-leg measurements, not independent source replications. The combined suite, all per-program files and provenance have been [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md). The first integrated-source leg is running. No four-leg comparison or complete sixteen-suite outcome is claimed by this checkpoint.
+
+## Completed-suite checkpoint — 20 October, 01:31 UTC
+
+The first integrated-source GIL disabled suite also completed all 100 programs and 127 named results. Per-run checks pass; result names and recorded work match the baseline. Its 5,004 measured run records, 15,852 values, original-program files and provenance have been [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md). Two of sixteen suites are complete; the second integrated-source leg is running. No complete ABBA comparison or performance effect is asserted from these two legs.
