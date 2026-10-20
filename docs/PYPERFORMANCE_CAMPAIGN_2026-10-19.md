@@ -65,3 +65,7 @@ The first integrated-source GIL disabled suite also completed all 100 programs a
 ## Additional results-reader verification — 20 October
 
 The analysis requires explicit Boolean enabled-state metadata in every run; a missing field or integer zero is not evidence of disabled execution. Planted controls exposed the inherited Boolean-conversion gap before the correction. All ten analysis tests pass and both completed real suites pass the stronger check. [Retained before/after and real-suite evidence](../benchmarks/dependency-repair/analysis-state-verification-evidence/README.md). This change is confined to post-collection analysis: measurement inputs, hook, runner, workloads, runtime policies and calculations remain unchanged.
+
+## Completed-suite checkpoint — 20 October, 03:22 UTC
+
+The second integrated-source GIL disabled suite completed all 100 programs and 127 named results. Runtime/hook and explicit disabled-state checks pass; result names and recorded work match the baseline. Its 5,004 measured run records, 15,852 values, original-program files and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md). Three of sixteen suites are complete. The final baseline leg of the first GIL serial-control ABBA is running; no complete four-leg comparison is claimed yet.
