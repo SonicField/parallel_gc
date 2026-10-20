@@ -69,3 +69,9 @@ The analysis requires explicit Boolean enabled-state metadata in every run; a mi
 ## Completed-suite checkpoint — 20 October, 03:22 UTC
 
 The second integrated-source GIL disabled suite completed all 100 programs and 127 named results. Runtime/hook and explicit disabled-state checks pass; result names and recorded work match the baseline. Its 5,004 measured run records, 15,852 values, original-program files and provenance are [preserved and verified](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md). Three of sixteen suites are complete. The final baseline leg of the first GIL serial-control ABBA is running; no complete four-leg comparison is claimed yet.
+
+## First complete source ABBA — 20 October, 05:15 UTC
+
+All four GIL-disabled legs completed. Input fingerprints match before and after; every leg retains 100 original programs and 127 matching named results. The [complete results and raw evidence](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md) include an arithmetic cross-check of every result and both halves. Geometric-mean execution-time change is −0.21%; the largest increases are `bench_mp_pool` (+6.98%) and `shortest_path` (+3.15%). The pool halves differ substantially (+12.80% and +1.03%). This is a descriptive source comparison with parallel GC disabled, not a neutrality, causal or full-project acceptance verdict.
+
+Four of sixteen suites are complete. GIL enabled started automatically at 05:15:35 UTC. FT disabled and FT enabled follow. All original workloads, rigorous parameters, binaries and measurement inputs remain unchanged; VP adoption/remediation has not begun.
