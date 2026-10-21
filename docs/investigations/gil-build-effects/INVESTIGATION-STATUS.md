@@ -1,6 +1,25 @@
 # Investigation: GIL build effects after unused-code cleanup
 
-Status: three of four focused ABBA blocks complete; final disabled control running. The original large enabled increases have not recurred in either enabled block. Final verification and evidence preservation remain required.
+Status: all four focused ABBA blocks completed and verified. The original large enabled increases did not recur. Cause remains unresolved; no collector change or new build experiment is justified by this result alone.
+
+## Latest findings — 21 October 2026
+
+The original executable bytes were measured with the same reconstructed runtime, unchanged benchmark programs and rigorous parameters. Each row compares integrated versus baseline **with the same GC policy**, not parallel versus serial. Positive percentages mean more execution time.
+
+| Policy / repetition | `btree_gc_only` time change | BTree halves | `connected_components` time change | NetworkX halves |
+|---|---:|---|---:|---|
+| Disabled / first | +9.24% | +16.77%, +0.91% | +0.09% | −0.39%, +0.60% |
+| Enabled / first | +0.88% | +5.75%, −3.89% | −1.77% | −1.83%, −1.71% |
+| Enabled / second | +2.41% | −0.68%, +5.59% | −2.05% | −5.19%, +1.33% |
+| Disabled / second | −1.82% | −1.35%, −2.28% | −2.37% | −4.03%, −0.67% |
+
+The earlier enabled increases (+12.70% BTree and +6.48% NetworkX) did not reproduce in either new block. BTree's two enabled block averages are still positive; all four enabled halves must remain visible because their directions oppose within each block. The disabled BTree control also reverses direction across repetitions. These results do not establish equivalence, a stable smaller regression, or a speedup attributable to cleanup.
+
+The strong interpretation that this pair has a consistently large enabled penalty under the declared shared runtime is not supported. Run conditions, adaptive trajectories or runtime context remain plausible explanations for the earlier observation. This experiment cannot distinguish them, or exclude PGO/build differences and runtime–binary interactions. The original runtime was not recovered; the changed runtime is therefore a limit on generalisation, not proof that it caused the original result. No timed-GC attribution is made for NetworkX.
+
+Next owner decision: whether this bounded non-reproduction warrants further investigation. Independent PGO rebuilds or instrumented GC diagnostics require the stage-3 protocol/budget gate below; neither was run. No implementation fix is proposed. Historical results and all original warnings remain retained.
+
+Evidence and restoration locators are in the final completion entry. Earlier entries below preserve the observations and gates at their stated stages; statements about pending work there are historical, not current status.
 
 Author/operator: Codex, root session `01a0d2dd-cae0-7453-8afb-9a483d2d280a`.
 Created: 2026-10-21T13:30:57Z.
@@ -180,3 +199,21 @@ Time changes: `btree_gc_only` +0.88% (halves +5.75%, −3.89%); `connected_compo
 The second enabled block ran 14:26:39–14:41:58 UTC. The same strict state, selection, digest and package checks passed, and its before/after fingerprints match. Campaign record SHA-256: `a6ac9a51a50122b7008b815438944a3645f2ad5f128fcb8b88030d636d131840`; raw campaign `results/03-enabled` and readable `analysis-03-enabled.json` remain in the owned workspace.
 
 Time changes: `btree_gc_only` +2.41% (halves −0.68%, +5.59%); `connected_components` −2.05% (−5.19%, +1.33%). Neither enabled block reproduces the original magnitudes. Both BTree blocks have opposing half-directions, so their positive block averages do not establish a stable regression. NetworkX has lower block averages in both repetitions, but its second block also has opposing half-directions. These are descriptive observations, not equivalence or a causal attribution. The final disabled control started immediately; no inputs or samples changed.
+
+### 2026-10-21T14:59:12Z — final control, checks and evidence custody complete
+
+The final disabled block ran 14:41:58–14:57:20 UTC. Controller session 74149 completed with exit 0; all four blocks passed their declared checks. Measurement elapsed time was 61 minutes 23 seconds, within the eight-hour ceiling. All sixteen focused suite invocations completed; no full-default sweep, fresh interpreter build or collector edit ran.
+
+Final disabled time changes: `btree_gc_only` −1.82% (halves −1.35%, −2.28%); `connected_components` −2.37% (−4.03%, −0.67%). Campaign SHA-256 `fd08978916df2175471030abcd8274df022d4a9aa94b4fbe9caa7a557bec8f5b`; final readable analysis SHA-256 `fb814e50536a1ecf61cb33b6af3351d3be7d20401adf017e90684a223e8ac39c`.
+
+The strict focused reader was rerun against every completed campaign and its output compared byte for byte with every saved analysis. All checks pass, including raw/program digests, actual policy/GIL/hook state, packages and selection. All four before/after fingerprints match the frozen starting inputs. Its ten tests pass again. A separately written `crosscheck.py` reads raw JSON without importing that reader and recomputes every leg mean, block ratio and both halves; all eight named-result rows agree. It also records absolute sample standard deviations and counts. These are operator self-checks, not an independent assessor audit or independent build replication. Arithmetic output SHA-256: `8635449f67d4f7bbaadee317f0651007be1e33e52a8ed018b244df8c1c2ce488`.
+
+Equal-weight leg means determine the block ratio: `(candidate leg 2 + candidate leg 3) / (baseline leg 1 + baseline leg 4)`. No samples or warnings were removed. BTree has six measured values from two run records per leg; NetworkX has 120 from forty. The first disabled BTree candidate leg has mean 92.50 ms and sample standard deviation 23.79 ms. The original rigorous defaults remain intact; these small BTree sample counts and observed variation constrain inference. Sample deviations are descriptive, not confidence intervals or independent-build variation. Captured host-load snapshots do not establish exclusive host ownership.
+
+**External evidence store:** `/home/alexturner/local/parallel-gc-gil-evidence.2Cwhq4`, Git revision `c5987dd1cbcd6175e1b0d6ef12d4530f619df4bd`. `observations.tar.gz` contains all raw campaigns/per-program outputs, failed preparation logs, readiness, exact commands, fingerprints, analyses and test captures. SHA-256: `d8798ced8b8fdaac9b82fdfaf6e128c88e102e45344fa2d6a2ddeb6a22b3df9f`. `runtime.tar.gz` preserves the actual reconstructed runtime/native and installed package inputs, excluding pyc/cache files; SHA-256 `a364f9dea117245a1be7ab3da11506464db5b849f1835a8ab88c4e2458714fb4`. Its manifest declares intentional identical executable copies in separate working/virtual-environment prefixes. No product source or old audit packet was copied into the project worktree.
+
+**Verified recovery replica:** `/home/alexturner/local/parallel-gc-gil-evidence-20261021-v2.bundle`, SHA-256 `6e8f58355b0cb542f6d7691f04c48b421d83153fad0a76ba6cab592e4a4a33bc`. Actual fresh clone into `parallel-gc-gil-evidence-restored-20261021-v2` completed at the exact revision; all four tracked evidence files were byte-compared with the store, and `sha256sum -c SHA256SUMS` passed in the restored checkout. Git printed `bundle-uri operation not supported by protocol`, but completed the clone and the subsequent checks passed. Initial replica revision `3d9f6cbe12ba8f68e9a13ab0791f5d1021871bbd` and its first bundle are retained; the successor corrects the README's initially inaccurate recovery filename and updates its digest. It does not alter either evidence archive.
+
+This verifies recovery of archive bytes, not executing a portable restored runtime, authenticating action timestamps or surviving whole-host loss. The driver base interpreter and system libraries remain external dependencies. Original executable/build-record custody has its separately verified replica above. Retain the owned evidence for project life plus one year after retirement; no workspace, original input or old evidence was deleted. The final local project-record commit will also be bundled and byte-checked before handoff; its exact revision and check are reported with the handoff, avoiding a self-referential commit hash in this file.
+
+**Scoped outcome:** the authorised recovered-binary/shared-runtime experiment is complete. Cause remains inconclusive. No project-conformance claim, closure of A-000001, source-repair acceptance, universal noise threshold or performance-neutrality claim follows. Stage 3 remains conditional and uncommissioned; Alex retains the next investigation decision. Existing review date and change/custody triggers remain in force. No benchmark is left running and no remote write was made.
