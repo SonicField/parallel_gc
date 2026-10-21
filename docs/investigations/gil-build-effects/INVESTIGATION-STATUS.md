@@ -83,3 +83,20 @@ Pre-plan inspection only: exact Git diffs/reference searches, benchmark scripts,
 Current verdict: **inconclusive** about the cause. There is a shared live-heap characteristic, but no established shared timed collector phase or source-versus-build attribution.
 
 Next action: bounded input-recovery inspection; then return the proposed first measurement command and recovered identities to Alex for confirmation. On interruption, no benchmark process from this investigation needs termination. Preserve this plan's committed version and append later outcomes rather than rewriting prospective criteria.
+
+### 2026-10-21T13:32:24Z — recovery inventory check
+
+Plan baseline: parent commit `cbf5880`. Read-only check used `/usr/local/bin/python3` to load `vp/artefacts/A-000001/input/inventory.json`, select entries whose original path is below `/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW` and ends in `/python`, then compare SHA-256 of each retained file against the inventory. Files were read directly; no binary was executed or restored.
+
+Attempt 1 printed four matching hashes, then exited 1 with `KeyError: 'original_path'` on a different inventory entry. Its unconditional dictionary lookup was wrong. Attempt 2 used `get('original_path', '')`, asserted exactly four selected entries, checked all four digests and exited 0. The correction changed only this read-only selection check, not evidence or benchmark inputs.
+
+Retained directory: `vp/artefacts/A-000001/input/external/parallel-gc-benchmarks-complete-20261016-ntQPAW/`.
+
+| File below retained directory | Recorded and observed SHA-256 |
+|---|---|
+| `baseline-gil/python` | `cc88a007f907335d9e480a8d3b926788216dfcfc3cf4d371638bb86f1e538b0b` |
+| `candidate-gil/python` | `2df758725bac29198fa0341fe9a60594814dcd59acd24e9e6af2bfd9a6d230f9` |
+| `baseline-ft/python` | `ee7c932bfdf6e76e8c5d18a2331a0a473a130a6c9500c24f0700c10c471f35d5` |
+| `candidate-ft/python` | `c51db4dee5757e789cc208162bc32d70e9d8e79834a07cc0eed63888cecd19c1` |
+
+Observation: the binaries are present and identifiable, despite loss of their original temporary directory. This does not establish a usable restored Python prefix, dependency environment, independent replica or full historical build recovery. A-000001/F-005 is not closed. Next: check retained configuration/stdlib/native-module/environment inputs before proposing any benchmark command. The cause of the performance increases remains inconclusive.
