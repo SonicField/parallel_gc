@@ -152,6 +152,39 @@ No workflow, result JSON, original campaign summary, source, benchmark program,
 acceptance rule or collector behavior changed. Final checks and successor
 assessment remain pending; the worker proposes all five findings ready for
 re-audit, not independently closed.
+
+## Verification before successor assessment
+
+At repaired revision `90b48cca79099ccb4faa957f4e30b3697c938561`, read-only
+fixed-Git-tree checks cover 95 documents and 502 local inline links. No
+nonlegacy destination or approximate heading mismatch is found. The 19 old
+A-000001 packet-link occurrences remain excluded and explicitly dispositioned
+in ACCESS.md. All fifteen explicit historical locator occurrences resolve
+in the appropriate parent/core repository. The earlier parent-only diagnostic
+misclassified the upstream source locator; repository-aware checking corrected
+that check without changing the historical reference.
+
+`vp/artefacts/DOC-000001/checks.json` retains the selection, identities, link
+limits and changed paths. Command: `python3
+/home/alexturner/local/parallel-gc-doc-reconciliation.9Du35R/check_documents.py`
+from the parent. This is an operator's ordinary read-only document checker,
+not execution of project tests or independent assessor evidence. Markdown/RST
+render tools are absent; approximate slugs are not rendered-anchor proof and
+external URLs were not fetched. The checker is outside the project source tree.
+
+Changed paths are documents plus the identified new audit evidence JSON only.
+CPython/pyperformance gitlinks, workflows, all benchmark programs/raw results
+and the three historical root-placement SUMMARY.md files are unchanged.
+The original A-000002 report hash still matches its seal. Core tracked status
+is clean; unrelated parent untracked files remain preserved. New-text
+whitespace checks pass. No acceptance rule or technical failure policy changed.
+
+Manual evidence reconciliation preserves all original percentages while
+distinguishing full versus quick protocols, fixed source versus runtime
+comparisons, GIL-only reconstructed custody, and reported versus job-verified
+CI. A fresh A-000003 now checks every initial finding, the worker gap
+dispositions and the new register/current-state route. Any remaining finding
+stays open; it is not waived by this self-check.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.
