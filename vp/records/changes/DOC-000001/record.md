@@ -122,6 +122,12 @@ editing those historical summaries or raw results. The root entry's stronger
 ownership report: helpers retain their last batch, with scheduling-dependent
 historical fraction. Candidate rejection remains unchanged. New-text whitespace
 checks pass; successor assessment remains required for independent closure.
+F-005 repair: DESIGN now distinguishes nominal startup and handled fallback
+from the existing A5–A7/A12 gaps. The active-collection guard was checked
+read-only in the selected `cpython/Modules/gcmodule.c`: both GIL and FT enable
+and disable test `collecting` before the would-be no-op path and raise
+`RuntimeError`. No core file, policy, test or failure semantics changed.
+New-text whitespace checks pass; independent closure remains pending.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.

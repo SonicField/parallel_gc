@@ -159,10 +159,15 @@ weakly ordered targets such as AArch64.
 
 ### 2.8 Serial fallback conditions
 
-Serial code runs when parallel GC is disabled, the pool is not active, the
-collection is below threshold, the split vector cannot describe usable work, or
-a phase cannot dispatch. Lazy-start failures fall back with bounded
-diagnostics (§5).
+Handled pre-dispatch conditions select serial code when parallel GC is
+disabled, the pool is not active, the collection is below threshold, the split
+vector is recognized as unusable, or a phase cannot dispatch. Lazy-start
+failures fall back with bounded diagnostics (§5).
+
+This is not a claim that every allocation or partial-phase failure is safely
+handled. Split-vector growth failures can be ignored, so an incomplete vector
+need not be recognized; FT temporary-state rollback is also unverified.
+[OPEN_ISSUES A5–A7](OPEN_ISSUES.md#1-source-audit) records those exceptions.
 
 ---
 
@@ -384,9 +389,12 @@ parallelism (§3.3).
 A transient `STARTING` state exists while the lifecycle lock is held; it is
 never reported as enabled. Fork, disable, shutdown and competing collections
 wait for it to commit to `ACTIVE` or roll back to `FAILED`.
-`gc.enable_parallel()` moves `DISABLED`/`FAILED` to `ARMED` (resetting the
-controller and failure latch, creating no thread) and is a no-op otherwise.
-`gc.disable_parallel()` moves any state to `DISABLED`.
+When no collection is active, `gc.enable_parallel()` moves `DISABLED`/`FAILED`
+to `ARMED` (resetting the controller and failure latch, creating no thread) and
+is a no-op otherwise; `gc.disable_parallel()` moves any state to `DISABLED`.
+In supporting builds both calls raise `RuntimeError` during an active
+collection, even for a call that would otherwise be a no-op. This call guard
+does not change the nominal lifecycle states.
 
 ### 5.2 Lazy transactional startup
 
@@ -408,6 +416,13 @@ bounded code and enters `FAILED`. The collection completes serially; one
 `collecting` cleared). A secondary failure while warning is suppressed, and
 warnings-as-errors cannot turn the serial fallback into a failed collection.
 Only an explicit `gc.enable_parallel()` permits another attempt.
+
+This describes the nominal startup/rollback sequence, not proof of every
+failure path. Worker join results are currently unchecked; safe cleanup after
+a join failure remains an unresolved [A12 issue](OPEN_ISSUES.md#1-source-audit).
+The proposed failure policy and its required tests are not implemented by
+this description. Collection-phase allocation/rollback gaps A5–A7 are distinct
+from startup cancellation.
 
 Lazy startup exists because eager creation triggered glibc's irreversible
 first-thread transition: `sqlite_synth` was 38.1% (GIL) and 10.4% (FT) slower
