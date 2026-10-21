@@ -192,3 +192,23 @@ Outcomes and failed checks will be appended here; final revisions are
 identified in Git history.
 Review triggers: changed document meaning, underlying evidence, owner scope,
 contradictory findings or custody loss. D has no calendar expiry requirement.
+
+## Successor dispatch and recovery
+
+A-000003 is commissioned to distinct fresh-context agent
+`/root/documentation_reauditor`, with no inherited worker/owner conversation.
+Its fixed input is `eaa0b065922a08c6e51c79cc8856e82433fbcf48` and its request
+is `vp/records/audits/A-000003/request.md` at that revision. Current VP was
+rechecked as clean `b9984e5833258ff138a290680140f0467f0f5758` before dispatch;
+the auditor must read and verify its instructions itself.
+
+The repaired-input bundle is
+`/home/alexturner/local/parallel-gc-doc-successor-20261021.bundle`, SHA-256
+`86e746ea03bd7457286fb49ffda6d741b4a14971ac086a70da1b0e679c68b928`.
+Fresh no-checkout restoration at
+`/home/alexturner/local/parallel-gc-doc-successor-restored-20261021` recovered
+every changed tracked document/evidence file since the baseline; exact-commit
+byte comparisons passed. Git again emitted its unsupported bundle-uri warning
+but cloning and all comparisons completed. This is a same-host documentation
+replica check, not recovery of the legacy packet or original benchmark runtime.
+The successor remains in progress; its verdict is not anticipated here.
