@@ -168,3 +168,9 @@ Controller PID 2633521 advances under timeout PID 2633520 and terminal session 7
 The disabled source-control time changes are `btree_gc_only` +9.24% (halves +16.77%, +0.91%) and `connected_components` +0.09% (halves −0.39%, +0.60%). The BTree first candidate leg has substantial original pyperf variation warnings; no value or run was removed. This control result differs from the earlier campaign and does not establish a reproducible source effect. The enabled blocks and second disabled block are still required; no complete investigation verdict follows.
 
 Raw campaign: owned workspace `results/01-disabled`; analysis `analysis-01-disabled.json`, SHA-256 `785211ed61129653658ac289d5fb08ddb747874770f0dde27b53b7589acc8b9e`. Campaign record SHA-256 `29cdd6d652d5c236a066f52e949da8255ed359b97faf0c51f09aba34135a1952`. First enabled block started immediately after verification. No source, runtime or workload change occurred between blocks.
+
+### 2026-10-21T14:26:39Z — first enabled block complete
+
+The first enabled block ran 14:11:22–14:26:39 UTC. Complete-program/leg/digest, explicit runtime state, package inventory, original-binary identity and before/after fingerprint checks pass. The saved rigorous run/value counts match the preceding block. Raw campaign `results/02-enabled`, campaign record SHA-256 `441c0b3af68b96db99c577e200ae3f87e3d0fc75ca48a18e926b40add9ae847a`, and `analysis-02-enabled.json` remain in the owned workspace.
+
+Time changes: `btree_gc_only` +0.88% (halves +5.75%, −3.89%); `connected_components` −1.77% (−1.83%, −1.71%). This block does not reproduce the earlier +12.70%/+6.48% increases. BTree half-directions oppose; no stable effect or cause is established. The second enabled and second disabled blocks are still required. They follow unchanged inputs; the next enabled block started at this timestamp. No values were discarded.
