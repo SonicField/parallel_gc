@@ -1,7 +1,7 @@
 # DOC-000001 — Documentation audit and reconciliation
 
 ID: parallel_gc:documentation:DOC-000001. Level: D.
-Created: 2026-10-21. Author/operator: Codex root session
+Created: 2026-10-21T16:04:37Z. Author/operator: Codex root session
 `01a0d2dd-cae0-7453-8afb-9a483d2d280a`. Owner: Alex Turner.
 Status: open; prospective audit and repair record.
 
@@ -61,7 +61,36 @@ No full-project conformance or release decision is a completion requirement.
 
 ## Results and current action
 
-Pending: candidate freeze and initial independent audit. Outcomes and failed
-checks will be appended here; final revisions are identified in Git history.
+Candidate `40bfdcd41462caafb0f1fc38856529d4739cf48e` was committed before
+dispatch. Same-host replica `/home/alexturner/local/parallel-gc-doc-audit-20261021.bundle`
+has SHA-256 `351318813618b913c50a629c6584491d16f71631c510893f8702d00baa70e4d9`.
+A fresh clone in `parallel-gc-doc-audit-restored-20261021` recovered the
+request, this commissioning record, prior audit report, README, PERFORMANCE
+and GIL investigation; each was byte-compared with the candidate. Git emitted
+its unsupported bundle-uri warning but completed cloning and all comparisons
+passed. This is selected record recovery on the same host, not full-host or
+legacy packet recovery. The fresh auditor `/root/documentation_auditor` has
+no inherited conversation and is assessing that fixed revision.
+
+The worker's separate baseline check inspected inline file destinations in
+14 reviewer-facing Markdown documents: no missing file destination. It did
+not check anchors, RST rendering or historical free-text locators. Phrase
+inspection found stale current-status statements in README, PERFORMANCE,
+VALIDATION, OPEN_ISSUES and the integration plan: some full comparisons remain
+described as pending and binary custody as unverified despite later records.
+These observations do not themselves close any independent audit finding.
+
+Worker gaps to reconcile after the audit: W1 a central investigation/choice
+register is missing; W2 current summaries conflict with dated successor
+evidence; W3 audit records lacked Git custody (their sealed report/request
+are now committed, but the large local legacy packet is not); W4 existing
+audit findings need an explicit current disposition without invented closure.
+Full-project six-view adoption was not established and is not a mandatory
+repair imposed by this level-D task. A small linked register/current view is
+an alternative to duplicating all investigation records.
+
+Pending: initial independent report, reconciled dispositions and repairs.
+Outcomes and failed checks will be appended here; final revisions are
+identified in Git history.
 Review triggers: changed document meaning, underlying evidence, owner scope,
 contradictory findings or custody loss. D has no calendar expiry requirement.
