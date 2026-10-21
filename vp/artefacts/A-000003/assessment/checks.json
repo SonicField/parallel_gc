@@ -1,0 +1,830 @@
+{
+  "audit": "A-000003",
+  "kind": "Project Audit",
+  "level": "D explanatory documentation",
+  "operator": "fresh-context Codex /root/documentation_reauditor",
+  "fixed_input": {
+    "repository": "SonicField/parallel_gc",
+    "commit": "eaa0b065922a08c6e51c79cc8856e82433fbcf48",
+    "tree": "d303a6644baa25d7a0040618726e7c50a8e9a821",
+    "request_path": "vp/records/audits/A-000003/request.md",
+    "request_blob": "3b21c7ab41f283da0d9423e18bd3e51521a62955",
+    "bundle": "/home/alexturner/local/parallel-gc-doc-successor-20261021.bundle",
+    "bundle_sha256": "86e746ea03bd7457286fb49ffda6d741b4a14971ac086a70da1b0e679c68b928",
+    "restored_repository": "/home/alexturner/local/parallel-gc-doc-successor-restored-20261021",
+    "bundle_verify": "exit 0; complete history; fixed commit at refs/heads/main"
+  },
+  "instructions": {
+    "repository": "/home/alexturner/verifiable-practice",
+    "revision_start_and_end": "b9984e5833258ff138a290680140f0467f0f5758",
+    "tracked_status_start_and_end": "clean",
+    "standard": "1.1, 21 October 2026",
+    "read": "All seven files completely read by the assessor; unchanged hashes at start and 2026-10-21 16:32:29 UTC",
+    "sha256": {
+      "SKILL.md": "de0959637ee2d9e768cc881ceb72c83b0a02d1aa07a345c75fdd0d7deed17406",
+      "standards/project-records.md": "86892cdbd47413188eeab839cab08a5378d78696fd67274ca2915fbb1fe6a450",
+      "playbooks/audit-routing.md": "8b8943a06e278c6a6c7ccf970f1cd72cef9c3e7495921861a32d1e40df548f1d",
+      "playbooks/record-audit.md": "26bc22ab91e8ebfc222b1967f7778b609a0ede58c1e70a2cf59f17dcd48b2814",
+      "templates/project-records/audit.md": "9e390185302be1f0d841827b0b279311661caccc91d8f572d2b431a376ebd3d8",
+      "templates/project-records/audit-request.md": "d7f1881d5052c48756baa8b19a63e166c2694c0130237721aac85d15ae3a9c51",
+      "templates/project-records/audit-response.md": "31611cee40ee5fdca3cc8d28bf6c38818ebf5e71023cccf556824cdd2e93646f"
+    }
+  },
+  "changed_paths_since": "eda5e00ad3aa243171a3a29fbcdad1706634567d",
+  "changed_paths": [
+    "README.md",
+    "SKILL.md",
+    "benchmarks/dependency-repair/PLAN.md",
+    "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+    "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+    "docs/CLAUDE_INTEGRATION_PLAN.md",
+    "docs/DESIGN.md",
+    "docs/HANDOFF_RECONCILIATION_PLAN.md",
+    "docs/OPEN_ISSUES.md",
+    "docs/PERFORMANCE.md",
+    "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+    "docs/TESTING.md",
+    "docs/VALIDATION.md",
+    "docs/ci-results-2026-10-19.md",
+    "vp/README.md",
+    "vp/REGISTRY.md",
+    "vp/STATE.md",
+    "vp/artefacts/A-000002/assessment/MANIFEST.md",
+    "vp/artefacts/A-000002/assessment/checks.json",
+    "vp/artefacts/DOC-000001/checks.json",
+    "vp/records/audits/A-000001/ACCESS.md",
+    "vp/records/audits/A-000001/record.md",
+    "vp/records/audits/A-000001/request.md",
+    "vp/records/audits/A-000002/record.md",
+    "vp/records/audits/A-000002/request.md",
+    "vp/records/audits/A-000003/request.md",
+    "vp/records/changes/DOC-000001/record.md"
+  ],
+  "recovery": {
+    "method": "cmp <(git -C primary show fixed:path) <(git -C restored show fixed:path), for every changed path",
+    "results": [
+      {
+        "path": "README.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "SKILL.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "benchmarks/dependency-repair/PLAN.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/CLAUDE_INTEGRATION_PLAN.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/DESIGN.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/OPEN_ISSUES.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/PERFORMANCE.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/TESTING.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/VALIDATION.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "docs/ci-results-2026-10-19.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/README.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/REGISTRY.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/STATE.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/artefacts/A-000002/assessment/MANIFEST.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/artefacts/A-000002/assessment/checks.json",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/artefacts/DOC-000001/checks.json",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000001/ACCESS.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000001/record.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000001/request.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000002/record.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000002/request.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/audits/A-000003/request.md",
+        "exit": 0,
+        "diagnostic": ""
+      },
+      {
+        "path": "vp/records/changes/DOC-000001/record.md",
+        "exit": 0,
+        "diagnostic": ""
+      }
+    ],
+    "limits": "Git object bytes, not executable behavior or whole-host survival; coordinator prepared the fresh restoration"
+  },
+  "local_links": {
+    "method": "Inline Markdown file/directory destinations only; no anchors, reference links, external URLs, rendering or submodule internals",
+    "documents": [
+      "README.md",
+      "SKILL.md",
+      "benchmarks/dependency-repair/PLAN.md",
+      "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "docs/DESIGN.md",
+      "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "docs/OPEN_ISSUES.md",
+      "docs/PERFORMANCE.md",
+      "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "docs/TESTING.md",
+      "docs/VALIDATION.md",
+      "docs/ci-results-2026-10-19.md",
+      "vp/README.md",
+      "vp/REGISTRY.md",
+      "vp/STATE.md",
+      "vp/artefacts/A-000002/assessment/MANIFEST.md",
+      "vp/records/audits/A-000001/ACCESS.md",
+      "vp/records/audits/A-000001/record.md",
+      "vp/records/audits/A-000001/request.md",
+      "vp/records/audits/A-000002/record.md",
+      "vp/records/audits/A-000002/request.md",
+      "vp/records/audits/A-000003/request.md",
+      "vp/records/changes/DOC-000001/record.md"
+    ],
+    "occurrences": 343,
+    "unique_targets": 120,
+    "missing_occurrences": [
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/input/user-authority.md",
+        "path": "vp/artefacts/A-000001/input/user-authority.md"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+        "path": "vp/artefacts/A-000001/input/source/docs/OPEN_ISSUES.md"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/input/source/README.md",
+        "path": "vp/artefacts/A-000001/input/source/README.md"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/input/source/docs/VALIDATION.md",
+        "path": "vp/artefacts/A-000001/input/source/docs/VALIDATION.md"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/input/audit-standard/standards/project-records.md",
+        "path": "vp/artefacts/A-000001/input/audit-standard/standards/project-records.md"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/verification-pre.json",
+        "path": "vp/artefacts/A-000001/assessment/verification-pre.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/verification-post.json",
+        "path": "vp/artefacts/A-000001/assessment/verification-post.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/archive-inventory-check.json",
+        "path": "vp/artefacts/A-000001/assessment/archive-inventory-check.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+        "path": "vp/artefacts/A-000001/assessment/identity-cross-checks.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/structural-summary.json",
+        "path": "vp/artefacts/A-000001/assessment/structural-summary.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/path-index.txt",
+        "path": "vp/artefacts/A-000001/assessment/path-index.txt"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/record-searches.json",
+        "path": "vp/artefacts/A-000001/assessment/record-searches.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/selected-link-check.json",
+        "path": "vp/artefacts/A-000001/assessment/selected-link-check.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/historical-locator-check.json",
+        "path": "vp/artefacts/A-000001/assessment/historical-locator-check.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/selected-excerpts.json",
+        "path": "vp/artefacts/A-000001/assessment/selected-excerpts.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/material-run-inspection.json",
+        "path": "vp/artefacts/A-000001/assessment/material-run-inspection.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/readiness-inspection.json",
+        "path": "vp/artefacts/A-000001/assessment/readiness-inspection.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+        "path": "vp/artefacts/A-000001/assessment/identity-cross-checks.json"
+      },
+      {
+        "source": "vp/records/audits/A-000001/record.md",
+        "target": "../../../artefacts/A-000001/assessment/MANIFEST.md",
+        "path": "vp/artefacts/A-000001/assessment/MANIFEST.md"
+      }
+    ],
+    "results": [
+      {
+        "path": "docs/pep-parallel-gc-v2.rst",
+        "exit": 0
+      },
+      {
+        "path": "vp/README.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/VALIDATION.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/PERFORMANCE.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/GETTING_STARTED.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/DESIGN.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/OPEN_ISSUES.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/TESTING.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/CLAUDE_INTEGRATION_PLAN.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/reviews/2026-10-15-claude-scaling-review.md",
+        "exit": 0
+      },
+      {
+        "path": "SKILL.md",
+        "exit": 0
+      },
+      {
+        "path": "README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/STATE.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/GENSHI.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/COVERAGE.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/MARKUPSAFE.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/GREENLET.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/DULWICH.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/SQLALCHEMY.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/ci-results-2026-10-19.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/TOOLCHAIN-PREPARATION.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/pyperformance-preparation-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-1/SUMMARY.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-quick-module-1/SUMMARY.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-module-1/SUMMARY.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/PLAN.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/REGISTRY.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/test_prepared_pyperformance.py",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/claude-scaling-2026-10-15",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-1958301-ft-lazy-full-2026-10-08.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/analyse_pyperformance_abba.py",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/records/changes/DOC-000001/record.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+        "exit": 0
+      },
+      {
+        "path": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/records/audits/A-000002/record.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/records/audits/A-000001/record.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/records/audits/A-000001/ACCESS.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/ft-container-clean-baseline-2026-10-05/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/investigations/claude-scaling-2026-10-15/README.md",
+        "exit": 0
+      },
+      {
+        "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19",
+        "exit": 0
+      },
+      {
+        "path": "vp/records/audits/A-000001/request.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/artefacts/A-000001/input/user-authority.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/input/source/README.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/input/source/docs/VALIDATION.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/input/audit-standard/standards/project-records.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/verification-pre.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/verification-post.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/archive-inventory-check.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/identity-cross-checks.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/structural-summary.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/path-index.txt",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/record-searches.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/selected-link-check.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/historical-locator-check.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/selected-excerpts.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/material-run-inspection.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/readiness-inspection.json",
+        "exit": 128
+      },
+      {
+        "path": "vp/artefacts/A-000001/assessment/MANIFEST.md",
+        "exit": 128
+      },
+      {
+        "path": "vp/records/audits/A-000002/request.md",
+        "exit": 0
+      },
+      {
+        "path": "vp/artefacts/A-000002/assessment/checks.json",
+        "exit": 0
+      }
+    ],
+    "limits": "No recursive reading of A-000001 packet; only fixed-tree target existence checks"
+  },
+  "preservation": {
+    "A_000002_report_sha256": "b86e59995c7eb5b3527b2c5aaf49041b0bb324e04f254063f924b3ca9fc222bc",
+    "A_000002_checks_sha256": "a25de5bf785d0396865fd06f42a48d10c6315345850c7ba3b4e6ef86b10bf6cb",
+    "A_000002_report_cmp": "exit 0 against introducing commit 5f3629ee546e116d29c63c39cdc92eec319415cb",
+    "A_000001_report_cmp": "exit 0 against 40bfdcd41462caafb0f1fc38856529d4739cf48e"
+  },
+  "unchanged": {
+    "cpython_gitlink": "b91445e0b95454e32b982770f6e3c864beb5a528",
+    "pyperformance_gitlink": "ccc0aeb7ad46d65b6dcd4160e0fdda4d885852dd",
+    "scope": "Baseline/fixed Git diff changes only the 25 named Markdown documents and two assessment JSONs; workflows, benchmark code/raw results, operative acceptance rules and original three SUMMARY.md files are unchanged"
+  },
+  "retained_assessor_failure": "One preliminary preservation command used the unresolved, unverified abbreviation 90e1f582 and failed with invalid object name / cmp EOF (exit 1). A bounded Git log identified the actual introducing commit 5f3629ee546e116d29c63c39cdc92eec319415cb; the corrected comparison passed. No evidence/input mutation occurred.",
+  "postcheck_utc": "2026-10-21 16:32:29 UTC",
+  "role_compliance": "No project script/test/build/benchmark/runtime/code execution, source repair, CPython policy reading, remote write or further agent; only ordinary Git/file/digest inspection and auditor outputs."
+}
