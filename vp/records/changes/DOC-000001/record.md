@@ -128,6 +128,13 @@ read-only in the selected `cpython/Modules/gcmodule.c`: both GIL and FT enable
 and disable test `collecting` before the would-be no-op path and raise
 `RuntimeError`. No core file, policy, test or failure semantics changed.
 New-text whitespace checks pass; independent closure remains pending.
+F-003 / W3 / W4 repair: added A-000001/ACCESS.md as a current companion,
+identifying tracked report/request versus local untracked legacy inputs.
+The three named legacy manifests were observed present, not rehashed as a
+complete packet. The original report/request and their seal are unchanged;
+all six historical findings remain open with narrow current dispositions.
+New-text whitespace checks pass. Packet recovery/off-host custody and broad
+historical closure were not performed or claimed.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.
