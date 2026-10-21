@@ -34,6 +34,7 @@ under Alex Turner's guidance using
 | What is broken, unproven or undecided? What blocks upstreaming? | [Open issues](docs/OPEN_ISSUES.md) |
 | Which tests and CI runs apply to which source revision? | [Validation](docs/VALIDATION.md), [Testing](docs/TESTING.md) |
 | What was adopted from the review work, and what remains? | [Integration plan and progress log](docs/CLAUDE_INTEGRATION_PLAN.md) |
+| Where are investigations, choices, evidence and audit dispositions recorded? | [VP current state and register](vp/README.md) |
 | What is proposed for discussion? | [Discussion draft](docs/pep-parallel-gc-v2.rst) |
 | Why does root propagation scale poorly in some heaps? | [Scaling review, 15 October 2026](docs/reviews/2026-10-15-claude-scaling-review.md) |
 | I am an AI assistant working on this project. | [SKILL.md](SKILL.md): method, evidence rules and why simple designs are kept |

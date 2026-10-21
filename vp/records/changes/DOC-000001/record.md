@@ -135,6 +135,12 @@ complete packet. The original report/request and their seal are unchanged;
 all six historical findings remain open with narrow current dispositions.
 New-text whitespace checks pass. Packet recovery/off-host custody and broad
 historical closure were not performed or claimed.
+W1 / F-002 navigation repair: added vp/README.md, REGISTRY.md and STATE.md,
+linking existing design choices, rejected experiments, integration checks,
+dependency alternatives, completed comparisons and open decisions by family.
+README's reviewer route links the entry. Scope is explicitly explanatory,
+not all-source lifecycle coverage or retrospective whole-project adoption.
+Current-status reconciliation and complete link checks follow separately.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.
