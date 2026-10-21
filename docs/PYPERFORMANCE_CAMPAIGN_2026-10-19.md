@@ -111,3 +111,13 @@ The second integrated FT-disabled suite completed all 100 programs and 127 named
 All four FT-disabled legs completed with matching before/after input fingerprints and 100 original programs/127 named results per leg. [Complete results, raw evidence and arithmetic cross-check](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md). Geometric-mean time change is +0.23%; largest increases are `dask` (+4.55%), `k_core` (+2.51%) and `html5lib` (+2.21%). `k_core` has opposing halves; `dask` and `html5lib` increase in both. These remain unresolved source-comparison observations, not activation-cost estimates, causal attribution or acceptance.
 
 Twelve of sixteen suites are complete. FT enabled started at 21:29:09 UTC. Measurement inputs remain unchanged; VP adoption/remediation remains pending.
+
+## Fourth complete source ABBA — 21 October, 05:50 UTC
+
+All four FT-enabled legs completed. The controller exited successfully at 05:50:38 UTC, with matching initial, before-campaign and after-campaign input fingerprints. Every leg retains 100 original programs and 127 named results, 5,004 measured run records and 15,852 values. Strict per-run state/hook and all 400 original-program digest checks pass. A separate arithmetic checker recomputed all ratios and both halves, and checked seven recorded result/comparison digests and matching package/direct-URL inventories. [Complete FT-enabled results and raw evidence](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md).
+
+Geometric-mean execution-time change is −0.25%; largest increases are `dulwich_log` (+2.22%), `k_core` (+1.75%) and `btree` (+1.52%), all positive in both halves. `stdlib_startup` increases +1.20% with opposing halves. `btree_gc_only` decreases −4.69%, with substantially different halves (−1.36%, −7.89%). These are descriptive source comparisons, not activation-cost estimates or evidence of causation, neutrality or acceptance. GC pauses were not measured.
+
+The original build/driver root was absent at analysis time; the first invocation returned exit 127 without running analysis or a benchmark. A separate analysis environment with pyperf 2.10.0 was then created; its inventory and successful cross-check are preserved. The disappearance of the original binaries is unexplained. This is an evidence-custody gap, not a benchmark execution failure or permission to regenerate historical inputs.
+
+All sixteen suites are complete and recorded. No benchmark workload, rigorous setting or measured binary was changed during this analysis. Nothing was pushed. VP adoption/remediation and independent audit remain to be done; completed measurements do not establish project conformance.

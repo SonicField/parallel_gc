@@ -179,6 +179,8 @@ On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/P
 
 **Later 20 October FT follow-up:** the complete [FT-disabled source ABBA](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md) records geometric-mean time change +0.23%, `dask` +4.55%, `k_core` +2.51% and `html5lib` +2.21%. `k_core` has opposing halves; the other two increase in both. This collector-disabled source control does not attribute those changes to parallel collection. FT enabled remains pending; all observed increases and uncertainty remain open.
 
+**21 October completion:** all sixteen rigorous suites are now complete. [FT enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md) records geometric-mean time change −0.25%, but `dulwich_log` +2.22%, `k_core` +1.75% and `btree` +1.52% increase in both halves. The individual increases remain unresolved. This compares sources with parallel GC enabled, not activation versus serial in one binary. The recorded build/driver root was absent at final analysis time; historical measurement fingerprints and raw results remain, but present binary custody is unverified. This loss is unexplained and must be addressed in evidence-custody remediation.
+
 | ID | State | Issue |
 |----|-------|-------|
 | P1 | Measured; mechanism inferred | FT propagation workers leave permanently after `2 × num_workers` failed steal sweeps. With module-rooted live data, helpers exit before work becomes stealable: graph 0.61–0.83× serial at 16 workers (3.39× when frame-rooted). In the project suite, module-rooted collections spend 27–51% of their time in propagation at 16 workers, against 9–20% when frame-rooted. A fix (helpers wait until all work is finished) was tried and dropped; see below. |
@@ -258,7 +260,7 @@ Design discussion is not blocked on these; landing is.
 | Native macOS active collector | First run built all four ARM64 configurations, then failed before tests due to the executable path; workflow corrected. Rerun `38880079592` feature-off passes reported; final feature-on outcomes unconfirmed. |
 | Source failure policies | A5, A6, A7, A8, A12 open. |
 | Performance limits and adaptation | Review-work criteria recorded for discussion (PERFORMANCE.md §6); root-placement weaknesses P1–P4 open (experiments dropped); P5–P6 open; no convergence claim. |
-| Current full default pyperformance | Dependency readiness passes all 100 original programs in all eight contexts, with 127 named results each and no failures. Rigorous performance comparisons remain outstanding. No programs excluded. Older focused SQLite results and the new diagnostic execution checks do not validate performance neutrality. |
+| Current full default pyperformance | All sixteen rigorous source-comparison suites are complete, with 100 original programs and 127 named results each. No programs excluded. Individual increases remain unresolved; this is not a performance-neutrality verdict or a same-binary activation-cost comparison. See PERFORMANCE §4.1. |
 | Optimized feature-off controls | Pending. |
 | First-use latency and memory | Not measured. |
 | Extension compatibility and provenance | Pending. |

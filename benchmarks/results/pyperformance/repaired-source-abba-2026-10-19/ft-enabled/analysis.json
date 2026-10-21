@@ -1,0 +1,4890 @@
+{
+  "build_mode": "ft",
+  "campaign": "/tmp/parallel-gc-pyperformance-rigorous-6a93Gj/full-v4/ft-enabled/campaign.json",
+  "campaign_sha256": "9519d93a818dec8b98e02f28497d96684bd616ad8616417e5a7ff7c302b4da31",
+  "geomean_time_change_pct": -0.24935573405920897,
+  "interpretation": "Descriptive leg means and half-comparisons; no acceptance or causal verdict.",
+  "program_count": 100,
+  "result_count": 127,
+  "rows": [
+    {
+      "baseline_mean_seconds": 0.21741735880884033,
+      "benchmark": "2to3",
+      "candidate_mean_seconds": 0.2154576309879,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.48506984554123056,
+        -1.3215225208745074
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.21842037617849808,
+          "measured_processes": 40,
+          "stdev_seconds": 0.004247387028971886,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21736088479713847,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0031226083937204952,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21355437717866152,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0030041562342955426,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21641434143918256,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0036221841225776126,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.90136676835606,
+      "time_ratio": 0.9909863323164394
+    },
+    {
+      "baseline_mean_seconds": 0.008004721036559203,
+      "benchmark": "many_optionals",
+      "candidate_mean_seconds": 0.007964583727880382,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.47292144418510373,
+        -0.5301582809683514
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.008038119833994035,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00018390478665733406,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.008000105841589781,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0001570330248881275,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00792906161417098,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0001486163492218393,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00797132223912437,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0001827834276001982,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.5014204554475543,
+      "time_ratio": 0.9949857954455245
+    },
+    {
+      "baseline_mean_seconds": 0.0004272922517581416,
+      "benchmark": "subparsers",
+      "candidate_mean_seconds": 0.00042350510105582844,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.0858144613079546,
+        -0.6850272164120375
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0004291965351209607,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8136031961822404e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00042453625707518464,
+          "measured_processes": 40,
+          "stdev_seconds": 9.35551518771215e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0004224739450364723,
+          "measured_processes": 40,
+          "stdev_seconds": 8.488664289421314e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0004253879683953225,
+          "measured_processes": 40,
+          "stdev_seconds": 9.473756202815656e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.8863139190403047,
+      "time_ratio": 0.991136860809597
+    },
+    {
+      "baseline_mean_seconds": 0.3300074638992858,
+      "benchmark": "async_generators",
+      "candidate_mean_seconds": 0.329319659275158,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.15276669908139695,
+        -0.26435572142460284
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.33083718083022784,
+          "measured_processes": 40,
+          "stdev_seconds": 0.003549741442505274,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33033177178973955,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002833473060639887,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.32830754676057644,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002123102539100134,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.32917774696834384,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002529220030797955,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.2084209296362216,
+      "time_ratio": 0.9979157907036378
+    },
+    {
+      "baseline_mean_seconds": 0.27456914055316395,
+      "benchmark": "async_tree_none",
+      "candidate_mean_seconds": 0.2742983803308259,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.88615802677664,
+        0.6915608811301599
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.2750265562751641,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0194652005590353,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.27258938637096436,
+          "measured_processes": 40,
+          "stdev_seconds": 0.015621110568368419,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.27600737429068734,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016213303342868746,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.27411172483116386,
+          "measured_processes": 40,
+          "stdev_seconds": 0.020431254205345865,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.0986127653648805,
+      "time_ratio": 0.9990138723463512
+    },
+    {
+      "baseline_mean_seconds": 0.442850236602438,
+      "benchmark": "async_tree_cpu_io_mixed",
+      "candidate_mean_seconds": 0.4421024473966099,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.6170463741416943,
+        0.2831276221239465
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.4447185896492253,
+          "measured_processes": 40,
+          "stdev_seconds": 0.017722078889999857,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.44197446971666066,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016106792067838414,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4422304250765592,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01749922943952261,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4409818835556507,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016627261472270262,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.16885826042798424,
+      "time_ratio": 0.9983114173957202
+    },
+    {
+      "baseline_mean_seconds": 0.38453424799954516,
+      "benchmark": "async_tree_cpu_io_mixed_tg",
+      "candidate_mean_seconds": 0.38452988426821927,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.8013249059129479,
+        0.8091626843124144
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.3869475795344139,
+          "measured_processes": 40,
+          "stdev_seconds": 0.013771323619376203,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3838468722067773,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009676287885119237,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3852128963296612,
+          "measured_processes": 40,
+          "stdev_seconds": 0.015129507639425862,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.38212091646467644,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009685118903014057,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.0011348095387053725,
+      "time_ratio": 0.999988651904613
+    },
+    {
+      "baseline_mean_seconds": 0.11832583262973154,
+      "benchmark": "async_tree_eager",
+      "candidate_mean_seconds": 0.11756576066448664,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6779455332303064,
+        -0.6064111318662468
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.11891046403907239,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002213332436264919,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.11810431585957606,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0026608231809729203,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.11702720546939721,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002284056577717353,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1177412012203907,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0023098914531308238,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6423550532903,
+      "time_ratio": 0.993576449467097
+    },
+    {
+      "baseline_mean_seconds": 0.3390327067463659,
+      "benchmark": "async_tree_eager_cpu_io_mixed",
+      "candidate_mean_seconds": 0.3402093440139045,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.5841478019821378,
+        1.2919324162992796
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.34150311287958174,
+          "measured_processes": 40,
+          "stdev_seconds": 0.011417963619767636,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3395082299519951,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009504755947401201,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.34091045807581394,
+          "measured_processes": 40,
+          "stdev_seconds": 0.020102325313577935,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33656230061315,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010970909958605557,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.34705715529059766,
+      "time_ratio": 1.003470571552906
+    },
+    {
+      "baseline_mean_seconds": 0.38285882081836464,
+      "benchmark": "async_tree_eager_cpu_io_mixed_tg",
+      "candidate_mean_seconds": 0.38471981992479415,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.2817402101644495,
+        0.6936435237447025
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.38585574966855346,
+          "measured_processes": 40,
+          "stdev_seconds": 0.017035559583215856,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3869428604686012,
+          "measured_processes": 40,
+          "stdev_seconds": 0.018062957805653458,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3824967793809871,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01760509305393717,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.37986189196817577,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016592507885345824,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.4860797257985494,
+      "time_ratio": 1.0048607972579855
+    },
+    {
+      "baseline_mean_seconds": 0.45988830909676226,
+      "benchmark": "async_tree_eager_io",
+      "candidate_mean_seconds": 0.46481266534732035,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.9577130968027703,
+        1.1861361864162756
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.46452869684435427,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012185578591043751,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.46897754901243993,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012009288390430566,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4606477816822007,
+          "measured_processes": 40,
+          "stdev_seconds": 0.027866998374876547,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4552479213491703,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010486755512842345,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 1.070772218634941,
+      "time_ratio": 1.0107077221863494
+    },
+    {
+      "baseline_mean_seconds": 0.43771066554666804,
+      "benchmark": "async_tree_eager_io_tg",
+      "candidate_mean_seconds": 0.43846023748628793,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        1.0935317957654567,
+        -0.7499509458482434
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.4374532101598258,
+          "measured_processes": 40,
+          "stdev_seconds": 0.011265780402103092,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4422369001045202,
+          "measured_processes": 40,
+          "stdev_seconds": 0.014122912340794656,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4346835748680557,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010603127968499044,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.43796812093351034,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012669101348294314,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.17124826937533477,
+      "time_ratio": 1.0017124826937533
+    },
+    {
+      "baseline_mean_seconds": 0.2096356662766387,
+      "benchmark": "async_tree_eager_memoization",
+      "candidate_mean_seconds": 0.21032752689595025,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.5177150283047993,
+        0.14013140692841208
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.21086466053966432,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010262403393764344,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21195633857666205,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010528086781280635,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.20869871521523845,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009292177347575445,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2084066720136131,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00869381895581693,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.3300300142622392,
+      "time_ratio": 1.0033003001426224
+    },
+    {
+      "baseline_mean_seconds": 0.26807281528987614,
+      "benchmark": "async_tree_eager_memoization_tg",
+      "candidate_mean_seconds": 0.2686301106199001,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.5147700825797408,
+        -0.10274236577734186
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.2697013427581017,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016567397679091357,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.27108968458293625,
+          "measured_processes": 40,
+          "stdev_seconds": 0.02558802381983789,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.26617053665686397,
+          "measured_processes": 40,
+          "stdev_seconds": 0.016604006518683753,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2664442878216505,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01729398343442901,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.20788953531947207,
+      "time_ratio": 1.0020788953531947
+    },
+    {
+      "baseline_mean_seconds": 0.19652588181973746,
+      "benchmark": "async_tree_eager_tg",
+      "candidate_mean_seconds": 0.1935811505614159,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.027302474881818473,
+        -2.9422200057816816
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.1946876728441566,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01013456945395887,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.19463451829118034,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010307894367422564,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.19252778283165148,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010615386451616448,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.19836409079531828,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012871075022723529,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.498393611596971,
+      "time_ratio": 0.9850160638840303
+    },
+    {
+      "baseline_mean_seconds": 0.5071867174042078,
+      "benchmark": "async_tree_io",
+      "candidate_mean_seconds": 0.503825567534659,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.3401512319795019,
+        -1.656109439530351
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.5047855027485639,
+          "measured_processes": 40,
+          "stdev_seconds": 0.013683273866494832,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5065025368550171,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01844657408974523,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.501148598214301,
+          "measured_processes": 40,
+          "stdev_seconds": 0.013918609634387721,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5095879320598518,
+          "measured_processes": 40,
+          "stdev_seconds": 0.014648692420656844,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6627046320832775,
+      "time_ratio": 0.9933729536791672
+    },
+    {
+      "baseline_mean_seconds": 0.460745491576381,
+      "benchmark": "async_tree_io_tg",
+      "candidate_mean_seconds": 0.4573029617856567,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.3560259223551308,
+        -0.13259131547038727
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.4628970386382813,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010350287793728463,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.456620034800532,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008799038595224504,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.45798588877078145,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00897543419115339,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.4585939445144807,
+          "measured_processes": 40,
+          "stdev_seconds": 0.013067776805138846,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7471651603027318,
+      "time_ratio": 0.9925283483969727
+    },
+    {
+      "baseline_mean_seconds": 0.333697822492104,
+      "benchmark": "async_tree_memoization",
+      "candidate_mean_seconds": 0.3293449945670242,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -3.100702986168491,
+        0.5289874047354592
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.3371112528645123,
+          "measured_processes": 40,
+          "stdev_seconds": 0.018608806697394842,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3266584341802324,
+          "measured_processes": 40,
+          "stdev_seconds": 0.015413450265085718,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33203155495381603,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01733354882091448,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33028439211969574,
+          "measured_processes": 40,
+          "stdev_seconds": 0.017895004421017966,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.3044220344538782,
+      "time_ratio": 0.9869557796554612
+    },
+    {
+      "baseline_mean_seconds": 0.2808160918958795,
+      "benchmark": "async_tree_memoization_tg",
+      "candidate_mean_seconds": 0.27836150130800286,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.2692071454141307,
+        -0.47368125521054516
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.282685306109488,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010616876696492257,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.27909744400531056,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009860560145368834,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2776255586106951,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012530147853741933,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2789468776822711,
+          "measured_processes": 40,
+          "stdev_seconds": 0.017052997140254156,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.8740918553865384,
+      "time_ratio": 0.9912590814461346
+    },
+    {
+      "baseline_mean_seconds": 0.22094985664977382,
+      "benchmark": "async_tree_none_tg",
+      "candidate_mean_seconds": 0.21833949708379805,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.6681330279077033,
+        -0.6890090038531471
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.2222384770323212,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01335489997441287,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21853124359622597,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008208582845319319,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21814775057137012,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008992074961762292,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21966123626722645,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009240707550626514,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.1814262319768898,
+      "time_ratio": 0.9881857376802311
+    },
+    {
+      "baseline_mean_seconds": 0.213651678377452,
+      "benchmark": "asyncio_tcp",
+      "candidate_mean_seconds": 0.21553077374895413,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.9543219706737549,
+        2.754763540755145
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.21603724995317558,
+          "measured_processes": 40,
+          "stdev_seconds": 0.006536537604379589,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21397555901203305,
+          "measured_processes": 40,
+          "stdev_seconds": 0.007307944505885598,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21708598848587524,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008625298303865945,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21126610680172841,
+          "measured_processes": 40,
+          "stdev_seconds": 0.006607152824072305,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.8795135080485572,
+      "time_ratio": 1.0087951350804856
+    },
+    {
+      "baseline_mean_seconds": 0.9176224929047748,
+      "benchmark": "asyncio_tcp_ssl",
+      "candidate_mean_seconds": 0.9173373057662199,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.1153294376053271,
+        -0.17756353278423065
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.9178614124345282,
+          "measured_processes": 40,
+          "stdev_seconds": 0.02152190071927043,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.9189199768394852,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01364659817392079,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.9157546346929545,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01825566873249719,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.9173835733750214,
+          "measured_processes": 40,
+          "stdev_seconds": 0.012568772906814529,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.031078917611548906,
+      "time_ratio": 0.9996892108238845
+    },
+    {
+      "baseline_mean_seconds": 0.5738051229622214,
+      "benchmark": "asyncio_websockets",
+      "candidate_mean_seconds": 0.5725766844504203,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.24352424118592175,
+        -0.18442702472697414
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.5759553697736313,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0025624353009460624,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5745527788298205,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00355562909220636,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.57060059007102,
+          "measured_processes": 40,
+          "stdev_seconds": 0.004593688928663628,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5716548761508117,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0022155265051616462,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.21408636183996022,
+      "time_ratio": 0.9978591363816004
+    },
+    {
+      "baseline_mean_seconds": 0.00022325087924552158,
+      "benchmark": "base64_small",
+      "candidate_mean_seconds": 0.00022174063847918055,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.0651952057777025,
+        -0.2853790098420683
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00022393215792059588,
+          "measured_processes": 40,
+          "stdev_seconds": 1.608473574038751e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00022154684331023115,
+          "measured_processes": 40,
+          "stdev_seconds": 1.6424862225331693e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00022193443364812993,
+          "measured_processes": 40,
+          "stdev_seconds": 2.0331103155231283e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0002225696005704473,
+          "measured_processes": 40,
+          "stdev_seconds": 1.4773769992186113e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6764769623505695,
+      "time_ratio": 0.9932352303764943
+    },
+    {
+      "baseline_mean_seconds": 0.00174809096994674,
+      "benchmark": "base64_large",
+      "candidate_mean_seconds": 0.0017478674842398808,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.1149399886027469,
+        0.08954609795217561
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.001749588922393741,
+          "measured_processes": 40,
+          "stdev_seconds": 1.0799565623560067e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0017475779450857468,
+          "measured_processes": 40,
+          "stdev_seconds": 1.393009332065106e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0017481570233940148,
+          "measured_processes": 40,
+          "stdev_seconds": 5.680366320929995e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0017465930174997387,
+          "measured_processes": 40,
+          "stdev_seconds": 2.095068524956723e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.012784558166678561,
+      "time_ratio": 0.9998721544183332
+    },
+    {
+      "baseline_mean_seconds": 0.0002442005796713905,
+      "benchmark": "urlsafe_base64_small",
+      "candidate_mean_seconds": 0.0002433147178029079,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.4411459624557801,
+        -0.2839133348063072
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0002449159083577494,
+          "measured_processes": 40,
+          "stdev_seconds": 1.740336379569466e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00024383547171661726,
+          "measured_processes": 40,
+          "stdev_seconds": 2.868509399588961e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00024279396388919848,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8866794467314407e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0002434852509850316,
+          "measured_processes": 40,
+          "stdev_seconds": 2.133639844299111e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.36275993680059404,
+      "time_ratio": 0.9963724006319941
+    },
+    {
+      "baseline_mean_seconds": 0.00019881952758472228,
+      "benchmark": "base32_small",
+      "candidate_mean_seconds": 0.0001978253865521159,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.35381734897403927,
+        -0.6464846986261152
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00019899506484459076,
+          "measured_processes": 40,
+          "stdev_seconds": 1.0583266425259287e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00019829098578156846,
+          "measured_processes": 40,
+          "stdev_seconds": 1.5733023655301025e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001973597873226633,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8173069403953991e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001986439903248538,
+          "measured_processes": 40,
+          "stdev_seconds": 1.6359330062298104e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.5000218261673295,
+      "time_ratio": 0.9949997817383267
+    },
+    {
+      "baseline_mean_seconds": 0.001960399727007219,
+      "benchmark": "base32_large",
+      "candidate_mean_seconds": 0.0019566774524719223,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.3536697519460841,
+        -0.025180938861502078
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0019657457727589645,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2388642832184421e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0019587935245605572,
+          "measured_processes": 40,
+          "stdev_seconds": 1.0512610625552535e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.001954561380383287,
+          "measured_processes": 40,
+          "stdev_seconds": 1.3518292065344738e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0019550536812554735,
+          "measured_processes": 40,
+          "stdev_seconds": 1.3201656102718853e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.1898732428910921,
+      "time_ratio": 0.9981012675710891
+    },
+    {
+      "baseline_mean_seconds": 0.000309859564299586,
+      "benchmark": "base16_small",
+      "candidate_mean_seconds": 0.00031054605168113385,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.06553698836989641,
+        0.5095242791887111
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00031033991690492256,
+          "measured_processes": 40,
+          "stdev_seconds": 1.9398692766859694e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0003101365294696734,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3880911851589506e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00031095557389259433,
+          "measured_processes": 40,
+          "stdev_seconds": 3.005890568762207e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0003093792116942495,
+          "measured_processes": 40,
+          "stdev_seconds": 2.590476468395717e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.22154790771089505,
+      "time_ratio": 1.002215479077109
+    },
+    {
+      "baseline_mean_seconds": 0.0058035090136399955,
+      "benchmark": "base16_large",
+      "candidate_mean_seconds": 0.005788582133754971,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.15813809241543852,
+        -0.3568738421278361
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.005821122489093492,
+          "measured_processes": 40,
+          "stdev_seconds": 3.581675991504244e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.005811917077032073,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00019662274069334374,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00576524719047787,
+          "measured_processes": 40,
+          "stdev_seconds": 3.8292701650966886e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.005785895538186499,
+          "measured_processes": 40,
+          "stdev_seconds": 4.643291895116799e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.25720438875759255,
+      "time_ratio": 0.9974279561124241
+    },
+    {
+      "baseline_mean_seconds": 0.00044342136569260526,
+      "benchmark": "ascii85_small",
+      "candidate_mean_seconds": 0.0004418154457046815,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.5206239416450709,
+        -0.2030012120761593
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0004444072638762009,
+          "measured_processes": 40,
+          "stdev_seconds": 3.963016792556551e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0004420935732620516,
+          "measured_processes": 40,
+          "stdev_seconds": 4.12065956875977e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00044153731814731143,
+          "measured_processes": 40,
+          "stdev_seconds": 4.299418368248542e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00044243546750900956,
+          "measured_processes": 40,
+          "stdev_seconds": 3.81751877532603e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.36216567630099616,
+      "time_ratio": 0.99637834323699
+    },
+    {
+      "baseline_mean_seconds": 0.009098697037309951,
+      "benchmark": "ascii85_large",
+      "candidate_mean_seconds": 0.009025027980048133,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7629555447605241,
+        -0.8566402821030272
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.009124318064035226,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00027307605025715464,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009054703573444083,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002947976759200891,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.008995352386652182,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002169639288533866,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009073076010584677,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000288660342777491,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.8096660099762953,
+      "time_ratio": 0.991903339900237
+    },
+    {
+      "baseline_mean_seconds": 0.00017635661431540938,
+      "benchmark": "base85_small",
+      "candidate_mean_seconds": 0.0001758534973419046,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.44000457993246256,
+        -0.12988759460275112
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00017674079280520041,
+          "measured_processes": 40,
+          "stdev_seconds": 1.1092479901336166e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001759631252222486,
+          "measured_processes": 40,
+          "stdev_seconds": 1.5028441950108464e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00017574386946156057,
+          "measured_processes": 40,
+          "stdev_seconds": 1.4497117665304823e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00017597243582561834,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2023076795421406e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.28528386953775575,
+      "time_ratio": 0.9971471613046224
+    },
+    {
+      "baseline_mean_seconds": 0.003758997150604652,
+      "benchmark": "base85_large",
+      "candidate_mean_seconds": 0.00375119167365483,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.04980879205912503,
+        -0.3657080007235858
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.003761627895194882,
+          "measured_processes": 40,
+          "stdev_seconds": 4.469093862033208e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.003759754273778526,
+          "measured_processes": 40,
+          "stdev_seconds": 5.871783772455743e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0037426290735311342,
+          "measured_processes": 40,
+          "stdev_seconds": 6.742343563520384e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.003756366406014422,
+          "measured_processes": 40,
+          "stdev_seconds": 6.979291308470446e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.20764785492233262,
+      "time_ratio": 0.9979235214507767
+    },
+    {
+      "baseline_mean_seconds": 3.7474804289871826,
+      "benchmark": "bpe_tokeniser",
+      "candidate_mean_seconds": 3.7524989951440753,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.32470667636039785,
+        -0.05737189760278705
+      ],
+      "legs": [
+        {
+          "mean_seconds": 3.752404494676739,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04599749747791865,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.764588802595002,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0321395593683134,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.7404091876931487,
+          "measured_processes": 40,
+          "stdev_seconds": 0.03836176043262108,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.742556363297626,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04209989941090812,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.13391840870131677,
+      "time_ratio": 1.0013391840870132
+    },
+    {
+      "baseline_mean_seconds": 1.6412195372395217,
+      "benchmark": "btree",
+      "candidate_mean_seconds": 1.6662352007503312,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        2.7748951968378455,
+        0.26503389129433064
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.646774302702397,
+          "measured_processes": 2,
+          "stdev_seconds": 0.04626153628528131,
+          "values": 6
+        },
+        {
+          "mean_seconds": 1.692470563730846,
+          "measured_processes": 2,
+          "stdev_seconds": 0.07455740203530234,
+          "values": 6
+        },
+        {
+          "mean_seconds": 1.6399998377698164,
+          "measured_processes": 2,
+          "stdev_seconds": 0.060168416590552776,
+          "values": 6
+        },
+        {
+          "mean_seconds": 1.6356647717766464,
+          "measured_processes": 2,
+          "stdev_seconds": 0.034140866072587414,
+          "values": 6
+        }
+      ],
+      "time_change_pct": 1.5242119011625421,
+      "time_ratio": 1.0152421190116254
+    },
+    {
+      "baseline_mean_seconds": 0.015992540943746768,
+      "benchmark": "btree_gc_only",
+      "candidate_mean_seconds": 0.015242199801529448,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.3600691536610476,
+        -7.891472796534726
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0156690936225156,
+          "measured_processes": 2,
+          "stdev_seconds": 0.0005636776285447181,
+          "values": 6
+        },
+        {
+          "mean_seconds": 0.015455983113497496,
+          "measured_processes": 2,
+          "stdev_seconds": 0.0009303503968600525,
+          "values": 6
+        },
+        {
+          "mean_seconds": 0.0150284164895614,
+          "measured_processes": 2,
+          "stdev_seconds": 0.0002984294286084845,
+          "values": 6
+        },
+        {
+          "mean_seconds": 0.016315988264977932,
+          "measured_processes": 2,
+          "stdev_seconds": 0.0017586468349821312,
+          "values": 6
+        }
+      ],
+      "time_change_pct": -4.691819422921095,
+      "time_ratio": 0.953081805770789
+    },
+    {
+      "baseline_mean_seconds": 0.008099163770869685,
+      "benchmark": "chameleon",
+      "candidate_mean_seconds": 0.008196126300269195,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.6112320378412139,
+        1.7928119580999935
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00816538032910709,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00012427684626954854,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.008215289749690177,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0001473055547778238,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.008176962850848212,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00015998944807258284,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00803294721263228,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00013689012762030338,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 1.197191860081337,
+      "time_ratio": 1.0119719186008134
+    },
+    {
+      "baseline_mean_seconds": 0.04483410402899608,
+      "benchmark": "chaos",
+      "candidate_mean_seconds": 0.04465870056398368,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.4752125974030963,
+        -0.30676038680654827
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.04496253737209675,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00028017043240720585,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.04474886973039247,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002846682800389215,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.04456853139757489,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00020622531018837633,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.044705670685895406,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002651763945507202,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.39122776915305746,
+      "time_ratio": 0.9960877223084694
+    },
+    {
+      "baseline_mean_seconds": 1.3293736825895999e-05,
+      "benchmark": "comprehensions",
+      "candidate_mean_seconds": 1.3199532864405228e-05,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.0292261029622107,
+        -0.3852141359564243
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.3352114632425582e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 9.561740518201419e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.3214691183331221e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.1697182348861649e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.3184374545479234e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 7.880749005003476e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.3235359019366417e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.103392537655859e-07,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7086341690416442,
+      "time_ratio": 0.9929136583095836
+    },
+    {
+      "baseline_mean_seconds": 0.004744556164829798,
+      "benchmark": "bench_mp_pool",
+      "candidate_mean_seconds": 0.0047872203689621525,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        2.1138369335421014,
+        -0.32031644168648565
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.004754162018070929,
+          "measured_processes": 40,
+          "stdev_seconds": 9.075928085300698e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.004854657250689343,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000658742385064018,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.004719783487234963,
+          "measured_processes": 40,
+          "stdev_seconds": 6.086130627858975e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.004734950311588667,
+          "measured_processes": 40,
+          "stdev_seconds": 9.219837938935389e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.8992243457589089,
+      "time_ratio": 1.008992243457589
+    },
+    {
+      "baseline_mean_seconds": 0.0012931163697430747,
+      "benchmark": "bench_thread_pool",
+      "candidate_mean_seconds": 0.0012946723763282838,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.056081307057653795,
+        0.1849024823272316
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0012963671229954342,
+          "measured_processes": 40,
+          "stdev_seconds": 2.2021029706487112e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0012970941426222757,
+          "measured_processes": 40,
+          "stdev_seconds": 8.602058183239705e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.001292250610034292,
+          "measured_processes": 40,
+          "stdev_seconds": 2.5451344989583373e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.001289865616490715,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3833331776607483e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.12032997351338892,
+      "time_ratio": 1.001203299735134
+    },
+    {
+      "baseline_mean_seconds": 0.018783875325364838,
+      "benchmark": "coroutines",
+      "candidate_mean_seconds": 0.018811793129619524,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.35955136832466206,
+        0.6623324997860447
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.018885493695658322,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00012622074657715906,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.018817590644660716,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00013774275422809184,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.018805995614578328,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00015005545573102473,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.018682256955071353,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00013701363772392565,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.14862643501998285,
+      "time_ratio": 1.0014862643501998
+    },
+    {
+      "baseline_mean_seconds": 0.12660990262714525,
+      "benchmark": "coverage",
+      "candidate_mean_seconds": 0.1261650191154331,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.8817616067189782,
+        0.18578812517715537
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.12741508067895968,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0017343775706155353,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1262915834163626,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00423415265932341,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1260384548145036,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0015731538424553677,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.12580472457533082,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001633784401253448,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3513812920481363,
+      "time_ratio": 0.9964861870795186
+    },
+    {
+      "baseline_mean_seconds": 0.06016598584440847,
+      "benchmark": "crypto_pyaes",
+      "candidate_mean_seconds": 0.05934691177487063,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.7724446186590526,
+        -0.946843518606133
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.06041569764104982,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005455607926036566,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05934486285938571,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00039296833538504195,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05934896069035555,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005446066145427473,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05991627404776712,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005782114133326749,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.3613573484127728,
+      "time_ratio": 0.9863864265158723
+    },
+    {
+      "baseline_mean_seconds": 0.5004352859027373,
+      "benchmark": "dask",
+      "candidate_mean_seconds": 0.5017345763704119,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.8667786190507787,
+        -0.34579662295324276
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.49972631494359426,
+          "measured_processes": 40,
+          "stdev_seconds": 0.011156572110076243,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5040578357952957,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01623383665562595,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.499411316945528,
+          "measured_processes": 40,
+          "stdev_seconds": 0.013086008315028954,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5011442568618805,
+          "measured_processes": 40,
+          "stdev_seconds": 0.022229423089604607,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.2596320651791606,
+      "time_ratio": 1.0025963206517916
+    },
+    {
+      "baseline_mean_seconds": 0.00018105421163075637,
+      "benchmark": "deepcopy",
+      "candidate_mean_seconds": 0.00018203658713673577,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.46205258216975853,
+        0.6237399284100498
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00018174817936748391,
+          "measured_processes": 40,
+          "stdev_seconds": 1.451356540902837e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001825879515232979,
+          "measured_processes": 40,
+          "stdev_seconds": 1.226185411618483e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00018148522275017361,
+          "measured_processes": 40,
+          "stdev_seconds": 1.6401769365113258e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00018036024389402882,
+          "measured_processes": 40,
+          "stdev_seconds": 1.6131089274104478e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.5425863873207648,
+      "time_ratio": 1.0054258638732076
+    },
+    {
+      "baseline_mean_seconds": 2.0335333005050415e-06,
+      "benchmark": "deepcopy_reduce",
+      "candidate_mean_seconds": 2.024787999310718e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6106915021791393,
+        -0.2473085177849499
+      ],
+      "legs": [
+        {
+          "mean_seconds": 2.0453352467105407e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.0160895751931943e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.0328445581678047e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 1.7533066715721185e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.0167314404536304e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.5108798690706884e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.0217313542995423e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.6809302758465934e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.43005448655065726,
+      "time_ratio": 0.9956994551344934
+    },
+    {
+      "baseline_mean_seconds": 2.3894611757668827e-05,
+      "benchmark": "deepcopy_memo",
+      "candidate_mean_seconds": 2.3924237275233888e-05,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.14489693479800003,
+        0.10296188018508179
+      ],
+      "legs": [
+        {
+          "mean_seconds": 2.3956930939069328e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.729813441195358e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.3991643797671713e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.3943734249201571e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.3856830752796063e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 4.4663065711698597e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.3832292576268325e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 3.4144286126320624e-07,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.12398409258753684,
+      "time_ratio": 1.0012398409258754
+    },
+    {
+      "baseline_mean_seconds": 0.0029377909312340005,
+      "benchmark": "deltablue",
+      "candidate_mean_seconds": 0.0029268674332342927,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.689441075699615,
+        -0.05090894189773154
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00295299146976807,
+          "measured_processes": 40,
+          "stdev_seconds": 5.168769946482854e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.002932632333613583,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3978882245673022e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0029211025328550024,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3701418286633336e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.002922590392699931,
+          "measured_processes": 40,
+          "stdev_seconds": 2.2698693201955525e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.37182693579626,
+      "time_ratio": 0.9962817306420374
+    },
+    {
+      "baseline_mean_seconds": 0.027989724728589255,
+      "benchmark": "django_template",
+      "candidate_mean_seconds": 0.027891762727328268,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6031736205962313,
+        -0.09543463102322791
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.028065644831319028,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00048464101059053904,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.027896360265246282,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002218905035341074,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.02788716518941025,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021876157441329757,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.027913804625859483,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000345261011209069,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3499927284419724,
+      "time_ratio": 0.9965000727155803
+    },
+    {
+      "baseline_mean_seconds": 1.8609186155333495,
+      "benchmark": "docutils",
+      "candidate_mean_seconds": 1.8595758817779522,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.3764562390863091,
+        0.23513129451515624
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.8699974972677107,
+          "measured_processes": 40,
+          "stdev_seconds": 0.03738962594067282,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.8629577750184885,
+          "measured_processes": 40,
+          "stdev_seconds": 0.025361908171787,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.856193988537416,
+          "measured_processes": 40,
+          "stdev_seconds": 0.032939083458426846,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.8518397337989883,
+          "measured_processes": 40,
+          "stdev_seconds": 0.027983118603213095,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.07215435130742964,
+      "time_ratio": 0.9992784564869257
+    },
+    {
+      "baseline_mean_seconds": 0.05812114857059593,
+      "benchmark": "dulwich_log",
+      "candidate_mean_seconds": 0.05940887134638615,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        1.0635022682798034,
+        3.387143524390468
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.058608353809298325,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002532639119355374,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.059231654981461664,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0019526387694228738,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05958608771131064,
+          "measured_processes": 40,
+          "stdev_seconds": 0.006297349374565283,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05763394333189353,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0025061889133545026,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 2.215583840753088,
+      "time_ratio": 1.0221558384075309
+    },
+    {
+      "baseline_mean_seconds": 0.3421987405279651,
+      "benchmark": "fannkuch",
+      "candidate_mean_seconds": 0.3345705361998019,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -2.3053943022278256,
+        -2.152348582584729
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.34355039448322106,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0025457981010703614,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33563020326352366,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0020908080733914656,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.33351086913608013,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002503749121674062,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3408470865727092,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002956269273635673,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -2.229173700754694,
+      "time_ratio": 0.9777082629924531
+    },
+    {
+      "baseline_mean_seconds": 0.1827796977944672,
+      "benchmark": "fastapi_http",
+      "candidate_mean_seconds": 0.1847161415653924,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.7206363683930794,
+        1.402462706007257
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.1839099753725653,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00568014434791198,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.18523529754020274,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005842399769637479,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1841969855905821,
+          "measured_processes": 40,
+          "stdev_seconds": 0.017120122717383557,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.18164942021636912,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005319906007535196,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 1.0594413899856159,
+      "time_ratio": 1.0105944138998562
+    },
+    {
+      "baseline_mean_seconds": 0.07202772496578594,
+      "benchmark": "float",
+      "candidate_mean_seconds": 0.07132557997635255,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8736417836442523,
+        -1.0750359343509097
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.07167927806343262,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0035406764448134005,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07105305794005592,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0030688920522724066,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07159810201264918,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0039924278474209795,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07237617186813926,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0033672055752930457,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.9748259989704078,
+      "time_ratio": 0.9902517400102959
+    },
+    {
+      "baseline_mean_seconds": 0.0010530298267743396,
+      "benchmark": "create_gc_cycles",
+      "candidate_mean_seconds": 0.0010459493321225938,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -1.4587022214536005,
+        0.13816011124987426
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0010690166155351713,
+          "measured_processes": 40,
+          "stdev_seconds": 7.013677338191285e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0010534228464166517,
+          "measured_processes": 40,
+          "stdev_seconds": 7.481929000403725e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.001038475817828536,
+          "measured_processes": 40,
+          "stdev_seconds": 5.6998489275502795e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0010370430380135076,
+          "measured_processes": 40,
+          "stdev_seconds": 6.819819467978892e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.672392601967875,
+      "time_ratio": 0.9932760739803213
+    },
+    {
+      "baseline_mean_seconds": 0.0009768779449586874,
+      "benchmark": "gc_traversal",
+      "candidate_mean_seconds": 0.0009853964337101693,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        1.844297779713755,
+        -0.09578692980559689
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0009746182830591958,
+          "measured_processes": 40,
+          "stdev_seconds": 6.607455133851699e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009925931464143409,
+          "measured_processes": 40,
+          "stdev_seconds": 3.89500640516937e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009781997210059974,
+          "measured_processes": 40,
+          "stdev_seconds": 5.173059810853057e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009791376068581789,
+          "measured_processes": 40,
+          "stdev_seconds": 5.062497248365217e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.872011574776832,
+      "time_ratio": 1.0087201157477683
+    },
+    {
+      "baseline_mean_seconds": 0.024641084090884155,
+      "benchmark": "generators",
+      "candidate_mean_seconds": 0.02454075381247094,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7865899835324708,
+        -0.024001636433490514
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.02476198734366335,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021522457965069566,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.024567212031494517,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00045478413513020365,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.024514295593447363,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00022957910428722078,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.02452018083810496,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000161487473233362,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.40716665729140233,
+      "time_ratio": 0.995928333427086
+    },
+    {
+      "baseline_mean_seconds": 0.019741237253765576,
+      "benchmark": "genshi_text",
+      "candidate_mean_seconds": 0.019732889441365843,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.9381046483454392,
+        0.8653727165309988
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.01987084473463862,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00023047938528686192,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.01968443541651747,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00017019830106899646,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.019781343466214216,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00018055602331302025,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.019611629772892533,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00022657936434561984,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.04228616622364845,
+      "time_ratio": 0.9995771383377635
+    },
+    {
+      "baseline_mean_seconds": 0.03818973067585224,
+      "benchmark": "genshi_xml",
+      "candidate_mean_seconds": 0.038093336001232575,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.8494197739592146,
+        0.3519565763074217
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.03842358693946153,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005598312665149786,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03809720939413334,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005417244760765386,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03808946260833181,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005657490274086765,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03795587441224294,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005995411382449864,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.2524099356390974,
+      "time_ratio": 0.997475900643609
+    },
+    {
+      "baseline_mean_seconds": 0.09155908930309428,
+      "benchmark": "go",
+      "candidate_mean_seconds": 0.09137925253987002,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.3411467966514814,
+        -0.05026113432924362
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09200737175609296,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0011883158918716559,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09169349155466383,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001847227458241799,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0910650135250762,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0011008431740784914,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0911108068500956,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0010866026000785468,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.1964160681294458,
+      "time_ratio": 0.9980358393187055
+    },
+    {
+      "baseline_mean_seconds": 0.0044424957662461875,
+      "benchmark": "hexiom",
+      "candidate_mean_seconds": 0.004444276914849373,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.02832855464964812,
+        0.05190252012985397
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0044508307827830626,
+          "measured_processes": 40,
+          "stdev_seconds": 3.4641424705927174e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.004452091638813727,
+          "measured_processes": 40,
+          "stdev_seconds": 2.4303014549295732e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.004436462190885019,
+          "measured_processes": 40,
+          "stdev_seconds": 3.122588621792314e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0044341607497093115,
+          "measured_processes": 40,
+          "stdev_seconds": 5.196095804508845e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.040093422636844345,
+      "time_ratio": 1.0004009342263684
+    },
+    {
+      "baseline_mean_seconds": 0.03900190087248727,
+      "benchmark": "html5lib",
+      "candidate_mean_seconds": 0.03862872722287042,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8621458919994662,
+        -1.0515682580608865
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.03902174887480214,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0008106989217709576,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03868532446989169,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005649719293152159,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03857212997584914,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006509301941174289,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03898205287017239,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0010629470827649375,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.9568088766670702,
+      "time_ratio": 0.9904319112333293
+    },
+    {
+      "baseline_mean_seconds": 0.006155951583059505,
+      "benchmark": "json_dumps",
+      "candidate_mean_seconds": 0.006113992793446717,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8766575545082644,
+        -0.4850732286650339
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00617895851052405,
+          "measured_processes": 40,
+          "stdev_seconds": 4.7918439336173043e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00612479020395161,
+          "measured_processes": 40,
+          "stdev_seconds": 5.881432237070332e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.006103195382941825,
+          "measured_processes": 40,
+          "stdev_seconds": 4.95162427425135e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.006132944655594959,
+          "measured_processes": 40,
+          "stdev_seconds": 9.660040208668684e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6815971348483996,
+      "time_ratio": 0.993184028651516
+    },
+    {
+      "baseline_mean_seconds": 1.87860679102414e-05,
+      "benchmark": "json_loads",
+      "candidate_mean_seconds": 1.864535099192229e-05,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6497714185115133,
+        -0.848923299314186
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.8842291742657834e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 2.187628634158218e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.8719859916321487e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 2.0627635250374682e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.857084206752309e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2976912617218235e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.8729844077824966e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8906004310767967e-07,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7490493433295775,
+      "time_ratio": 0.9925095065667042
+    },
+    {
+      "baseline_mean_seconds": 4.834862874834774e-06,
+      "benchmark": "logging_format",
+      "candidate_mean_seconds": 4.839363888417362e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.04314491715595725,
+        0.14333232271912522
+      ],
+      "legs": [
+        {
+          "mean_seconds": 4.8487285653209256e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 5.803990885248664e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.8508205452435504e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 4.0051659095040115e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.8279072315911736e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.3863716671183825e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.820997184348623e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 4.411649365854505e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.09309495841165472,
+      "time_ratio": 1.0009309495841165
+    },
+    {
+      "baseline_mean_seconds": 7.219649640788361e-08,
+      "benchmark": "logging_silent",
+      "candidate_mean_seconds": 7.171693268729721e-08,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7574730300772825,
+        -0.5701547778792171
+      ],
+      "legs": [
+        {
+          "mean_seconds": 7.253104922592494e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 6.004178203537484e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 7.198164608960648e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 4.118314266865207e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 7.145221928498794e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 5.250318034190661e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 7.186194358984229e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 5.158216741224162e-10,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6642479129140066,
+      "time_ratio": 0.9933575208708599
+    },
+    {
+      "baseline_mean_seconds": 4.365200173973942e-06,
+      "benchmark": "logging_simple",
+      "candidate_mean_seconds": 4.383683339312938e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.044526886114759634,
+        0.8060764026591283
+      ],
+      "legs": [
+        {
+          "mean_seconds": 4.3867622076732005e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.672714955744607e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.388715496285537e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.082638804583473e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.378651182340339e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.78931527450905e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 4.343638140274683e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.97653010487997e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.4234207963519143,
+      "time_ratio": 1.0042342079635191
+    },
+    {
+      "baseline_mean_seconds": 0.012779243603290524,
+      "benchmark": "mako",
+      "candidate_mean_seconds": 0.012714841794513633,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7853612245130703,
+        -0.21975716775496368
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.012842377822380513,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00012668079848300967,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.01274151876665807,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00013952943183875155,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.012688164822369194,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00013522399895873525,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.012716109384200536,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021072172165468084,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.5039563433966388,
+      "time_ratio": 0.9949604365660336
+    },
+    {
+      "baseline_mean_seconds": 1.0631100851654385,
+      "benchmark": "mdp",
+      "candidate_mean_seconds": 1.0579880054535655,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7521766617746284,
+        -0.20880967324635735
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.0682294206538547,
+          "measured_processes": 40,
+          "stdev_seconds": 0.03850712282585792,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.060194448257486,
+          "measured_processes": 40,
+          "stdev_seconds": 0.03853215093837513,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.055781562649645,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04021216079828275,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0579907496770222,
+          "measured_processes": 40,
+          "stdev_seconds": 0.037848705377549995,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.48180144120031354,
+      "time_ratio": 0.9951819855879969
+    },
+    {
+      "baseline_mean_seconds": 0.09279011553153396,
+      "benchmark": "meteor_contest",
+      "candidate_mean_seconds": 0.09220401021302677,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.0377549843748834,
+        -0.21940523945364054
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09348544328628729,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007624626665386582,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09251529343891889,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007548132645825816,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09189272698713466,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0008295545298125154,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09209478777678062,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007625325034324662,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6316462859753735,
+      "time_ratio": 0.9936835371402463
+    },
+    {
+      "baseline_mean_seconds": 0.09739335779449902,
+      "benchmark": "nbody",
+      "candidate_mean_seconds": 0.09649157611420378,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.247922560285264,
+        -0.5980754053617421
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0982680183951743,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001646774902012294,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09704170962407564,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00130076747547219,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09594144260433192,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001256072740557255,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09651869719382375,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0012822794268062634,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.9259170242369219,
+      "time_ratio": 0.9907408297576308
+    },
+    {
+      "baseline_mean_seconds": 0.6480051983031445,
+      "benchmark": "shortest_path",
+      "candidate_mean_seconds": 0.6482908631286894,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        3.682391280707664,
+        -3.492331686063277
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.638802523786823,
+          "measured_processes": 40,
+          "stdev_seconds": 0.03846458709988497,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6623257322236895,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04160046451832788,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6342559940336893,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04485141045156029,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6572078728194659,
+          "measured_processes": 40,
+          "stdev_seconds": 0.07451289443033178,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.04408372437334496,
+      "time_ratio": 1.0004408372437334
+    },
+    {
+      "baseline_mean_seconds": 0.6347766681496675,
+      "benchmark": "connected_components",
+      "candidate_mean_seconds": 0.6197005486853111,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -2.687953373943519,
+        -2.064281645657051
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.6325575213258465,
+          "measured_processes": 40,
+          "stdev_seconds": 0.041500975901923205,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6155546700892349,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04900789273243696,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6238464272813872,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04458542163539471,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.6369958149734885,
+          "measured_processes": 40,
+          "stdev_seconds": 0.04215104769455755,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -2.375027347539771,
+      "time_ratio": 0.9762497265246023
+    },
+    {
+      "baseline_mean_seconds": 2.6351313459997376,
+      "benchmark": "k_core",
+      "candidate_mean_seconds": 2.681319318863098,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        1.2159767052711823,
+        2.293091659476665
+      ],
+      "legs": [
+        {
+          "mean_seconds": 2.643729750928469,
+          "measured_processes": 40,
+          "stdev_seconds": 0.13162907973741042,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.675876888850083,
+          "measured_processes": 40,
+          "stdev_seconds": 0.15174021467273224,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.6867617488761124,
+          "measured_processes": 40,
+          "stdev_seconds": 0.1808473503400686,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.626532941071006,
+          "measured_processes": 40,
+          "stdev_seconds": 0.1335853216836109,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 1.7527768751821826,
+      "time_ratio": 1.0175277687518218
+    },
+    {
+      "baseline_mean_seconds": 0.06850969568671038,
+      "benchmark": "nqueens",
+      "candidate_mean_seconds": 0.06849161231269439,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.38100832069839496,
+        0.33118310284243613
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.06879496209633847,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005991612857164093,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.06853284756653011,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004827792095712822,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.06845037705885867,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005977624507467325,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.06822442927708229,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005249081924282686,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.02639535008107652,
+      "time_ratio": 0.9997360464991892
+    },
+    {
+      "baseline_mean_seconds": 0.00989287431560418,
+      "benchmark": "pathlib",
+      "candidate_mean_seconds": 0.009893833818205168,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.13670449989431344,
+        0.15714121348251453
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.009927849536567616,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021131825390059667,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009914277719508391,
+          "measured_processes": 40,
+          "stdev_seconds": 9.629521191588915e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009873389916901943,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00012147722326007803,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009857899094640743,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0001148371565494924,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.009698926422974097,
+      "time_ratio": 1.0000969892642297
+    },
+    {
+      "baseline_mean_seconds": 7.031759413204478e-06,
+      "benchmark": "pickle",
+      "candidate_mean_seconds": 6.99571970320297e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.641736564871842,
+        -0.382474051100512
+      ],
+      "legs": [
+        {
+          "mean_seconds": 7.054668086918052e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 9.8381844393618e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 7.009395702273953e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.1434989523067275e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 6.982043704131987e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.782590137734478e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 7.008850739490906e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 4.877042091737589e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.5125276319015049,
+      "time_ratio": 0.994874723680985
+    },
+    {
+      "baseline_mean_seconds": 2.0244950867436274e-05,
+      "benchmark": "pickle_dict",
+      "candidate_mean_seconds": 2.0226216709033906e-05,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.12027161919687668,
+        -0.06467059461500169
+      ],
+      "legs": [
+        {
+          "mean_seconds": 2.029325300857939e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2259591609585994e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.026884598459825e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.4588314652178247e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.018358743346956e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.0460221004424164e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.0196648726293158e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2275508736400067e-07,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.09253743575392548,
+      "time_ratio": 0.9990746256424607
+    },
+    {
+      "baseline_mean_seconds": 3.0084223592060274e-06,
+      "benchmark": "pickle_list",
+      "candidate_mean_seconds": 2.96703312471891e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.6031506663085504,
+        -1.146896758264282
+      ],
+      "legs": [
+        {
+          "mean_seconds": 3.0183789565777867e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.638552822074956e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.969989794223693e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.233027234160635e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.9640764552141265e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8085180504769953e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 2.998465761834268e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8460266903243506e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.375778715394227,
+      "time_ratio": 0.9862422128460577
+    },
+    {
+      "baseline_mean_seconds": 0.00023219862206436421,
+      "benchmark": "pickle_pure_python",
+      "candidate_mean_seconds": 0.00023282821858326014,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.2635283062794924,
+        0.27881758878367524
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0002330270282861117,
+          "measured_processes": 40,
+          "stdev_seconds": 1.7278266167108036e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00023364112046692754,
+          "measured_processes": 40,
+          "stdev_seconds": 4.960256340213853e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0002320153166995927,
+          "measured_processes": 40,
+          "stdev_seconds": 1.8055114554219182e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.00023137021584261673,
+          "measured_processes": 40,
+          "stdev_seconds": 2.1428849384998893e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.2711456740347895,
+      "time_ratio": 1.002711456740348
+    },
+    {
+      "baseline_mean_seconds": 0.17044533125590533,
+      "benchmark": "pidigits",
+      "candidate_mean_seconds": 0.17038880687517427,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.24683471775189814,
+        0.18176056639185312
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.17094298223188767,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0011301004436574064,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.17052103560417892,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0023080650639615793,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1702565781461696,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0008867886883042737,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.169947680279923,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000992705032921488,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.03316276269614837,
+      "time_ratio": 0.9996683723730385
+    },
+    {
+      "baseline_mean_seconds": 0.5334415040211752,
+      "benchmark": "pprint_safe_repr",
+      "candidate_mean_seconds": 0.5347303959463412,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.3030484091982366,
+        0.17999802763071227
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.5342652906508495,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00428283507634513,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5358843731150652,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005010177639825683,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5335764187776173,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005075393356716077,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.5326177173915009,
+          "measured_processes": 40,
+          "stdev_seconds": 0.004588809707504912,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.24161823094943635,
+      "time_ratio": 1.0024161823094944
+    },
+    {
+      "baseline_mean_seconds": 1.0910395905918753,
+      "benchmark": "pprint_pformat",
+      "candidate_mean_seconds": 1.0919688818083766,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.0388811069847117,
+        0.20986937951250617
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.093840515986085,
+          "measured_processes": 40,
+          "stdev_seconds": 0.007289245030867389,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0934152186848223,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005826058685847106,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.090522544931931,
+          "measured_processes": 40,
+          "stdev_seconds": 0.006108209925308323,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0882386651976654,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00616694317094578,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.08517483916392621,
+      "time_ratio": 1.0008517483916393
+    },
+    {
+      "baseline_mean_seconds": 0.3361805762940397,
+      "benchmark": "pyflate",
+      "candidate_mean_seconds": 0.3352727879382049,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -1.3516112429171279,
+        0.8243072529427575
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.3381513817002997,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01716157087016605,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3335808896071588,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008083370567959722,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.336964686269251,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010358902250098969,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3342097708877797,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00954996864409457,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.2700299838384379,
+      "time_ratio": 0.9972997001616156
+    },
+    {
+      "baseline_mean_seconds": 0.016090099183638813,
+      "benchmark": "python_startup",
+      "candidate_mean_seconds": 0.016170008714689175,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.6109061187246523,
+        1.6152867773489232
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.01617036096402444,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002732890994216663,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.01607157523947535,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00024052198421347523,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.016268442189902997,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005336657267930381,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.016009837403253187,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00022645138472569582,
+          "values": 400
+        }
+      ],
+      "time_change_pct": 0.4966379022176559,
+      "time_ratio": 1.0049663790221766
+    },
+    {
+      "baseline_mean_seconds": 0.0073750220160582105,
+      "benchmark": "python_startup_no_site",
+      "candidate_mean_seconds": 0.007396713929920225,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.32282991172895015,
+        0.9169454848140024
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.007409893380099675,
+          "measured_processes": 40,
+          "stdev_seconds": 7.963145601548618e-05,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.00738597202784149,
+          "measured_processes": 40,
+          "stdev_seconds": 9.926758594031996e-05,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.00740745583199896,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00012411155862889248,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.007340150652016746,
+          "measured_processes": 40,
+          "stdev_seconds": 9.013318904232024e-05,
+          "values": 400
+        }
+      ],
+      "time_change_pct": 0.2941267675511172,
+      "time_ratio": 1.0029412676755112
+    },
+    {
+      "baseline_mean_seconds": 0.214134940582638,
+      "benchmark": "raytrace",
+      "candidate_mean_seconds": 0.21361894555545102,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.6965726561884544,
+        0.2181716451722604
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.2149620934467142,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0014105153775529392,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2134647262825941,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0013977744987741282,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21377316482830794,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0015896937576229614,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.2133077877185618,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0012354917609568368,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.24096722645216007,
+      "time_ratio": 0.9975903277354784
+    },
+    {
+      "baseline_mean_seconds": 0.09894443910646564,
+      "benchmark": "regex_compile",
+      "candidate_mean_seconds": 0.09872198543162086,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.46180911885702614,
+        0.01260763637744855
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0990387575274023,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007205912298709983,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09858138751393805,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0009504920966312463,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09886258334930366,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0008650599283127099,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09885012068552897,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001481638207391513,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.224826859249172,
+      "time_ratio": 0.9977517314075083
+    },
+    {
+      "baseline_mean_seconds": 0.10049927054011884,
+      "benchmark": "regex_dna",
+      "candidate_mean_seconds": 0.10062239849357865,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.1474702062452704,
+        0.39346137319282715
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.10067737466500451,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007401993172661403,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1005289055329437,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0019079941395288335,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.10071589145421361,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006687346920351434,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.10032116641523317,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005616832651280552,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.12251626583763553,
+      "time_ratio": 1.0012251626583764
+    },
+    {
+      "baseline_mean_seconds": 0.0017795048604117862,
+      "benchmark": "regex_effbot",
+      "candidate_mean_seconds": 0.0017710083333561974,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -1.2341518334810675,
+        0.29074161976159196
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0017929499640013092,
+          "measured_processes": 40,
+          "stdev_seconds": 3.805675279188227e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0017708222391471888,
+          "measured_processes": 40,
+          "stdev_seconds": 3.961672838296473e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.001771194427565206,
+          "measured_processes": 40,
+          "stdev_seconds": 4.2285729623807944e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0017660597568222632,
+          "measured_processes": 40,
+          "stdev_seconds": 3.985231987978476e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.4774657965037954,
+      "time_ratio": 0.995225342034962
+    },
+    {
+      "baseline_mean_seconds": 0.012858025009821479,
+      "benchmark": "regex_v8",
+      "candidate_mean_seconds": 0.012801131594460457,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.49798212565063116,
+        -0.3868385599616442
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.012872749815384547,
+          "measured_processes": 40,
+          "stdev_seconds": 9.933839194245624e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.012808645822224208,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00045575547326058487,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.012793617366696708,
+          "measured_processes": 40,
+          "stdev_seconds": 9.895735078676042e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.012843300204258412,
+          "measured_processes": 40,
+          "stdev_seconds": 8.369173554252762e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.4424739827272428,
+      "time_ratio": 0.9955752601727276
+    },
+    {
+      "baseline_mean_seconds": 0.03976537016569637,
+      "benchmark": "richards",
+      "candidate_mean_seconds": 0.039458667679961465,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.682066094200362,
+        -0.860768667633649
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.03982635564364803,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002678881779960208,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03955471357524706,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001126310408752038,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.039362621784675866,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021597757820268157,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.039704384687744704,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0003087671048151632,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7712803488485576,
+      "time_ratio": 0.9922871965115144
+    },
+    {
+      "baseline_mean_seconds": 0.045277281456704566,
+      "benchmark": "richards_super",
+      "candidate_mean_seconds": 0.04496621630484393,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.7316721560233996,
+        -0.6421210257056886
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.045404692686861384,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00028793604750908003,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.045072479192943625,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005977786852573663,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.044859953416744244,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00023921737576071655,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.04514987022654774,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002491186802819754,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6870225902544158,
+      "time_ratio": 0.9931297740974558
+    },
+    {
+      "baseline_mean_seconds": 0.21131565898346405,
+      "benchmark": "scimark_fft",
+      "candidate_mean_seconds": 0.2106536247069016,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        0.1443509733225934,
+        -0.7730032887440785
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.21179227201112857,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0010765444773104152,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21209799621719866,
+          "measured_processes": 40,
+          "stdev_seconds": 0.015296033044000849,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.20920925319660455,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0011311377123173925,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.21083904595579953,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0011043643716443128,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.31329163193450915,
+      "time_ratio": 0.9968670836806549
+    },
+    {
+      "baseline_mean_seconds": 0.09162727215249712,
+      "benchmark": "scimark_lu",
+      "candidate_mean_seconds": 0.09105647099398387,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6942485210615357,
+        -0.5509210841131429
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09210685522994026,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0028010320897729223,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09146740474971012,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0030675516525712158,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09064553723825762,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00285164598250513,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09114768907505398,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0029072722731676463,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.622959895131725,
+      "time_ratio": 0.9937704010486827
+    },
+    {
+      "baseline_mean_seconds": 0.052789826392351344,
+      "benchmark": "scimark_monte_carlo",
+      "candidate_mean_seconds": 0.05259504048153758,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.36178872144538854,
+        -0.3762241936997035
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.05295549489480133,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0003650041497872308,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05276390788688635,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000817702456208499,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05242617307618881,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002846099951784124,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.05262415788990135,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004397513525225547,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.36898380639869277,
+      "time_ratio": 0.9963101619360131
+    },
+    {
+      "baseline_mean_seconds": 0.08130018574884161,
+      "benchmark": "scimark_sor",
+      "candidate_mean_seconds": 0.08082517628790811,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8755525433933098,
+        -0.29034623411703375
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.08166604819319521,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005593304804893962,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.08095101903115089,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005482826513158108,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.08069933354466532,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00047827010531913215,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.080934323304488,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005161089528322383,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.5842661447305053,
+      "time_ratio": 0.994157338552695
+    },
+    {
+      "baseline_mean_seconds": 0.0035416203069568537,
+      "benchmark": "scimark_sparse_mat_mult",
+      "candidate_mean_seconds": 0.0035098519036788883,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8137650058231416,
+        -0.9806357696431789
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0035500434098745853,
+          "measured_processes": 40,
+          "stdev_seconds": 2.316643046498046e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0035211543989134954,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00010332101596011375,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.003498549408444281,
+          "measured_processes": 40,
+          "stdev_seconds": 1.9122178979592466e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0035331972040391216,
+          "measured_processes": 40,
+          "stdev_seconds": 2.4610883827373003e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.8970019517778982,
+      "time_ratio": 0.991029980482221
+    },
+    {
+      "baseline_mean_seconds": 0.07435505342825005,
+      "benchmark": "spectral_norm",
+      "candidate_mean_seconds": 0.07443627358491843,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.033189781067410884,
+        0.18567608594532992
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.07455016538733616,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004104447946931802,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07457490842401361,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004551276166905433,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07429763874582325,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005615616697396983,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07415994146916395,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006289738079066509,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.10923286706632229,
+      "time_ratio": 1.0010923286706632
+    },
+    {
+      "baseline_mean_seconds": 0.7482228909114685,
+      "benchmark": "sphinx",
+      "candidate_mean_seconds": 0.7431650022432829,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.2845576549945337,
+        -0.06568112302800522
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.7492879468792428,
+          "measured_processes": 40,
+          "stdev_seconds": 0.026199756316216422,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.7396629111996541,
+          "measured_processes": 40,
+          "stdev_seconds": 0.023809219613526163,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.7466670932869116,
+          "measured_processes": 40,
+          "stdev_seconds": 0.029327245987993317,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.7471578349436944,
+          "measured_processes": 40,
+          "stdev_seconds": 0.02844500566500013,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6759868923582713,
+      "time_ratio": 0.9932401310764173
+    },
+    {
+      "baseline_mean_seconds": 0.09804247706003177,
+      "benchmark": "sqlalchemy_declarative",
+      "candidate_mean_seconds": 0.09741523956181482,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.6382707723873726,
+        -0.6412528871336698
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09809928002844875,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001802686724204451,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09747314099610473,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0019317490437280472,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09735733812752491,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0014447353346018921,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09798567409161478,
+          "measured_processes": 40,
+          "stdev_seconds": 0.003980160626374929,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6397609658851167,
+      "time_ratio": 0.9936023903411488
+    },
+    {
+      "baseline_mean_seconds": 0.009579811152555826,
+      "benchmark": "sqlalchemy_imperative",
+      "candidate_mean_seconds": 0.009504769882429778,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.9865846599481976,
+        -0.5801328087046587
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.009578326465270948,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00048146138594869805,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009483828165684827,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0003040974700001477,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009525711599174732,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00032067643611261276,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.009581295839840702,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00045253384078015717,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7833272381995493,
+      "time_ratio": 0.9921667276180045
+    },
+    {
+      "baseline_mean_seconds": 0.07369085732498207,
+      "benchmark": "sqlglot_v2_normalize",
+      "candidate_mean_seconds": 0.07379111179228251,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.25442970948761356,
+        0.017820985030159164
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.07364228081423789,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005286809410910015,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0738296486553736,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005019023569276548,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07375257492919142,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007846758781199707,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07373943383572623,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006906816204775916,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.13604736182986077,
+      "time_ratio": 1.0013604736182986
+    },
+    {
+      "baseline_mean_seconds": 0.037415966697153635,
+      "benchmark": "sqlglot_v2_optimize",
+      "candidate_mean_seconds": 0.03736912028883428,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.43581933287479835,
+        0.18691423602259505
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.03750630524979594,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006952100401781188,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03734284552047029,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002964846537970705,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03739539505719828,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004398732146381548,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03732562814451133,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0003440036756876331,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.1252043243958667,
+      "time_ratio": 0.9987479567560413
+    },
+    {
+      "baseline_mean_seconds": 0.0009766577207301452,
+      "benchmark": "sqlglot_v2_parse",
+      "candidate_mean_seconds": 0.0009718943131095633,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.765900147765497,
+        -0.20778065634519116
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0009797549952054395,
+          "measured_processes": 40,
+          "stdev_seconds": 1.254320802370382e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009722510502494212,
+          "measured_processes": 40,
+          "stdev_seconds": 1.225213021132611e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009715375759697054,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2574190053895739e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0009735604462548508,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2287289938523529e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.48772538418278,
+      "time_ratio": 0.9951227461581722
+    },
+    {
+      "baseline_mean_seconds": 0.0012132418236130132,
+      "benchmark": "sqlglot_v2_transpile",
+      "candidate_mean_seconds": 0.0012081346717423003,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.9399553598752997,
+        0.10218061694935443
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.0012180463955398105,
+          "measured_processes": 40,
+          "stdev_seconds": 5.32889524911608e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0012065973031591662,
+          "measured_processes": 40,
+          "stdev_seconds": 2.6557903139933455e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0012096720403254344,
+          "measured_processes": 40,
+          "stdev_seconds": 2.4527455714776137e-05,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0012084372516862156,
+          "measured_processes": 40,
+          "stdev_seconds": 2.1304691168164227e-05,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.42095085837907664,
+      "time_ratio": 0.9957904914162092
+    },
+    {
+      "baseline_mean_seconds": 1.3219992157864625e-06,
+      "benchmark": "sqlite_synth",
+      "candidate_mean_seconds": 1.3175412612772184e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.11129737546989871,
+        -0.5632337851510627
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.3223062579115207e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 7.565116892353376e-09,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.320834565750791e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 1.1089552620750104e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.3142479568036455e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 8.055649579384155e-09,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.321692173661404e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 9.753550128643999e-09,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.33721309786043374,
+      "time_ratio": 0.9966278690213957
+    },
+    {
+      "baseline_mean_seconds": 0.18218362712068484,
+      "benchmark": "stdlib_startup",
+      "candidate_mean_seconds": 0.18437732469174078,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.05490228049135348,
+        2.468927735259263
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.18260219695046545,
+          "measured_processes": 40,
+          "stdev_seconds": 0.004504939302699736,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.18250194418011234,
+          "measured_processes": 40,
+          "stdev_seconds": 0.005929965339878323,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.18625270520336926,
+          "measured_processes": 40,
+          "stdev_seconds": 0.030025174715966576,
+          "values": 400
+        },
+        {
+          "mean_seconds": 0.18176505729090423,
+          "measured_processes": 40,
+          "stdev_seconds": 0.004673053457622296,
+          "values": 400
+        }
+      ],
+      "time_change_pct": 1.2041134572442935,
+      "time_ratio": 1.012041134572443
+    },
+    {
+      "baseline_mean_seconds": 0.3101914643814477,
+      "benchmark": "sympy_expand",
+      "candidate_mean_seconds": 0.3090228444857833,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.8200094534236091,
+        0.06961617136789222
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.31126875811411686,
+          "measured_processes": 40,
+          "stdev_seconds": 0.003226903406127504,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3087163248720268,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0036678652019060598,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3093293640995398,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0042241978846729615,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.3091141706487785,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0028829189058599465,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3767414741713493,
+      "time_ratio": 0.9962325852582865
+    },
+    {
+      "baseline_mean_seconds": 0.01428203321120236,
+      "benchmark": "sympy_integrate",
+      "candidate_mean_seconds": 0.014376975815685,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.29181769464069474,
+        1.6238007648676112
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.014300254767294972,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00018550197069508212,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.014258524093505306,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0002087959045606243,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.014495427537864695,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002445470419532439,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.014263811655109749,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00021416939468877483,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.6647695260095787,
+      "time_ratio": 1.0066476952600958
+    },
+    {
+      "baseline_mean_seconds": 0.09809717982425355,
+      "benchmark": "sympy_sum",
+      "candidate_mean_seconds": 0.09743081517711591,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.1294478949837927,
+        -0.22890453767997476
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09812203878924872,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0016930944722693417,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09701380148762836,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002376740573889525,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09784782886660347,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0023180056441454862,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09807232085925838,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0017421992227523919,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.6792903204062228,
+      "time_ratio": 0.9932070967959378
+    },
+    {
+      "baseline_mean_seconds": 0.18354368778333688,
+      "benchmark": "sympy_str",
+      "candidate_mean_seconds": 0.1839928062981926,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.6567848980585156,
+        1.1544049278688906
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.18437811849483599,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0020511504846255977,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.18316715085723748,
+          "measured_processes": 40,
+          "stdev_seconds": 0.007088774205302952,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.1848184617391477,
+          "measured_processes": 40,
+          "stdev_seconds": 0.008456885946406381,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.18270925707183777,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002527021550734005,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.24469297761189335,
+      "time_ratio": 1.002446929776119
+    },
+    {
+      "baseline_mean_seconds": 0.09678224061111299,
+      "benchmark": "telco",
+      "candidate_mean_seconds": 0.09704238063034912,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.16225327503478493,
+        0.37548690562696496
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09685584862406055,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0012578593026557694,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09701300041051582,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0036763939403491775,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09707176085018242,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000713898881874832,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09670863259816542,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000800294987302082,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.26878900260371985,
+      "time_ratio": 1.0026878900260372
+    },
+    {
+      "baseline_mean_seconds": 1.4088311960804276,
+      "benchmark": "tomli_loads",
+      "candidate_mean_seconds": 1.4036824341009682,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.5730120175104769,
+        -0.15699710251111387
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.41193871491123,
+          "measured_processes": 40,
+          "stdev_seconds": 0.010278924768225776,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.4038481363949056,
+          "measured_processes": 40,
+          "stdev_seconds": 0.01240953602903087,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.4035167318070307,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009565854547837224,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.4057236772496253,
+          "measured_processes": 40,
+          "stdev_seconds": 0.009934682849646685,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3654633708980892,
+      "time_ratio": 0.9963453662910191
+    },
+    {
+      "baseline_mean_seconds": 0.09232370859826915,
+      "benchmark": "tornado_http",
+      "candidate_mean_seconds": 0.09120147705931837,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.9226429772413391,
+        -1.5069989513545656
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.09209652793748925,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0030378053937095044,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0912468057901909,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0028910506868375127,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09115614832844585,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00307259608744455,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.09255088925904904,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002899545397085226,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -1.2155399257562038,
+      "time_ratio": 0.987844600742438
+    },
+    {
+      "baseline_mean_seconds": 9.736367889180049e-05,
+      "benchmark": "typing_runtime_protocols",
+      "candidate_mean_seconds": 9.703217757153955e-05,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.2753377019379166,
+        -0.4057130606452297
+      ],
+      "legs": [
+        {
+          "mean_seconds": 9.743534661386851e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2401641451364986e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 9.716707036962664e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2489428250794126e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 9.689728477345246e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2216225030288286e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 9.729201116973249e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.2868371295480007e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3404773977669251,
+      "time_ratio": 0.9965952260223307
+    },
+    {
+      "baseline_mean_seconds": 3.8584109988211894e-08,
+      "benchmark": "unpack_sequence",
+      "candidate_mean_seconds": 3.901515604809447e-08,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        0.8623621805884163,
+        1.3727337450067933
+      ],
+      "legs": [
+        {
+          "mean_seconds": 3.864284180821187e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 2.7544377078555577e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.897608306147049e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3765374977564117e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.905422903471845e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 2.5805176189247823e-10,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.8525378168211926e-08,
+          "measured_processes": 40,
+          "stdev_seconds": 4.0860655166530005e-10,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 1.1171595250331512,
+      "time_ratio": 1.0111715952503315
+    },
+    {
+      "baseline_mean_seconds": 1.0687099698998282e-05,
+      "benchmark": "unpickle",
+      "candidate_mean_seconds": 1.0644908834365196e-05,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.9937906012096986,
+        0.2100801868718971
+      ],
+      "legs": [
+        {
+          "mean_seconds": 1.0739083345470135e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 1.1511883612338799e-07,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0632359344526777e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 9.782972838017911e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0657458324203617e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 8.064429416392153e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 1.0635116052526427e-05,
+          "measured_processes": 40,
+          "stdev_seconds": 7.764242621850214e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.3947831106791422,
+      "time_ratio": 0.9960521688932086
+    },
+    {
+      "baseline_mean_seconds": 3.5238085334299285e-06,
+      "benchmark": "unpickle_list",
+      "candidate_mean_seconds": 3.4989306431043586e-06,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -0.8041876322324559,
+        -0.6075514717679975
+      ],
+      "legs": [
+        {
+          "mean_seconds": 3.5282826009582396e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.1587361479101726e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.499908588651124e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.3469813504752642e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.497952697557594e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 2.0100996744813476e-08,
+          "values": 120
+        },
+        {
+          "mean_seconds": 3.5193344659016173e-06,
+          "measured_processes": 40,
+          "stdev_seconds": 3.259018708092444e-08,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.7059943833371274,
+      "time_ratio": 0.9929400561666287
+    },
+    {
+      "baseline_mean_seconds": 0.00016592364866786132,
+      "benchmark": "unpickle_pure_python",
+      "candidate_mean_seconds": 0.0001655766567697962,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.4926442571245526,
+        0.0757468457389665
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.00016631992509549793,
+          "measured_processes": 40,
+          "stdev_seconds": 2.512574500839643e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001655005595360611,
+          "measured_processes": 40,
+          "stdev_seconds": 1.0816875067955248e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001656527540035313,
+          "measured_processes": 40,
+          "stdev_seconds": 1.289676019388945e-06,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0001655273722402247,
+          "measured_processes": 40,
+          "stdev_seconds": 3.2975431351626384e-06,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.2091274516025865,
+      "time_ratio": 0.9979087254839741
+    },
+    {
+      "baseline_mean_seconds": 0.03245507640919337,
+      "benchmark": "xdsl_constant_fold",
+      "candidate_mean_seconds": 0.03249066474381834,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.32648440973844783,
+        0.5474221845576999
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.03251559253161152,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0014755884868627213,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03240943419126173,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0014701622156701648,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.032571895296374956,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00179554161709028,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.03239456028677523,
+          "measured_processes": 40,
+          "stdev_seconds": 0.001537686427873354,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.10965413908219368,
+      "time_ratio": 1.001096541390822
+    },
+    {
+      "baseline_mean_seconds": 0.11072585041401908,
+      "benchmark": "xml_etree_parse",
+      "candidate_mean_seconds": 0.10992414888460189,
+      "half_direction": "agrees",
+      "half_time_changes_pct": [
+        -1.3046667404375545,
+        -0.1375668870858826
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.11128086803170542,
+          "measured_processes": 40,
+          "stdev_seconds": 0.002569226006023557,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.10982902355802555,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007772711235171765,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.11001927421117823,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0013038674964659192,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.11017083279633273,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007736066695141154,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.724041880391546,
+      "time_ratio": 0.9927595811960845
+    },
+    {
+      "baseline_mean_seconds": 0.07498080917672875,
+      "benchmark": "xml_etree_iterparse",
+      "candidate_mean_seconds": 0.07476562883433266,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.8133619850108298,
+        0.24322386963255838
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.07525210870662705,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006640359647241959,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07464003666148832,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0007642429451283336,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07489122100717699,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0009514804951817159,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07470950964683046,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006069165489714017,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.28698055510298914,
+      "time_ratio": 0.9971301944489701
+    },
+    {
+      "baseline_mean_seconds": 0.07284272183120871,
+      "benchmark": "xml_etree_generate",
+      "candidate_mean_seconds": 0.0727718125776543,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.5208651397925923,
+        0.3293488564384939
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.07311475141129146,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0006595871845638198,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07273392215914404,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005622523323406434,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07280970299616456,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0013165508308730044,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.07257069225112597,
+          "measured_processes": 40,
+          "stdev_seconds": 0.000507735880133858,
+          "values": 120
+        }
+      ],
+      "time_change_pct": -0.09734569463057952,
+      "time_ratio": 0.9990265430536942
+    },
+    {
+      "baseline_mean_seconds": 0.05570452370836089,
+      "benchmark": "xml_etree_process",
+      "candidate_mean_seconds": 0.05573248347694365,
+      "half_direction": "differs",
+      "half_time_changes_pct": [
+        -0.3343817419503736,
+        0.4381000665865997
+      ],
+      "legs": [
+        {
+          "mean_seconds": 0.055944822127154716,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0004916844524515944,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.0557577528563949,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005168880846084889,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.055707214097492394,
+          "measured_processes": 40,
+          "stdev_seconds": 0.0005303168516364165,
+          "values": 120
+        },
+        {
+          "mean_seconds": 0.055464225289567064,
+          "measured_processes": 40,
+          "stdev_seconds": 0.00048414044513697907,
+          "values": 120
+        }
+      ],
+      "time_change_pct": 0.05019299461053173,
+      "time_ratio": 1.0005019299461053
+    }
+  ],
+  "runtime_mode": "enabled",
+  "targets": {
+    "baseline": {
+      "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+      "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/baseline-ft/python",
+      "executable_sha256": "ee7c932bfdf6e76e8c5d18a2331a0a473a130a6c9500c24f0700c10c471f35d5",
+      "gil_enabled": false,
+      "git": [
+        "CPython",
+        "remotes/upstream/HEAD-26-gc67363fa59-dirty",
+        "c67363fa59"
+      ],
+      "parallel_config": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "source_repository": {
+        "dirty": false,
+        "revision": "c67363fa59543ef5d572383af927f1cff88514a1",
+        "status": []
+      },
+      "version": "3.16.0a0 free-threading build (remotes/upstream/HEAD-26-gc67363fa59-dirty:c67363fa59, Oct 16 2026, 10:37:23) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+    },
+    "candidate": {
+      "config_args": "'--with-parallel-gc' '--enable-optimizations' '--with-lto' '--disable-gil' 'PKG_CONFIG_PATH=/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64/pkgconfig' 'LDFLAGS=-L/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64 -Wl,-rpath,/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/lib64' 'CPPFLAGS=-I/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/deps/usr/include'",
+      "executable": "/tmp/parallel-gc-benchmarks-complete-20261016-ntQPAW/candidate-ft/python",
+      "executable_sha256": "c51db4dee5757e789cc208162bc32d70e9d8e79834a07cc0eed63888cecd19c1",
+      "gil_enabled": false,
+      "git": [
+        "CPython",
+        "heads/parallel-gc-upstream-port-dirty",
+        "388fd5bb46"
+      ],
+      "parallel_config": {
+        "available": true,
+        "enabled": false,
+        "num_workers": 0,
+        "parallel_cleanup": true,
+        "pool_active": false,
+        "startup_failed": false
+      },
+      "source_repository": {
+        "dirty": false,
+        "revision": "388fd5bb46fdda6b464db566faf818505c3d6eef",
+        "status": []
+      },
+      "version": "3.16.0a0 free-threading build (heads/parallel-gc-upstream-port-dirty:388fd5bb46, Oct 16 2026, 10:48:14) [GCC 11.5.0 20240719 (Red Hat 11.5.0-15)]"
+    }
+  }
+}
