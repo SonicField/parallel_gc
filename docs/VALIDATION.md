@@ -26,11 +26,26 @@ Documentation-only commits do not change those measurements or the CPython
 gitlink. Collector changes need new evidence; a claim that older results still
 apply requires an explicit account of the intervening changes.
 
+## Latest status: 21 October 2026
+
+All sixteen repaired-dependency rigorous source-comparison suites are complete:
+100 original programs and 127 named results per leg. [Campaign and checks](PYPERFORMANCE_CAMPAIGN_2026-10-19.md).
+Individual increases, performance neutrality and causation remain unresolved.
+The [four-block GIL follow-up](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
+did not reproduce the earlier large BTree/NetworkX increases using recovered
+GIL binaries in a reconstructed shared runtime. Its selected same-host custody
+checks do not recover the original complete runtime or establish all FT assets.
+
+The five [19 October workflow successes](ci-results-2026-10-19.md) are reported
+conclusions, not independently inspected source/job artifacts, counts or skips.
+No new remote query was made. Dated pending statements below are checkpoints;
+use this overview and [VP current state](../vp/STATE.md) for what remains now.
+
 ## CI repair follow-up: 19 October 2026
 
 The new Linux matrix, compiler checks, full Linux CPython suite, Windows and macOS workflows are all reported successful in Alex's supplied listing. [Run IDs, original failures and evidence limits](ci-results-2026-10-19.md). Job-level source artifacts, skips and counts remain to be inspected; workflow conclusions must not be expanded into unsupported test-by-test claims.
 
-Automatic runs `39248590193` and `39248590252` failed for two independently reproduced causes: the parent hook test chose runtime-disabled mode on feature-off builds, and Clang rejected an uncalled GIL wrapper. Parent `d448e16` repairs the probe and passes all 76 harness tests in all four feature-on/off GIL/FT configurations. CPython `b91445e0b9` removes only that wrapper; all 32 GCC/Clang GIL/FT debug/release GC-object compilations pass with the strict unused-code errors intact. Fresh GIL/FT debug builds pass the focused collector and parent harness selections. [Compiler/runtime evidence and limits](../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md). These are local repairs, not hosted confirmation; new CI runs are required. The benchmark results below retain their original tested source identities.
+Automatic runs `39248590193` and `39248590252` failed for two independently reproduced causes: the parent hook test chose runtime-disabled mode on feature-off builds, and Clang rejected an uncalled GIL wrapper. Parent `d448e16` repairs the probe and passes all 76 harness tests in all four feature-on/off GIL/FT configurations. CPython `b91445e0b9` removes only that wrapper; all 32 GCC/Clang GIL/FT debug/release GC-object compilations pass with the strict unused-code errors intact. Fresh GIL/FT debug builds pass the focused collector and parent harness selections. [Compiler/runtime evidence and limits](../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md). Subsequent hosted workflow successes are reported above; source/job verification remains outstanding. The benchmark results below retain their original tested source identities.
 
 ## Dependency follow-up: 19 October 2026
 
@@ -38,7 +53,7 @@ The [dependency repair plan](../benchmarks/dependency-repair/PLAN.md) records si
 
 The original Dask, Genshi XML/text, Coverage, Sphinx and Dulwich programs pass targeted short checks in all eight baseline/current GIL/FT enabled/disabled contexts. Cloudpickle and Genshi correctness tests also pass on all four target binaries and Python 3.12; native dependency probes pass on all four target binaries. These checks are not rigorous performance measurements or a complete repeated default suite.
 
-Alex subsequently approved SQLAlchemy 1.4.19's [supported pure-Python build](../benchmarks/dependency-repair/SQLALCHEMY.md). [Repeated complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) passes all 100 original programs in all eight contexts, with 127 named results each and no failures. FT remains GIL-disabled and all four fresh complete environments pass `pip check`. The sixteen rigorous comparisons remain outstanding; diagnostic execution checks are not performance measurements. The historical failure captures below are preserved, not relabelled as repaired suites. Hosted CI evidence remains unavailable.
+Alex subsequently approved SQLAlchemy 1.4.19's [supported pure-Python build](../benchmarks/dependency-repair/SQLALCHEMY.md). [Repeated complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) passes all 100 original programs in all eight contexts, with 127 named results each and no failures. FT remains GIL-disabled and all four fresh complete environments pass `pip check`. At this readiness checkpoint the sixteen rigorous comparisons were outstanding; they are now complete in the linked latest-status record. Diagnostic execution checks are not performance measurements. The historical failure captures below are preserved, not relabelled as repaired suites. Reported CI conclusions are available; detailed source/job evidence remains unverified.
 
 ## Integration checkpoint: 17 October 2026
 
@@ -104,9 +119,9 @@ suites, Windows/macOS validation or new performance results.
 
 The subsequent optimized builds and project comparisons are recorded in the 17 October checkpoint above. Publication and hosted dispatch were reported, but current source artifacts and outcomes remain unavailable. The rigorous pyperformance comparisons await agreed dependency work. Older results from a retaining harness cannot isolate a collector change.
 
-## Required remote coverage and older captured runs
+## Historical remote coverage and older captured runs
 
-The dated run IDs below precede the integrated CPython source. Newer dispatches have been reported, but their outcomes and artifacts are missing. Required coverage also includes the eight GCC/Clang GIL/FT release/debug object checks added to the Linux matrix. Do not read an older success as current validation.
+The dated run IDs below precede the integrated CPython source. This is the older checkpoint; newer workflow conclusions are recorded in the 19 October follow-up above, with source/job artifact limits. Required coverage also includes the eight GCC/Clang GIL/FT release/debug object checks added to the Linux matrix. Do not read an older success as current validation.
 
 The first published-run outcomes below were reported on 16 October 2026.
 The macOS logs verify parent `724b74b749d942ace6ea05ec3bdab4bd504781d9` and

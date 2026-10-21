@@ -11,6 +11,10 @@ retention qualification and rejected-experiment discussion here supersede
 claims that all earlier collection-shape heaps were fully live or that the
 quick rebuild comparison established a universal noise floor.
 
+Latest status is in [VP STATE](../vp/STATE.md); the [linked register](../vp/REGISTRY.md)
+connects investigations, choices and evidence. Dated checkpoints below retain
+their original failures; current completion and follow-ups are in §4.1.
+
 ## 1. Two benchmark systems, both required
 
 General suites such as `pyperformance` detect whole-interpreter regressions
@@ -219,7 +223,7 @@ A subsequent [focused FT controlled-case ABBA](../benchmarks/results/investigati
 
 The subsequent [unchanged full FT repeat](../benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md) restores the original full `__main__` invocation and preceding sustained phases, using the same binaries. All four legs completed at 16:18 UTC on 17 October. The broad module pattern still does not reproduce: every module controlled case has a positive first-half and negative second-half change. Four overall module means increase, four decrease. Seven frame controlled cases increase in both halves (+2.43% to +5.91%). Frame mixed throughput decreases −1.11%, frame AI-shaped −3.93%, and module mixed −1.97%; the last has opposing halves. All 72 rows, serial controls, maxima, counts and callback totals are preserved and independently checked. No collector change, causal explanation or acceptance claim follows. The three experiments remain separate rather than pooling their contexts and time windows.
 
-**Full-default pyperformance remains incomplete.** The first corrected suite failed Dask/Cloudpickle and Genshi on Python 3.16 API errors. Eight subsequent [all-program diagnostic checks](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md) find the same two failures in GIL and seven in FT, matching both source revisions and collector policies. The five additional FT programs load extensions that enable the GIL; worker attestation correctly rejects them. No workload was omitted or unsafe GIL override introduced. These short checks are not ABBA measurements.
+**Historical dependency-blocked checkpoint, 17 October.** The first corrected suite failed Dask/Cloudpickle and Genshi on Python 3.16 API errors. Eight subsequent [all-program diagnostic checks](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md) found the same two failures in GIL and seven in FT, matching both source revisions and collector policies. The five additional FT programs loaded extensions that enabled the GIL; worker attestation rejected them. No workload was omitted or unsafe GIL override introduced. These short checks were not ABBA measurements; the repaired complete campaigns below supersede the pending status, not these original failure records.
 
 Dependency repairs were approved and executed on 19 October in isolated environments. [All seven repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, with 127 named results each and no failures. Benchmark programs remain unchanged. Coverage retains CTracer; its extension and those of Dulwich, MarkupSafe and Greenlet remain native. FT runtime checks stay active and FT execution remains GIL-disabled. Alex approved SQLAlchemy 1.4.19's supported pure-Python build consistently across both sources and build modes. All four fresh complete environments pass `pip check`, including Dulwich's required urllib3 2.2.2 upgrade. These diagnostic execution checks are not performance evidence; at that readiness checkpoint all sixteen rigorous suites were outstanding. Different dependency implementations must not be mixed with historical measurements. [Hosted workflow successes](ci-results-2026-10-19.md) are user-reported; source/job-level artifacts remain unverified.
 
@@ -234,7 +238,21 @@ All four full source-ABBA campaigns (sixteen suites) retain 100 original program
 | [FT disabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md) | +0.23% | `dask` +4.55% and `html5lib` +2.21% increase in both halves; `k_core` +2.51% has opposing halves. |
 | [FT enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md) | −0.25% | `dulwich_log` +2.22%, `k_core` +1.75% and `btree` +1.52% increase in both halves. `stdlib_startup` +1.20% has opposing halves. |
 
-All rows, leg variation, raw results, input fingerprints, pooled comparisons and arithmetic checks are retained. The summaries do not establish neutrality, causation or acceptance. Sequential disabled/enabled campaigns are not a controlled activation-cost estimate. [Protocol and completion log](PYPERFORMANCE_CAMPAIGN_2026-10-19.md). The original build/driver root was absent when the final FT-enabled analysis ran; its unexplained loss and the replacement analysis environment are recorded with that report. Completed measurement fingerprints remain, but present custody of the binaries is not verified.
+All rows, leg variation, raw results, input fingerprints, pooled comparisons and arithmetic checks are retained. The summaries do not establish neutrality, causation or acceptance. Sequential disabled/enabled campaigns are not a controlled activation-cost estimate. [Protocol and completion log](PYPERFORMANCE_CAMPAIGN_2026-10-19.md). The original build/driver root was absent when the final FT-enabled analysis ran; its unexplained loss and the replacement analysis environment remain recorded. Later recovery verified the original GIL pair, not the original complete runtime or all FT asset custody.
+
+#### Focused GIL follow-up, 21 October
+
+[Four completed focused ABBA blocks](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
+reuse the recovered original GIL executables with one shared reconstructed
+runtime and unchanged rigorous workloads. Enabled source time changes are
+BTree +0.88% and +2.41%, NetworkX −1.77% and −2.05%; all BTree enabled halves
+oppose within their blocks. Disabled controls and every half are retained in
+the record. The earlier +12.70%/+6.48% magnitudes did not recur. This is not
+equivalence, proof of a smaller stable regression, cleanup attribution or proof
+that the old runtime caused the result. Same-host recovery covers identified
+GIL inputs/new observation archives, not the complete old runtime, all FT
+assets or host-loss protection. The proposed independent-PGO-build stage
+remains conditional and uncommissioned.
 
 ### 4.2 Historical serial/parallel measurements, 7–15 October 2026
 
@@ -359,7 +377,7 @@ those changes with Alex first. The current integration keeps those unchanged.
 ## 7. Pending measurements
 
 - Focused reproduction of negative integration measurements, then fresh-profile/generated-code investigation if the differences recur. Completed GIL/FT project ABBA is linked in §4.1; no cause or repair is assumed.
-- Focused repetition and diagnosis of the individual pyperformance increases in §4.1. All sixteen rigorous source-comparison suites are complete; that does not establish neutrality or close the observed increases.
+- Further diagnosis of the individual pyperformance increases in §4.1. The four-block BTree/NetworkX GIL follow-up is complete and did not reproduce the original magnitudes in a reconstructed runtime; independent rebuild/profile work remains conditional, not automatically authorised. Other individual increases remain unresolved.
 - Optimized feature-off controls for compile-time overhead.
 - First-use pool startup latency, reported separately; pool memory use.
 - Per-worker phase counters in FT `get_parallel_stats()` (today FT reports no

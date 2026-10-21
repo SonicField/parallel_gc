@@ -20,3 +20,7 @@ This records workflow-level conclusions from the supplied listing. Job-specific 
 Previous Linux full-suite `39249631377` and Windows `39249634897` were also reported successful. They remain distinct from the new source-pair runs above.
 
 These conclusions resolve the reported red workflows after the two local repairs. They do not establish performance neutrality or replace detailed source/job verification. The complete rigorous pyperformance comparisons remain separate work.
+
+Later 21 October follow-up: [all sixteen rigorous source-comparison suites](PYPERFORMANCE_CAMPAIGN_2026-10-19.md)
+are complete. This does not change the CI source/job limits above or close
+individual performance questions. [VP current state](../vp/STATE.md).

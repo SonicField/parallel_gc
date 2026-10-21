@@ -27,19 +27,19 @@ in their reports, not relabelled as the selected current checkout.
 
 ## Documentation audit work in progress
 
-[A-000002](records/audits/A-000002/record.md) has five open documentation
-findings. Campaign-signal qualifications (F-004), nominal-path exceptions
-(F-005), and historical access dispositions (F-003) are repaired locally,
-pending independent successor review. Current-status reconciliation and the
-new register's reviewer routes (F-001/F-002) are being completed. The worker's
-four gaps are mapped to the same work in DOC-000001.
+[A-000002](records/audits/A-000002/record.md) has five findings addressed locally
+and ready for independent successor review: current-status routes (F-001),
+the GIL follow-up/register (F-002), historical access disposition (F-003),
+campaign-signal qualifications (F-004), and nominal-path exceptions (F-005).
+They are not independently closed yet. The worker's four gaps are mapped
+to the same work in DOC-000001.
 
 All six [A-000001 historical findings](records/audits/A-000001/ACCESS.md)
 remain open. Allocation/rollback/join and other [technical landing issues](../docs/OPEN_ISSUES.md)
 are not documentation repairs and remain unchanged.
 
-Next: finish the explanatory status updates, verify links/factual support and
-unchanged source/benchmark bytes, then commission a fresh successor audit at
+Next: verify links/factual support and unchanged source/benchmark bytes,
+then commission a fresh successor audit at
 the repaired revision. New PGO rebuilds, GC diagnostics or code changes are
 not commissioned by this record. Alex retains technical decisions and remote
 pushes. No benchmark is currently running for this documentation task.

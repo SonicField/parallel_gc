@@ -1,5 +1,13 @@
 # Informal review handoff reconciliation
 
+Latest status, 21 October: this historical documentation plan is complete
+locally; later integration, dependency repairs and full source comparisons
+have their own records. [VP current state and register](../vp/README.md)
+routes those outcomes, the completed GIL follow-up and open questions.
+[19 October hosted successes](ci-results-2026-10-19.md) are user-reported,
+not source/job-artifact verification. Pending statements in the original
+dated plan/progress below describe those checkpoints, not current suite state.
+
 ## Goal and scope
 
 Prepare a reproducible starting place for Matt and Pablo to understand, build,
@@ -49,7 +57,9 @@ After evening review and local commit, push the CPython branch first and the
 parent commit second. Verify a fresh public recursive clone, then run the
 four-build matrix and manual Linux and Windows full-suite workflows against
 that parent/submodule pair. Record their actual revisions, outcomes and skips.
-These remote steps are pending, not passed by documentation reconciliation.
+At the original checkpoint those remote steps were pending, not passed by
+documentation reconciliation. Later reported conclusions are linked above;
+the requirement for exact source/job verification remains unchanged.
 
 Use explicit ref names when pushing, after reviewing and committing the parent
 documentation:

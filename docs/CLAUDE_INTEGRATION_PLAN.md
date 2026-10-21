@@ -2,7 +2,7 @@
 
 Status: execution approved by Alex, 16 October 2026. Local imports and atomic commits are authorised; remote pushes remain Alex's responsibility.
 
-Local outcome: documentation, benchmark repairs, unreferenced-code cleanup, production marking tests and incremental-build dependencies are committed separately. The active collector design is preserved. Fresh GCC checks, focused suites, sanitizer selections and ownership/mutation checks pass within the recorded limits. Publishing, dependency-complete hosted suites and matched-harness performance campaigns remain pending; see [VALIDATION.md](VALIDATION.md).
+Latest outcome, 21 October: documentation, benchmark repairs, unreferenced-code cleanup, production marking tests and incremental-build dependencies are committed separately, preserving the active collector design. Local checks and full project comparisons are recorded; dependency repairs and all sixteen rigorous pyperformance source-comparison suites are complete. Five newer hosted successes are user-reported, with source/job artifacts still unverified. Individual performance questions remain open; [VALIDATION.md](VALIDATION.md) and [VP current state](../vp/STATE.md) distinguish completed work from pending evidence. The progress entries below retain their dates and original failures.
 
 ## Goal and method
 
@@ -105,7 +105,7 @@ For each completed step record: imported commits, destination commits, exact che
 | 2: dead code | Complete locally | CPython `442a97213f`; four before/after feature-on builds and two feature-off controls; warning gates and symbol checks |
 | 3: production tests | Complete locally | CPython `0fc7b3ccb9`; debug verifier, replay-untracking regression, mutation checks, clean six-configuration tests and four sanitizer selections |
 | 4: benchmarks | Complete locally | Separate retention and rooting changes; hardened 24-test harness and planted-reference controls; fresh four-mode repeats |
-| 5: validation | Compiler workflow added locally; hosted runs pending | Eight GCC/Clang GIL/FT release/debug object checks; publishing and matched-harness measurements remain pending |
+| 5: validation | Local full/project/pyperformance comparisons complete; newer hosted successes reported | Individual increases and causes remain unresolved; source/job artifacts, counts/skips and landing acceptance remain separate requirements. [Current evidence](VALIDATION.md) |
 
 ### 16 October: manifest and execution approval
 

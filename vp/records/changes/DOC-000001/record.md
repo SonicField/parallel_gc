@@ -141,6 +141,17 @@ dependency alternatives, completed comparisons and open decisions by family.
 README's reviewer route links the entry. Scope is explicitly explanatory,
 not all-source lifecycle coverage or retrospective whole-project adoption.
 Current-status reconciliation and complete link checks follow separately.
+F-001 / F-002 / W2 repair: reviewer summaries now route current completion,
+reported CI versus unverified job/source artifacts, and the four-block GIL
+follow-up. Dated integration/dependency/handoff checkpoints retain their
+historical failures but no longer masquerade as current pending work. GIL
+custody is explicitly narrower than original-runtime/all-FT/whole-host recovery.
+The first multi-file patch failed its exact-line check on a paragraph fragment
+and changed no file; the paragraph was read and the correction reapplied.
+No workflow, result JSON, original campaign summary, source, benchmark program,
+acceptance rule or collector behavior changed. Final checks and successor
+assessment remain pending; the worker proposes all five findings ready for
+re-audit, not independently closed.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.

@@ -179,8 +179,9 @@ feature-off debug builds. All four run focused collector and parent benchmark
 harness tests; both feature-on builds also run the full default CPython suite.
 Full-suite runtime policy starts disabled, as on Linux and Windows. Each job
 retains source-pair evidence and any test logs produced before a failure.
-The first hosted result is pending; local syntax checks are not portability
-evidence.
+The first hosted run failed and later workflows are reported successful;
+[dated outcomes and source/job limits](ci-results-2026-10-19.md) are distinct
+from local syntax checks, which are not portability evidence.
 
 After pushing the parent commit, trigger it with:
 

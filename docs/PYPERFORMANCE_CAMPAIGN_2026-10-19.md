@@ -1,5 +1,13 @@
 # Full repaired-dependency pyperformance comparisons
 
+Latest status, 21 October: all sixteen suites and their checks are complete.
+The later [four-block GIL follow-up](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
+did not reproduce the earlier large BTree/NetworkX increases with recovered
+GIL binaries in a reconstructed runtime; it does not establish equivalence,
+cause or original-environment recovery. [Current investigation register](../vp/REGISTRY.md).
+The dated checkpoints below preserve their original preparation failures and
+pending states; they are not instructions to rerun completed campaigns.
+
 ## Question and protocol
 
 Do the integrated changes alter execution time for the original default pyperformance workloads, in GIL or FT, with parallel GC enabled or disabled? The terminal outcome is a complete, reproducible comparison that names regressions and uncertainty, not a passing smoke or a favourable geometric mean.
@@ -121,3 +129,12 @@ Geometric-mean execution-time change is −0.25%; largest increases are `dulwich
 The original build/driver root was absent at analysis time; the first invocation returned exit 127 without running analysis or a benchmark. A separate analysis environment with pyperf 2.10.0 was then created; its inventory and successful cross-check are preserved. The disappearance of the original binaries is unexplained. This is an evidence-custody gap, not a benchmark execution failure or permission to regenerate historical inputs.
 
 All sixteen suites are complete and recorded. No benchmark workload, rigorous setting or measured binary was changed during this analysis. Nothing was pushed. VP adoption/remediation and independent audit remain to be done; completed measurements do not establish project conformance.
+
+Subsequent custody and documentation disposition: the two original GIL
+executables were recovered and matched against their earlier hashes. Selected
+same-host replicas and the new reconstructed-runtime observations are verified
+in the linked GIL record. The original build/driver path loss is unexplained;
+the complete original runtime and all FT asset custody remain unestablished.
+The [D documentation reconciliation](../vp/records/changes/DOC-000001/record.md)
+tracks a fresh audit and repairs; it does not declare whole-project adoption
+or close the older audit's historical findings.

@@ -15,6 +15,16 @@ confirmation ([VALIDATION.md](VALIDATION.md)).
 
 **19 October hosted follow-up:** all five latest workflows are reported successful: Linux focused matrix, GCC/Clang checks, full Linux CPython suite, Windows and macOS. [Conclusions and run IDs](ci-results-2026-10-19.md). This supersedes earlier "outcomes unknown" entries at workflow level only; source artifacts, job counts and skips still need inspection. No performance or unresolved source-failure policy is closed by those successes.
 
+**Current follow-up, 21 October:** all sixteen rigorous source-comparison
+pyperformance suites are complete. The [four-block GIL investigation](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
+did not reproduce the earlier large BTree/NetworkX increases using recovered
+GIL binaries in one shared reconstructed runtime; cause, equivalence and
+acceptance remain unresolved. Selected same-host GIL recovery is verified,
+not the original complete runtime or all FT asset custody. [VP state and
+investigation/choice register](../vp/README.md). Dated pending entries below
+are checkpoints; source failure policies and technical landing gates remain
+unchanged.
+
 ## 1. Source audit
 
 Audit standard: [Verifiable Practice](https://github.com/SonicField/verifiable-practice)
@@ -143,7 +153,8 @@ Afterwards all five trigger recompilation. Actual dependency-driven rebuilds,
 links and focused tests pass in four feature-on configurations and two
 feature-off debug controls. No collector code changed
 ([evidence](../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md)).
-Fresh hosted builds remain pending.
+Later hosted workflow successes are reported in the 19 October follow-up;
+their detailed source/job verification remains pending.
 
 **CPython documentation.** `Doc/library/gc.rst` still describes child recovery
 as creating helpers and a disabled GIL configuration as reporting retained
@@ -169,9 +180,9 @@ The [completed 16–17 October source comparison, §4.1](PERFORMANCE.md) does no
 
 The [focused FT collection repeat](../benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md) did not reproduce the broad module-rooted pattern with the same binaries and generated-member counts. Its fresh invocation omits preceding sustained workloads and uses a normal imported module, so context differs. The subsequent [unchanged full FT repeat](../benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md) also does not reproduce the broad pattern: all eight module cases have opposing halves. It records seven frame collection increases in both halves (+2.43% to +5.91%) and three lower throughput means. The original evidence is preserved; cause and performance neutrality remain unestablished. No repair was made or collector change authorized.
 
-Full-default pyperformance is blocked by dependency compatibility, not reported complete from a passing subset. The 17 October all-program checks find Dask/Cloudpickle and Genshi API errors in both modes; Coverage, dulwich_log, Sphinx and both SQLAlchemy variants additionally load native extensions that enable the GIL in FT. The attestation rejects those runs. Failures match baseline/current and enabled/disabled. [Original failure evidence](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md).
+At the 17 October checkpoint full-default pyperformance was blocked by dependency compatibility, not reported complete from a passing subset. Those all-program checks found Dask/Cloudpickle and Genshi API errors in both modes; Coverage, dulwich_log, Sphinx and both SQLAlchemy variants additionally loaded native extensions that enabled the GIL in FT. Attestation rejected those runs. Failures matched baseline/current and enabled/disabled. [Original failure evidence](../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md). The later completed campaigns supersede the pending status, not those failure captures.
 
-On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, producing 127 named results each with zero failures. Benchmark programs and FT checks are unchanged; Coverage retains CTracer, and required native builds are verified rather than accepting silent fallback. Alex approved SQLAlchemy 1.4.19's supported pure-Python implementation consistently across both sources and build modes. All four fresh complete environments pass `pip check`; FT stays GIL-disabled. No workload exclusion or unsafe runtime override has been made. Rigorous comparisons remain incomplete; diagnostic readiness is not performance evidence.
+On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/PLAN.md) and [complete readiness](../benchmarks/dependency-repair/full-readiness-evidence/README.md) pass: all 100 original programs execute in all eight contexts, producing 127 named results each with zero failures. Benchmark programs and FT checks are unchanged; Coverage retains CTracer, and required native builds are verified rather than accepting silent fallback. Alex approved SQLAlchemy 1.4.19's supported pure-Python implementation consistently across both sources and build modes. All four fresh complete environments pass `pip check`; FT stays GIL-disabled. No workload exclusion or unsafe runtime override has been made. At this readiness checkpoint rigorous comparisons were incomplete; completion is now recorded below. Diagnostic readiness is not performance evidence.
 
 ### Previously recorded performance findings
 
@@ -179,7 +190,7 @@ On 19 October, seven [dependency-only repairs](../benchmarks/dependency-repair/P
 
 **Later 20 October FT follow-up:** the complete [FT-disabled source ABBA](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md) records geometric-mean time change +0.23%, `dask` +4.55%, `k_core` +2.51% and `html5lib` +2.21%. `k_core` has opposing halves; the other two increase in both. This collector-disabled source control does not attribute those changes to parallel collection. FT enabled remains pending; all observed increases and uncertainty remain open.
 
-**21 October completion:** all sixteen rigorous suites are now complete. [FT enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md) records geometric-mean time change −0.25%, but `dulwich_log` +2.22%, `k_core` +1.75% and `btree` +1.52% increase in both halves. The individual increases remain unresolved. This compares sources with parallel GC enabled, not activation versus serial in one binary. The recorded build/driver root was absent at final analysis time; historical measurement fingerprints and raw results remain, but present binary custody is unverified. This loss is unexplained and must be addressed in evidence-custody remediation.
+**21 October completion:** all sixteen rigorous suites are now complete. [FT enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md) records geometric-mean time change −0.25%, but `dulwich_log` +2.22%, `k_core` +1.75% and `btree` +1.52% increase in both halves. The individual increases remain unresolved. This compares sources with parallel GC enabled, not activation versus serial in one binary. The recorded build/driver root was absent at final analysis time; historical fingerprints and raw results remain. The later GIL recovery/follow-up linked above establishes selected GIL same-host custody, not the original complete runtime, all FT assets or an explanation for the original path loss.
 
 | ID | State | Issue |
 |----|-------|-------|
@@ -262,8 +273,8 @@ Design discussion is not blocked on these; landing is.
 |------|-------|
 | GIL and FT ASan/TSan | Local focused selections pass; phase allocation failures untested. |
 | Linux AArch64 correctness and performance | Four fresh baseline/current optimized GIL/FT builds and selected tests pass; complete project ABBA records negative results needing follow-up. GIL/FT ASan/TSan selections pass at the verifier commit. Full-suite/hosted evidence remains separate. |
-| Linux hosted CI and Windows | Earlier successes reported for `38730251690`, `38730312362` and `38730315605`; their detailed evidence needs examination. Integrated-source dispatches reported, but current source artifacts and outcomes are unavailable (VALIDATION.md). |
-| Native macOS active collector | First run built all four ARM64 configurations, then failed before tests due to the executable path; workflow corrected. Rerun `38880079592` feature-off passes reported; final feature-on outcomes unconfirmed. |
+| Linux hosted CI and Windows | Newer 19 October workflow successes are user-reported; detailed source/job artifacts, counts and skips still need examination (VALIDATION.md). Required coverage is unchanged. |
+| Native macOS active collector | Earlier path/probe failures remain recorded. The 19 October macOS workflow is reported successful; exact active-collector job/source artifacts remain unverified. |
 | Source failure policies | A5, A6, A7, A8, A12 open. |
 | Performance limits and adaptation | Review-work criteria recorded for discussion (PERFORMANCE.md §6); root-placement weaknesses P1–P4 open (experiments dropped); P5–P6 open; no convergence claim. |
 | Current full default pyperformance | All sixteen rigorous source-comparison suites are complete, with 100 original programs and 127 named results each. No programs excluded. Individual increases remain unresolved; this is not a performance-neutrality verdict or a same-binary activation-cost comparison. See PERFORMANCE §4.1. |

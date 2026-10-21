@@ -1,5 +1,15 @@
 # Investigation: integrated-source CI and performance
 
+Current successor route, 21 October: the original project comparisons and FT
+repeats below are complete. Dependency repairs and all sixteen rigorous
+source-comparison pyperformance suites subsequently completed;
+[campaign](../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md).
+[Reported hosted successes](../../../../docs/ci-results-2026-10-19.md) remain
+distinct from source/job-artifact verification. The [latest GIL follow-up](../../../../docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md)
+did not reproduce the earlier large BTree/NetworkX increases in a reconstructed
+runtime; cause and equivalence remain unresolved. The opening status below is
+the historical 17 October checkpoint, not a competing current status.
+
 **Status:** Four corrected optimized builds and supplementary local tests passed. Both current modes also have passing full physical-source debug runs; an earlier GIL environment leak remains unexplained. All eight original project legs and both source analyses are complete. The focused and unchanged full FT repeats do not reproduce the original broad module-rooted slowdown; the full repeat retains seven both-halves frame collection increases and three lower throughput means. All four repeat legs and 72-row analysis checks pass. The first corrected default pyperformance suite failed Dask and Genshi. Eight all-program diagnostic checks show two failing programs in GIL and seven in FT, matching baseline/current and enabled/disabled. No benchmark is running. Dependency changes await agreement; hosted CI run IDs remain pending.
 **Hypothesis:** The integration preserves collection behaviour and has not introduced a reproducible throughput or collection-latency regression.
 **Falsification criterion:** A new functional failure, or a reproducible per-workload throughput decrease/latency increase in the matched-source comparisons.
