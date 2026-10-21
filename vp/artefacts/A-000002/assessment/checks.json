@@ -1,0 +1,3478 @@
+{
+  "audit": "A-000002",
+  "final_postcheck": {"time_utc":"2026-10-21 16:16:42 UTC","tree":"0d2a45c2ff7a607155cdf0f7a3b0d004c2df3ab1","request_blob":"5ec765f8d4e4d912ebc895c65c0903f88bf5f6f0","bundle_sha256":"351318813618b913c50a629c6584491d16f71631c510893f8702d00baa70e4d9","vp_head":"b9984e5833258ff138a290680140f0467f0f5758","vp_status_short":"","seven_instruction_files_diff_against_declared":""},
+  "kind": "project",
+  "revision": "40bfdcd41462caafb0f1fc38856529d4739cf48e",
+  "tree": "0d2a45c2ff7a607155cdf0f7a3b0d004c2df3ab1",
+  "request_blob": "5ec765f8d4e4d912ebc895c65c0903f88bf5f6f0",
+  "vp_instruction_revision": "c100fbd7f7a735e8216156223c59aa97f9ad8fa6",
+  "vp_repository_post_head": "87fb8eb4b7c1b6f1177c5902796b48bcba94441e",
+  "vp_instruction_files_unchanged": true,
+  "inventory": [
+    {
+      "path": "README.md",
+      "line_count": 141
+    },
+    {
+      "path": "SKILL.md",
+      "line_count": 110
+    },
+    {
+      "path": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "line_count": 47
+    },
+    {
+      "path": "benchmarks/dependency-repair/COVERAGE.md",
+      "line_count": 24
+    },
+    {
+      "path": "benchmarks/dependency-repair/DULWICH.md",
+      "line_count": 35
+    },
+    {
+      "path": "benchmarks/dependency-repair/GENSHI.md",
+      "line_count": 35
+    },
+    {
+      "path": "benchmarks/dependency-repair/GREENLET.md",
+      "line_count": 22
+    },
+    {
+      "path": "benchmarks/dependency-repair/MARKUPSAFE.md",
+      "line_count": 22
+    },
+    {
+      "path": "benchmarks/dependency-repair/PLAN.md",
+      "line_count": 40
+    },
+    {
+      "path": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line_count": 23
+    },
+    {
+      "path": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "line_count": 37
+    },
+    {
+      "path": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "line_count": 18
+    },
+    {
+      "path": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "line_count": 16
+    },
+    {
+      "path": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "line_count": 30
+    },
+    {
+      "path": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "line_count": 8
+    },
+    {
+      "path": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "line_count": 20
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/ft-container-clean-baseline-2026-10-05/README.md",
+      "line_count": 40
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/README.md",
+      "line_count": 39
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md",
+      "line_count": 107
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md",
+      "line_count": 81
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md",
+      "line_count": 89
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md",
+      "line_count": 72
+    },
+    {
+      "path": "benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md",
+      "line_count": 90
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "line_count": 46
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/analysis.md",
+      "line_count": 139
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "line_count": 48
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/analysis.md",
+      "line_count": 139
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "line_count": 45
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/analysis.md",
+      "line_count": 139
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line_count": 48
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/analysis.md",
+      "line_count": 139
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "line_count": 17
+    },
+    {
+      "path": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line_count": 193
+    },
+    {
+      "path": "docs/DESIGN.md",
+      "line_count": 633
+    },
+    {
+      "path": "docs/GETTING_STARTED.md",
+      "line_count": 170
+    },
+    {
+      "path": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line_count": 258
+    },
+    {
+      "path": "docs/OPEN_ISSUES.md",
+      "line_count": 286
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "line_count": 368
+    },
+    {
+      "path": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line_count": 124
+    },
+    {
+      "path": "docs/TESTING.md",
+      "line_count": 442
+    },
+    {
+      "path": "docs/VALIDATION.md",
+      "line_count": 166
+    },
+    {
+      "path": "docs/ci-results-2026-10-19.md",
+      "line_count": 23
+    },
+    {
+      "path": "docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md",
+      "line_count": 220
+    },
+    {
+      "path": "docs/pep-parallel-gc-v2.rst",
+      "line_count": 956
+    },
+    {
+      "path": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "line_count": 653
+    },
+    {
+      "path": "vp/records/audits/A-000001/record.md",
+      "line_count": 170
+    },
+    {
+      "path": "vp/records/audits/A-000001/request.md",
+      "line_count": 53
+    },
+    {
+      "path": "vp/records/audits/A-000002/request.md",
+      "line_count": 66
+    },
+    {
+      "path": "vp/records/changes/DOC-000001/record.md",
+      "line_count": 68
+    },
+    {
+      "path": "benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+      "line_count": 28
+    },
+    {
+      "path": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "line_count": 42
+    },
+    {
+      "path": "benchmarks/results/investigations/claude-scaling-2026-10-15/README.md",
+      "line_count": 19
+    },
+    {
+      "path": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "line_count": 68
+    },
+    {
+      "path": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "line_count": 40
+    },
+    {
+      "path": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "line_count": 33
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+      "line_count": 33
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line_count": 118
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line_count": 115
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line_count": 288
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/TOOLCHAIN-PREPARATION.md",
+      "line_count": 38
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+      "line_count": 25
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "line_count": 62
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line_count": 63
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/README.md",
+      "line_count": 47
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "line_count": 66
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "line_count": 56
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line_count": 131
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/README.md",
+      "line_count": 28
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+      "line_count": 42
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "line_count": 49
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "line_count": 43
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "line_count": 75
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line_count": 114
+    },
+    {
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/pyperformance-preparation-evidence/README.md",
+      "line_count": 21
+    },
+    {
+      "path": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "line_count": 36
+    },
+    {
+      "path": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "line_count": 58
+    },
+    {
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "line_count": 35
+    },
+    {
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-1/SUMMARY.md",
+      "line_count": 64
+    },
+    {
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-module-1/SUMMARY.md",
+      "line_count": 54
+    },
+    {
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-quick-module-1/SUMMARY.md",
+      "line_count": 36
+    },
+    {
+      "path": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line_count": 222
+    }
+  ],
+  "local_link_method": "Inline Markdown and explicit RST links parsed from immutable objects; local file/directory resolution against bounded parent Git tree. No external URLs, rendered output, implicit/autolink/reference-style links or arbitrary prose paths certified. CPython-internal links not content-audited.",
+  "local_links": [
+    {
+      "source": "README.md",
+      "line": 17,
+      "target": "docs/pep-parallel-gc-v2.rst",
+      "dest": "docs/pep-parallel-gc-v2.rst",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 21,
+      "target": "docs/VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 21,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 23,
+      "target": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 25,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 25,
+      "target": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 31,
+      "target": "docs/GETTING_STARTED.md",
+      "dest": "docs/GETTING_STARTED.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 32,
+      "target": "docs/DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 33,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 34,
+      "target": "docs/OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 35,
+      "target": "docs/VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 35,
+      "target": "docs/TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 36,
+      "target": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "dest": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 37,
+      "target": "docs/pep-parallel-gc-v2.rst",
+      "dest": "docs/pep-parallel-gc-v2.rst",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 38,
+      "target": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 39,
+      "target": "SKILL.md",
+      "dest": "SKILL.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 62,
+      "target": "docs/VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 65,
+      "target": "docs/GETTING_STARTED.md",
+      "dest": "docs/GETTING_STARTED.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 80,
+      "target": "docs/DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 81,
+      "target": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 90,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 96,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 107,
+      "target": "docs/OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 108,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "line": 118,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "SKILL.md",
+      "line": 9,
+      "target": "README.md",
+      "dest": "README.md",
+      "exists": true
+    },
+    {
+      "source": "SKILL.md",
+      "line": 16,
+      "target": "docs/PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "SKILL.md",
+      "line": 17,
+      "target": "docs/OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "SKILL.md",
+      "line": 72,
+      "target": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "dest": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "exists": true
+    },
+    {
+      "source": "SKILL.md",
+      "line": 73,
+      "target": "docs/OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "line": 5,
+      "target": "cloudpickle-evidence/unpatched-gil.log",
+      "dest": "benchmarks/dependency-repair/cloudpickle-evidence/unpatched-gil.log",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "line": 9,
+      "target": "cloudpickle-evidence/",
+      "dest": "benchmarks/dependency-repair/cloudpickle-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/COVERAGE.md",
+      "line": 5,
+      "target": "coverage-newest-rejected-evidence/",
+      "dest": "benchmarks/dependency-repair/coverage-newest-rejected-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/COVERAGE.md",
+      "line": 7,
+      "target": "test_native_dependencies.py",
+      "dest": "benchmarks/dependency-repair/test_native_dependencies.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/COVERAGE.md",
+      "line": 7,
+      "target": "coverage-evidence/",
+      "dest": "benchmarks/dependency-repair/coverage-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/DULWICH.md",
+      "line": 5,
+      "target": "dulwich-evidence/",
+      "dest": "benchmarks/dependency-repair/dulwich-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/DULWICH.md",
+      "line": 9,
+      "target": "test_native_dependencies.py",
+      "dest": "benchmarks/dependency-repair/test_native_dependencies.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GENSHI.md",
+      "line": 9,
+      "target": "genshi-evidence/unpatched-gil.log",
+      "dest": "benchmarks/dependency-repair/genshi-evidence/unpatched-gil.log",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GENSHI.md",
+      "line": 12,
+      "target": "genshi-evidence/",
+      "dest": "benchmarks/dependency-repair/genshi-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GENSHI.md",
+      "line": 19,
+      "target": "CLOUDPICKLE.md",
+      "dest": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GENSHI.md",
+      "line": 34,
+      "target": "CLOUDPICKLE.md",
+      "dest": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GREENLET.md",
+      "line": 5,
+      "target": "greenlet-evidence/",
+      "dest": "benchmarks/dependency-repair/greenlet-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/GREENLET.md",
+      "line": 14,
+      "target": "test_native_dependencies.py",
+      "dest": "benchmarks/dependency-repair/test_native_dependencies.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/MARKUPSAFE.md",
+      "line": 5,
+      "target": "markupsafe-evidence/",
+      "dest": "benchmarks/dependency-repair/markupsafe-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/MARKUPSAFE.md",
+      "line": 14,
+      "target": "test_native_dependencies.py",
+      "dest": "benchmarks/dependency-repair/test_native_dependencies.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 25,
+      "target": "CLOUDPICKLE.md",
+      "dest": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 27,
+      "target": "GENSHI.md",
+      "dest": "benchmarks/dependency-repair/GENSHI.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 28,
+      "target": "COVERAGE.md",
+      "dest": "benchmarks/dependency-repair/COVERAGE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 29,
+      "target": "MARKUPSAFE.md",
+      "dest": "benchmarks/dependency-repair/MARKUPSAFE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 30,
+      "target": "GREENLET.md",
+      "dest": "benchmarks/dependency-repair/GREENLET.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 31,
+      "target": "DULWICH.md",
+      "dest": "benchmarks/dependency-repair/DULWICH.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 32,
+      "target": "SQLALCHEMY.md",
+      "dest": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 38,
+      "target": "PREPARED_READINESS.md",
+      "dest": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PLAN.md",
+      "line": 39,
+      "target": "full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line": 3,
+      "target": "check_prepared_suite.py",
+      "dest": "benchmarks/dependency-repair/check_prepared_suite.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line": 3,
+      "target": "test_prepared_readiness.py",
+      "dest": "benchmarks/dependency-repair/test_prepared_readiness.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line": 9,
+      "target": "../run_pyperformance.py",
+      "dest": "benchmarks/run_pyperformance.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line": 9,
+      "target": "../../docs/PERFORMANCE.md#21-pyperformance-abba",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "line": 7,
+      "target": "sqlalchemy-evidence/",
+      "dest": "benchmarks/dependency-repair/sqlalchemy-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "line": 29,
+      "target": "test_sqlalchemy_pure.py",
+      "dest": "benchmarks/dependency-repair/test_sqlalchemy_pure.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "line": 31,
+      "target": "sqlalchemy-pure-evidence/",
+      "dest": "benchmarks/dependency-repair/sqlalchemy-pure-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "line": 9,
+      "target": "checks.tar.gz",
+      "dest": "benchmarks/dependency-repair/analysis-state-verification-evidence/checks.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "line": 17,
+      "target": "../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "line": 3,
+      "target": "../../analyse_pyperformance_abba.py",
+      "dest": "benchmarks/analyse_pyperformance_abba.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "line": 9,
+      "target": "checks.tar.gz",
+      "dest": "benchmarks/dependency-repair/analysis-verification-evidence/checks.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "line": 15,
+      "target": "../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "line": 9,
+      "target": "../check_prepared_suite.py",
+      "dest": "benchmarks/dependency-repair/check_prepared_suite.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "line": 9,
+      "target": "../PREPARED_READINESS.md",
+      "dest": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "line": 7,
+      "target": "attempts-and-tests.tar.gz",
+      "dest": "benchmarks/dependency-repair/per-run-validation-evidence/attempts-and-tests.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "line": 7,
+      "target": "../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "line": 5,
+      "target": "checks-and-smokes.tar.gz",
+      "dest": "benchmarks/dependency-repair/prepared-execution-evidence/checks-and-smokes.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "line": 11,
+      "target": "../full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "line": 19,
+      "target": "../../../docs/PERFORMANCE.md#21-pyperformance-abba",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "line": 5,
+      "target": "../ninth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "line": 16,
+      "target": "../gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "line": 9,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "line": 28,
+      "target": "analysis.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/analysis.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "line": 28,
+      "target": "analysis.json",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "line": 36,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "line": 9,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "line": 28,
+      "target": "analysis.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/analysis.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "line": 28,
+      "target": "analysis.json",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "line": 38,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "line": 9,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "line": 27,
+      "target": "analysis.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/analysis.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "line": 27,
+      "target": "analysis.json",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "line": 35,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line": 9,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line": 28,
+      "target": "analysis.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/analysis.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line": 28,
+      "target": "analysis.json",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line": 30,
+      "target": "../gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "line": 38,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "line": 16,
+      "target": "../gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "line": 16,
+      "target": "../gil-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "line": 16,
+      "target": "../first-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "line": 5,
+      "target": "../fifth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "line": 16,
+      "target": "../gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "line": 5,
+      "target": "../fifth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "line": 16,
+      "target": "../gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "line": 5,
+      "target": "../ninth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "line": 9,
+      "target": "evidence.tar.gz",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/evidence.tar.gz",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "line": 16,
+      "target": "../second-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "line": 16,
+      "target": "../../../../../docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 5,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 146,
+      "target": "../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "dest": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 158,
+      "target": "../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 164,
+      "target": "../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 174,
+      "target": "../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 178,
+      "target": "../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 182,
+      "target": "../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "line": 192,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 10,
+      "target": "CLAUDE_INTEGRATION_PLAN.md",
+      "dest": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 13,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 14,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 15,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 58,
+      "target": "reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 59,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 230,
+      "target": "reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 324,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 340,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 414,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 439,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 632,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 27,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 60,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 84,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 108,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 131,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 144,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 150,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 167,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 168,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 169,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 13,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 90,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 90,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 141,
+      "target": "pep-parallel-gc-v2.rst",
+      "dest": "docs/pep-parallel-gc-v2.rst",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 186,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 233,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 249,
+      "target": "../benchmarks/dependency-repair/PLAN.md",
+      "dest": "benchmarks/dependency-repair/PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 251,
+      "target": "../benchmarks/dependency-repair/SQLALCHEMY.md",
+      "dest": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 251,
+      "target": "../benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 257,
+      "target": "ci-results-2026-10-19.md",
+      "dest": "docs/ci-results-2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 14,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 16,
+      "target": "ci-results-2026-10-19.md",
+      "dest": "docs/ci-results-2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 111,
+      "target": "../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 112,
+      "target": "../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 116,
+      "target": "../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "dest": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 145,
+      "target": "../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 162,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 163,
+      "target": "reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 168,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 170,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 170,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 172,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 174,
+      "target": "../benchmarks/dependency-repair/PLAN.md",
+      "dest": "benchmarks/dependency-repair/PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 174,
+      "target": "../benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 178,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 180,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 182,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 217,
+      "target": "../benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "dest": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 4,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 5,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 88,
+      "target": "../benchmarks/test_prepared_pyperformance.py",
+      "dest": "benchmarks/test_prepared_pyperformance.py",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 120,
+      "target": "../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 132,
+      "target": "../benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "dest": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 168,
+      "target": "../benchmarks/results/investigations/claude-scaling-2026-10-15/",
+      "dest": "benchmarks/results/investigations/claude-scaling-2026-10-15",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 213,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 214,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 216,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 218,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 220,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 222,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 224,
+      "target": "../benchmarks/dependency-repair/PLAN.md",
+      "dest": "benchmarks/dependency-repair/PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 224,
+      "target": "../benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 224,
+      "target": "ci-results-2026-10-19.md",
+      "dest": "docs/ci-results-2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 232,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 233,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 234,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 235,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 237,
+      "target": "PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "dest": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 269,
+      "target": "reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 276,
+      "target": "../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 277,
+      "target": "../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 278,
+      "target": "../benchmarks/results/arm64-316-1958301-ft-lazy-full-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-1958301-ft-lazy-full-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 279,
+      "target": "../benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "dest": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 280,
+      "target": "../benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md",
+      "dest": "benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 282,
+      "target": "../benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md",
+      "dest": "benchmarks/results/arm64-316-gil-adaptive-threshold-full-2026-09-30.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 283,
+      "target": "../benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md",
+      "dest": "benchmarks/results/arm64-316-ft-92f-full-2026-09-30.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 284,
+      "target": "../benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md",
+      "dest": "benchmarks/results/arm64-316-ft-92f-standard-2026-09-30.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 297,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 299,
+      "target": "../benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "dest": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 11,
+      "target": "../benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 11,
+      "target": "../benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 41,
+      "target": "../benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 45,
+      "target": "../benchmarks/analyse_pyperformance_abba.py",
+      "dest": "benchmarks/analyse_pyperformance_abba.py",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 55,
+      "target": "../benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 59,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 63,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 67,
+      "target": "../benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 71,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 75,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 81,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 85,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 89,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 93,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 99,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 103,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 107,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 111,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "line": 117,
+      "target": "../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "dest": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 4,
+      "target": "GETTING_STARTED.md",
+      "dest": "docs/GETTING_STARTED.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 5,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 8,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 11,
+      "target": "../README.md",
+      "dest": "README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 12,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 90,
+      "target": "../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 199,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 259,
+      "target": "GETTING_STARTED.md",
+      "dest": "docs/GETTING_STARTED.md",
+      "exists": true
+    },
+    {
+      "source": "docs/TESTING.md",
+      "line": 417,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 31,
+      "target": "ci-results-2026-10-19.md",
+      "dest": "docs/ci-results-2026-10-19.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 33,
+      "target": "../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "dest": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 37,
+      "target": "../benchmarks/dependency-repair/PLAN.md",
+      "dest": "benchmarks/dependency-repair/PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 41,
+      "target": "../benchmarks/dependency-repair/SQLALCHEMY.md",
+      "dest": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 41,
+      "target": "../benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "dest": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 45,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 49,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 50,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 51,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 52,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 53,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 54,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 55,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 57,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 58,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 59,
+      "target": "../benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 72,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 73,
+      "target": "../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 74,
+      "target": "../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 85,
+      "target": "CLAUDE_INTEGRATION_PLAN.md",
+      "dest": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 92,
+      "target": "../benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 93,
+      "target": "../benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 94,
+      "target": "../benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 95,
+      "target": "../benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 162,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/VALIDATION.md",
+      "line": 163,
+      "target": "HANDOFF_RECONCILIATION_PLAN.md",
+      "dest": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/ci-results-2026-10-19.md",
+      "line": 16,
+      "target": "../benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+      "dest": "benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/ci-results-2026-10-19.md",
+      "line": 17,
+      "target": "../benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "dest": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 30,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 43,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 73,
+      "target": "../README.md",
+      "dest": "README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 74,
+      "target": "GETTING_STARTED.md",
+      "dest": "docs/GETTING_STARTED.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 83,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 176,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 423,
+      "target": "reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 738,
+      "target": "../benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-669ed6b-full-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 740,
+      "target": "../benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "dest": "benchmarks/results/arm64-316-1958301-ft-lazy-analysis-2026-10-08.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 751,
+      "target": "PERFORMANCE.md",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 758,
+      "target": "CLAUDE_INTEGRATION_PLAN.md",
+      "dest": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 779,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 783,
+      "target": "TESTING.md",
+      "dest": "docs/TESTING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 783,
+      "target": "DESIGN.md",
+      "dest": "docs/DESIGN.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 784,
+      "target": "OPEN_ISSUES.md",
+      "dest": "docs/OPEN_ISSUES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 924,
+      "target": "../README.md",
+      "dest": "README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 925,
+      "target": "VALIDATION.md",
+      "dest": "docs/VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "line": 602,
+      "target": "../../benchmarks/results/investigations/claude-scaling-2026-10-15/",
+      "dest": "benchmarks/results/investigations/claude-scaling-2026-10-15",
+      "exists": true
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 8,
+      "target": "request.md",
+      "dest": "vp/records/audits/A-000001/request.md",
+      "exists": true
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 8,
+      "target": "../../../artefacts/A-000001/input/user-authority.md",
+      "dest": "vp/artefacts/A-000001/input/user-authority.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+      "dest": "vp/artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/README.md",
+      "dest": "vp/artefacts/A-000001/input/source/README.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/docs/VALIDATION.md",
+      "dest": "vp/artefacts/A-000001/input/source/docs/VALIDATION.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 22,
+      "target": "../../../artefacts/A-000001/input/audit-standard/standards/project-records.md",
+      "dest": "vp/artefacts/A-000001/input/audit-standard/standards/project-records.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 34,
+      "target": "../../../artefacts/A-000001/assessment/verification-pre.json",
+      "dest": "vp/artefacts/A-000001/assessment/verification-pre.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 34,
+      "target": "../../../artefacts/A-000001/assessment/verification-post.json",
+      "dest": "vp/artefacts/A-000001/assessment/verification-post.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 42,
+      "target": "../../../artefacts/A-000001/assessment/archive-inventory-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/archive-inventory-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 42,
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+      "dest": "vp/artefacts/A-000001/assessment/identity-cross-checks.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/structural-summary.json",
+      "dest": "vp/artefacts/A-000001/assessment/structural-summary.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/path-index.txt",
+      "dest": "vp/artefacts/A-000001/assessment/path-index.txt",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/record-searches.json",
+      "dest": "vp/artefacts/A-000001/assessment/record-searches.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 52,
+      "target": "../../../artefacts/A-000001/assessment/selected-link-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/selected-link-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 52,
+      "target": "../../../artefacts/A-000001/assessment/historical-locator-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/historical-locator-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 54,
+      "target": "../../../artefacts/A-000001/assessment/selected-excerpts.json",
+      "dest": "vp/artefacts/A-000001/assessment/selected-excerpts.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 74,
+      "target": "../../../artefacts/A-000001/assessment/material-run-inspection.json",
+      "dest": "vp/artefacts/A-000001/assessment/material-run-inspection.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 75,
+      "target": "../../../artefacts/A-000001/assessment/readiness-inspection.json",
+      "dest": "vp/artefacts/A-000001/assessment/readiness-inspection.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 75,
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+      "dest": "vp/artefacts/A-000001/assessment/identity-cross-checks.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 167,
+      "target": "../../../artefacts/A-000001/assessment/MANIFEST.md",
+      "dest": "vp/artefacts/A-000001/assessment/MANIFEST.md",
+      "exists": false
+    },
+    {
+      "source": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "line": 20,
+      "target": "../ci-probe-feature-off-2026-10-19/README.md",
+      "dest": "benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/claude-scaling-2026-10-15/README.md",
+      "line": 4,
+      "target": "../../../../docs/reviews/2026-10-15-claude-scaling-review.md",
+      "dest": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "line": 26,
+      "target": "../production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 3,
+      "target": "focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 3,
+      "target": "full-ft-repeat/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 20,
+      "target": "build-evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 93,
+      "target": "ft-source-analysis.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/ft-source-analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 104,
+      "target": "GIL-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 108,
+      "target": "project-legs/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "line": 117,
+      "target": "ANALYSIS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line": 3,
+      "target": "FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line": 18,
+      "target": "build-evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line": 91,
+      "target": "gil-source-analysis.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/gil-source-analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line": 105,
+      "target": "project-legs/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "line": 114,
+      "target": "ANALYSIS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 79,
+      "target": "build-evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 85,
+      "target": "ANALYSIS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 93,
+      "target": "project-legs/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 109,
+      "target": "GIL-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 119,
+      "target": "hook-evidence/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 123,
+      "target": "project-legs/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 145,
+      "target": "FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 157,
+      "target": "TOOLCHAIN-PREPARATION.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/TOOLCHAIN-PREPARATION.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 161,
+      "target": "pyperformance-preparation-evidence/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/pyperformance-preparation-evidence/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 167,
+      "target": "full-pyperformance-preparation/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 179,
+      "target": "dependency-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 187,
+      "target": "default-runtime-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 197,
+      "target": "local-full-suite/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 203,
+      "target": "local-full-suite/physical-debug/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 209,
+      "target": "local-full-suite/gil-full-comparison/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 217,
+      "target": "focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 243,
+      "target": "full-ft-repeat/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 249,
+      "target": "full-ft-repeat/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 253,
+      "target": "full-ft-repeat/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "line": 259,
+      "target": "full-ft-repeat/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+      "line": 8,
+      "target": "../local-full-suite/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "line": 7,
+      "target": "../full-pyperformance-preparation/selected-workloads.txt",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/selected-workloads.txt",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "line": 14,
+      "target": "summary.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/summary.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "line": 16,
+      "target": "../dependency-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 7,
+      "target": "../full-pyperformance-preparation/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 22,
+      "target": "../compatibility_probe.py",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/compatibility_probe.py",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 24,
+      "target": "baseline-gil.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/baseline-gil.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 24,
+      "target": "candidate-gil.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/candidate-gil.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 24,
+      "target": "baseline-ft.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/baseline-ft.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 24,
+      "target": "candidate-ft.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/candidate-ft.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "line": 60,
+      "target": "../default-runtime-compatibility/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/README.md",
+      "line": 46,
+      "target": "RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "line": 13,
+      "target": "README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "line": 50,
+      "target": "evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "line": 65,
+      "target": "../full-ft-repeat/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "line": 3,
+      "target": "RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "line": 7,
+      "target": "../focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "line": 28,
+      "target": "evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "line": 38,
+      "target": "evidence/complete-checks.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/evidence/complete-checks.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line": 15,
+      "target": "README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line": 23,
+      "target": "evidence/complete-checks.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/evidence/complete-checks.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line": 107,
+      "target": "../FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line": 108,
+      "target": "../focused-collections/RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "line": 130,
+      "target": "evidence/",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/evidence",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "line": 44,
+      "target": "source-paths.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/source-paths.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "line": 48,
+      "target": "physical-debug/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "line": 48,
+      "target": "gil-full-comparison/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "line": 14,
+      "target": "../physical-debug/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "line": 20,
+      "target": "../physical-debug/README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "line": 18,
+      "target": "../README.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "line": 33,
+      "target": "../../INVESTIGATION-STATUS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 7,
+      "target": "gil-1-baseline.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/gil-1-baseline.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 20,
+      "target": "gil-2-candidate.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/gil-2-candidate.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 33,
+      "target": "gil-3-candidate.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/gil-3-candidate.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 46,
+      "target": "gil-4-baseline.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/gil-4-baseline.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 57,
+      "target": "../GIL-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 57,
+      "target": "../gil-source-analysis.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/gil-source-analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 61,
+      "target": "ft-1-baseline.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/ft-1-baseline.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 76,
+      "target": "ft-2-candidate.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/ft-2-candidate.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 89,
+      "target": "ft-3-candidate.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/ft-3-candidate.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 102,
+      "target": "ft-4-baseline.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/ft-4-baseline.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 113,
+      "target": "../FT-PROJECT-RESULTS.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "line": 113,
+      "target": "../ft-source-analysis.json",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/ft-source-analysis.json",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/integration-validation-2026-10-16/pyperformance-preparation-evidence/README.md",
+      "line": 13,
+      "target": "../TOOLCHAIN-PREPARATION.md",
+      "dest": "benchmarks/results/investigations/integration-validation-2026-10-16/TOOLCHAIN-PREPARATION.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "line": 27,
+      "target": "../dead-code-cleanup-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "line": 35,
+      "target": "../production-verifier-integration-2026-10-16/README.md",
+      "dest": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 65,
+      "target": "investigations/pgo-gil-split-disabled-abba-v3-2026-10-05/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-gil-split-disabled-abba-v3-2026-10-05",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 66,
+      "target": "investigations/pgo-gil-split-enabled-abba-v4-2026-10-05/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-gil-split-enabled-abba-v4-2026-10-05",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 67,
+      "target": "investigations/pgo-ft-dicts-disabled-abba-v4-2026-10-05/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-ft-dicts-disabled-abba-v4-2026-10-05",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 68,
+      "target": "investigations/pgo-ft-containers-enabled-abba-v2-2026-10-05/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-ft-containers-enabled-abba-v2-2026-10-05",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 101,
+      "target": "investigations/pgo-gil-full-disabled-abba-2026-10-05/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-gil-full-disabled-abba-2026-10-05",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 102,
+      "target": "investigations/pgo-ft-full-disabled-abba-2026-10-06/",
+      "dest": "benchmarks/results/pyperformance/investigations/pgo-ft-full-disabled-abba-2026-10-06",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 128,
+      "target": "baselines/pgo-gil-full-abba-2026-10-06/",
+      "dest": "benchmarks/results/pyperformance/baselines/pgo-gil-full-abba-2026-10-06",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "line": 144,
+      "target": "baselines/pgo-ft-full-abba-2026-10-07/",
+      "dest": "benchmarks/results/pyperformance/baselines/pgo-ft-full-abba-2026-10-07",
+      "exists": true
+    }
+  ],
+  "missing_local_links": [
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 8,
+      "target": "../../../artefacts/A-000001/input/user-authority.md",
+      "dest": "vp/artefacts/A-000001/input/user-authority.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+      "dest": "vp/artefacts/A-000001/input/source/docs/OPEN_ISSUES.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/README.md",
+      "dest": "vp/artefacts/A-000001/input/source/README.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 18,
+      "target": "../../../artefacts/A-000001/input/source/docs/VALIDATION.md",
+      "dest": "vp/artefacts/A-000001/input/source/docs/VALIDATION.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 22,
+      "target": "../../../artefacts/A-000001/input/audit-standard/standards/project-records.md",
+      "dest": "vp/artefacts/A-000001/input/audit-standard/standards/project-records.md",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 34,
+      "target": "../../../artefacts/A-000001/assessment/verification-pre.json",
+      "dest": "vp/artefacts/A-000001/assessment/verification-pre.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 34,
+      "target": "../../../artefacts/A-000001/assessment/verification-post.json",
+      "dest": "vp/artefacts/A-000001/assessment/verification-post.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 42,
+      "target": "../../../artefacts/A-000001/assessment/archive-inventory-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/archive-inventory-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 42,
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+      "dest": "vp/artefacts/A-000001/assessment/identity-cross-checks.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/structural-summary.json",
+      "dest": "vp/artefacts/A-000001/assessment/structural-summary.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/path-index.txt",
+      "dest": "vp/artefacts/A-000001/assessment/path-index.txt",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 50,
+      "target": "../../../artefacts/A-000001/assessment/record-searches.json",
+      "dest": "vp/artefacts/A-000001/assessment/record-searches.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 52,
+      "target": "../../../artefacts/A-000001/assessment/selected-link-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/selected-link-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 52,
+      "target": "../../../artefacts/A-000001/assessment/historical-locator-check.json",
+      "dest": "vp/artefacts/A-000001/assessment/historical-locator-check.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 54,
+      "target": "../../../artefacts/A-000001/assessment/selected-excerpts.json",
+      "dest": "vp/artefacts/A-000001/assessment/selected-excerpts.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 74,
+      "target": "../../../artefacts/A-000001/assessment/material-run-inspection.json",
+      "dest": "vp/artefacts/A-000001/assessment/material-run-inspection.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 75,
+      "target": "../../../artefacts/A-000001/assessment/readiness-inspection.json",
+      "dest": "vp/artefacts/A-000001/assessment/readiness-inspection.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 75,
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json",
+      "dest": "vp/artefacts/A-000001/assessment/identity-cross-checks.json",
+      "exists": false
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 167,
+      "target": "../../../artefacts/A-000001/assessment/MANIFEST.md",
+      "dest": "vp/artefacts/A-000001/assessment/MANIFEST.md",
+      "exists": false
+    }
+  ],
+  "anchors": [
+    {
+      "source": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "line": 9,
+      "target": "../../docs/PERFORMANCE.md#21-pyperformance-abba",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    },
+    {
+      "source": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "line": 19,
+      "target": "../../../docs/PERFORMANCE.md#21-pyperformance-abba",
+      "dest": "docs/PERFORMANCE.md",
+      "exists": true
+    }
+  ],
+  "historical_locator_method": "Literal git show <hex>:<md/rst path> locators in selected prose, unique object existence through git cat-file -e in parent; no recursive expansion of historical audit packets.",
+  "historical_checks": [
+    {
+      "source": "README.md",
+      "line": 42,
+      "rev": "724b74b",
+      "path": "docs/ARCHITECTURE.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/DESIGN.md",
+      "line": 618,
+      "rev": "724b74b",
+      "path": "docs/SOURCE_INVENTORY.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/GETTING_STARTED.md",
+      "line": 153,
+      "rev": "724b74b",
+      "path": "docs/BUILD_AND_TEST.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "line": 107,
+      "rev": "724b74b",
+      "path": "docs/REVIEW_HANDOFF.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "vp/records/audits/A-000001/record.md",
+      "line": 129,
+      "rev": "724b74b",
+      "path": "AUTIT-TODO.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/OPEN_ISSUES.md",
+      "line": 268,
+      "rev": "724b74b",
+      "path": "docs/PATCH_SERIES.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 6,
+      "rev": "724b74b",
+      "path": "docs/BENCHMARKING.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 311,
+      "rev": "724b74b",
+      "path": "docs/PERFORMANCE_INVESTIGATION_PLAN.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/PERFORMANCE.md",
+      "line": 312,
+      "rev": "724b74b",
+      "path": "docs/FT_CONTAINER_TRAVERSAL_OPTIMIZATION_PLAN.md",
+      "exists": true,
+      "error": ""
+    },
+    {
+      "source": "docs/pep-parallel-gc-v2.rst",
+      "line": 786,
+      "rev": "724b74b",
+      "path": "docs/LAZY_POOL_CREATION_PLAN.md",
+      "exists": true,
+      "error": ""
+    }
+  ],
+  "selected_analysis_method": "Read four immutable analysis.json documents with jq; select nine named rows per campaign; independently compare published ratio/halves with retained leg means. This is consistency of derived records, not raw benchmark verification or technical execution.",
+  "selected_analysis_checks": [
+    {
+      "mode": "gil-disabled",
+      "rows": 9,
+      "maximum_absolute_difference_pct": 0,
+      "geomean": -0.21427448363610102,
+      "program_count": 100,
+      "result_count": 127
+    },
+    {
+      "mode": "gil-enabled",
+      "rows": 9,
+      "maximum_absolute_difference_pct": 0,
+      "geomean": 0.33165923482989523,
+      "program_count": 100,
+      "result_count": 127
+    },
+    {
+      "mode": "ft-disabled",
+      "rows": 9,
+      "maximum_absolute_difference_pct": 0,
+      "geomean": 0.22891604575800972,
+      "program_count": 100,
+      "result_count": 127
+    },
+    {
+      "mode": "ft-enabled",
+      "rows": 9,
+      "maximum_absolute_difference_pct": 0,
+      "geomean": -0.24935573405920897,
+      "program_count": 100,
+      "result_count": 127
+    }
+  ],
+  "recovery_byte_checks": [
+    {
+      "path": "vp/records/audits/A-000002/request.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "fd1c96",
+        "wall_time_seconds": 0.00003216,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "path": "vp/records/changes/DOC-000001/record.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "c2f4c2",
+        "wall_time_seconds": 0.000030944,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "path": "vp/records/audits/A-000001/record.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "36b827",
+        "wall_time_seconds": 0.000031265,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "path": "README.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "84d6e0",
+        "wall_time_seconds": 0.000031425,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "ae2b2b",
+        "wall_time_seconds": 0.000034433,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "path": "docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "e94cc4",
+        "wall_time_seconds": 0.000034433,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ],
+  "recovery_file_sha256": [
+    {
+      "path": "vp/records/audits/A-000002/request.md",
+      "sha256": "bc03912a2c64c7cc5181d1e731774c35686930cefcb7e3b4f4e37c85283933e3"
+    },
+    {
+      "path": "vp/records/changes/DOC-000001/record.md",
+      "sha256": "09b396f4cae32076fefae099f097a13d105f70053ae65063e81da2646182830d"
+    },
+    {
+      "path": "vp/records/audits/A-000001/record.md",
+      "sha256": "e76105d3013924702541da1587c65781a944be72f29057f8a3dc1f987d7e8237"
+    },
+    {
+      "path": "README.md",
+      "sha256": "ca5e5afaf755eb063fb71b5256bc70ff1386c10cfa59355b752f40e267439121"
+    },
+    {
+      "path": "docs/PERFORMANCE.md",
+      "sha256": "34387ec6a0b47e918da754e8384d765ce0f7599c1db9f6bc204fe751c083a402"
+    },
+    {
+      "path": "docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md",
+      "sha256": "23d7fe52863aea9d05e883c3f07dda3b4f571befd9879af989872404b9fecb29"
+    }
+  ],
+  "bundle_sha256": "351318813618b913c50a629c6584491d16f71631c510893f8702d00baa70e4d9",
+  "observations": [
+    "VP initially clean at c100fbd7; post HEAD 87fb8eb4 with untracked vp/artefacts/A-000011/; diff of all seven assessed instruction files empty.",
+    "First restored-repository HEAD lookup failed because no HEAD commit was configured; selecting the fixed revision succeeds. No restoration byte mismatch observed.",
+    "No project script/test/build/benchmark, copied old audit packet, core source semantic audit, policy read, remote write or repair performed."
+  ]
+}

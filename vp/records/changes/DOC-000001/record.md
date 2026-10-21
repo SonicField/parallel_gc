@@ -89,7 +89,35 @@ Full-project six-view adoption was not established and is not a mandatory
 repair imposed by this level-D task. A small linked register/current view is
 an alternative to duplicating all investigation records.
 
-Pending: initial independent report, reconciled dispositions and repairs.
+Initial audit A-000002 sealed at 2026-10-21T16:16:42Z. Its fixed-input checks
+pass. The VP checkout received unrelated record commits during assessment;
+the auditor verified all seven instruction files remained identical to the
+declared revision. The report preserves its own scope and uncertainty.
+
+## Reconciled repair decisions — 21 October
+
+The initial audit's five recommendations and all four worker gaps are accepted
+for bounded explanatory repair. No implementation recommendation is enacted.
+
+| Issue | Intended disposition and check |
+|---|---|
+| A-000002/F-001; W2 | Reconcile current status and mark dated pending entries as historical; completed comparisons, unresolved individual results and reported versus source-verified CI remain distinct. |
+| A-000002/F-002; W1, W2 | Add a central linked investigation/choice register and current state; route the GIL follow-up from reviewer/performance/open-issue/campaign entry points, with changed-runtime and GIL-only custody limits. |
+| A-000002/F-003; W3, W4 | Keep the original audit report untouched and add an access/disposition companion. Identify tracked reports versus untracked local legacy packet, and retain all six old findings as open. |
+| A-000002/F-004 | Correct the current three-campaign shorthand: first full throughput signal, quick diagnostic-only latency warning, final full latency result, all from one binary pair. Preserve original summaries and candidate rejection. |
+| A-000002/F-005 | Qualify nominal fallback/startup and state the already recorded active-collection API guard. Link unresolved allocation/rollback/join issues; do not change their policy or claim they are fixed. |
+
+W3's report/request Git preservation is complete at `40bfdcd`; legacy packet
+custody remains a stated limitation, not a D task to solve by importing it.
+W4's broader historical gaps are not independently closed. The register is a
+navigation aid to existing choices/evidence, not full maintained-source coverage
+or retrospective authority reconstruction. No six-view project migration is
+required for this bounded task. Each explanatory group gets its own commit.
+
+Pending: these repairs, factual/link/source checks and the successor audit.
+The first audit-output staging command rejected `checks.json` under the
+existing ignore rule. Only that identified new assessment JSON is explicitly
+included; the ignore policy and legacy packet remain unchanged.
 Outcomes and failed checks will be appended here; final revisions are
 identified in Git history.
 Review triggers: changed document meaning, underlying evidence, owner scope,
