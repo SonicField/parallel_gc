@@ -20,8 +20,12 @@ survives only as attributed prose; a new index does not authenticate it.
 Use the record's immutable commit/path when reviewing an earlier conclusion,
 not the current branch tip as a substitute for its measured revision.
 
-[A-000002](records/audits/A-000002/record.md) is the fresh-context documentation
-assessment; its findings are tracked in DOC-000001 pending successor review.
+[A-000002](records/audits/A-000002/record.md) is the initial fresh-context
+documentation assessment. [A-000003](records/audits/A-000003/record.md) is
+the distinct fresh-context successor: it independently closes all five
+documentation findings at `eaa0b065922a08c6e51c79cc8856e82433fbcf48` and
+confirms W1–W4's bounded dispositions. No new finding was raised. Its verdict
+does not close the underlying technical/historical limitations.
 [A-000001](records/audits/A-000001/record.md) is the older, inconclusive project
 audit. Read its [access/disposition companion](records/audits/A-000001/ACCESS.md)
 before following links into its untracked local legacy packet. All six old

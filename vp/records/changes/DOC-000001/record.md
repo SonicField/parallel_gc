@@ -212,3 +212,31 @@ byte comparisons passed. Git again emitted its unsupported bundle-uri warning
 but cloning and all comparisons completed. This is a same-host documentation
 replica check, not recovery of the legacy packet or original benchmark runtime.
 The successor remains in progress; its verdict is not anticipated here.
+
+## Independent successor outcome — 21 October, 16:34 UTC
+
+A-000003 sealed its report at 16:32:59 UTC and rechecked inputs/outputs at
+16:34:01 UTC. The entire report and its manifest were read by the coordinator;
+report/checks digests match the seal. Outputs are retained unchanged in
+`863f8ec` (parent repository, A-000003 report and assessment directory).
+The report SHA-256 is
+`f0d6283d187f8cdd4a703399bbb465e847f677e8ce7844c7a52032e6833d8561`;
+checks SHA-256 is
+`ff2eb72b955937e221d4aa40906e18f99df1608dd63ed1321ce16ed5b59b2032`.
+
+All A-000002/F-001–F-005 are independently closed at
+`eaa0b065922a08c6e51c79cc8856e82433fbcf48`; W1–W4 dispositions are satisfied.
+F-003 closes only the companion/access explanation, not complete historical
+custody; F-005 closes nominal-path qualification, not failure-path correctness.
+All six A-000001 findings remain open. No new finding was raised. The verdict
+is conformant with the commissioned bounded documentation checks, not with
+whole-project VP adoption, source correctness, performance neutrality or
+release requirements. The fresh assessor's cold-reader result identifies the
+current stage, completed experiments, unresolved causes, custody limits and
+Alex's uncommissioned technical choices from STATE and REGISTRY.
+
+The current view and register now record that successor outcome. Final local
+link/scope/seal checks and recovery of the handoff revision remain to be recorded.
+No third audit is required or commissioned: the declared two-assessment gate
+is satisfied. No source, benchmark, failure policy, operative gate or remote
+state changed. The record remains open only for those final handoff checks.

@@ -25,21 +25,23 @@ and whole-host recovery remain unestablished. Source selection is always the
 parent `cpython/` gitlink; measured baseline/integrated revisions stay fixed
 in their reports, not relabelled as the selected current checkout.
 
-## Documentation audit work in progress
+## Documentation audit outcome
 
-[A-000002](records/audits/A-000002/record.md) has five findings addressed locally
-and ready for independent successor review: current-status routes (F-001),
-the GIL follow-up/register (F-002), historical access disposition (F-003),
-campaign-signal qualifications (F-004), and nominal-path exceptions (F-005).
-They are not independently closed yet. The worker's four gaps are mapped
-to the same work in DOC-000001.
+[A-000003](records/audits/A-000003/record.md), sealed 21 October 2026 at
+16:32:59 UTC, independently closes all five A-000002 documentation findings
+at input `eaa0b065922a08c6e51c79cc8856e82433fbcf48`: current-status routes,
+GIL follow-up/register, historical access disposition, campaign-signal
+qualifications, and nominal-path exceptions. W1–W4 dispositions are satisfied
+within their stated scope. No new findings were raised. This is a bounded
+documentation verdict, not whole-project VP conformance or technical acceptance.
 
 All six [A-000001 historical findings](records/audits/A-000001/ACCESS.md)
 remain open. Allocation/rollback/join and other [technical landing issues](../docs/OPEN_ISSUES.md)
 are not documentation repairs and remain unchanged.
 
-Next: verify links/factual support and unchanged source/benchmark bytes,
-then commission a fresh successor audit at
-the repaired revision. New PGO rebuilds, GC diagnostics or code changes are
-not commissioned by this record. Alex retains technical decisions and remote
-pushes. No benchmark is currently running for this documentation task.
+Next: finish the current-view checks and tested final documentation recovery,
+then hand off the locally committed documentation to Alex. Technical follow-up
+choices remain with Alex: exact hosted job/source verification, the conditional
+independent-PGO-build stage, or other unresolved investigations. New PGO builds,
+GC diagnostics or code changes are not commissioned by this record. Alex retains
+remote pushes. No benchmark is running for this documentation task.
