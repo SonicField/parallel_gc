@@ -39,9 +39,14 @@ All six [A-000001 historical findings](records/audits/A-000001/ACCESS.md)
 remain open. Allocation/rollback/join and other [technical landing issues](../docs/OPEN_ISSUES.md)
 are not documentation repairs and remain unchanged.
 
-Next: finish the current-view checks and tested final documentation recovery,
-then hand off the locally committed documentation to Alex. Technical follow-up
-choices remain with Alex: exact hosted job/source verification, the conditional
-independent-PGO-build stage, or other unresolved investigations. New PGO builds,
-GC diagnostics or code changes are not commissioned by this record. Alex retains
-remote pushes. No benchmark is running for this documentation task.
+The documentation task is complete: current-view checks passed and the
+handoff revision `da6a17c58a81f76e2648b6a41632d9cb2bea04c4` was recovered
+and byte/mode-compared for all 31 changed tracked files. The tested same-host
+bundle and restoration route are in DOC-000001. Reports, evidence and repairs
+are locally committed; nothing was pushed by this task.
+
+Next owner decision: Alex chooses exact hosted job/source verification, the
+conditional independent-PGO-build stage, another unresolved investigation, or
+reviewer handoff. New PGO builds, GC diagnostics or code changes are not
+commissioned by this record. Alex retains remote pushes. No benchmark is running
+for this documentation task.

@@ -40,8 +40,10 @@ A-000002. The GIL follow-up separately identifies recovered-binary and runtime
 evidence stores, manifests and tested archive recovery. These are scoped
 recovery checks, not portable rebuilds or whole-host protection.
 
-The final repaired revision gets a new tested documentation bundle before
-handoff. No original packet, failed run or workspace is pruned here. Changed
+The repaired handoff revision `da6a17c58a81f76e2648b6a41632d9cb2bea04c4`
+has a new tested documentation bundle; DOC-000001 identifies its digest,
+restoration route and complete changed-file comparison. No original packet,
+failed run or workspace is pruned here. Changed
 evidence, document meaning, owner authority or custody triggers review; D
 documentation does not acquire a calendar expiry or renew underlying C
 experimental conclusions. Source/benchmark changes and new measurements need

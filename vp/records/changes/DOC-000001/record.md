@@ -3,7 +3,8 @@
 ID: parallel_gc:documentation:DOC-000001. Level: D.
 Created: 2026-10-21T16:04:37Z. Author/operator: Codex root session
 `01a0d2dd-cae0-7453-8afb-9a483d2d280a`. Owner: Alex Turner.
-Status: open; prospective audit and repair record.
+Status: complete; bounded documentation audit, repairs and handoff checks.
+Terminal timestamp: 2026-10-21T16:36:13Z (coordinator entry; not independently authenticated).
 
 ## Before work
 
@@ -262,3 +263,38 @@ at this execution is
 `b0c45130d0330f9d4e907fad2d17ebc49e8fbcf5431d5e3ff60db66370432333`.
 It remains outside project source. Earlier check output is preserved unchanged.
 These are worker handoff checks, not a third independent audit or technical run.
+
+## Recovery, completion and handoff — 21 October
+
+Handoff revision `da6a17c58a81f76e2648b6a41632d9cb2bea04c4` is preserved
+in `/home/alexturner/local/parallel-gc-doc-handoff-20261021.bundle`, SHA-256
+`40bfb41160840418181f574869e1671784369a9955029577c7af53a4fc02dddb`.
+Fresh no-checkout restoration:
+`/home/alexturner/local/parallel-gc-doc-handoff-restored-20261021`.
+For every path in `git diff --name-only eda5e00 da6a17c`, compare
+`git show da6a17c:<path>` from the restored repository with the retained
+working file using `cmp`, and compare the two exact-commit `git ls-tree`
+entries. All 31 changed tracked files passed both byte and Git-mode comparison.
+Git's unsupported bundle-uri warning did not prevent cloning or comparisons.
+This covers the initial/successor reports, unique assessment/check evidence
+and repaired documentation; it does not establish legacy packet, runtime,
+all-FT or whole-host recovery. No retained bytes were pruned.
+
+Completion was checked against the authorised goal, not just passing links:
+the initial and successor assessors used distinct fresh contexts and read
+current VP; the initial five recommendations and W1–W4 are reconciled; atomic
+D repairs and actual checks are retained; the successor independently closes
+all five documentation conditions with no new finding; current navigation
+keeps original negative evidence and six historical findings open; the repaired
+records and evidence have tested scoped recovery. No source/benchmark changes,
+operative-policy changes, new technical experiments or remote writes occurred.
+
+The current views now record the completed task and leave the next technical
+or reviewer-handoff decision to Alex. The two-audit budget was respected.
+Final coordinator-only status updates do not change the assessed repair meaning;
+their commit is identified in Git history. A post-commit restoration checks
+the exact final revision too; its external bundle is
+`/home/alexturner/local/parallel-gc-doc-complete-20261021.bundle` and its
+fresh restoration is `parallel-gc-doc-complete-restored-20261021` alongside it.
+The result and immutable revision are reported at handoff, without pretending
+this record can contain its own enclosing commit or bundle digest.
