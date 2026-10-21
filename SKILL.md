@@ -62,8 +62,14 @@ project's full ABBA suite they:
 - helped only module-rooted ones;
 - reintroduced steal contention (publishing to idle workers);
 - needed a memory-ordering fix (the list splitting);
-- showed a sustained `ai_workload` latency regression flagged in three
-  campaigns.
+- showed a sustained `ai_workload` mean-latency increase of 11.1% in the
+  final full module-rooted campaign.
+
+This was not three rigorous latency replications. The first full campaign
+reported throughput −4.0% and mean latency +1.5%; the intervening quick run
+reported a +15% latency warning but was a machinery check, not performance
+evidence. All three used the same binary pair. Keep those different metrics
+and protocols separate when explaining the candidate's rejection.
 
 The realistic throughput gain (+6%) was similar in size to differences in a
 later quick build comparison; its attribution remains uncertain. All four

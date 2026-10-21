@@ -11,13 +11,28 @@ experimental changes to known-root propagation. Those changes were:
 
 All four were **dropped** on 16 October 2026: they showed a benefit only on
 module-rooted workloads; the list splitting is container-specific; and the
-sustained `ai_workload` latency regression was flagged in three campaigns.
+final full campaign recorded a sustained `ai_workload` mean-latency increase.
 The data is kept as evidence for the open root-placement issues
 (`docs/OPEN_ISSUES.md` §2).
 
+## Current interpretation, 21 October 2026
+
+The three campaign summaries are preserved historical interpretations. They
+are not three independent rigorous latency replications: all use one binary
+pair, and the quick run uses a different diagnostic-only protocol.
+
+| Campaign | Recorded AI result | Interpretation limit |
+|---|---|---|
+| [First full](suite-abba-1/SUMMARY.md) | Throughput −4.0%, mean latency +1.5% | The original summary labels the signal not significant; it is not the later +11.1% latency result. |
+| [Quick](suite-quick-module-1/SUMMARY.md) | Mean latency +15% | Machinery check with large control variation, not additional performance evidence. |
+| [Final full module-rooted](suite-abba-module-1/SUMMARY.md) | Mean latency +11.1%, halves +5.2%/+16.6% | A same-pair full result, not independent build replication. |
+
+The conservative candidate-rejection decision remains recorded. These results
+do not establish that added coordination always harms performance.
+
 | Directory | Contents |
 |---|---|
-| `suite-abba-1/` | `--full --include-synthetic`, benchmark `724b74b`. **Collection-shape results are invalid**: before benchmark commit `6c8bf14`, creation-pool threads kept every cluster reachable. Mixed and sustained results are valid. |
+| `suite-abba-1/` | `--full --include-synthetic`, benchmark `724b74b`. Collection-shape results did not establish the intended garbage fraction: creation helpers could retain their last batch, depending on scheduling. The actual historical retained fraction is unknown. Mixed and sustained workloads did not use that pool. [Ownership evidence](../creation-pool-retention-2026-10-16.md). |
 | `suite-quick-module-1/` | `--quick` machinery check of the module-rooted variants (benchmark `306644b`). Not evidence. |
 | `suite-abba-module-1/` | `--full --include-synthetic` with the module-rooted variants (benchmark `306644b`). Main evidence. |
 | `hv-baseline.jsonl`, `hv-replicate.txt` | Baseline validity check: module-rooted collection heaps reproduce the propagation weakness; frame-rooted twins do not. |

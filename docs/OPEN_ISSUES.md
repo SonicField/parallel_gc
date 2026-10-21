@@ -205,8 +205,14 @@ Results:
   mean latency;
 - module-rooted collection shapes ran 12–26% faster;
 - frame-rooted workloads were mostly neutral;
-- sustained `ai_workload` mean latency rose 11.1%, flagged in three
-  campaigns.
+- sustained `ai_workload` mean latency rose 11.1% in the final full campaign
+  (halves +5.2%, +16.6%).
+
+The first full campaign reported AI throughput −4.0% and mean latency +1.5%.
+The intermediate quick campaign's +15% latency warning was diagnostic only.
+These use one binary pair and different protocols, not three independent
+rigorous latency replications. The retained campaign summaries preserve their
+original interpretations; the current qualification is in the linked record.
 
 The combined candidate was dropped: improvements in module-rooted cases did
 not justify the observed regression and additional coordination. Publishing

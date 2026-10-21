@@ -115,6 +115,13 @@ or retrospective authority reconstruction. No six-view project migration is
 required for this bounded task. Each explanatory group gets its own commit.
 
 Pending: these repairs, factual/link/source checks and the successor audit.
+F-004 repair: checked all three original SUMMARY.md files, then corrected
+SKILL, OPEN_ISSUES, PERFORMANCE and the root-placement entry record without
+editing those historical summaries or raw results. The root entry's stronger
+"every cluster" retention statement was also reconciled with the existing
+ownership report: helpers retain their last batch, with scheduling-dependent
+historical fraction. Candidate rejection remains unchanged. New-text whitespace
+checks pass; successor assessment remains required for independent closure.
 The first audit-output staging command rejected `checks.json` under the
 existing ignore rule. Only that identified new assessment JSON is explicitly
 included; the ignore policy and legacy packet remain unchanged.
