@@ -240,3 +240,25 @@ link/scope/seal checks and recovery of the handoff revision remain to be recorde
 No third audit is required or commissioned: the declared two-assessment gate
 is satisfied. No source, benchmark, failure policy, operative gate or remote
 state changed. The record remains open only for those final handoff checks.
+
+## Current-view verification — 21 October
+
+At `0ebeba2aea5104f43b56cd1b2d98c2047542b7aa`, the operator's final fixed-tree
+check covers 98 documents and 508 local inline links: no missing nonlegacy
+destination, approximate anchor mismatch or unexpected non-document change.
+The nineteen excluded historical packet-link occurrences remain explained.
+Both sealed audit report hashes match. Original summaries, gitlinks, source,
+benchmark programs/raw results and workflows remain unchanged. No rendered
+Markdown/RST or external URL claim is added; underlying evidence and technical
+unknowns are not renewed by this documentation check.
+
+Unique output: `vp/artefacts/DOC-000001/final-checks.json`, SHA-256
+`d69ccfbdd5de79bc5114faaa06fa7b6687bda67ca5947edb44eb3d80b8f376a2`.
+Command from the parent: `python3
+/home/alexturner/local/parallel-gc-doc-reconciliation.9Du35R/check_documents.py`.
+The ordinary operator checker was amended to permit only the specifically
+identified new audit/check JSONs and verify the successor seal; its SHA-256
+at this execution is
+`b0c45130d0330f9d4e907fad2d17ebc49e8fbcf5431d5e3ff60db66370432333`.
+It remains outside project source. Earlier check output is preserved unchanged.
+These are worker handoff checks, not a third independent audit or technical run.

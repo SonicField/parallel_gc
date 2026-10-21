@@ -1,0 +1,739 @@
+{
+  "approximate_anchor_mismatches": [],
+  "changed_paths": [
+    "README.md",
+    "SKILL.md",
+    "benchmarks/dependency-repair/PLAN.md",
+    "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+    "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+    "docs/CLAUDE_INTEGRATION_PLAN.md",
+    "docs/DESIGN.md",
+    "docs/HANDOFF_RECONCILIATION_PLAN.md",
+    "docs/OPEN_ISSUES.md",
+    "docs/PERFORMANCE.md",
+    "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+    "docs/TESTING.md",
+    "docs/VALIDATION.md",
+    "docs/ci-results-2026-10-19.md",
+    "vp/README.md",
+    "vp/REGISTRY.md",
+    "vp/STATE.md",
+    "vp/artefacts/A-000002/assessment/MANIFEST.md",
+    "vp/artefacts/A-000002/assessment/checks.json",
+    "vp/artefacts/A-000003/assessment/MANIFEST.md",
+    "vp/artefacts/A-000003/assessment/checks.json",
+    "vp/artefacts/DOC-000001/checks.json",
+    "vp/records/audits/A-000001/ACCESS.md",
+    "vp/records/audits/A-000001/record.md",
+    "vp/records/audits/A-000001/request.md",
+    "vp/records/audits/A-000002/record.md",
+    "vp/records/audits/A-000002/request.md",
+    "vp/records/audits/A-000003/record.md",
+    "vp/records/audits/A-000003/request.md",
+    "vp/records/changes/DOC-000001/record.md"
+  ],
+  "document_count": 98,
+  "files": [
+    {
+      "blob": "4f61b87053249d458a9e3da19aa2289cc97593c2",
+      "path": "README.md",
+      "working_sha256": "48bd9bbe32e7bc818e66c1178d38fa0539e5aa1d037c5b9f704a19b9a657b444"
+    },
+    {
+      "blob": "f5714818588bf7404262e4f79e83cab2aa767084",
+      "path": "SKILL.md",
+      "working_sha256": "91214a304fb319cc770a52f9273b4485b4bd0fcd988131eea69865ea54f0fca1"
+    },
+    {
+      "blob": "303cac87290a112a8fdd04d2ce63e3be8dbc0c35",
+      "path": "benchmarks/dependency-repair/CLOUDPICKLE.md",
+      "working_sha256": "127e5aa6ad60af6b4d2c433b041eaa27578acef82459e56b5838e5d2f97f578b"
+    },
+    {
+      "blob": "0c18d051d63b4fa1d1a45dc20c7269c27621745c",
+      "path": "benchmarks/dependency-repair/COVERAGE.md",
+      "working_sha256": "1b67272034ebc7b51a50066f16a7e36a4f51916e49e5168d28ecdb9963006134"
+    },
+    {
+      "blob": "1461c6038bf95087f181c80fc57a19e002574272",
+      "path": "benchmarks/dependency-repair/DULWICH.md",
+      "working_sha256": "e88ea10e3dd0d78025b2a898d928cac8cfdaf9a67a61f0dfe498719766ccc38a"
+    },
+    {
+      "blob": "4a15b99cc1e31a748897f044e59976e7420e7a85",
+      "path": "benchmarks/dependency-repair/GENSHI.md",
+      "working_sha256": "1c61da9f652f8e1d9348dfb16e733bcdd94a82b0416108a544368d48fcc6155f"
+    },
+    {
+      "blob": "331ce54d527a6b6df76e9d1f034d5007c3e54218",
+      "path": "benchmarks/dependency-repair/GREENLET.md",
+      "working_sha256": "d3920e74175cc7f57927bed398e5e6932cd418e470c94d023a42d55c1b982beb"
+    },
+    {
+      "blob": "b9b024e9033dcece82aa8cd55769afd184d0229d",
+      "path": "benchmarks/dependency-repair/MARKUPSAFE.md",
+      "working_sha256": "3df641b9c6c54e4504a98dd48f75d512df4e5c276cd4b23af77bb64badbdb057"
+    },
+    {
+      "blob": "3159c86b6c5e7864d60851802b8a77799c7c3345",
+      "path": "benchmarks/dependency-repair/PLAN.md",
+      "working_sha256": "29b316f4b525f6d2f5158d3dfaa19168275d346e808c789a86e1d6c694d0fc87"
+    },
+    {
+      "blob": "41716d4d851e98b6052fc2e8168318582fe0c9ba",
+      "path": "benchmarks/dependency-repair/PREPARED_READINESS.md",
+      "working_sha256": "3b1f2e18f7226e48b0f105074a2d815c3bee314fc429e0a32c8373d6d715a4ce"
+    },
+    {
+      "blob": "0c9013f087cc9f21ac9b152b90e5ef6e3ce2b259",
+      "path": "benchmarks/dependency-repair/SQLALCHEMY.md",
+      "working_sha256": "d5f3bae72791bbb97a04afc30be73acab6d6656f42f25a93047985d24de0b055"
+    },
+    {
+      "blob": "f0763d7cb32d3498d95cf8719cdb821a817ed960",
+      "path": "benchmarks/dependency-repair/analysis-state-verification-evidence/README.md",
+      "working_sha256": "bc1abb642e0ab50d2ba24ee041dba1b4ab7b2ef62484689a91afc1334b3cf1cb"
+    },
+    {
+      "blob": "c0f5fefd8c9ad1030860c58af1b36bbff9df9b7a",
+      "path": "benchmarks/dependency-repair/analysis-verification-evidence/README.md",
+      "working_sha256": "913a77189a72f5117fb441ccaaaed936d47714917c888114f672caf0d02a3c99"
+    },
+    {
+      "blob": "46c722284dfb2415f3a5bf59be9f857f74ed2e5d",
+      "path": "benchmarks/dependency-repair/full-readiness-evidence/README.md",
+      "working_sha256": "e3184fa8168d0d417aea806e7a8bfa8e16d7eb239bc201bfed804c656ed2304b"
+    },
+    {
+      "blob": "4f68c3a31259616294ddc449b85c26d5050097f9",
+      "path": "benchmarks/dependency-repair/per-run-validation-evidence/README.md",
+      "working_sha256": "c6424f15883cc130fb44a2157459c31c6c36d16b401a6bef0d6ebfeca1e73766"
+    },
+    {
+      "blob": "6cfff137afc7dd7b974869dff15bbecb6e94863b",
+      "path": "benchmarks/dependency-repair/prepared-execution-evidence/README.md",
+      "working_sha256": "649f95f1a80c5626a6a034a8620f6e6a7ce120431e54def8b4651955e47d4ca5"
+    },
+    {
+      "blob": "c3244670148f3e12db4d6f8afa77f647b910acb2",
+      "path": "benchmarks/results/investigations/ci-probe-feature-off-2026-10-19/README.md",
+      "working_sha256": "7802cadb8837dc8709ad6cd11a74be102fec4596e8eb277c8567cbb069414932"
+    },
+    {
+      "blob": "a23405e3b3ead3929accfd9097c42ec6ac673f7c",
+      "path": "benchmarks/results/investigations/ci-unused-wrapper-2026-10-19/README.md",
+      "working_sha256": "e0498b828fa18c2f1dc3d4c43edff0dd8a5776efe9323ef91f127f973377882d"
+    },
+    {
+      "blob": "16ec254b9a273b6411d59c37f0ebfecd0827b078",
+      "path": "benchmarks/results/investigations/claude-scaling-2026-10-15/README.md",
+      "working_sha256": "11eba48daa0a5124b24ec0fc6d9bb1d02a2d9ff19c03c05331a7a45116b04fdc"
+    },
+    {
+      "blob": "6c6d4097f1af02963100f97d09dcbd5a6d2e33da",
+      "path": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "working_sha256": "b95ff86eb245db47885a585c384308630bc5b889fa3dea03e0f40889d9076335"
+    },
+    {
+      "blob": "f4b6623c8e75d1ac15d20493980ca38d623cf3ee",
+      "path": "benchmarks/results/investigations/dead-code-cleanup-2026-10-16/README.md",
+      "working_sha256": "ce8ff003b4794987a0b2d065cba4bc080c9ec0588013b3f7af40238560866681"
+    },
+    {
+      "blob": "7bd2790a3a43d132c9817609466c4c12ff151ceb",
+      "path": "benchmarks/results/investigations/header-dependencies-2026-10-16/README.md",
+      "working_sha256": "4efbd3d32d1f718efc4a4caf0d39212636acfd8e895bdc78f5f8142f5963a04b"
+    },
+    {
+      "blob": "f676224e8053cde0317e785aac5cad7ab13a938d",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/ANALYSIS.md",
+      "working_sha256": "f406f3fdbd3f047735c4f2647ab86c1b8867315ab7a8d02ab59f45870d035167"
+    },
+    {
+      "blob": "d88acd82e1209860580f22602072c355cda9f1e9",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/FT-PROJECT-RESULTS.md",
+      "working_sha256": "28baf1019514300ddd8139f15edaefb6503c3cdb8389629a3ff7db716a8ee35c"
+    },
+    {
+      "blob": "54c3dc58fe240122c132adde5dc42c65de1ac14f",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/GIL-PROJECT-RESULTS.md",
+      "working_sha256": "1b74d184b6996f5184f1132bf0747c8a6bf2442efecf6fb08eef950610ad9b1c"
+    },
+    {
+      "blob": "4bed96d93b416979948289d08a7b1b7969fe937f",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/INVESTIGATION-STATUS.md",
+      "working_sha256": "14fd2dd0513df71f08b3c08d5e639e9495d355bbc6c7260c1f0ba7935ecd1d6c"
+    },
+    {
+      "blob": "b70f7b18bc83be4c6ff1691cf0963fae53527f2f",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/TOOLCHAIN-PREPARATION.md",
+      "working_sha256": "809e3cbf80930068ff20dabef539b8bf9a4c6e4024ef946787af6872c762b6bd"
+    },
+    {
+      "blob": "6d1c07ca233d5342ba36086f7d56316d1df9c404",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md",
+      "working_sha256": "ddc6bf303faf0016fe49dc232ac7c49edfe865241703ce481d87a8909ea92237"
+    },
+    {
+      "blob": "b615be061466bf10b478fe20bb76fc2b8463d992",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/default-runtime-compatibility/README.md",
+      "working_sha256": "53aa9a094c128cef1b6b17d241de2ea4451327bde83d0ad56251d9bbeb316f7c"
+    },
+    {
+      "blob": "4a4ef8eda85676d5316484ff3eac9c456679b2f7",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/dependency-compatibility/README.md",
+      "working_sha256": "3e872771e808d441e95bd74e27a59552cf5a5c9acd9b760748399d4057676bb4"
+    },
+    {
+      "blob": "fa8370fcbcf69aae4b88149c308459ba625f5c49",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/README.md",
+      "working_sha256": "82cc94d069f543ebade6f2875dd6e730a58435c20f10545cbd6bb3f13668f24e"
+    },
+    {
+      "blob": "acdd53fd846fc9d08413064d713ffe73fdd9ef92",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/focused-collections/RESULTS.md",
+      "working_sha256": "6b0e89f33d4a4d0e10813c9da726c8f81c8f41b67cb588e81d73362eff3dcf38"
+    },
+    {
+      "blob": "401ec76327f4512d3c9f6687858a6c80f2035644",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/README.md",
+      "working_sha256": "796cc64cc0b4a28409d0934f524ffae45da71bcd9a3100e1015cadce42fb5d18"
+    },
+    {
+      "blob": "8106e4dd3d6cd1057d002f1a06e6f6707385e5e5",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-ft-repeat/RESULTS.md",
+      "working_sha256": "29c44a87df4b921da2db39c2951ed7bc4c9490eaa54972bbbe55df1c16ea8e6c"
+    },
+    {
+      "blob": "4e7b4e128f3baef13f0bb19109e93a63f999ccce",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/full-pyperformance-preparation/README.md",
+      "working_sha256": "57ede8c02fb3ce644f988b9abd37943c5033404bae798ad3b182216f695af503"
+    },
+    {
+      "blob": "fe6a8ccc1a747ac4c5eed520af8f9cbc7f96bf9a",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/hook-evidence/README.md",
+      "working_sha256": "6dfd80a71773532bdd827f442d14cbebe88dee4089fbd75ac47f79766c518f20"
+    },
+    {
+      "blob": "0d603b69973dcfdde8a0a02586f8577422be222b",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/README.md",
+      "working_sha256": "5976260bc82df3389f9cb9269c4bd33a01699831024cce91694b181c1f606f05"
+    },
+    {
+      "blob": "feffc3a90699b36eda86ea6c0a02d3c57025aed7",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/gil-full-comparison/README.md",
+      "working_sha256": "2c3fedc54813b94b1fa5364e57bcdf9178807b6250b44398dd489673967ba842"
+    },
+    {
+      "blob": "d329e49fa835e007c0d48bdf9338c3daef8d4cf2",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/local-full-suite/physical-debug/README.md",
+      "working_sha256": "8bd60fdf9b3430a6475cd4e167bfbfb68b5c97326b870473299cea6e1e663869"
+    },
+    {
+      "blob": "8098f3cd1deedb10a13010dc591ff09d165d4428",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/project-legs/README.md",
+      "working_sha256": "64c454323f89548c8f465bc7a39ec7d36f3ad7dc429918fe6ea8f32c0455ed40"
+    },
+    {
+      "blob": "77f613137ea930613d8942c4ac06bf951514fce6",
+      "path": "benchmarks/results/investigations/integration-validation-2026-10-16/pyperformance-preparation-evidence/README.md",
+      "working_sha256": "c6f9b61f10f3f7314e0b1da2c73a5ce640face63c6910e61bb697707b71f7e80"
+    },
+    {
+      "blob": "2f7c05ccfca949b3c5404d8db1be5911da302b6e",
+      "path": "benchmarks/results/investigations/module-rooting-integration-2026-10-16/README.md",
+      "working_sha256": "b38e83110cc0073d78bb6929c329336c9af5cea507fa05cb8cd7ac312dc0fd2d"
+    },
+    {
+      "blob": "0723928feaa0f695f3a5487eb2a6337e9dadcbc1",
+      "path": "benchmarks/results/investigations/production-verifier-integration-2026-10-16/README.md",
+      "working_sha256": "bd96be6c61f68f0136551a3060750b9f50a55aaf180df20d444efa7b0e0e53e0"
+    },
+    {
+      "blob": "ced70c0753ba007bba7c2b1b28d50d18ab0adb78",
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/README.md",
+      "working_sha256": "c757356f063c57c580a6aa4e9084d2f0d455e3fa9ae89eb12395c01145036bb7"
+    },
+    {
+      "blob": "3272b41c61c919d0270ac4b117c124de25a5f32e",
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-1/SUMMARY.md",
+      "working_sha256": "1605c033070824b0fa5a67cf315bedce36f12d59a0fe64e4da7e517a2b93c212"
+    },
+    {
+      "blob": "9683a4291b6ec6c449c13a55d1eb58f3664b8bf0",
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-abba-module-1/SUMMARY.md",
+      "working_sha256": "6968d85d30a83fee52f1f84e034f7d76f45b4ce5b72f722d37ceb71f51519af0"
+    },
+    {
+      "blob": "8856b97da628dd5e3ddd5ef1cd98a62f2836ff42",
+      "path": "benchmarks/results/investigations/root-placement-campaigns-2026-10-15/suite-quick-module-1/SUMMARY.md",
+      "working_sha256": "56889a97588d36245edf7a3defea1da0aba0c2d205b0326265b0e5678618077a"
+    },
+    {
+      "blob": "db5fcf545807859493df3a3c83d3cf136a8b85b7",
+      "path": "benchmarks/results/pyperformance/investigations/ft-container-clean-baseline-2026-10-05/README.md",
+      "working_sha256": "0ed71e73295dc983d9a0a173ee45d2f2f2009c999cba8b34a24b270dfb86e546"
+    },
+    {
+      "blob": "a6fa0c52da35f59a21aeba3599056a1e19aaac1f",
+      "path": "benchmarks/results/pyperformance/investigations/ft-container-traversal-2026-10-05/README.md",
+      "working_sha256": "6b9da15fa3ec39f8c8d38c7cffcfed0ec299973649a7661bafbe4b99d7574070"
+    },
+    {
+      "blob": "bd4a86bd0c68a2913d264485ece7efff39ddb942",
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-dict-verification-2026-10-05.md",
+      "working_sha256": "9c83442775e60630ec1e3dffd90becb9016f9ca7941dc564f2af2443582410be"
+    },
+    {
+      "blob": "51729560616f668d70b2d670388cecdc3d44dc25",
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-list-verification-2026-10-05.md",
+      "working_sha256": "673916d4418f59f823cb528afa22fd3bfb81d1e684ef67209676538f50b0e399"
+    },
+    {
+      "blob": "6d56c8e3e61042e568fb498523fe8b340c79b869",
+      "path": "benchmarks/results/pyperformance/investigations/ft-exact-tuple-verification-2026-10-05.md",
+      "working_sha256": "5cca39f143395b886248608a04d7aa3b76018873ef243aa0766fb5a06eda3da5"
+    },
+    {
+      "blob": "078a2477719c1b2fc7d9d95ca2c8b05c1f936591",
+      "path": "benchmarks/results/pyperformance/investigations/gil-lazy-pool-sqlite-abba-2026-10-07/README.md",
+      "working_sha256": "5adfeea8dbc4d2ddb7ee79fb0420038e5b5c8b94dae7805509bf35bfb21cc161"
+    },
+    {
+      "blob": "24cb5f419df97dc864948e84b79a1cb5261de9e5",
+      "path": "benchmarks/results/pyperformance/investigations/sqlite-thread-transition-2026-10-07.md",
+      "working_sha256": "bfab5a742a717474cf833425502d6c0593dd137605ad34f50476fddbf4b7ea82"
+    },
+    {
+      "blob": "a53955f1e55f175e66a3889c69228893940bfad3",
+      "path": "benchmarks/results/pyperformance/pgo-runtime-abba-arm64-2026-10-07.md",
+      "working_sha256": "2c666ca269176974b587b34fc374259e38bef241dbd87c6a5074f2fc90664ba5"
+    },
+    {
+      "blob": "81bd7b5f0002992a88de7fd2e65ca6208d383699",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/eleventh-complete-leg/README.md",
+      "working_sha256": "da5b4044ff10d2e64b7c1a5bf7738f127f9f348f95b10008f80c2932ae9b64a0"
+    },
+    {
+      "blob": "647a6e1329cef289b90ffa99c97172cb43437ebb",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/fifth-complete-leg/README.md",
+      "working_sha256": "b754a0a90c67ec1ae198fec2484462f0f198dff12eb45101c597c2c16b91b870"
+    },
+    {
+      "blob": "fc926d5d7160b968a807251753221b91c84cb889",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/first-complete-leg/README.md",
+      "working_sha256": "d26ee482790a65252ce3a7b48a55acc70eece0bce6ed7f927c125215a816ebd9"
+    },
+    {
+      "blob": "9e19bc798bb68ede66edb89c959af9ae1bceb47c",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md",
+      "working_sha256": "c5ca1e1d1e59ba8004df1d81281fc2fae04de236de7ac765d5d23a3498457d0b"
+    },
+    {
+      "blob": "12e4ba566e694166de021b5760bf8a83e37a793f",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/analysis.md",
+      "working_sha256": "ec60bdb001e4bfcb117e6e237b9dafec015f7215814b2ce864bf4c7180458b41"
+    },
+    {
+      "blob": "231d9779592a6c8c55d9b9d82e7d00eb7f6f05b6",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md",
+      "working_sha256": "f1a05337c3a1b640eaa4b227483c6ca7c062085408e3a6b6ff30683ec926b3c4"
+    },
+    {
+      "blob": "a0af0444b00ac54eb2f80cd4b5e4363dd1797ced",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/analysis.md",
+      "working_sha256": "f53f056881e10e27693d4b47e51db392938a1f8e21735eb9dc3ceca137d51e4b"
+    },
+    {
+      "blob": "49e1bca8e8b95cbab03be5eda912c30d81bca000",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/README.md",
+      "working_sha256": "73c079ff6f67bd5b1ffb792bc2d3cdc4dd77caba2bedb8c9f89a5f52b65edea4"
+    },
+    {
+      "blob": "ff2b0ff7ceed109ae5b44ecbf69a3e0479a6b3fd",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-disabled/analysis.md",
+      "working_sha256": "7a0ac242b105e9cdce4213bfe717f0574219fab784a38f71006858555b0911ec"
+    },
+    {
+      "blob": "56af6948560e810acd00ae946af62478509b676b",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/README.md",
+      "working_sha256": "2e91cd72c385c94c43675936517a3bcfbda10640ccb362a261cfeed4fd45e5a5"
+    },
+    {
+      "blob": "b8cac599aefa41ef8161cc45854aaede0aed2b2f",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/gil-enabled/analysis.md",
+      "working_sha256": "4f3f8015ace0f735d807353cd854953c9a4a6d3122bac98aa213e738f7a868ab"
+    },
+    {
+      "blob": "bc099adc990788ed35dece82c7c7e6e62f0e3998",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ninth-complete-leg/README.md",
+      "working_sha256": "56a48ec7a5a6e1297b28c69020d2a25d2d8e523db487fc5693188e794958553f"
+    },
+    {
+      "blob": "970afc980c571fa2e81378ad09bb7beb4ac3ff62",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/second-complete-leg/README.md",
+      "working_sha256": "5782b7ead85df2f5359782f070ecdb6edd8de133765a996c51c64b1d56c2027d"
+    },
+    {
+      "blob": "bddb33f51ca21758c7f42ea2bae5b62a27439b85",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/seventh-complete-leg/README.md",
+      "working_sha256": "67e6712e8755846fe09ab918b725310871cb06472632d493dd3b3e23afdf01ce"
+    },
+    {
+      "blob": "83667f8b43006a392bebc0d6137bab1b02daabec",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/sixth-complete-leg/README.md",
+      "working_sha256": "824e510ddc4b45e2e473ed0b0ed86439abd020ac9b72ce0d7e97b77684ad5760"
+    },
+    {
+      "blob": "c35ae92f80e737e7990aff237a48e92703c17fd7",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/tenth-complete-leg/README.md",
+      "working_sha256": "920b3e969f37be40a0bbd66c0c69f49ec68f20e0c71240c9c7b6cac90dbb400b"
+    },
+    {
+      "blob": "e6bd1bf67c0be6615e2300eb8b011f95199c8feb",
+      "path": "benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/third-complete-leg/README.md",
+      "working_sha256": "20ebef3c97aeb3c98c06fbb0fad05be16144d55785bf35de12c219018ab6c7a7"
+    },
+    {
+      "blob": "4aa2487228fe5460f9ece8cf9a310c421272672f",
+      "path": "docs/CLAUDE_INTEGRATION_PLAN.md",
+      "working_sha256": "ec4187e3d5b00cc655a3f8bdfb6d1e562a5d4af1d7c6d8dacbd5d19b9c609a21"
+    },
+    {
+      "blob": "b54ed514ccafa0fae8f9a338fb06408084539af5",
+      "path": "docs/DESIGN.md",
+      "working_sha256": "ab0c14a9d1f14872ac68f69aef5c16bea698eb8a39811e302891062cf615bd2d"
+    },
+    {
+      "blob": "c82a6eafa757cbe99491dd3e38fbb0252066fcab",
+      "path": "docs/GETTING_STARTED.md",
+      "working_sha256": "b0af464ac0bffe30d8bff33c485d9655d057db462117bbd7e655c5f5d8e98576"
+    },
+    {
+      "blob": "5f7bd0c459bfd571942bfd5c4cc72bd91124ec63",
+      "path": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "working_sha256": "1561f2fb227410071acfb27ee6ee803a9019f10dd7e33789c66eac06e49c8815"
+    },
+    {
+      "blob": "e5ad3526a983fb5580b729c5580c2d156c5d8fad",
+      "path": "docs/OPEN_ISSUES.md",
+      "working_sha256": "9f28dcfbfcc9a33c6655a1458f0951465c446b0a6e72b440bc356fae0a7c8ccd"
+    },
+    {
+      "blob": "2e0251f9269166f68df57413e321dc2b80ab68a3",
+      "path": "docs/PERFORMANCE.md",
+      "working_sha256": "a8e8ce2f01fd573cf88c3553b3bb953bea2042798f66a6a546ac7f0984fd4c99"
+    },
+    {
+      "blob": "a9ee1a21e0147215e3ef45b752d2b03676ca4675",
+      "path": "docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md",
+      "working_sha256": "9eeb8946fc9de851924be0c960b773124df80a50c0eb0c8dbc083e833434d6e6"
+    },
+    {
+      "blob": "7220bea6a22fcb9e5ce463762a196a994eafd4b1",
+      "path": "docs/TESTING.md",
+      "working_sha256": "db8ff2c215058d5a307e53629cd89c88c42cd7f8a255525df445a8b947b09151"
+    },
+    {
+      "blob": "9c624da51d34da10c2a36376fe93f88b780c14dc",
+      "path": "docs/VALIDATION.md",
+      "working_sha256": "07f7912daf0706ebf332757b4bc72d3ad9aee65eb2e7c9bb4ad45a73af115d46"
+    },
+    {
+      "blob": "0d41b5099ead47055b847b5a7336c92ed1faaffa",
+      "path": "docs/ci-results-2026-10-19.md",
+      "working_sha256": "142641700225c6bd3bbaf83b848c83649591a27af24cf094815d2ad761e04342"
+    },
+    {
+      "blob": "99dcf0bce5479e4fd7dd23d139a249b2c75b480a",
+      "path": "docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md",
+      "working_sha256": "23d7fe52863aea9d05e883c3f07dda3b4f571befd9879af989872404b9fecb29"
+    },
+    {
+      "blob": "604a22def3110edd0c67da5c48dc7f035c61b381",
+      "path": "docs/pep-parallel-gc-v2.rst",
+      "working_sha256": "cf14b41ecb2d7223405cc214ef811325af9a93824b41fe0cd2d6aa83179a7170"
+    },
+    {
+      "blob": "b04f0d7ac371da14c25922e0d4fe94c93c95e10a",
+      "path": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "working_sha256": "013eeaa655298f05acb8d6a90037cbab01898c9549083e03a829104e2d44c9f7"
+    },
+    {
+      "blob": "b635d779b68b578958bf146eb422a5bc9c684549",
+      "path": "vp/README.md",
+      "working_sha256": "1334a22a45bc7138d8faf69f5751b89f667e28a8201bb6652fc7f1166dede48c"
+    },
+    {
+      "blob": "86765609a29111bd73517e1cc2d3a8a9ac0494b7",
+      "path": "vp/REGISTRY.md",
+      "working_sha256": "eb46cc00d59480c3aca8995fcfb1e9d59caffa26d8d227d25e14c1151e136cd8"
+    },
+    {
+      "blob": "835a0202136c4536a96fa0a7111c62a2ff10ea51",
+      "path": "vp/STATE.md",
+      "working_sha256": "2029fcd6fb2ff52a898e9c4c263975994920bc3b192a919af5a5aa856eabb8f6"
+    },
+    {
+      "blob": "b1d0d7da0b4b47baa19663a1c8799a2a92ef6b1f",
+      "path": "vp/artefacts/A-000002/assessment/MANIFEST.md",
+      "working_sha256": "936bd8ec0743f0858ad4aac5079c8c841eb6013df3474e25b56939803ffdcc14"
+    },
+    {
+      "blob": "abd5a0d1526b03fa4b71fd2b527d15983dafdbc8",
+      "path": "vp/artefacts/A-000003/assessment/MANIFEST.md",
+      "working_sha256": "7e7888dd44fe1b78f03063fd6cad32fb5b9c839465c37695cafe27ab80091843"
+    },
+    {
+      "blob": "ddcccd9c3b5d21e4905fb0e3b531eda2ff14aa8b",
+      "path": "vp/records/audits/A-000001/ACCESS.md",
+      "working_sha256": "ce334313afb87ac4ca82a4658f897a39b9e912af4ca9bda13a6ffb9b802eee87"
+    },
+    {
+      "blob": "0102bc033f691c3f68dba5de81425b54c33a0ba0",
+      "path": "vp/records/audits/A-000001/record.md",
+      "working_sha256": "e76105d3013924702541da1587c65781a944be72f29057f8a3dc1f987d7e8237"
+    },
+    {
+      "blob": "119dcbd8d5c054a9ad9e3a1eb145dab1b5451a8e",
+      "path": "vp/records/audits/A-000001/request.md",
+      "working_sha256": "600ef65d4f536bc3414b3e21401c5024e876dd669a02d9937e1063214b9135cc"
+    },
+    {
+      "blob": "dd6ed1a62e308ad7100f887d71613365713f9d05",
+      "path": "vp/records/audits/A-000002/record.md",
+      "working_sha256": "b86e59995c7eb5b3527b2c5aaf49041b0bb324e04f254063f924b3ca9fc222bc"
+    },
+    {
+      "blob": "5ec765f8d4e4d912ebc895c65c0903f88bf5f6f0",
+      "path": "vp/records/audits/A-000002/request.md",
+      "working_sha256": "bc03912a2c64c7cc5181d1e731774c35686930cefcb7e3b4f4e37c85283933e3"
+    },
+    {
+      "blob": "7007d706df18d5ba809df910faf58d63a155f543",
+      "path": "vp/records/audits/A-000003/record.md",
+      "working_sha256": "f0d6283d187f8cdd4a703399bbb465e847f677e8ce7844c7a52032e6833d8561"
+    },
+    {
+      "blob": "3b21c7ab41f283da0d9423e18bd3e51521a62955",
+      "path": "vp/records/audits/A-000003/request.md",
+      "working_sha256": "b01a98864cd7283516c2d70a8bc46c3a88991c095eb74e3ffd65e1092229b2c5"
+    },
+    {
+      "blob": "0bdd99919b31f9e5ede66d0d1c066d62f06f1ac2",
+      "path": "vp/records/changes/DOC-000001/record.md",
+      "working_sha256": "056aee0132006a4fd85553c9c01a7fb1e1297bba02015a45ad467354f5735c28"
+    }
+  ],
+  "historical_locators": [
+    {
+      "document": "README.md",
+      "path": "docs/ARCHITECTURE.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "benchmarks/results/investigations/creation-pool-retention-2026-10-16.md",
+      "path": "benchmarks/gc_perf_benchmark.py",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "bedc060"
+    },
+    {
+      "document": "docs/DESIGN.md",
+      "path": "docs/SOURCE_INVENTORY.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/GETTING_STARTED.md",
+      "path": "docs/BUILD_AND_TEST.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/HANDOFF_RECONCILIATION_PLAN.md",
+      "path": "docs/REVIEW_HANDOFF.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/OPEN_ISSUES.md",
+      "path": "AUTIT-TODO.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/OPEN_ISSUES.md",
+      "path": "docs/PATCH_SERIES.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/PERFORMANCE.md",
+      "path": "docs/BENCHMARKING.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/PERFORMANCE.md",
+      "path": "docs/PERFORMANCE_INVESTIGATION_PLAN.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/PERFORMANCE.md",
+      "path": "docs/PERFORMANCE_INVESTIGATION_PLAN.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/PERFORMANCE.md",
+      "path": "docs/FT_CONTAINER_TRAVERSAL_OPTIMIZATION_PLAN.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/VALIDATION.md",
+      "path": "docs/LAZY_POOL_CREATION_PLAN.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/pep-parallel-gc-v2.rst",
+      "path": "docs/LAZY_POOL_CREATION_PLAN.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    },
+    {
+      "document": "docs/reviews/2026-10-15-claude-scaling-review.md",
+      "path": "Python/gc_free_threading.c",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc/cpython"
+      ],
+      "revision": "333071231d3a"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "path": "AUTIT-TODO.md",
+      "resolved_repositories": [
+        "/data/users/alexturner/parallel_gc"
+      ],
+      "revision": "724b74b"
+    }
+  ],
+  "initial_sealed_report_sha256": "b86e59995c7eb5b3527b2c5aaf49041b0bb324e04f254063f924b3ca9fc222bc",
+  "legacy_excluded_packet_links": [
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/input/user-authority.md"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/input/source/docs/OPEN_ISSUES.md"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/input/source/README.md"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/input/source/docs/VALIDATION.md"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/input/audit-standard/standards/project-records.md"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/verification-pre.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/verification-post.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/archive-inventory-check.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/structural-summary.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/path-index.txt"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/record-searches.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/selected-link-check.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/historical-locator-check.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/selected-excerpts.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/material-run-inspection.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/readiness-inspection.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/identity-cross-checks.json"
+    },
+    {
+      "document": "vp/records/audits/A-000001/record.md",
+      "target": "../../../artefacts/A-000001/assessment/MANIFEST.md"
+    }
+  ],
+  "limits": "Operator checks, not independent audit. Anchor slugs approximate; no rendered or remote URL claim. Legacy packet links remain excluded and dispositioned.",
+  "local_link_count": 508,
+  "missing_nonlegacy_fixed_tree_links": [],
+  "render_tooling": {
+    "docutils": false,
+    "markdown_it": false
+  },
+  "revision": "0ebeba2aea5104f43b56cd1b2d98c2047542b7aa",
+  "successor_sealed_report_sha256": "f0d6283d187f8cdd4a703399bbb465e847f677e8ce7844c7a52032e6833d8561",
+  "unexpected_nondocument_changes": []
+}
