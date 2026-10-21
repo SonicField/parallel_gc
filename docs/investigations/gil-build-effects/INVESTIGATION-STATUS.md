@@ -1,6 +1,6 @@
 # Investigation: GIL build effects after unused-code cleanup
 
-Status: owner approved comparison of recovered executables in a shared current runtime; preparing and verifying that runtime before the focused measurements.
+Status: three of four focused ABBA blocks complete; final disabled control running. The original large enabled increases have not recurred in either enabled block. Final verification and evidence preservation remain required.
 
 Author/operator: Codex, root session `01a0d2dd-cae0-7453-8afb-9a483d2d280a`.
 Created: 2026-10-21T13:30:57Z.
@@ -174,3 +174,9 @@ Raw campaign: owned workspace `results/01-disabled`; analysis `analysis-01-disab
 The first enabled block ran 14:11:22–14:26:39 UTC. Complete-program/leg/digest, explicit runtime state, package inventory, original-binary identity and before/after fingerprint checks pass. The saved rigorous run/value counts match the preceding block. Raw campaign `results/02-enabled`, campaign record SHA-256 `441c0b3af68b96db99c577e200ae3f87e3d0fc75ca48a18e926b40add9ae847a`, and `analysis-02-enabled.json` remain in the owned workspace.
 
 Time changes: `btree_gc_only` +0.88% (halves +5.75%, −3.89%); `connected_components` −1.77% (−1.83%, −1.71%). This block does not reproduce the earlier +12.70%/+6.48% increases. BTree half-directions oppose; no stable effect or cause is established. The second enabled and second disabled blocks are still required. They follow unchanged inputs; the next enabled block started at this timestamp. No values were discarded.
+
+### 2026-10-21T14:41:58Z — second enabled block complete
+
+The second enabled block ran 14:26:39–14:41:58 UTC. The same strict state, selection, digest and package checks passed, and its before/after fingerprints match. Campaign record SHA-256: `a6ac9a51a50122b7008b815438944a3645f2ad5f128fcb8b88030d636d131840`; raw campaign `results/03-enabled` and readable `analysis-03-enabled.json` remain in the owned workspace.
+
+Time changes: `btree_gc_only` +2.41% (halves −0.68%, +5.59%); `connected_components` −2.05% (−5.19%, +1.33%). Neither enabled block reproduces the original magnitudes. Both BTree blocks have opposing half-directions, so their positive block averages do not establish a stable regression. NetworkX has lower block averages in both repetitions, but its second block also has opposing half-directions. These are descriptive observations, not equivalence or a causal attribution. The final disabled control started immediately; no inputs or samples changed.
