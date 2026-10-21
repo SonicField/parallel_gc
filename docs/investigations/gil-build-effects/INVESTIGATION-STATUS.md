@@ -1,6 +1,6 @@
 # Investigation: GIL build effects after unused-code cleanup
 
-Status: planning; no new build or benchmark commissioned yet.
+Status: stage 1 recovery checks recorded; unchanged-environment repeat cannot proceed. Owner decision needed on a separately labelled reconstruction/rebuild protocol. No new build or benchmark commissioned yet.
 
 Author/operator: Codex, root session `01a0d2dd-cae0-7453-8afb-9a483d2d280a`.
 Created: 2026-10-21T13:30:57Z.
@@ -100,3 +100,25 @@ Retained directory: `vp/artefacts/A-000001/input/external/parallel-gc-benchmarks
 | `candidate-ft/python` | `c51db4dee5757e789cc208162bc32d70e9d8e79834a07cc0eed63888cecd19c1` |
 
 Observation: the binaries are present and identifiable, despite loss of their original temporary directory. This does not establish a usable restored Python prefix, dependency environment, independent replica or full historical build recovery. A-000001/F-005 is not closed. Next: check retained configuration/stdlib/native-module/environment inputs before proposing any benchmark command. The cause of the performance increases remains inconclusive.
+
+### 2026-10-21T13:41:15Z — runtime recovery limits and verified replica
+
+Authority: current instruction to follow this investigation and report findings. Prior goal-turn work was progress: committed protocol and verified original binary identities. This stage is new recovery evidence, not a repeated status report or a benchmark execution.
+
+The two original GIL virtual environments still have directories, but both have lost `bin/python`, `pyvenv.cfg` and `lib/python3.16/site-packages/networkx`. Some repaired packages remain. The original native build/dependency prefix and detached source worktree paths are absent. Git worktree registrations report those original source locations as prunable; nothing was pruned. Exact source Git objects remain accessible, including each revision's `Lib/os.py`; recovering source is not recovering compiled native modules.
+
+Inspection of the retained inventory found 90 entries from the original complete-build root, including executables, configuration/build/preflight logs and `builds.sh`, but zero `.so` files and no original virtual-environment files. The build preflight identifies native `_decimal` under the missing prefix and libmpdec 2.5.1. `readelf -d` on the preserved baseline GIL executable identifies libc/libm and the original private-library RPATH; it is a read-only ELF check, not a successful runtime preflight. Raw original program results identify the now-incomplete virtual environment as the executable for both affected benchmarks.
+
+Checks: direct `ls` of named original paths failed as missing; inventory JSON selection completed; `git cat-file -e` for both source locators passed. The checks establish absence from these named paths/retained packet scope, not absence of every possible host backup. No exhaustive host search or remote query was performed.
+
+Created recovery storage outside the project tree: `/home/alexturner/local/parallel-gc-gil-recovery.iJz6nj/`. It contains the two original GIL executables and, for each, `Makefile`, `binary.sha256`, `build.log`, `configure.log`, `preflight.json` and `pyconfig.h`, plus ownership/custody README and SHA-256 manifest. Original audit inputs are unchanged. The original project/audit tree was not recursively copied or added to Git.
+
+Replica commit: `091100291cfb7ff83f48ba52c8e01f8e7d0d2818`. Self-contained `RECOVERY.bundle` SHA-256: `1bf4cead53632bb6209063cc8960309fa86d4b98ea4ba48976542548fe156d9f`. `git bundle verify` passed; a fresh `git clone RECOVERY.bundle restored` checked out that commit. Clone printed `error: bundle-uri operation not supported by protocol`, but completed; the actual restored revision, clean tracked state and content checks subsequently passed. This diagnostic is retained rather than hidden.
+
+In `restored/`, `sha256sum -c SHA256SUMS` passed for all 15 covered files. All fourteen restored original-input files were also compared byte for byte with their retained audit originals using `cmp`, with no differences. This tests actual recovery of the declared selection, not merely presence of hashes. No recovered Python was executed. All copy, commit, bundle, clone and verification steps completed in this bounded recovery pass; there is no live benchmark process to wait for.
+
+This is a same-host recovery replica: it protects the selected binaries/provenance against project working-tree loss, not whole-host loss. It does not preserve missing native extensions, a usable standard-library prefix, all dependencies or an independently authenticated historical environment. It is not independent assessor closure of A-000001/F-005 or project conformance.
+
+**Stage 1 finding:** executable bytes are recoverable, but a complete original runtime environment is not established. Stage 2's unchanged-environment gate is not satisfied. Reinstalling or recompiling missing inputs must be called reconstruction, not an original-environment repeat. No historical comparison, fresh PGO build, native-module rebuild or benchmark was started.
+
+**Next owner decision:** approve a separately labelled matched-runtime reconstruction around the recovered executables, or approve fresh controlled builds with new identities and an explicit within-source build-variation comparison. Either requires a dated protocol amendment with actual inputs/resource budget before execution. Neither permits changing collector behaviour. The existing slowdown observations remain valid for their recorded pair; their cause remains **inconclusive**.
