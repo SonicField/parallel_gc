@@ -116,3 +116,25 @@ pass. Planning completed at 2026-10-22T13:37:34Z; implementation remains pending
 The planning commit identifies both changed paths. Its exact bytes will be
 compared from the existing separate restoration repository before handoff;
 that check covers documents only, not experimental reproduction or host loss.
+
+## Execution authority — 22 October
+
+Alex clarified that correcting old AI-written defaults does not require approval
+sentence by sentence, then instructed “Please execute.” This authorises the
+planned records reform and its one scoped Project Audit, not filesystem cleanup
+or new measurements. Execution baseline is planning commit
+`6f9f7168013cab137a8a3d006b68345d1dafc6c2`; tracked parent state is clean.
+Current VP is still clean at the pinned 1.2 revision. Historical reports/results
+and external archives remain untouched.
+
+Prospective implementation level: C for the evidence-role/retention control
+correction as a group; separate explanatory reader updates are D. The declared
+fresh changed-control gate applies before acceptance. Changing definitions could
+otherwise hide a real raw-result obligation, so all required measurements,
+inputs, recipes and explicit exceptions remain protected. No actual byte disposal
+occurs. The 29 October review and earlier change triggers apply to this C-stage
+decision; D prose keeps trigger-only review. Unknown genuine external obligations
+are escalated, not removed under this authorisation.
+
+Progress: discovery in progress; stages 2–5 not yet executed. The original plan
+and its then-pending approval statements above are preserved as pre-action history.
