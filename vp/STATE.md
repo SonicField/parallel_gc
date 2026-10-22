@@ -50,3 +50,10 @@ conditional independent-PGO-build stage, another unresolved investigation, or
 reviewer handoff. New PGO builds, GC diagnostics or code changes are not
 commissioned by this record. Alex retains remote pushes. No benchmark is running
 for this documentation task.
+
+## Proposed records reform — 22 October
+
+[REC-000001](records/changes/REC-000001/record.md) plans bounded reform for
+VP 1.2: required reproduction records, provenance identifiers and disposable
+resources. Execution awaits Alex's approval. Existing retention duties, audit
+verdicts and technical decisions are unchanged; no cleanup is authorised.
