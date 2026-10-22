@@ -1,5 +1,10 @@
 # REC-000001 — Reform records for VP 1.2 evidence roles
 
+Current status, 22 October: implementation and scoped independent assessment
+complete; ready for Alex's C-stage acceptance or deferral. The original plan's
+then-pending status below is preserved history. Final progress and audit outcome
+are at the end of this record. No cleanup or remote write occurred.
+
 ID: `parallel_gc:records:REC-000001`. Owner: Alex Turner. Worker: Codex.
 Created: 2026-10-22T13:36:23Z. Status: plan for owner review; execution not authorised.
 
@@ -242,3 +247,44 @@ Missing clean-environment reconstruction and off-host protection remain limits,
 not claims this document reform has repaired them.
 
 Stage 4 recovery and stage 5 audit are next. No stage budget was exceeded.
+
+## Independent gate and handoff — 22 October, 13:57 UTC
+
+Stages 4–5 complete. Fixed input
+`7a9ebfb247d3709d4b59e45b4a341c850f54748c` was fetched locally into the
+existing separate replica's `refs/records-reform/audit-input`; all thirteen
+changed files were byte/mode-compared successfully and Git connectivity passed.
+Repeatable method: `git diff --name-only <baseline> <input>` selects paths;
+compare `git show <input>:<path>` bytes and `git ls-tree <input> -- <path>`
+mode/object entries between source and replica; run
+`git fsck --connectivity-only --no-dangling <input>` there. The final handoff
+commit is likewise fetched/compared after committing this entry; its exact
+revision and observed check belong to the handoff, not a self-referential hash.
+This verifies records on a separate same-host repository, not clean experimental
+reconstruction or whole-host protection.
+
+[A-000004](../../audits/A-000004/record.md) independently assessed that fixed
+input and sealed at 13:56:46 UTC. The report is preserved at
+`f932b7580bc556583b066027d6613b2a23a6be63`, SHA-256
+`029e5ba2d993e1cfee0c06ef36696292e37b128ba6d44e3a8c48c665d9a5b6b5`.
+Verdict: conformant within the commissioned record-control scope; no new
+mandatory findings. Its own thirteen-file recovery, all-tree comparison,
+semantic role checks, dependency/patch and archive-identity/index checks passed.
+It inspected every changed clause and the declared semantic traces, without
+executing product code, archived runtimes or experiments. Its 4:55 elapsed
+assessment is within the one-round 45-minute budget. No further audit was spawned.
+
+Only the prospective blanket binary/environment implications of A-000001/F-004
+and F-005 are independently superseded under 1.2. Their real historical-record
+access/custody gaps remain open, as do F-001/F-002/F-003/F-006. Missing original
+HV raw data, the undetailed scratch failure, unmapped legacy unique support,
+111 untracked results' custody, runtime configuration dependencies and untested
+clean reconstruction are not repaired by this change. Off-host protection is
+unverified, not a generic newly imposed duty for every resource.
+
+The declared assessment gate is satisfied; Alex retains acceptance or deferral
+of the C-stage outcome. The 29 October/earlier-change review remains. Current
+views now route the scoped result without changing old reports. Required-record
+periods, results, source, workloads, workflows and gitlinks stay intact. No
+filesystem cleanup, executable retention mandate, new experiment or remote write
+was added. Future custody work or disposal needs its own exact bounded scope.

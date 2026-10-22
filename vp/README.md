@@ -59,6 +59,13 @@ before following links into its untracked local legacy packet. All six old
 findings remain open; this documentation work does not reconstruct missing
 history or close technical landing gates.
 
+[A-000004](records/audits/A-000004/record.md) is the fresh VP 1.2 records-reform
+assessment at `7a9ebfb247d3709d4b59e45b4a341c850f54748c`: conformant within
+that changed-control scope, no new mandatory findings. It supersedes only the
+prospective blanket binary/environment-retention implications of A-000001/F-004
+and F-005. Their genuine access/custody conditions and the other four findings
+remain open. Alex retains C-stage acceptance; this is not whole-project conformance.
+
 ## Custody and change limits
 
 Authoritative records are preserved in parent Git history. The documentation

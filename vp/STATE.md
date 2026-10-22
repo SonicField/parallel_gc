@@ -40,7 +40,9 @@ within their stated scope. No new findings were raised. This is a bounded
 documentation verdict, not whole-project VP conformance or technical acceptance.
 
 All six [A-000001 historical findings](records/audits/A-000001/ACCESS.md)
-remain open. Allocation/rollback/join and other [technical landing issues](../docs/OPEN_ISSUES.md)
+retain open historical conditions. A-000004 supersedes only F-004/F-005's
+prospective blanket binary-retention implications under VP 1.2, not their genuine
+record-access/custody gaps. Allocation/rollback/join and other [technical landing issues](../docs/OPEN_ISSUES.md)
 are not documentation repairs and remain unchanged.
 
 The documentation task is complete: current-view checks passed and the
@@ -60,7 +62,11 @@ for this documentation task.
 [REC-000001](records/changes/REC-000001/record.md) executes bounded reform for
 VP 1.2: required reproduction records, provenance identifiers and disposable
 resources. Alex authorised execution and correction of earlier AI-written
-defaults. Discovery is complete; reader guidance is being reconciled with dated
-retention successors. One fresh changed-control audit remains before acceptance.
+defaults. Implementation and [A-000004's scoped assessment](records/audits/A-000004/record.md)
+are complete: conformant for the changed record control, no new mandatory findings.
+The independent gate is satisfied; Alex accepts or defers the C-stage outcome.
 Raw results, source, original dated entries and sealed reports stay unchanged.
 No cleanup, new benchmark or remote write is authorised by this task.
+Remaining custody/reconstruction limits are not hidden by the passed gate:
+unique legacy support and untracked raw results still need scoped disposition,
+and clean environment reconstruction/off-host record recovery remain untested.

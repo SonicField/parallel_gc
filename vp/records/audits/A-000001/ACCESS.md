@@ -1,5 +1,11 @@
 # A-000001: current access and disposition
 
+Current disposition, 22 October: [A-000004](../A-000004/record.md) independently
+supersedes only the prospective blanket binary/environment implications of
+F-004/F-005 under VP 1.2. Genuine required-record access/custody conditions and
+the other four findings remain open. The dated original table and worker request
+below remain history; the fresh report supplies the independent outcome.
+
 Original disposition: 21 October 2026 under [DOC-000001](../../changes/DOC-000001/record.md),
 level D. The 22 October successor below is part of the level-C records reform.
 This companion does not modify the [sealed report](record.md) or its
