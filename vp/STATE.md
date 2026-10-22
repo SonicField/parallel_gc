@@ -1,7 +1,8 @@
 # Current documentation and investigation state
 
-Updated 21 October 2026. This is a reviewer navigation summary under the
-level-D [documentation reconciliation](records/changes/DOC-000001/record.md),
+Updated 22 October 2026. This is a reviewer navigation summary under the
+completed level-D [documentation reconciliation](records/changes/DOC-000001/record.md)
+and the bounded [VP 1.2 records reform](records/changes/REC-000001/record.md),
 not source correctness, performance acceptance or full VP conformance.
 
 ## What is complete and what remains
@@ -20,8 +21,11 @@ have not been inspected in the current record. No live GitHub status is
 inferred. [Reported CI evidence](../docs/ci-results-2026-10-19.md).
 
 Two original GIL binaries and the new shared-runtime observations have scoped
-same-host recovery evidence. Complete original runtime, all FT asset custody
-and whole-host recovery remain unestablished. Source selection is always the
+same-host recovery checks. Original-environment reconstruction and off-host
+recovery of required experiment records remain unestablished. Missing temporary
+FT binaries alone are not an evidence defect. Unique untracked results still
+need a durable custody decision; retaining binaries would not resolve that.
+Source selection is always the
 parent `cpython/` gitlink; measured baseline/integrated revisions stay fixed
 in their reports, not relabelled as the selected current checkout.
 
@@ -51,9 +55,12 @@ reviewer handoff. New PGO builds, GC diagnostics or code changes are not
 commissioned by this record. Alex retains remote pushes. No benchmark is running
 for this documentation task.
 
-## Proposed records reform — 22 October
+## Records reform — 22 October
 
-[REC-000001](records/changes/REC-000001/record.md) plans bounded reform for
+[REC-000001](records/changes/REC-000001/record.md) executes bounded reform for
 VP 1.2: required reproduction records, provenance identifiers and disposable
-resources. Execution awaits Alex's approval. Existing retention duties, audit
-verdicts and technical decisions are unchanged; no cleanup is authorised.
+resources. Alex authorised execution and correction of earlier AI-written
+defaults. Discovery is complete; reader guidance is being reconciled with dated
+retention successors. One fresh changed-control audit remains before acceptance.
+Raw results, source, original dated entries and sealed reports stay unchanged.
+No cleanup, new benchmark or remote write is authorised by this task.

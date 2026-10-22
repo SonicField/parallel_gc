@@ -1,6 +1,7 @@
 # Investigation and choice register
 
-Updated 21 October 2026 under [DOC-000001](records/changes/DOC-000001/record.md).
+Updated 22 October 2026; original reconciliation under [DOC-000001](records/changes/DOC-000001/record.md),
+current evidence-role reform under [REC-000001](records/changes/REC-000001/record.md).
 This is a family-level navigation index for current reviewer documentation,
 not exhaustive coverage of every historical action, `.nbs` record, vendor file
 or CPython source unit. Entries summarise retained records; they do not grant
@@ -70,6 +71,7 @@ implementation context, not pooled into the new comparison.
 | Documentation audit and repair | Fresh successor independently closes all five initial documentation findings and satisfies W1–W4 dispositions at the fixed repaired input; no new finding. Technical/historical limitations remain open, not accepted by the D verdict. | [DOC-000001](records/changes/DOC-000001/record.md), [initial A-000002](records/audits/A-000002/record.md), [successor A-000003](records/audits/A-000003/record.md) |
 | Historical project audit | Inconclusive, six findings still open. Narrow new recovery/reporting does not establish full historical closure. | [A-000001 access and dispositions](records/audits/A-000001/ACCESS.md) |
 | Remaining source/API/performance decisions | No new repair authorised here: allocation/rollback/join policies, extension compatibility/provenance, public API, first-use latency/memory, feature-off performance and unresolved workloads remain. | [Open issues and landing gates](../docs/OPEN_ISSUES.md), [validation](../docs/VALIDATION.md) |
+| VP 1.2 evidence-role reform | Separate required records, provenance IDs and working resources; correct AI-written blanket binary retention without deleting bytes or changing historical verdicts. Independent control gate pending. | [Plan, discovery, obligations and progress](records/changes/REC-000001/record.md), [reader guidance](README.md#what-must-be-kept) |
 
 Earlier port/restoration plans, source inventories and lifecycle choices have
 immutable historical routes in DESIGN, VALIDATION and the handoff log. Their
