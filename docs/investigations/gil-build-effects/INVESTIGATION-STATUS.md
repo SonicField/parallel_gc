@@ -2,6 +2,12 @@
 
 Status: all four focused ABBA blocks completed and verified. The original large enabled increases did not recur. Cause remains unresolved; no collector change or new build experiment is justified by this result alone.
 
+Records clarification, 22 October: the [dated retention successor](#22-october-2026--evidence-roles-and-retention-successor)
+separates required experiment support from executable identities and working
+runtimes under VP 1.2. Historical recovery checks below prove byte recovery,
+not reconstruction of the original environment. The four new blocks repeat a
+measurement with a different shared runtime, not an independently rebuilt pair.
+
 ## Latest findings — 21 October 2026
 
 The original executable bytes were measured with the same reconstructed runtime, unchanged benchmark programs and rigorous parameters. Each row compares integrated versus baseline **with the same GC policy**, not parallel versus serial. Positive percentages mean more execution time.
@@ -217,3 +223,61 @@ Equal-weight leg means determine the block ratio: `(candidate leg 2 + candidate 
 This verifies recovery of archive bytes, not executing a portable restored runtime, authenticating action timestamps or surviving whole-host loss. The driver base interpreter and system libraries remain external dependencies. Original executable/build-record custody has its separately verified replica above. Retain the owned evidence for project life plus one year after retirement; no workspace, original input or old evidence was deleted. The final local project-record commit will also be bundled and byte-checked before handoff; its exact revision and check are reported with the handoff, avoiding a self-referential commit hash in this file.
 
 **Scoped outcome:** the authorised recovered-binary/shared-runtime experiment is complete. Cause remains inconclusive. No project-conformance claim, closure of A-000001, source-repair acceptance, universal noise threshold or performance-neutrality claim follows. Stage 3 remains conditional and uncommissioned; Alex retains the next investigation decision. Existing review date and change/custody triggers remain in force. No benchmark is left running and no remote write was made.
+
+## 22 October 2026 — evidence roles and retention successor
+
+Authority: Alex instructed execution of [REC-000001](../../../vp/records/changes/REC-000001/record.md),
+including correction of prior AI-written retention defaults. This current
+level-C successor applies VP 1.2 §6.1 at
+`b068e9cbe245bcdc039993020befb594a795bff3`. It does not rewrite the earlier
+protocol, outcome, archive manifests or audit verdicts, and authorises no deletion.
+
+Required records remain protected for project life plus one year after retirement:
+original and new raw measurements, failed attempts, preparation/controller/
+analysis scripts, source and dependency/toolchain specifications, build/run
+commands, workload controls, configuration/fingerprint inventories, analyses
+and environmental limitations. Alex is custodian and decision owner; experiment
+reviewers and repeaters are the consumers. Source/build commands and native-decimal
+preparation are linked from [build evidence](../../../benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md);
+dependency versions, patches and engine constraints are in the [repair plan](../../../benchmarks/dependency-repair/PLAN.md)
+and [readiness records](../../../benchmarks/dependency-repair/full-readiness-evidence/README.md).
+The frozen run protocol and preparation failures remain above, with the captured
+scripts, inventories and raw outputs in the named observation store.
+
+The blanket period no longer applies to recovered executables, installed
+runtimes, compiled support modules, package caches or virtual environments merely
+because they were used. Their hashes are provenance identifiers. They were
+temporary resources for the completed diagnostic; no release, forensic,
+exact-byte replay or external retention requirement was identified. This
+supersedes that scope of the historical `README.md` defaults in
+`/home/alexturner/local/parallel-gc-gil-recovery.iJz6nj` at
+`091100291cfb7ff83f48ba52c8e01f8e7d0d2818` and
+`/home/alexturner/local/parallel-gc-gil-evidence.2Cwhq4` at
+`c5987dd1cbcd6175e1b0d6ef12d4530f619df4bd`, and the blanket wording in the
+21 October completion entry. Those revisions remain preserved. Actual external
+obligations discovered later require an explicit purpose, consumer and period;
+this successor does not waive them.
+
+The existing observation archive is a **mixed container**: index inspection
+found raw JSON/logs and scripts alongside a bz2 RPM, extension, header and
+documentation. It stays intact here. Future separately authorised cleanup must
+first retain its required records and any unique configuration support in a
+recoverable location; the build products need not remain their permanent carrier.
+The runtime archive contains installed environments and possible configuration
+support. Header/index inspection, without extraction, cannot prove that all
+required configuration has independent custody. Ownership, active consumers and
+those record dependencies must be resolved before later resource disposal.
+
+Reproduction status is specific: recipes and executed identities are recorded;
+the original complete environment was unavailable; preparation of the different
+shared runtime and its four measurement blocks actually ran on 21 October;
+reconstruction from retained records on a clean environment is **untested**.
+Selected archive/executable byte recovery was tested on this host. Neither that
+check nor retained runtime bytes establish clean reconstruction, repetition of
+the original result or host-loss protection. Base interpreter/system-library
+dependencies and unverified off-host record recovery remain explicit limits.
+No compiler, container or complete-machine archive is required by default.
+
+This successor changes records, not the result or causal interpretation. The
+original investigation's review date and stage-3 gate still apply. The changed
+retention control requires REC-000001's independent audit before acceptance.

@@ -26,7 +26,7 @@ Documentation-only commits do not change those measurements or the CPython
 gitlink. Collector changes need new evidence; a claim that older results still
 apply requires an explicit account of the intervening changes.
 
-## Latest status: 21 October 2026
+## Latest status: 22 October 2026
 
 All sixteen repaired-dependency rigorous source-comparison suites are complete:
 100 original programs and 127 named results per leg. [Campaign and checks](PYPERFORMANCE_CAMPAIGN_2026-10-19.md).
@@ -34,7 +34,10 @@ Individual increases, performance neutrality and causation remain unresolved.
 The [four-block GIL follow-up](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
 did not reproduce the earlier large BTree/NetworkX increases using recovered
 GIL binaries in a reconstructed shared runtime. Its selected same-host custody
-checks do not recover the original complete runtime or establish all FT assets.
+checks do not reconstruct the original complete environment. Missing temporary
+FT binaries alone are not an evidence defect; access to required raw results,
+specifications and commands remains necessary. Clean environment reconstruction
+and off-host record recovery are untested. [VP 1.2 evidence roles](../vp/README.md#what-must-be-kept).
 
 The five [19 October workflow successes](ci-results-2026-10-19.md) are reported
 conclusions, not independently inspected source/job artifacts, counts or skips.

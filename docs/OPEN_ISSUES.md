@@ -15,12 +15,15 @@ confirmation ([VALIDATION.md](VALIDATION.md)).
 
 **19 October hosted follow-up:** all five latest workflows are reported successful: Linux focused matrix, GCC/Clang checks, full Linux CPython suite, Windows and macOS. [Conclusions and run IDs](ci-results-2026-10-19.md). This supersedes earlier "outcomes unknown" entries at workflow level only; source artifacts, job counts and skips still need inspection. No performance or unresolved source-failure policy is closed by those successes.
 
-**Current follow-up, 21 October:** all sixteen rigorous source-comparison
+**Current follow-up, 22 October:** all sixteen rigorous source-comparison
 pyperformance suites are complete. The [four-block GIL investigation](investigations/gil-build-effects/INVESTIGATION-STATUS.md)
 did not reproduce the earlier large BTree/NetworkX increases using recovered
 GIL binaries in one shared reconstructed runtime; cause, equivalence and
 acceptance remain unresolved. Selected same-host GIL recovery is verified,
-not the original complete runtime or all FT asset custody. [VP state and
+not reconstruction of the original complete environment. Clean reconstruction
+and off-host recovery of required records remain untested; missing temporary
+FT executables alone are not an evidence defect. Unique untracked raw results
+still need a custody decision. [VP 1.2 evidence roles](../vp/README.md#what-must-be-kept), [VP state and
 investigation/choice register](../vp/README.md). Dated pending entries below
 are checkpoints; source failure policies and technical landing gates remain
 unchanged.

@@ -209,3 +209,36 @@ unchanged; current prose and dated successor entries carry the correction.
 Stage 1 complete within its 45-minute budget. Stage 2 proceeds under Alex's
 already clarified authority; no further approval of AI default clauses is
 requested. One independent C-stage gate remains before acceptance.
+
+## Repairs and checks — 22 October, 13:50 UTC
+
+Stages 2–3 complete: reader guidance was committed separately at `77cb297`;
+the current retention/control repair adds dated GIL/campaign/access successors
+and reconciles root/performance/validation/open-issue prose. Required GIL records
+retain the project-life-plus-one-year period; the old AI blanket rule no longer
+requires retaining working binaries/runtimes. No actual exception was removed
+and no archive or original manifest was edited. Recipes, clean reconstruction,
+the actual different-runtime repeat and byte recovery are separately described.
+
+Ordinary external Git/text checker
+`/home/alexturner/local/parallel-gc-record-reform.0E3W5s/check_records.py`
+passed: eleven allowed document paths, 987 protected tracked paths plus gitlinks
+unchanged, 240 resolving local links, original dated GIL/campaign prose and
+original access table preserved. Its evidence-role assertions check the five
+declared counterexamples through recorded clauses, not new experiments. This is
+a structural operator check; the independent auditor supplies semantic scrutiny.
+Whitespace checks pass. No build, benchmark, extraction, archive edit, remote
+write or deletion ran. The checker is an ordinary disposable verification tool,
+not a required executable artefact.
+
+Proposed resource disposition: retain source/patch/protocol/raw/log records in
+the nine family groups above; treat build trees, installed tools/environments,
+compiler/package caches and recovered executables as working resources, with
+disposal pending exact-target authority and active-consumer/dependency checks.
+Keep mixed containers and the unmapped legacy packet intact until unique records
+have verified custody; preserve the 111 untracked results while their custody
+is decided. There is no per-file cleanup queue or new default archive duty.
+Missing clean-environment reconstruction and off-host protection remain limits,
+not claims this document reform has repaired them.
+
+Stage 4 recovery and stage 5 audit are next. No stage budget was exceeded.

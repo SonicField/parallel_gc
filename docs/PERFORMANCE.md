@@ -238,7 +238,7 @@ All four full source-ABBA campaigns (sixteen suites) retain 100 original program
 | [FT disabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-disabled/README.md) | +0.23% | `dask` +4.55% and `html5lib` +2.21% increase in both halves; `k_core` +2.51% has opposing halves. |
 | [FT enabled](../benchmarks/results/pyperformance/repaired-source-abba-2026-10-19/ft-enabled/README.md) | −0.25% | `dulwich_log` +2.22%, `k_core` +1.75% and `btree` +1.52% increase in both halves. `stdlib_startup` +1.20% has opposing halves. |
 
-All rows, leg variation, raw results, input fingerprints, pooled comparisons and arithmetic checks are retained. The summaries do not establish neutrality, causation or acceptance. Sequential disabled/enabled campaigns are not a controlled activation-cost estimate. [Protocol and completion log](PYPERFORMANCE_CAMPAIGN_2026-10-19.md). The original build/driver root was absent when the final FT-enabled analysis ran; its unexplained loss and the replacement analysis environment remain recorded. Later recovery verified the original GIL pair, not the original complete runtime or all FT asset custody.
+All rows, leg variation, raw results, input fingerprints, pooled comparisons and arithmetic checks are retained. The summaries do not establish neutrality, causation or acceptance. Sequential disabled/enabled campaigns are not a controlled activation-cost estimate. [Protocol and completion log](PYPERFORMANCE_CAMPAIGN_2026-10-19.md). The original build/driver root was absent when the final FT-enabled analysis ran; its unexplained loss and the replacement analysis environment remain recorded. Later recovery verified the original GIL pair, not reconstruction of the original complete environment. Under [VP 1.2 evidence roles](../vp/README.md#what-must-be-kept), missing temporary FT executables alone are not an evidence defect. Required experiment records remain protected; clean reconstruction and off-host record recovery are untested.
 
 #### Focused GIL follow-up, 21 October
 
@@ -250,8 +250,9 @@ oppose within their blocks. Disabled controls and every half are retained in
 the record. The earlier +12.70%/+6.48% magnitudes did not recur. This is not
 equivalence, proof of a smaller stable regression, cleanup attribution or proof
 that the old runtime caused the result. Same-host recovery covers identified
-GIL inputs/new observation archives, not the complete old runtime, all FT
-assets or host-loss protection. The proposed independent-PGO-build stage
+GIL inputs/new observation archives, not clean reconstruction of the old
+environment or host-loss protection. The [22 October retention successor](investigations/gil-build-effects/INVESTIGATION-STATUS.md#22-october-2026--evidence-roles-and-retention-successor)
+separates required records from working resources. The proposed independent-PGO-build stage
 remains conditional and uncommissioned.
 
 ### 4.2 Historical serial/parallel measurements, 7–15 October 2026

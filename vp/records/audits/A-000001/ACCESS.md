@@ -1,7 +1,8 @@
 # A-000001: current access and disposition
 
-Updated 21 October 2026 under [DOC-000001](../../changes/DOC-000001/record.md),
-level D. This companion does not modify the [sealed report](record.md) or its
+Original disposition: 21 October 2026 under [DOC-000001](../../changes/DOC-000001/record.md),
+level D. The 22 October successor below is part of the level-C records reform.
+This companion does not modify the [sealed report](record.md) or its
 [original request](request.md).
 
 The report/request entered parent Git history at
@@ -40,3 +41,26 @@ inconclusive verdict remains attached to its original scope and time.
 Its F-003 asks for this access disposition, not broad closure of A-000001.
 Any claim of full historical closure needs a separately commissioned assessment
 with the corresponding evidence; this companion makes no such claim.
+
+## 22 October successor: F-004/F-005 scope under VP 1.2
+
+[REC-000001](../../changes/REC-000001/record.md) corrects current reliance on
+the old retention/access wording. The original table above is historical, not
+a prospective requirement to keep every environment or FT executable.
+Missing temporary binaries alone are not an evidence-custody defect under
+VP 1.2 §6.1, and archive recovery is not experimental reproduction.
+
+F-004 still requires honest access to historical support: unique observations,
+patches, specifications, commands, analysis and capture/authority records.
+The local legacy packet's unique content has not been comprehensively mapped
+or independently recovered off-host. F-005 still requires custody/recovery for
+required records and any genuine exact-byte obligation, not blanket machine or
+build archival. The GIL [retention successor](../../../../docs/investigations/gil-build-effects/INVESTIGATION-STATUS.md#22-october-2026--evidence-roles-and-retention-successor)
+separates its mixed archive's records from working resources without deletion.
+Unique untracked raw-result custody remains unresolved.
+
+The worker requests scoped correction/supersession of only the blanket-binary
+implication in F-004/F-005 from the commissioned fresh A-000004. Required-record
+access gaps are not closed by that request; none of the six original findings
+is self-closed here. Full historical conformance, source correctness and technical
+landing gates remain outside this bounded reform.

@@ -138,3 +138,26 @@ the complete original runtime and all FT asset custody remain unestablished.
 The [D documentation reconciliation](../vp/records/changes/DOC-000001/record.md)
 tracks a fresh audit and repairs; it does not declare whole-project adoption
 or close the older audit's historical findings.
+
+## 22 October — records and reproduction clarification
+
+This dated successor corrects the above description of missing binaries as an
+“evidence-custody gap.” Under [VP 1.2 records guidance](../vp/README.md#what-must-be-kept),
+a missing temporary executable is not such a gap solely because its hash was
+recorded. The unexplained original path loss remains an observed fact and limits
+reconstruction of the original context; it is not a benchmark execution failure.
+The old entries and measurements remain unchanged.
+
+Required support is the frozen source/build specification, commands, dependency
+versions/patches and engine choices, workload inputs, raw per-program and combined
+results, execution/fingerprint inventories, failed attempts and analysis. It is
+linked from the four result families above, [build evidence](../benchmarks/results/investigations/integration-validation-2026-10-16/build-evidence/README.md)
+and [dependency/readiness records](../benchmarks/dependency-repair/PLAN.md).
+Preserving those records matters; keeping each compiled interpreter does not.
+The sixteen suites actually ran. Reconstructing the full campaign environment
+from these records has not been tested; later same-host byte recovery of the
+GIL pair and different-runtime follow-up does not establish that reconstruction.
+Off-host custody of required records and unique untracked results remains an
+explicit limit. The GIL [dated successor](investigations/gil-build-effects/INVESTIGATION-STATUS.md#22-october-2026--evidence-roles-and-retention-successor)
+defines its record period separately from working-resource disposal. No data,
+binary or archive is deleted by [REC-000001](../vp/records/changes/REC-000001/record.md).
