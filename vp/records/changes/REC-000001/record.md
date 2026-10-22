@@ -138,3 +138,74 @@ are escalated, not removed under this authorisation.
 
 Progress: discovery in progress; stages 2–5 not yet executed. The original plan
 and its then-pending approval statements above are preserved as pre-action history.
+
+## Discovery checkpoint — 22 October, 13:47 UTC
+
+Read-only discovery covered all 36 register families and their 54 distinct
+primary targets (53 files and one directory). All targets are present. The
+directory is the repaired source-ABBA family, with 34 tracked files. Structural
+inspection covered every primary text target; semantic inspection concentrated
+on the seven dependency decisions, readiness, build preparation, source-ABBA
+support, GIL follow-up and named legacy manifests. This is not verification of
+every historical output or every byte in an archive.
+
+The existing REGISTRY supplies the support links for the groups below. Alex
+is the decision owner; source/design consumers are implementers and reviewers,
+and measurement consumers are reviewers repeating or examining the experiments.
+Working-resource ownership/active consumers have not been checked for disposal:
+there is no disposal in this task.
+
+| Register families covered | Required durable support | Provenance / working-resource disposition and limits |
+|---|---|---|
+| GIL partitioning; marking/barriers/private work; adaptive search; inherited forkserver activation; container traversal/inlining; parallel PGO; SQLite/lazy startup; fork recovery | Source/design choices, patches, exact protocols and recorded tests/measurements, including rejected candidates | Executable/profile IDs identify runs; build trees, pools' test environments and installed tools are working resources. No default exact-byte retention duty. |
+| FT root placement; four dropped coordination candidates; finalizer/BRC/float hypotheses | Workload definitions, protocols, raw outcomes and rejection/uncertainty explanations | Diagnostic builds are working resources. A hypothesis with a falsifier is not an executed experiment or established cause. |
+| Creation-worker retention; module-rooted coverage; dead code; production verifier; header dependencies | Source changes, controls, failures, test logs and design reasoning | Compiled tests/sanitizer binaries are working resources, not substitute proof for logs or unique patches. |
+| Native-decimal preparation; full project source ABBA; focused FT repeat; unchanged FT repeat; local full-suite/debug | Build specifications/commands, measured source identities, workload controls, raw legs/failed attempts, analysis and context limits | Build IDs are provenance. Original-environment reconstruction remains untested; a same-binary repeat is not independent rebuild replication. |
+| Cloudpickle; Genshi; Coverage; MarkupSafe; Greenlet; Dulwich; SQLAlchemy | Version/engine choices, source patches, native/pure-Python constraints, build/run recipes, inventories and diagnostic outputs | Wheels, RPMs, compiler installs and virtual environments are working resources. “Retain native engine” specifies the measured implementation, not perpetual wheel custody. Retrieval/rebuilding was not tested by this reform. |
+| Prepared runner/state validation; complete readiness | Runner source, exact selection/state constraints, per-run outputs, failures and package specifications | Disposable installed tools do not make missing raw outputs disposable. Diagnostic readiness is not performance evidence. |
+| Repaired source ABBA, all sixteen suites | Source/build/protocol specifications, raw per-program and combined results, execution/fingerprint inventories, comparisons and arithmetic checks | Source/build IDs identify the measured pair. Recorded recipes and completed execution exist; reconstruction from them has not been tested here. Missing temporary FT executables alone are not an evidence defect. |
+| GIL source-versus-build follow-up | Original and new raw observations, failed preparation, scripts, build/support specifications, fingerprints and analyses | Executable/runtime recovery is a past diagnostic result. The original complete runtime was unavailable; four new blocks used a different shared runtime. External archives are mixed as detailed below. |
+| CI probe/wrapper; documentation audit; historical project audit; remaining source/API/performance decisions | Source/record history, logs, original reports/requests/seals, authorities and honest unresolved limits | Copied source/build packets are not the mandatory retention unit. Unique observations and capture/authority metadata must remain accessible; no blanket historical closure. Hosted job/source inspection remains outstanding. |
+
+Named external manifests inspected: recovery store
+`parallel-gc-gil-recovery.iJz6nj`, revision
+`091100291cfb7ff83f48ba52c8e01f8e7d0d2818:README.md`, and evidence store
+`parallel-gc-gil-evidence.2Cwhq4`, revision
+`c5987dd1cbcd6175e1b0d6ef12d4530f619df4bd:README.md`, both under
+`/home/alexturner/local/`. Their binary/runtime retention clauses are earlier
+AI-written defaults, not an identified release, forensic, replay or external
+byte obligation. Alex's execution authority permits correcting those defaults
+through the dated parent successor, while preserving the historical manifests.
+The required-record period in the GIL record remains project life plus one year
+after retirement. No genuine external exact-byte exception was found within
+the inspected scope; unknown obligations elsewhere are not waived.
+
+Archive indexes, not extracted contents, distinguish 201 observation members
+from 6,364 runtime members. The observations archive contains raw JSON/logs,
+preparation/analysis scripts and fingerprints **and** a bz2 RPM, native extension,
+header and package documentation. Therefore it is a mixed container: preserve it
+until required records are safely separated before any separately authorised
+cleanup. That does not make each contained build product durable evidence.
+The runtime archive mainly contains installed runtimes/packages, but can also
+contain configuration support. Index inspection alone does not establish that
+every required configuration is recorded elsewhere. Its replacement or disposal
+would need that check; no portable restoration/reconstruction was tested.
+
+The legacy A-000001 input/assessment manifests were read in place; its whole
+copied packet was not expanded. Unique capture/log/authority evidence remains
+protected. Git source copies and executables are not automatically required,
+but no complete selective-disposal assessment was done. There are also 111
+untracked pyperformance result files: their durable custody and sole-copy status
+remain unresolved. They stay untouched; this reform does not classify all of
+them as disposable or claim off-host recovery.
+
+Fixed affected paths: this record, vp/README.md, vp/STATE.md, vp/REGISTRY.md,
+A-000001/ACCESS.md, root README.md, docs/PERFORMANCE.md, docs/VALIDATION.md,
+docs/OPEN_ISSUES.md, docs/PYPERFORMANCE_CAMPAIGN_2026-10-19.md and the GIL
+INVESTIGATION-STATUS.md. Add only the commissioned A-000004 request/reference
+and report. Original dated experiment entries and sealed audit records remain
+unchanged; current prose and dated successor entries carry the correction.
+
+Stage 1 complete within its 45-minute budget. Stage 2 proceeds under Alex's
+already clarified authority; no further approval of AI default clauses is
+requested. One independent C-stage gate remains before acceptance.
